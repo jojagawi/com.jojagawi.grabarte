@@ -1,0 +1,62 @@
+<code_scheme name="Project" version="173">
+  <option name="OTHER_INDENT_OPTIONS">
+    <value>
+      <option name="INDENT_SIZE" value="2" />
+      <option name="TAB_SIZE" value="2" />
+    </value>
+  </option>
+  <HTMLCodeStyleSettings>
+    <option name="HTML_ATTRIBUTE_WRAP" value="2" />
+    <option name="HTML_KEEP_BLANK_LINES" value="1" />
+    <option name="HTML_INLINE_ELEMENTS" value="abbr,acronym,basefont,bdo,big,br,cite,cite,code,dfn,em,font,i,input,kbd,label,q,s,samp,select,small,span,strike,strong,sub,sup,textarea,tt,u,var" />
+  </HTMLCodeStyleSettings>
+  <JavaCodeStyleSettings>
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="7" />
+    <option name="IMPORT_LAYOUT_TABLE">
+      <value>
+        <package name="" withSubpackages="true" static="false" />
+        <emptyLine />
+        <package name="javax" withSubpackages="false" static="false" />
+        <package name="java" withSubpackages="false" static="false" />
+        <emptyLine />
+        <package name="" withSubpackages="true" static="true" />
+      </value>
+    </option>
+  </JavaCodeStyleSettings>
+  <editorconfig>
+    <option name="ENABLED" value="true"/>
+  </editorconfig>
+  <codeStyleSettings language="HTML">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="2" />
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      <option name="TAB_SIZE" value="2" />
+    </indentOptions>
+  </codeStyleSettings>
+  <codeStyleSettings language="JAVA">
+    <!-- Use spaces, never tabs -->
+    <option name="USE_TAB_CHARACTER" value="false"/>
+    <option name="SMART_TABS" value="false"/>
+    <!-- Match checkstyle lineWrappingIndentation=4 and throwsIndent=4 -->
+    <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
+    <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
+    <option name="KEEP_MULTIPLE_EXPRESSIONS_IN_ONE_LINE" value="true" />
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="false"/>
+    <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="false"/>
+    <option name="ALIGN_MULTILINE_THROWS_LIST" value="false"/>
+    <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="false"/>
+    <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="false"/>
+    <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="false"/>
+    <option name="ALIGN_MULTILINE_ASSIGNMENT" value="false"/>
+    <indentOptions>
+      <!-- basicOffset=2 in checkstyle -->
+      <option name="INDENT_SIZE" value="2" />
+      <!-- lineWrappingIndentation=4 and throwsIndent=4 in checkstyle -->
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      <option name="TAB_SIZE" value="2" />
+      <option name="USE_TAB_CHARACTER" value="false"/>
+      <option name="SMART_TABS" value="false"/>
+      <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="false"/>
+    </indentOptions>
+  </codeStyleSettings>
+</code_scheme>
