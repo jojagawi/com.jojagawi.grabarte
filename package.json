@@ -26,6 +26,7 @@
     "gatsby-plugin-postcss": "^6.16.0",
     "gatsby-plugin-sharp": "^5.16.0",
     "gatsby-plugin-sitemap": "^6.16.0",
+    "gatsby-source-sqlite": "^1.0.0",
     "gatsby-source-filesystem": "^5.16.0",
     "gatsby-transformer-sharp": "^5.16.0",
     "postcss": "^8.5.16",
