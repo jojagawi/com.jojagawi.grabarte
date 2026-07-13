@@ -21,6 +21,12 @@ const config: GatsbyConfig = {
     {
       resolve: "gatsby-plugin-manifest",
       options: {
+        name: `Grab Arte`,
+        short_name: `grabarte`,
+        start_url: `/`,
+        background_color: `#000`,
+        theme_color: `#000`,
+        display: `minimal-ui`,
         icon: "src/images/icon.png",
       },
     },
