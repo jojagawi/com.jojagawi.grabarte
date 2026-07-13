@@ -82,7 +82,7 @@ jobs:
       - name: Upload Site
         uses: reggionick/s3-deploy@v4
         with:
-          folder: dist
+          folder: public
           bucket: grabarte.mx
           bucket-region: ${{ secrets.AWS_REGION }}
           delete-removed: true
