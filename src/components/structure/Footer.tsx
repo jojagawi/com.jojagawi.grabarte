@@ -32,10 +32,10 @@ const Footer = () => {
           <div className="max-w-xs">
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 items-center justify-center border border-primary/60 font-mono text-sm font-bold text-primary">
-                CL
+                GB
               </span>
               <span className="font-mono text-sm font-semibold tracking-[0.2em] text-foreground">
-                CORTE<span className="text-cyan">.LAB</span>
+                Grab <span className="text-cyan">Arte</span>
               </span>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">

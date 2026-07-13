@@ -22,10 +22,10 @@ const Header = () => {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="group flex items-center gap-2.5">
           <span className="flex size-8 items-center justify-center border border-primary/60 font-mono text-sm font-bold text-primary glow-cyan">
-            CL
+            GA
           </span>
           <span className="font-mono text-sm font-semibold tracking-[0.2em] text-foreground">
-            CORTE<span className="text-cyan">.LAB</span>
+            Grab <span className="text-cyan">Arte</span>
           </span>
         </Link>
 
