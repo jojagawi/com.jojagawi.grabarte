@@ -20,7 +20,10 @@ export default defineConfig([
       sonarjs: sonarjsPlugin,
       react: reactPlugin,
     },
-    extends: [js.configs.recommended, reactHooks.configs.flat.recommended],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended
+    ],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
