@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useStaticQuery, graphql } from "gatsby";
+import { MyQueryFooterQuery } from "../../__generated__/types";
 
 const Footer = () => {
 
-  const queryData = useStaticQuery(graphql`
-    query MyQuery {
+  const queryData: MyQueryFooterQuery = useStaticQuery(graphql`
+    query MyQueryFooter {
       allSqliteCatMaterials {
         nodes {
           id
@@ -12,18 +13,9 @@ const Footer = () => {
           slug
         }
       }
-      allSqliteCatFileExtension {
-        nodes {
-          id
-          name
-          extension
-        }
-      }
     }
   `);
   const materials = queryData.allSqliteCatMaterials.nodes
-
-  const fileExtensions = queryData.allSqliteCatFileExtension.nodes
 
   return (
     <footer className="border-t border-border bg-background">
@@ -75,7 +67,7 @@ const Footer = () => {
                 Materiales
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                {materials.map((material: { id: string; name: string }) => (
+                {materials.map((material) => (
                   <li key={material.id}>
                     <Link to={"/material/" + material.slug}>
                       {material.name}

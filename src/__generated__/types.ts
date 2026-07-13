@@ -3312,10 +3312,10 @@ export type MyQueryMaterialsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MyQueryMaterialsQuery = { __typename?: 'Query', allSqliteCatMaterials: { __typename?: 'SqliteCatMaterialsConnection', nodes: Array<{ __typename?: 'SqliteCatMaterials', id: string, name?: string | null, slug?: string | null, description?: string | null, icon?: string | null }> } };
 
-export type MyQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type MyQueryFooterQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyQueryQuery = { __typename?: 'Query', allSqliteCatMaterials: { __typename?: 'SqliteCatMaterialsConnection', nodes: Array<{ __typename?: 'SqliteCatMaterials', id: string, name?: string | null, slug?: string | null }> }, allSqliteCatFileExtension: { __typename?: 'SqliteCatFileExtensionConnection', nodes: Array<{ __typename?: 'SqliteCatFileExtension', id: string, name?: string | null, extension?: string | null }> } };
+export type MyQueryFooterQuery = { __typename?: 'Query', allSqliteCatMaterials: { __typename?: 'SqliteCatMaterialsConnection', nodes: Array<{ __typename?: 'SqliteCatMaterials', id: string, name?: string | null, slug?: string | null }> } };
 
 export type SiteMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 

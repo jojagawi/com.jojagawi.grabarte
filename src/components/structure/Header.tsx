@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { Link } from "gatsby"
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 import {Menu, X} from "lucide-react";
 
 const NAV = [
