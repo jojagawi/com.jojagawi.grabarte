@@ -1,5 +1,9 @@
 import type {GatsbyConfig} from "gatsby";
 
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `GrabArte`,
@@ -30,6 +34,15 @@ const config: GatsbyConfig = {
     __key: "pages"
   },
     {
+      resolve: `gatsby-plugin-alias-imports`,
+      options: {
+        alias: {
+          "@": "src",
+        },
+        extensions: ["ts", "tsx", "js", "jsx"],
+      },
+    },
+    {
       resolve: `gatsby-source-sqlite`,
       options: {
         fileName: './data/mydb.sqlite',
@@ -45,7 +58,7 @@ const config: GatsbyConfig = {
             name: 'CatDesignsType'
           },
           {
-            statement: 'SELECT id, name FROM CatFileExtension where status = 1',
+            statement: 'SELECT id, name, extension FROM CatFileExtension where status = 1',
             idFieldName: 'id',
             name: 'CatFileExtension'
           },
@@ -55,7 +68,7 @@ const config: GatsbyConfig = {
             name: 'CatFileType'
           },
           {
-            statement: 'SELECT id, name FROM CatMaterials where status = 1',
+            statement: 'SELECT id, name, slug FROM CatMaterials where status = 1',
             idFieldName: 'id',
             name: 'CatMaterials',
             // parentName: 'Designs',
@@ -89,7 +102,28 @@ const config: GatsbyConfig = {
           }
         ]
       }
-    }
+    },
+    //TODO Fix enable and add gatsby-plugin-offline
+    /*
+    {
+      resolve: `gatsby-source-geo`,
+      options: {
+        path: `${__dirname}/data/myfile.geojson`,
+        // optional per layer filters
+        layers: [
+          {
+            // nombre de la capa a filtrar
+            name: `some_layer`,
+            // filtro por atributo (similar a SQL WHERE)
+            attribute_filter: `category = 'Recreación'`,
+          },
+          {
+            name: `other_layer`,
+            attribute_filter: `type = 'Polygon'`,
+          },
+        ],
+      },
+    },*/
 
 
   ]

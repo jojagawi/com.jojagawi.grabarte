@@ -18,7 +18,12 @@ let ldJsonData = {
 const IndexPage: React.FC<PageProps> = () => {
   return (
     <Layout>
-      <p>Aquí va el contenido del sitio</p>
+      {process.env.GATSBY_ENV === "development" &&
+        <p>Estamos trabajando para que funcione el formulario...</p>
+      }
+      {process.env.GATSBY_ENV !== "development" &&
+        <p>Está página no esta disponible por el momento...</p>
+      }
     </Layout>
   )
 }

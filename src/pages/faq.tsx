@@ -18,7 +18,7 @@ let ldJsonData = {
 const IndexPage: React.FC<PageProps> = () => {
   return (
     <Layout>
-      <p>Aquí va el contenido del sitio</p>
+      <p>Aquí va el F.A.Q. del sitio</p>
     </Layout>
   )
 }

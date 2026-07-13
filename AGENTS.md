@@ -22,16 +22,19 @@ Este repositorio es **GrabArte**, un catálogo de productos personalizados const
 Mantén estas versiones a menos que se justifique en un PR:
 
 **Core Framework:**
+
 - gatsby: ^5.14.6
 - react: ^18.2.0
 - react-dom: ^18.2.0
 - typescript: ^5.3.3
 
 **Styling:**
+
 - tailwindcss: ^4.3.2
 - postcss: ^8.5.16
 
 **Gatsby Plugins:**
+
 - gatsby-plugin-image: ^3.16.0 (optimización de imágenes)
 - gatsby-plugin-sharp: ^5.16.0 (procesamiento de imágenes)
 - gatsby-transformer-sharp: ^5.16.0
@@ -43,6 +46,7 @@ Mantén estas versiones a menos que se justifique en un PR:
 - gatsby-plugin-google-gtag: ^5.16.0 (analytics)
 
 **Otras:**
+
 - @mdx-js/react: ^3.1.1
 - autoprefixer: ^10.5.2
 
@@ -139,23 +143,28 @@ grabarte.mx/
 ✅ **Hacer esto ANTES de hacer cambios:**
 
 1. Verifica versiones:
+
    ```powershell
    node -v    # debe ser >= 24.0.0
    pnpm -v    # debe ser >= 11.0.0
    ```
 
 2. Instala dependencias:
+
    ```powershell
    pnpm install
    ```
 
 3. Inicia el servidor de desarrollo:
+
    ```powershell
    pnpm run develop
    ```
+
    Verifica que funciona en `http://localhost:8000`
 
 4. Verifica que no hay errores de TypeScript:
+
    ```powershell
    pnpm run typecheck
    ```
@@ -218,6 +227,7 @@ docs: actualización de documentación
 ```
 
 Ejemplo:
+
 ```
 feat: agregar página de productos con filtros
 fix: corregir responsive del hero en mobile
@@ -321,4 +331,3 @@ GATSBY_UPLOAD_DIR=./data/uploads/
 **Stack**: Gatsby 5 + React 18 + TypeScript + Tailwind CSS
 **Hosting**: (Por configurar)
 **Base de datos**: SQLite (local) / (Por configurar en producción)
-

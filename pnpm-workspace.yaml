@@ -5,6 +5,7 @@ allowBuilds:
   es5-ext: true
   gatsby: true
   gatsby-cli: true
+  gdal: true
   lmdb: false
   msgpackr-extract: false
   sharp: true

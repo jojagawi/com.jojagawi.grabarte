@@ -12,6 +12,7 @@
 ## 🎯 Características Principales
 
 ### 📱 Sitio Público
+
 - ✅ Catálogo de productos personalizados
 - ✅ Páginas de detalle de productos
 - ✅ Sistema de solicitud de cotizaciones
@@ -20,6 +21,7 @@
 - ✅ Sitemap automático
 
 ### 🛠️ Panel Administrativo Local (En Desarrollo)
+
 - 🔲 Gestión de catálogo con SQLite
 - 🔲 Subida de archivos fuente (.psd, .ai, modelos 3D)
 - 🔲 Administración de productos, categorías y precios
@@ -147,15 +149,15 @@ grabarte.mx/
 
 ## 🎨 Stack Tecnológico
 
-| Herramienta | Versión | Propósito |
-|-----------|---------|----------|
-| **Gatsby** | ^5.14.6 | Framework SSG/SSR |
-| **React** | ^18.2.0 | Componentes UI |
-| **TypeScript** | ^5.3.3 | Seguridad de tipos |
-| **Tailwind CSS** | ^4.3.2 | Estilos utilitarios |
-| **PostCSS** | ^8.5.16 | Procesamiento de CSS |
-| **MDX** | ^3.1.1 | Markdown + JSX |
-| **SQLite** | - | Base de datos local |
+| Herramienta      | Versión | Propósito            |
+| ---------------- | ------- | -------------------- |
+| **Gatsby**       | ^5.14.6 | Framework SSG/SSR    |
+| **React**        | ^18.2.0 | Componentes UI       |
+| **TypeScript**   | ^5.3.3  | Seguridad de tipos   |
+| **Tailwind CSS** | ^4.3.2  | Estilos utilitarios  |
+| **PostCSS**      | ^8.5.16 | Procesamiento de CSS |
+| **MDX**          | ^3.1.1  | Markdown + JSX       |
+| **SQLite**       | -       | Base de datos local  |
 
 ---
 
@@ -381,6 +383,7 @@ pnpm run build
 ```
 
 Genera:
+
 - `public/` - Sitio estático optimizado
 - `pnpm-lock.yaml` - Dependencias fijadas
 

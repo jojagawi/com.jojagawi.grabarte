@@ -1,0 +1,50 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Parque Central",
+        "category": "Recreación"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-99.0721, 19.6016]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ruta Ciclista",
+        "category": "Transporte"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-99.0721, 19.6016],
+          [-99.0700, 19.6025],
+          [-99.0685, 19.6040]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Zona Universitaria",
+        "category": "Educación"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-99.0730, 19.6000],
+            [-99.0710, 19.6000],
+            [-99.0710, 19.6020],
+            [-99.0730, 19.6020],
+            [-99.0730, 19.6000]
+          ]
+        ]
+      }
+    }
+  ]
+}
