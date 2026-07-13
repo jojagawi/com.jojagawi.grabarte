@@ -1,0 +1,87 @@
+name: Validate And Build
+
+on:
+  push:
+    branches: [main]
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: "AWS Access key"
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: "AWS Secret key"
+        required: true
+      AWS_REGION:
+        description: "AWS Region"
+        required: true
+
+jobs:
+  aws-infra:
+    name: Setup infrastructure in AWS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials
+        id: creds-stack
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "value=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Deploy to AWS CloudFormation
+        id: update-stack
+        uses: aws-actions/aws-cloudformation-github-deploy@v2.2.0
+        with:
+          name: "landing-adobe-puntos-net"
+          template: "./.aws/infra.yml"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
+          capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
+
+  static-site:
+    name: Validate and build static-site
+    runs-on: ubuntu-latest
+    needs: aws-infra
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Configure AWS credentials
+        id: creds-stack
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload Site
+        uses: reggionick/s3-deploy@v4
+        with:
+          folder: dist
+          bucket: grabarte.mx
+          bucket-region: ${{ secrets.AWS_REGION }}
+          delete-removed: true
