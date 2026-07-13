@@ -129,6 +129,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.19
         version: 18.3.7(@types/react@18.3.31)
+      '@types/react-helmet':
+        specifier: ^6.1.11
+        version: 6.1.11
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.59.4
         version: 8.63.0(@typescript-eslint/parser@8.63.0(eslint@10.7.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.7.0(jiti@2.7.0))(typescript@6.0.3)
@@ -2306,6 +2309,9 @@ packages:
     resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}
     peerDependencies:
       '@types/react': ^18.0.0
+
+  '@types/react-helmet@6.1.11':
+    resolution: {integrity: sha512-0QcdGLddTERotCXo3VFlUSWO3ztraw8nZ6e3zJSgG7apwV5xt+pJUS8ewPBqT4NYB1optGLprNQzFleIY84u/g==}
 
   '@types/react@18.3.31':
     resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
@@ -11506,6 +11512,10 @@ snapshots:
       '@types/react': 18.3.31
 
   '@types/react-dom@18.3.7(@types/react@18.3.31)':
+    dependencies:
+      '@types/react': 18.3.31
+
+  '@types/react-helmet@6.1.11':
     dependencies:
       '@types/react': 18.3.31
 

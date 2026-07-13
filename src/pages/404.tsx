@@ -5,7 +5,7 @@ import {SEO} from "../components/seo";
 
 
 const NotFoundPage: React.FC<PageProps> = () => {
-  const env = process.env.GATSBY_ENV;
+
   return (
     <Layout>
       <p>Página no encontrada</p>

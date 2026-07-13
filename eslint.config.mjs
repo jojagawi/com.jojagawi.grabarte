@@ -10,7 +10,7 @@ import sonarjsPlugin from "eslint-plugin-sonarjs";
 import reactPlugin from "eslint-plugin-react";
 
 export default defineConfig([
-  globalIgnores([".cache","node_modules","coverage","public"]),
+  globalIgnores([".cache", "node_modules", "coverage", "public"]),
   {
     files: ["**/*.{ts,tsx}"],
     plugins: {
@@ -20,14 +20,12 @@ export default defineConfig([
       sonarjs: sonarjsPlugin,
       react: reactPlugin,
     },
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs.flat.recommended
-    ],
+    extends: [js.configs.recommended, reactHooks.configs.flat.recommended],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        ecmaFeatures: jsxA11y.configs.recommended.parserOptions?.ecmaFeatures || {},
+        ecmaFeatures:
+          jsxA11y.configs.recommended.parserOptions?.ecmaFeatures || {},
         ecmaVersion: 2020,
         jsx: true,
       },
@@ -54,6 +52,13 @@ export default defineConfig([
       "sonarjs/no-duplicate-string": "warn",
       "sonarjs/no-identical-functions": "warn",
       "sonarjs/cognitive-complexity": "warn",
+    },
+  },
+  {
+    files: ["src/__generated__/types.ts"],
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
     },
   },
 ]);
