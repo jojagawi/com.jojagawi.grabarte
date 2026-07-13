@@ -44,7 +44,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-2">
             <div>
               <h3 className="font-mono text-xs uppercase tracking-widest text-cyan">
                 Navegar
@@ -84,30 +84,12 @@ const Footer = () => {
                 ))}
               </ul>
             </div>
-            <div>
-              <h3 className="font-mono text-xs uppercase tracking-widest text-cyan">
-                Formatos
-              </h3>
-              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-
-                {fileExtensions.map((fileExtension: { id: string; name: string }) => (
-                  <li key={fileExtension.id}>
-                    <Link to={"/formato/" + fileExtension.extension}>
-                      {fileExtension.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-2 border-t border-border pt-6 sm:flex-row">
           <p className="font-mono text-xs text-muted-foreground">
             © {new Date().getFullYear()} GrabArte.mx — Todos los derechos reservados.
-          </p>
-          <p className="font-mono text-xs text-muted-foreground">
-            Hecho para makers, por makers.
           </p>
         </div>
       </div>

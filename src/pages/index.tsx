@@ -1,7 +1,9 @@
 import * as React from "react"
 import type { HeadFC, PageProps } from "gatsby"
 import Layout from "../components/Layout";
-import { SEO } from "../components/seo"
+import { SEO } from "../components/seo";
+import Hero from "../components/home/hero";
+import Materials from "../components/home/materials";
 
 let ldJsonData = {
   "@context": "https://schema.org",
@@ -18,9 +20,10 @@ let ldJsonData = {
 const IndexPage: React.FC<PageProps> = () => {
   return (
     <Layout>
-      <p>Aquí va el contenido del sitio</p>
+      <Hero />
+      <Materials />
     </Layout>
-  )
+  );
 }
 
 export default IndexPage
