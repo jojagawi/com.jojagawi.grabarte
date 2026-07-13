@@ -81,6 +81,6 @@
     "stylelint-config-recommended-scss": "^17.0.1",
     "stylelint-config-standard-scss": "^17.0.0",
     "stylelint-config-tailwindcss": "^1.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^6.0.3"
   }
 }
