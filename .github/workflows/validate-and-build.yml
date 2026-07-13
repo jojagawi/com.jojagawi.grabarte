@@ -39,7 +39,7 @@ jobs:
         id: update-stack
         uses: aws-actions/aws-cloudformation-github-deploy@v2.2.0
         with:
-          name: "landing-adobe-puntos-net"
+          name: "grabarte-mx"
           template: "./.aws/infra.yml"
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
