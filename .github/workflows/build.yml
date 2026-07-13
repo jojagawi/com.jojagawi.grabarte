@@ -1,4 +1,4 @@
-name: Validate And Build
+name: Setup and Build
 
 on:
   push:
