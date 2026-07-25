@@ -1,11 +1,14 @@
 /** @type {import('stylelint').Config} */
 
+const browsers = ["baseline widely available"]
+
 const styleIntConfig = {
   extends: [
     "stylelint-config-standard-scss",
     "stylelint-config-recommended-scss",
     "stylelint-config-tailwindcss"
   ],
+  plugins: ["stylelint-no-unsupported-browser-features"],
   rules: {
     "scss/at-rule-no-unknown": [
       true,
@@ -22,6 +25,13 @@ const styleIntConfig = {
           "custom-variant",
           "theme",
         ],
+      },
+    ],
+    "plugin/no-unsupported-browser-features": [
+      true,
+      {
+        browsers,
+        severity: "warning",
       },
     ],
   },
