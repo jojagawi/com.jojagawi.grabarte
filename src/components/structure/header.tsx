@@ -1,22 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Menu } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { Menu } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const navigation = [
+const ACL_FLAGS = {
+  ADD_DESIGNS: process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true",
+} as const;
+
+type AclKey = keyof typeof ACL_FLAGS;
+
+type NavItem = {
+  name: string;
+  href: string;
+  acl?: AclKey;
+};
+
+const navigation: NavItem[] = [
   { name: "Inicio", href: "/" },
   { name: "Productos", href: "/productos" },
   { name: "Proceso", href: "/proceso" },
   { name: "FAQ", href: "/faq" },
   { name: "Contacto", href: "/contacto" },
-]
+  { name: "Agregar", href: "/agregar", acl: "ADD_DESIGNS" },
+];
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const canShowByAcl = (acl?: AclKey) => {
+    if (!acl) return true;
+    return ACL_FLAGS[acl];
+  };
+  const visibleNavigation = navigation.filter((item) => canShowByAcl(item.acl));
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -40,7 +58,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-8">
-            {navigation.map((item) => (
+            {visibleNavigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -67,7 +85,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <div className="flex flex-col gap-6 mt-8">
-                {navigation.map((item) => (
+                {visibleNavigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
