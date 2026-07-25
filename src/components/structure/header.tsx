@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, Sparkles } from "lucide-react"
+import { Menu } from "lucide-react"
+import Image from "next/image";
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
@@ -24,7 +25,13 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-lg bg-[#4290A3] flex items-center justify-center group-hover:bg-[#1FA4A7] transition-colors">
-              <Sparkles className="w-5 h-5 text-white" />
+              <Image
+                src="/dam/logos/logo.svg"
+                alt="Logo InspirArte"
+                width={20}
+                height={20}
+                className="w-5 h-5 filter-[brightness(0)_invert(1)]"
+              />
             </div>
             <span className="font-serif text-xl font-bold text-foreground">
               Inspir<span className="text-[#1FA4A7]">Arte</span>
@@ -46,9 +53,7 @@ export function Header() {
               asChild
               className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
             >
-              <Link href="/contacto">
-                ¡Cotiza ahora!
-              </Link>
+              <Link href="/contacto">¡Cotiza ahora!</Link>
             </Button>
           </div>
 
@@ -86,5 +91,5 @@ export function Header() {
         </div>
       </nav>
     </header>
-  )
+  );
 }
