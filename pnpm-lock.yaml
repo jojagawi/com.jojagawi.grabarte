@@ -192,6 +192,9 @@ importers:
       prettier:
         specifier: ^3.9.5
         version: 3.9.6
+      sharp:
+        specifier: ^0.34.4
+        version: 0.34.5
       stylelint:
         specifier: ^17.14.0
         version: 17.14.1(typescript@5.9.3)
@@ -4960,8 +4963,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
     optionalDependencies:
@@ -8770,7 +8772,6 @@ snapshots:
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-ia32': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
-    optional: true
 
   shebang-command@1.2.0:
     dependencies:

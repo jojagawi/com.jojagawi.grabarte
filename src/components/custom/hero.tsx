@@ -10,7 +10,7 @@ export function Hero() {
     <section id="inicio" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-[#4290A3]/5" />
-      <div 
+      <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234290A3' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -25,20 +25,20 @@ export function Hero() {
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">Productos 100% personalizados</span>
             </div>
-            
+
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
               Transforma tus ideas en{" "}
               <span className="text-[#4290A3]">regalos únicos</span>
             </h1>
-            
+
             <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Creamos productos personalizados con impresión láser y corte en MDF. 
-              Desde termos y llaveros hasta figuras decorativas para cada ocasión especial. 
+              Creamos productos personalizados con impresión láser y corte en MDF.
+              Desde termos y llaveros hasta figuras decorativas para cada ocasión especial.
               <strong className="text-foreground"> ¡Hazlo tuyo!</strong>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
+              <Button
                 asChild
                 size="lg"
                 className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white group"
@@ -48,7 +48,7 @@ export function Hero() {
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button 
+              <Button
                 asChild
                 size="lg"
                 variant="outline"
@@ -83,9 +83,10 @@ export function Hero() {
               {/* Main Product Image */}
               <div className="col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden group shadow-lg">
                 <Image
-                  src="/images/termo-personalizado.png"
+                  src="/images/termo-personalizado.webp"
                   alt="Termo personalizado con grabado láser"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
                 />
@@ -102,9 +103,10 @@ export function Hero() {
               {/* Secondary Images */}
               <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
                 <Image
-                  src="/images/llaveros-grabados.png"
+                  src="/images/llaveros-grabados.webp"
                   alt="Llaveros grabados en madera"
                   fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -115,9 +117,10 @@ export function Hero() {
 
               <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
                 <Image
-                  src="/images/figuras-mdf.png"
+                  src="/images/figuras-mdf.webp"
                   alt="Figuras decorativas en MDF"
                   fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

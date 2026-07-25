@@ -10,7 +10,7 @@ const products = [
     id: 1,
     name: "Termos Personalizados",
     description: "Grabado láser de alta precisión en acero inoxidable. Perfectos para regalar o uso diario.",
-    image: "/images/termo-personalizado.png",
+    image: "/images/termo-personalizado.webp",
     color: "from-[#4290A3]/10 to-[#1FA4A7]/10",
     occasions: ["Día del Padre", "Graduaciones", "Corporativo"],
   },
@@ -18,7 +18,7 @@ const products = [
     id: 2,
     name: "Llaveros Grabados",
     description: "Diseños únicos en madera, acrílico o metal. Ideales para recuerdos de eventos.",
-    image: "/images/llaveros-grabados.png",
+    image: "/images/llaveros-grabados.webp",
     color: "from-[#1FA4A7]/10 to-[#3ACBFE]/10",
     occasions: ["Bodas", "XV Años", "Cumpleaños"],
   },
@@ -26,7 +26,7 @@ const products = [
     id: 3,
     name: "Carteras y Carpetas de Piel",
     description: "Grabado elegante en piel genuina. Un regalo con clase y personalidad.",
-    image: "/images/cartera-piel.png",
+    image: "/images/cartera-piel.webp",
     color: "from-[#585106]/10 to-[#4290A3]/10",
     occasions: ["Día del Padre", "Graduaciones", "Ejecutivo"],
   },
@@ -34,7 +34,7 @@ const products = [
     id: 4,
     name: "Figuras Decorativas MDF",
     description: "Corte láser de precisión para crear decoraciones únicas para cualquier ocasión.",
-    image: "/images/figuras-mdf.png",
+    image: "/images/figuras-mdf.webp",
     color: "from-[#00B003]/10 to-[#1FA4A7]/10",
     occasions: ["Navidad", "Día de la Madre", "Decoración"],
   },
@@ -54,7 +54,7 @@ const occasions = [
 export function Products() {
   const [selectedOccasion, setSelectedOccasion] = useState<string | null>(null)
 
-  const filteredProducts = selectedOccasion 
+  const filteredProducts = selectedOccasion
     ? products.filter(p => p.occasions.some(o => o.toLowerCase().includes(selectedOccasion.toLowerCase())))
     : products
 
@@ -70,7 +70,7 @@ export function Products() {
             Cada ocasión merece algo <span className="text-[#4290A3]">especial</span>
           </h2>
           <p className="text-muted-foreground text-lg">
-            Desde un detalle único hasta pedidos corporativos, creamos lo que imaginas. 
+            Desde un detalle único hasta pedidos corporativos, creamos lo que imaginas.
             Explora nuestras categorías y encuentra el regalo perfecto.
           </p>
         </div>
@@ -81,7 +81,7 @@ export function Products() {
             onClick={() => setSelectedOccasion(null)}
             className={cn(
               "px-4 py-2 rounded-full text-sm font-medium transition-all",
-              !selectedOccasion 
+              !selectedOccasion
                 ? "bg-[#4290A3] text-white shadow-lg shadow-[#4290A3]/25"
                 : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
             )}
@@ -124,10 +124,11 @@ export function Products() {
                   src={product.image}
                   alt={product.name}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              
+
               {/* Content */}
               <div className="p-6">
                 <h3 className="font-semibold text-lg text-foreground mb-2">
@@ -138,7 +139,7 @@ export function Products() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {product.occasions.map((occasion) => (
-                    <span 
+                    <span
                       key={occasion}
                       className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
                     >
@@ -156,7 +157,7 @@ export function Products() {
           <p className="text-muted-foreground mb-4">
             ¿No encuentras lo que buscas? <span className="text-[#4290A3] font-medium">¡Lo creamos para ti!</span>
           </p>
-          <a 
+          <a
             href="#contacto"
             className="inline-flex items-center gap-2 text-[#4290A3] font-medium hover:underline"
           >
