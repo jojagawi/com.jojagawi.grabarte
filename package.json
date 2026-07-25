@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "images:optimize": "node scripts/optimize-images.mjs",
-    "prebuild": "run-s images:optimize",
+    "prebuild": "run-s prisma:generate images:optimize",
     "postbuild": "run-s build:sitemap",
     "build": "next build",
     "build:sitemap": "next-sitemap --config next-sitemap.config.cjs",
@@ -16,6 +16,7 @@
     "prisma:deploy": "npx prisma migrate deploy",
     "prisma:generate": "npx prisma generate",
     "prisma:seed": "npx prisma db seed",
+    "pretest:typecheck": "run-s prisma:generate",
     "test:typecheck": "tsc --noEmit",
     "test:lint": "eslint .",
     "test:style:check": "stylelint \"src/**/*.{scss,css}\"",
