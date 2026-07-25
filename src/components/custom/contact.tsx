@@ -27,10 +27,10 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     setIsSubmitting(false)
     setIsSubmitted(true)
   }
@@ -49,7 +49,7 @@ export function Contact() {
             <p className="text-muted-foreground text-lg mb-8">
               Recibimos tu solicitud. Te contactaremos en menos de 24 horas para comenzar a crear algo increíble juntos.
             </p>
-            <Button 
+            <Button
               onClick={() => setIsSubmitted(false)}
               variant="outline"
               className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
@@ -75,7 +75,7 @@ export function Contact() {
               Hagamos realidad <span className="text-[#4290A3]">tu idea</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Cuéntanos qué producto necesitas, para quién es y cualquier detalle que nos ayude a entender tu visión. 
+              Cuéntanos qué producto necesitas, para quién es y cualquier detalle que nos ayude a entender tu visión.
               Si tienes imágenes de referencia, ¡adjúntalas!
             </p>
 
@@ -143,8 +143,8 @@ export function Contact() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nombre *</Label>
-                  <Input 
-                    id="name" 
+                  <Input
+                    id="name"
                     name="name"
                     required
                     placeholder="Tu nombre"
@@ -153,8 +153,8 @@ export function Contact() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
-                  <Input 
-                    id="email" 
+                  <Input
+                    id="email"
                     name="email"
                     type="email"
                     required
@@ -167,8 +167,8 @@ export function Contact() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone">Teléfono / WhatsApp</Label>
-                  <Input 
-                    id="phone" 
+                  <Input
+                    id="phone"
                     name="phone"
                     type="tel"
                     placeholder="+52 55 1234 5678"
@@ -216,8 +216,8 @@ export function Contact() {
 
               <div className="space-y-2">
                 <Label htmlFor="message">Cuéntanos más detalles *</Label>
-                <Textarea 
-                  id="message" 
+                <Textarea
+                  id="message"
                   name="message"
                   required
                   placeholder="Describe tu idea: qué diseño quieres, para quién es, cuántas piezas necesitas, fecha de entrega ideal..."
@@ -228,9 +228,9 @@ export function Contact() {
               {/* File Upload */}
               <div className="space-y-2">
                 <Label>Archivos de referencia (opcional)</Label>
-                <div 
-                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white"
-                  onClick={() => fileInputRef.current?.click()}
+                <label
+                  htmlFor="reference-files"
+                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
@@ -240,6 +240,7 @@ export function Contact() {
                     JPG, PNG, PDF (máx. 5 archivos, 10MB c/u)
                   </p>
                   <input
+                    id="reference-files"
                     ref={fileInputRef}
                     type="file"
                     multiple
@@ -247,13 +248,13 @@ export function Contact() {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                </div>
+                </label>
 
                 {/* File List */}
                 {files.length > 0 && (
                   <div className="space-y-2 mt-4">
                     {files.map((file, index) => (
-                      <div 
+                      <div
                         key={index}
                         className="flex items-center justify-between p-3 bg-white rounded-lg border border-border"
                       >
@@ -273,7 +274,7 @@ export function Contact() {
                 )}
               </div>
 
-              <Button 
+              <Button
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
@@ -293,7 +294,7 @@ export function Contact() {
 
               <p className="text-xs text-muted-foreground text-center">
                 Al enviar, aceptas nuestro{" "}
-                <a href="#" className="text-[#4290A3] hover:underline">aviso de privacidad</a>.
+                <a href="/aviso-de-privacidad" className="text-[#4290A3] hover:underline">aviso de privacidad</a>.
               </p>
             </form>
           </div>

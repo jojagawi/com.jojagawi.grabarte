@@ -1,4 +1,4 @@
-import { MessageSquare, Palette, Package, Truck, CheckCircle2 } from "lucide-react"
+import { MessageSquare, Palette, Package, Truck } from "lucide-react"
 
 const steps = [
   {
@@ -44,7 +44,7 @@ export function Process() {
             Tan fácil como <span className="text-[#1FA4A7]">1, 2, 3... ¡y 4!</span>
           </h2>
           <p className="text-muted-foreground text-lg">
-            Pedir tu producto personalizado es súper sencillo. 
+            Pedir tu producto personalizado es súper sencillo.
             Te acompañamos en cada paso para que el resultado sea exactamente lo que imaginaste.
           </p>
         </div>
@@ -54,7 +54,7 @@ export function Process() {
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
-              <div 
+              <div
                 key={step.number}
                 className="relative group"
               >
@@ -62,27 +62,27 @@ export function Process() {
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-border to-transparent z-0" />
                 )}
-                
+
                 <div className="relative z-10 text-center">
                   {/* Step Number */}
-                  <div 
+                  <div
                     className="w-24 h-24 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 group-hover:rotate-3"
                     style={{ backgroundColor: `${step.color}15` }}
                   >
-                    <Icon 
-                      className="w-10 h-10" 
+                    <Icon
+                      className="w-10 h-10"
                       style={{ color: step.color }}
                     />
                   </div>
-                  
+
                   {/* Number Badge */}
-                  <div 
+                  <div
                     className="absolute -top-2 -right-2 md:right-auto md:left-1/2 md:-translate-x-1/2 md:-top-2 w-8 h-8 rounded-full text-white text-sm font-bold flex items-center justify-center"
                     style={{ backgroundColor: step.color }}
                   >
                     {step.number.replace("0", "")}
                   </div>
-                  
+
                   <h3 className="font-semibold text-lg text-foreground mb-2">
                     {step.title}
                   </h3>
@@ -107,13 +107,13 @@ export function Process() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a 
+              <a
                 href="#contacto"
                 className="px-6 py-3 bg-white text-[#4290A3] font-semibold rounded-lg hover:bg-white/90 transition-colors text-center"
               >
                 Iniciar pedido
               </a>
-              <a 
+              <a
                 href="https://wa.me/5215512345678"
                 target="_blank"
                 rel="noopener noreferrer"

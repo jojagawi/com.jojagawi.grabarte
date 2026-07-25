@@ -44,6 +44,7 @@ type PaginationLinkProps = {
 
 function PaginationLink({
   className,
+  children,
   isActive,
   size = 'icon',
   ...props
@@ -61,7 +62,9 @@ function PaginationLink({
         className,
       )}
       {...props}
-    />
+    >
+      {children ?? <span className="sr-only">Pagination link</span>}
+    </a>
   )
 }
 

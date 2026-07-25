@@ -21,14 +21,18 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
                 aria-label="Facebook"
               >
@@ -105,10 +109,10 @@ export function Footer() {
               © {new Date().getFullYear()} LaserCraft MX. Todos los derechos reservados.
             </p>
             <div className="flex gap-6">
-              <Link href="#" className="text-white/60 hover:text-white text-sm transition-colors">
+              <Link href="/aviso-de-privacidad" className="text-white/60 hover:text-white text-sm transition-colors">
                 Aviso de Privacidad
               </Link>
-              <Link href="#" className="text-white/60 hover:text-white text-sm transition-colors">
+              <Link href="/terminos-y-condiciones" className="text-white/60 hover:text-white text-sm transition-colors">
                 Términos y Condiciones
               </Link>
             </div>
