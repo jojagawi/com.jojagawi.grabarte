@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function TerminosYCondiciones() {
   return (
     <>
       <h1>terminos-y-condiciones</h1>

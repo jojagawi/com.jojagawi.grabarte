@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function AvisoDePrivacidad() {
   return (
     <>
       <h1>Aviso de privacidad</h1>
