@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { AddNewDesign } from "@/components/custom/add-new-design";
+import { prisma } from "@/lib/prisma";
 
 
 
@@ -16,10 +17,46 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Agregar() {
+export default async function Agregar() {
+  const categories = await prisma.catCategories.findMany({
+    where: {
+      status: 1,
+      name: { not: null },
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  const materials = await prisma.catMaterials.findMany({
+    where: {
+      status: 1,
+      name: { not: null },
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   return (
     <>
-      <AddNewDesign />
+      <AddNewDesign
+        categories={categories.map((item) => ({ id: item.id, name: item.name ?? "" }))}
+        materials={materials.map((item) => ({
+          id: item.id,
+          name: item.name ?? "",
+          slug: item.slug ?? "",
+        }))}
+      />
     </>
   );
 }

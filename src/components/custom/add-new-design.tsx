@@ -1,29 +1,60 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Send, Upload, X, CheckCircle2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { ContactMethods } from "@/components/custom/contact-methods"
 import { sendGTMEvent } from "@next/third-parties/google";
 
-export function AddNewDesign() {
+type CategoryOption = {
+  id: number
+  name: string
+}
+
+type MaterialOption = {
+  id: number
+  name: string
+  slug: string
+}
+
+type AddNewDesignProps = {
+  categories: CategoryOption[]
+  materials: MaterialOption[]
+}
+
+export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [files, setFiles] = useState<File[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [previewFile, setPreviewFile] = useState<File | null>(null)
+  const [designImages, setDesignImages] = useState<File[]>([])
+  const [instructionFile, setInstructionFile] = useState<File | null>(null)
+  const [sourceFiles, setSourceFiles] = useState<File[]>([])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files)
-      setFiles(prev => [...prev, ...newFiles].slice(0, 5)) // Max 5 files
-    }
+  const handleSingleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: (file: File | null) => void,
+  ) => {
+    setter(e.target.files?.[0] ?? null)
   }
 
-  const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index))
+  const handleMultiFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<File[]>>,
+    maxFiles = 10,
+  ) => {
+    if (!e.target.files) return
+    const newFiles = Array.from(e.target.files)
+    setter((prev) => [...prev, ...newFiles].slice(0, maxFiles))
+    e.target.value = ""
+  }
+
+  const removeFileAtIndex = (
+    index: number,
+    setter: React.Dispatch<React.SetStateAction<File[]>>,
+  ) => {
+    setter((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,179 +104,205 @@ export function AddNewDesign() {
 
   return (
     <section id="contacto" className="py-24 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Info */}
-          <div>
-            <span className="inline-block px-4 py-1 rounded-full bg-[#00B003]/10 text-[#00B003] text-sm font-medium mb-4">
-              Contacto
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-              Hagamos realidad <span className="text-[#4290A3]">tu idea</span>
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Cuéntanos qué producto necesitas, para quién es y cualquier
-              detalle que nos ayude a entender tu visión. Si tienes imágenes de
-              referencia, ¡adjúntalas!
-            </p>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <span className="inline-block px-4 py-1 rounded-full bg-[#00B003]/10 text-[#00B003] text-sm font-medium mb-4">
+          Contacto
+        </span>
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+          Comparte tu <span className="text-[#4290A3]">nuevo diseño</span>
+        </h2>
+        <p className="text-muted-foreground text-lg mb-8">
+          Aqui puedes subir tus diseños para poder mostrarlos en el sitio web o
+          simplemente para poder almacenarlos y podermos usar en un futuro.
+        </p>
 
-            {/* Contact Methods */}
-            <ContactMethods />
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
-                <span className="text-sm text-muted-foreground">
-                  Respuesta en 24h
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
-                <span className="text-sm text-muted-foreground">
-                  Sin compromiso
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
-                <span className="text-sm text-muted-foreground">
-                  Cotización gratis
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Form */}
-          <div className="bg-muted/50 rounded-2xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nombre *</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    required
-                    placeholder="Tu nombre"
-                    className="bg-white"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="tu@email.com"
-                    className="bg-white"
-                  />
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Teléfono / WhatsApp</Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+52 55 1234 5678"
-                    className="bg-white"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="occasion">Ocasión</Label>
-                  <select
-                    id="occasion"
-                    name="occasion"
-                    className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
-                  >
-                    <option value="">Selecciona una opción</option>
-                    <option value="navidad">Navidad</option>
-                    <option value="dia-padre">Día del Padre</option>
-                    <option value="dia-madre">Día de la Madre</option>
-                    <option value="boda">Boda</option>
-                    <option value="xv">XV Años</option>
-                    <option value="cumple">Cumpleaños</option>
-                    <option value="graduacion">Graduación</option>
-                    <option value="corporativo">Corporativo</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-              </div>
+        {/* Form */}
+        <div className="bg-muted/50 rounded-2xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
+              <legend className="px-2 text-sm font-semibold text-foreground">1. Información base</legend>
 
               <div className="space-y-2">
-                <Label htmlFor="product">¿Qué producto te interesa? *</Label>
-                <select
-                  id="product"
-                  name="product"
+                <Label htmlFor="name">Nombre *</Label>
+                <Input
+                  id="name"
+                  name="name"
                   required
-                  className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
-                >
-                  <option value="">Selecciona un producto</option>
-                  <option value="termo">Termo personalizado</option>
-                  <option value="llavero">Llaveros</option>
-                  <option value="cartera">Cartera/Carpeta de piel</option>
-                  <option value="mdf">Figuras decorativas MDF</option>
-                  <option value="varios">Varios productos</option>
-                  <option value="otro">Otro (especificar)</option>
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="message">Cuéntanos más detalles *</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  required
-                  placeholder="Describe tu idea: qué diseño quieres, para quién es, cuántas piezas necesitas, fecha de entrega ideal..."
-                  className="bg-white min-h-[120px]"
+                  placeholder="Nombre del diseño"
                 />
               </div>
 
-              {/* File Upload */}
               <div className="space-y-2">
-                <Label>Archivos de referencia (opcional)</Label>
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Describe el diseño, medidas, acabado o recomendaciones..."
+                  className="min-h-30"
+                />
+              </div>
+
+              <label className="flex items-center gap-2 text-sm text-foreground">
+                <input type="checkbox" name="isCustomizable" className="size-4" />
+                Se puede personalizar
+              </label>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="materialType">Tipo de material</Label>
+                  <select
+                    id="materialType"
+                    name="materialType"
+                    className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                  >
+                    <option value="">Selecciona un material</option>
+                    {materials.map((material) => (
+                      <option key={material.id} value={material.slug || material.id}>
+                        {material.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tags">Tags *</Label>
+                  <Input
+                    id="tags"
+                    name="tags"
+                    required
+                    placeholder="Ej. navidad, adorno, mdf"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="categories">Categorías del catálogo *</Label>
+                <select
+                  id="categories"
+                  name="categories"
+                  required
+                  multiple
+                  className="w-full min-h-32 px-3 py-2 rounded-md border border-input bg-white text-sm"
+                >
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">Puedes seleccionar múltiples categorías.</p>
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
+              <legend className="px-2 text-sm font-semibold text-foreground">2. Producción</legend>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="mdfBoards">Número de tablones MDF</Label>
+                  <Input
+                    id="mdfBoards"
+                    name="mdfBoards"
+                    type="number"
+                    min={0}
+                    max={99}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="workTimeMinutes">Tiempo de trabajo (minutos)</Label>
+                  <Input
+                    id="workTimeMinutes"
+                    name="workTimeMinutes"
+                    type="number"
+                    min={0}
+                    placeholder="120"
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
+              <legend className="px-2 text-sm font-semibold text-foreground">3. Visibilidad</legend>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <input type="checkbox" name="status" className="size-4" defaultChecked />
+                  Status
+                </label>
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <input type="checkbox" name="tested" className="size-4" />
+                  Probado
+                </label>
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <input type="checkbox" name="showInHome" className="size-4" />
+                  Mostrar en el home
+                </label>
+                <label className="flex items-center gap-2 text-sm text-foreground">
+                  <input type="checkbox" name="showInSite" className="size-4" defaultChecked />
+                  Mostrar en el sitio
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
+              <legend className="px-2 text-sm font-semibold text-foreground">4. Archivos</legend>
+
+              <div className="space-y-2">
+                <Label htmlFor="preview-file">Vista previa</Label>
                 <label
-                  htmlFor="reference-files"
+                  htmlFor="preview-file"
                   className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Arrastra tus archivos aquí o{" "}
-                    <span className="text-[#4290A3] font-medium">
-                      haz clic para subir
-                    </span>
+                    Arrastra una imagen o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    JPG, PNG, PDF (máx. 5 archivos, 10MB c/u)
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP</p>
                   <input
-                    id="reference-files"
-                    ref={fileInputRef}
+                    id="preview-file"
+                    name="previewFile"
                     type="file"
-                    multiple
-                    accept="image/*,.pdf"
-                    onChange={handleFileChange}
+                    accept="image/*"
+                    onChange={(e) => handleSingleFileChange(e, setPreviewFile)}
                     className="hidden"
                   />
                 </label>
+                {previewFile && <p className="text-xs text-muted-foreground">{previewFile.name}</p>}
+              </div>
 
-                {/* File List */}
-                {files.length > 0 && (
-                  <div className="space-y-2 mt-4">
-                    {files.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 bg-white rounded-lg border border-border"
-                      >
-                        <span className="text-sm text-foreground truncate flex-1">
-                          {file.name}
-                        </span>
+              <div className="space-y-2">
+                <Label htmlFor="design-images">Imágenes del diseño</Label>
+                <label
+                  htmlFor="design-images"
+                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                >
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Arrastra imágenes o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Puedes subir múltiples archivos</p>
+                  <input
+                    id="design-images"
+                    name="designImages"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleMultiFileChange(e, setDesignImages, 20)}
+                    className="hidden"
+                  />
+                </label>
+                {designImages.length > 0 && (
+                  <div className="space-y-2 mt-2">
+                    {designImages.map((file, index) => (
+                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
+                        <span className="text-sm text-foreground truncate">{file.name}</span>
                         <button
                           type="button"
-                          onClick={() => removeFile(index)}
+                          onClick={() => removeFileAtIndex(index, setDesignImages)}
                           className="ml-2 p-1 hover:bg-muted rounded"
+                          aria-label={`Eliminar ${file.name}`}
                         >
                           <X className="w-4 h-4 text-muted-foreground" />
                         </button>
@@ -254,6 +311,70 @@ export function AddNewDesign() {
                   </div>
                 )}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instruction-file">Instrucciones</Label>
+                <label
+                  htmlFor="instruction-file"
+                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                >
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Arrastra el archivo o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">PDF, TXT, MD, DOC, DOCX</p>
+                  <input
+                    id="instruction-file"
+                    name="instructionFile"
+                    type="file"
+                    accept=".pdf,.txt,.md,.doc,.docx"
+                    onChange={(e) => handleSingleFileChange(e, setInstructionFile)}
+                    className="hidden"
+                  />
+                </label>
+                {instructionFile && <p className="text-xs text-muted-foreground">{instructionFile.name}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="source-files">Archivos fuente</Label>
+                <label
+                  htmlFor="source-files"
+                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                >
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Arrastra archivos fuente o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">AI, EPS, SVG, PDF, PSD, CDR, LBRN2, DXF, STL, OBJ</p>
+                  <input
+                    id="source-files"
+                    name="sourceFiles"
+                    type="file"
+                    multiple
+                    accept=".ai,.eps,.svg,.pdf,.psd,.cdr,.lbrn2,.dxf,.stl,.obj"
+                    onChange={(e) => handleMultiFileChange(e, setSourceFiles, 20)}
+                    className="hidden"
+                  />
+                </label>
+                {sourceFiles.length > 0 && (
+                  <div className="space-y-2 mt-2">
+                    {sourceFiles.map((file, index) => (
+                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
+                        <span className="text-sm text-foreground truncate">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeFileAtIndex(index, setSourceFiles)}
+                          className="ml-2 p-1 hover:bg-muted rounded"
+                          aria-label={`Eliminar ${file.name}`}
+                        >
+                          <X className="w-4 h-4 text-muted-foreground" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </fieldset>
 
               <Button
                 type="submit"
@@ -268,7 +389,7 @@ export function AddNewDesign() {
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    Enviar solicitud
+                    Guardar diseño
                   </>
                 )}
               </Button>
@@ -284,7 +405,6 @@ export function AddNewDesign() {
                 .
               </p>
             </form>
-          </div>
         </div>
       </div>
     </section>
