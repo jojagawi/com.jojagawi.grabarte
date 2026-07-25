@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/lib/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String?
+}
+
+model CatCategories {
+  id                   Int                   @id @default(autoincrement())
+  name                 String?
+  status               Int                   @default(1)
+  createdAt            DateTime              @default(now())
+  relDesignsCategories RelDesignsCategories[]
+}
+
+model CatDesignsType {
+  id              Int              @id @default(autoincrement())
+  name            String?
+  status          Int              @default(1)
+  createdAt       DateTime         @default(now())
+  relDesignsTypes RelDesignsTypes[]
+}
+
+model CatFileExtension {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  extension String?
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+  files     Files[]
+}
+
+model CatFileType {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+  files     Files[]
+}
+
+model CatMaterials {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  status      Int       @default(1)
+  createdAt   DateTime  @default(now())
+  slug        String?   @unique
+  description String?
+  icon        String?
+  designs     Designs[]
+}
+
+model Designs {
+  id                   Int                   @id @default(autoincrement())
+  name                 String?
+  description          String?
+  author               String?
+  status               Int                   @default(1)
+  createdAt            DateTime              @default(now())
+  materialId           Int?
+  material             CatMaterials?         @relation(fields: [materialId], references: [id])
+  relDesignsCategories RelDesignsCategories[]
+  relDesignsFiles      RelDesignsFiles[]
+  relDesignsTypes      RelDesignsTypes[]
+}
+
+model Files {
+  id              Int               @id @default(autoincrement())
+  fileTypeId      Int?
+  fileExtensionId Int?
+  status          Int               @default(1)
+  createdAt       DateTime          @default(now())
+  fileData        Bytes
+  fileType        CatFileType?      @relation(fields: [fileTypeId], references: [id])
+  fileExtension   CatFileExtension? @relation(fields: [fileExtensionId], references: [id])
+  relDesignsFiles RelDesignsFiles[]
+}
+
+model RelDesignsCategories {
+  id         Int           @id @default(autoincrement())
+  designId   Int?
+  categoryId Int?
+  status     Int           @default(1)
+  createdAt  DateTime      @default(now())
+  design     Designs?      @relation(fields: [designId], references: [id])
+  category   CatCategories? @relation(fields: [categoryId], references: [id])
+}
+
+model RelDesignsFiles {
+  id        Int      @id @default(autoincrement())
+  designId  Int?
+  typeId    Int?
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
+  design    Designs? @relation(fields: [designId], references: [id])
+  file      Files?   @relation(fields: [typeId], references: [id])
+}
+
+model RelDesignsTypes {
+  id         Int             @id @default(autoincrement())
+  designId   Int?
+  typeId     Int?
+  status     Int             @default(1)
+  createdAt  DateTime        @default(now())
+  design     Designs?        @relation(fields: [designId], references: [id])
+  designType CatDesignsType? @relation(fields: [typeId], references: [id])
+}
+
