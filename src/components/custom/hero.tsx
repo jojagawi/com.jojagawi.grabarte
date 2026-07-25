@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button"
 
 export function Hero() {
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+    <section
+      id="inicio"
+      className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+    >
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-[#4290A3]/5" />
+      <div className="absolute inset-0 bg-linear-to-br from-background via-background to-[#4290A3]/5" />
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -23,7 +26,9 @@ export function Hero() {
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4290A3]/10 text-[#4290A3]">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Productos 100% personalizados</span>
+              <span className="text-sm font-medium">
+                Productos 100% personalizados
+              </span>
             </div>
 
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
@@ -32,8 +37,9 @@ export function Hero() {
             </h1>
 
             <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Creamos productos personalizados con impresión láser y corte en MDF.
-              Desde termos y llaveros hasta figuras decorativas para cada ocasión especial.
+              Creamos productos personalizados con impresión láser y corte en
+              MDF. Desde termos y llaveros hasta figuras decorativas para cada
+              ocasión especial.
               <strong className="text-foreground"> ¡Hazlo tuyo!</strong>
             </p>
 
@@ -43,7 +49,7 @@ export function Hero() {
                 size="lg"
                 className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white group"
               >
-                <Link href="#contacto">
+                <Link href="/contacto">
                   Solicitar cotización
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -54,9 +60,7 @@ export function Hero() {
                 variant="outline"
                 className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
               >
-                <Link href="#productos">
-                  Ver productos
-                </Link>
+                <Link href="/productos">Ver productos</Link>
               </Button>
             </div>
 
@@ -64,15 +68,21 @@ export function Hero() {
             <div className="flex gap-8 pt-4">
               <div>
                 <div className="text-3xl font-bold text-[#1FA4A7]">500+</div>
-                <div className="text-sm text-muted-foreground">Clientes felices</div>
+                <div className="text-sm text-muted-foreground">
+                  Clientes felices
+                </div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-[#00B003]">1000+</div>
-                <div className="text-sm text-muted-foreground">Productos creados</div>
+                <div className="text-sm text-muted-foreground">
+                  Productos creados
+                </div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-[#4290A3]">5★</div>
-                <div className="text-sm text-muted-foreground">Calificación</div>
+                <div className="text-sm text-muted-foreground">
+                  Calificación
+                </div>
               </div>
             </div>
           </div>
@@ -81,35 +91,37 @@ export function Hero() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               {/* Main Product Image */}
-              <div className="col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden group shadow-lg">
+              <div className="col-span-2 relative aspect-4/3 rounded-2xl overflow-hidden group shadow-lg">
                 <Image
-                  src="/images/termo-personalizado.webp"
+                  src="/dam/productos/termo-personalizado.webp"
                   alt="Termo personalizado con grabado láser"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-[#4290A3] mb-2">
                     Más vendido
                   </span>
                   <p className="text-white font-medium">Termo Personalizado</p>
-                  <p className="text-white/80 text-sm">Con grabado láser de precisión</p>
+                  <p className="text-white/80 text-sm">
+                    Con grabado láser de precisión
+                  </p>
                 </div>
               </div>
 
               {/* Secondary Images */}
               <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
                 <Image
-                  src="/images/llaveros-grabados.webp"
+                  src="/dam/productos/llaveros-grabados.webp"
                   alt="Llaveros grabados en madera"
                   fill
                   sizes="(max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3">
                   <p className="text-white text-sm font-medium">Llaveros</p>
                 </div>
@@ -117,13 +129,13 @@ export function Hero() {
 
               <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
                 <Image
-                  src="/images/figuras-mdf.webp"
+                  src="/dam/productos/figuras-mdf.webp"
                   alt="Figuras decorativas en MDF"
                   fill
                   sizes="(max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-3 left-3">
                   <p className="text-white text-sm font-medium">Figuras MDF</p>
                 </div>
@@ -134,13 +146,27 @@ export function Hero() {
             <div className="absolute -bottom-4 -left-4 bg-white shadow-xl rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-[#00B003]/10 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-[#00B003]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-6 h-6 text-[#00B003]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground text-sm">Envío a todo México</p>
-                  <p className="text-xs text-muted-foreground">Entrega segura</p>
+                  <p className="font-semibold text-foreground text-sm">
+                    Envío a todo México
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Entrega segura
+                  </p>
                 </div>
               </div>
             </div>
@@ -153,11 +179,12 @@ export function Hero() {
         <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite]">
           {Array.from({ length: 10 }).map((_, i) => (
             <span key={i} className="mx-8 text-white/90 text-sm font-medium">
-              ✦ Navidad ✦ Día del Padre ✦ Día de la Madre ✦ Bodas ✦ XV Años ✦ Cumpleaños ✦ Graduaciones ✦ Día del Niño
+              ✦ Navidad ✦ Día del Padre ✦ Día de la Madre ✦ Bodas ✦ XV Años ✦
+              Cumpleaños ✦ Graduaciones ✦ Día del Niño
             </span>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }

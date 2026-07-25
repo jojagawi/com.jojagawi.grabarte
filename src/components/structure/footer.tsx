@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Sparkles, Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
+
   return (
     <footer id="legales" className="bg-[#585106] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
@@ -17,11 +18,11 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-white/80 text-sm leading-relaxed">
-              Transformamos tus ideas en productos únicos con tecnología láser de precisión. Cada pieza cuenta una historia.
+              Materializamos tus ideas con precisión y detalle.
             </p>
             <div className="flex gap-4">
               <a
-                href="https://www.instagram.com/"
+                href="https://www.instagram.com/InspirArte/"
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
@@ -30,7 +31,7 @@ export function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://www.facebook.com/"
+                href="https://www.facebook.com/InspirArte/"
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
@@ -46,11 +47,11 @@ export function Footer() {
             <h3 className="font-semibold text-lg mb-4">Navegación</h3>
             <ul className="space-y-3">
               {[
-                { name: "Inicio", href: "#inicio" },
-                { name: "Productos", href: "#productos" },
-                { name: "Proceso", href: "#proceso" },
-                { name: "FAQ", href: "#faq" },
-                { name: "Contacto", href: "#contacto" },
+                { name: "Inicio", href: "/" },
+                { name: "Productos", href: "/productos" },
+                { name: "Proceso", href: "/proceso" },
+                { name: "FAQ", href: "/faq" },
+                { name: "Contacto", href: "/contacto" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -86,18 +87,39 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Contacto</h3>
             <ul className="space-y-4">
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#3ACBFE]" />
-                <span className="text-white/80 text-sm">contacto@inspirarte.com</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#3ACBFE]" />
-                <span className="text-white/80 text-sm">+52 55 1234 5678</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#3ACBFE] shrink-0" />
-                <span className="text-white/80 text-sm">Ciudad de México, México</span>
-              </li>
+              {process.env.NEXT_PUBLIC_EMAIL && (
+                <li className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-[#3ACBFE]" />
+                  <span className="text-white/80 text-sm">
+                    <Link href={"mailto:" + process.env.NEXT_PUBLIC_EMAIL}>
+                      {process.env.NEXT_PUBLIC_EMAIL}
+                    </Link>
+                  </span>
+                </li>
+              )}
+              {process.env.NEXT_PUBLIC_WHATSAPP && (
+                <li className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-[#3ACBFE]" />
+                  <span className="text-white/80 text-sm">
+                    <Link
+                      href={
+                        "https://wa.me/" +
+                        process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")
+                      }
+                    >
+                      {process.env.NEXT_PUBLIC_WHATSAPP}
+                    </Link>
+                  </span>
+                </li>
+              )}
+              {process.env.NEXT_PUBLIC_DIR && (
+                <li className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#3ACBFE] shrink-0" />
+                  <span className="text-white/80 text-sm">
+                    {process.env.NEXT_PUBLIC_DIR}
+                  </span>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -106,13 +128,20 @@ export function Footer() {
         <div className="border-t border-white/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm">
-              © {new Date().getFullYear()} LaserCraft MX. Todos los derechos reservados.
+              © {new Date().getFullYear()} LaserCraft MX. Todos los derechos
+              reservados.
             </p>
             <div className="flex gap-6">
-              <Link href="/aviso-de-privacidad" className="text-white/60 hover:text-white text-sm transition-colors">
+              <Link
+                href="/aviso-de-privacidad"
+                className="text-white/60 hover:text-white text-sm transition-colors"
+              >
                 Aviso de Privacidad
               </Link>
-              <Link href="/terminos-y-condiciones" className="text-white/60 hover:text-white text-sm transition-colors">
+              <Link
+                href="/terminos-y-condiciones"
+                className="text-white/60 hover:text-white text-sm transition-colors"
+              >
                 Términos y Condiciones
               </Link>
             </div>
@@ -120,5 +149,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

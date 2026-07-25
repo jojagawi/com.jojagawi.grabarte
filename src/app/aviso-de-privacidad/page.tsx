@@ -1,7 +1,4 @@
 import { Metadata } from "next";
-import { Hero } from "@/components/custom/hero";
-import { Process } from "@/components/custom/process";
-import { Testimonials } from "@/components/custom/testimonials";
 
 export const metadata: Metadata = {
   title: "InspirArte | Personalización sin límites: del diseño a la realidad",
@@ -27,9 +24,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Process />
-      <Testimonials />
+      <h1>Aviso de privacidad</h1>
     </>
   );
 }

@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const navigation = [
-  { name: "Inicio", href: "#inicio" },
-  { name: "Productos", href: "#productos" },
-  { name: "Proceso", href: "#proceso" },
-  { name: "FAQ", href: "#faq" },
-  { name: "Contacto", href: "#contacto" },
+  { name: "Inicio", href: "/" },
+  { name: "Productos", href: "/productos" },
+  { name: "Proceso", href: "/proceso" },
+  { name: "FAQ", href: "/faq" },
+  { name: "Contacto", href: "/contacto" },
 ]
 
 export function Header() {
@@ -46,7 +46,7 @@ export function Header() {
               asChild
               className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
             >
-              <Link href="#contacto">
+              <Link href="/contacto">
                 ¡Cotiza ahora!
               </Link>
             </Button>
@@ -76,7 +76,7 @@ export function Header() {
                   asChild
                   className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white mt-4"
                 >
-                  <Link href="#contacto" onClick={() => setIsOpen(false)}>
+                  <Link href="/contacto" onClick={() => setIsOpen(false)}>
                     ¡Cotiza ahora!
                   </Link>
                 </Button>

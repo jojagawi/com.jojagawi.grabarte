@@ -9,36 +9,40 @@ const products = [
   {
     id: 1,
     name: "Termos Personalizados",
-    description: "Grabado láser de alta precisión en acero inoxidable. Perfectos para regalar o uso diario.",
-    image: "/images/termo-personalizado.webp",
+    description:
+      "Grabado láser de alta precisión en acero inoxidable. Perfectos para regalar o uso diario.",
+    image: "/dam/productos/termo-personalizado.webp",
     color: "from-[#4290A3]/10 to-[#1FA4A7]/10",
     occasions: ["Día del Padre", "Graduaciones", "Corporativo"],
   },
   {
     id: 2,
     name: "Llaveros Grabados",
-    description: "Diseños únicos en madera, acrílico o metal. Ideales para recuerdos de eventos.",
-    image: "/images/llaveros-grabados.webp",
+    description:
+      "Diseños únicos en madera, acrílico o metal. Ideales para recuerdos de eventos.",
+    image: "/dam/productos/llaveros-grabados.webp",
     color: "from-[#1FA4A7]/10 to-[#3ACBFE]/10",
     occasions: ["Bodas", "XV Años", "Cumpleaños"],
   },
   {
     id: 3,
     name: "Carteras y Carpetas de Piel",
-    description: "Grabado elegante en piel genuina. Un regalo con clase y personalidad.",
-    image: "/images/cartera-piel.webp",
+    description:
+      "Grabado elegante en piel genuina. Un regalo con clase y personalidad.",
+    image: "/dam/productos/cartera-piel.webp",
     color: "from-[#585106]/10 to-[#4290A3]/10",
     occasions: ["Día del Padre", "Graduaciones", "Ejecutivo"],
   },
   {
     id: 4,
     name: "Figuras Decorativas MDF",
-    description: "Corte láser de precisión para crear decoraciones únicas para cualquier ocasión.",
-    image: "/images/figuras-mdf.webp",
+    description:
+      "Corte láser de precisión para crear decoraciones únicas para cualquier ocasión.",
+    image: "/dam/productos/figuras-mdf.webp",
     color: "from-[#00B003]/10 to-[#1FA4A7]/10",
     occasions: ["Navidad", "Día de la Madre", "Decoración"],
   },
-]
+];
 
 const occasions = [
   { name: "Navidad", icon: Gift, color: "#00B003" },
@@ -117,7 +121,7 @@ export function Products() {
             >
               {/* Product Image */}
               <div className={cn(
-                "relative aspect-square bg-gradient-to-br overflow-hidden",
+                "relative aspect-square bg-linear-to-br overflow-hidden",
                 product.color
               )}>
                 <Image
@@ -158,7 +162,7 @@ export function Products() {
             ¿No encuentras lo que buscas? <span className="text-[#4290A3] font-medium">¡Lo creamos para ti!</span>
           </p>
           <a
-            href="#contacto"
+            href="/contacto"
             className="inline-flex items-center gap-2 text-[#4290A3] font-medium hover:underline"
           >
             Solicitar producto personalizado →
