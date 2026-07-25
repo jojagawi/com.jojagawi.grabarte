@@ -39,7 +39,7 @@ jobs:
         id: update-stack
         uses: aws-actions/aws-cloudformation-github-deploy@v2.2.0
         with:
-          name: "grabarte-mx"
+          name: "inspirarte-com"
           template: "./.aws/infra.yml"
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
@@ -82,7 +82,7 @@ jobs:
       - name: Upload Site
         uses: reggionick/s3-deploy@v4
         with:
-          folder: public
-          bucket: grabarte.mx
+          folder: out
+          bucket: www.inspiraarte.com
           bucket-region: ${{ secrets.AWS_REGION }}
           delete-removed: true
