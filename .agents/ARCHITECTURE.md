@@ -345,10 +345,10 @@ Test-Path "data/catalog.db"
 
 ```env
 # .env.local
-GATSBY_ADMIN_ENABLED=true
-GATSBY_DB_PATH=./data/catalog.db
-GATSBY_API_URL=http://localhost:3000/api
-GATSBY_UPLOAD_DIR=./data/uploads
+NEXT_ADMIN_ENABLED=true
+NEXT_DB_PATH=./data/catalog.db
+NEXT_API_URL=http://localhost:3000/api
+NEXT_UPLOAD_DIR=./data/uploads
 
 # server/.env
 DB_PATH=../data/catalog.db

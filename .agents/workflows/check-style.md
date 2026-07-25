@@ -1,10 +1,10 @@
 ---
-description: Verificar cumplimiento de estándares TypeScript y Gatsby
+description: Verificar cumplimiento de estándares TypeScript y Next.js App Router
 ---
 
 # Workflow: Verificación de Calidad de Código
 
-Este workflow permite verificar que el código TypeScript y Gatsby cumple con los estándares del proyecto GrabArte.
+Este workflow valida que el codigo cumpla los estandares del proyecto en la arquitectura actual con Next.js.
 
 ## Checklist de Verificación
 
@@ -13,7 +13,7 @@ Antes de hacer commit, verifica:
 ### 1. Verificación de Tipos TypeScript
 
 ```powershell
-pnpm run typecheck
+pnpm run test:typecheck
 ```
 
 Esto ejecuta `tsc --noEmit` y reporta cualquier error de tipo. **Corrige todos los errores antes de mergear.**
@@ -58,7 +58,7 @@ Para cada página o componente principal:
 Prueba manualmente con:
 
 ```powershell
-pnpm run develop
+pnpm run dev
 # Abre en navegador y prueba con teclado (Tab, Enter, Space)
 # Usa DevTools > Elements para verificar semántica
 ```
@@ -71,38 +71,39 @@ pnpm run build
 
 Verifica que la compilación de producción finaliza sin errores. Si hay warnings, evalúa si son críticos.
 
-Ejemplo de output esperado:
+Validaciones esperadas después del build:
 
 ```
-success open and validate gatsby-config and load plugins - 0.127s
-success load plugins - 0.893s
-success onPreInit - 0.041s
-...
-success Building HTML for failed pages - 0.066s
-success Clean up tmp files - 0.005s
-
-Your build finished successfully ✓
+- Build finalizado sin errores fatales
+- Carpeta `out/` generada
+- Si aplica, assets y rutas estaticas correctas para deploy
 ```
 
 ### 5. Verificación de Imágenes
 
 Todas las imágenes deben estar optimizadas:
 
-- ✅ Imágenes en `src/images/` tienen dimensiones menores a 500KB
-- ✅ Usa `gatsby-plugin-image` para optimización automática
-- ✅ Soporta WebP fallback
+- ✅ Imágenes en `public/` con peso optimizado para web
+- ✅ `alt` descriptivo en imágenes renderizadas
+- ✅ Uso correcto de `next/image` cuando aplique
+- ✅ Compatible con export estático (`images.unoptimized: true`)
 
 Ejemplo correcto:
 
-```typescript
-import { StaticImage } from "gatsby-plugin-image";
+```tsx
+import Image from "next/image";
 
-export const Hero = () => (
-  <StaticImage
-    src="../images/hero-banner.jpg"
-    alt="Catálogo de productos personalizados GrabArte"
-  />
-);
+export function HeroImage() {
+  return (
+    <Image
+      src="/images/hero-banner.jpg"
+      alt="Catalogo de productos personalizados GrabArte"
+      width={1600}
+      height={900}
+      priority
+    />
+  );
+}
 ```
 
 ## Comando Rápido de Pre-Commit
@@ -110,14 +111,21 @@ export const Hero = () => (
 Ejecuta todo antes de hacer commit:
 
 ```powershell
-pnpm run typecheck; pnpm run build
+pnpm run test:all
+pnpm run build
 ```
 
-Si ambos comandos finalizan sin errores, estás listo para hacer commit.
+Opcional segun alcance de cambios:
+
+```powershell
+pnpm run test:lighthouse
+```
+
+Si los comandos relevantes finalizan sin errores, estas listo para hacer commit.
 
 ## Verificación en CI/CD
 
-En GitHub Actions (si aplica), se ejecutarán estos checks automáticamente en PR. Asegúrate de que todos pasan antes de mergear.
+En CI (si aplica), se recomienda ejecutar al menos `pnpm run ci` antes de mergear.
 
 ---
 

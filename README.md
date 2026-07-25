@@ -1,450 +1,172 @@
-# GrabArte — Catálogo de Productos Personalizados
+# GrabArte / InspirArte - Catalogo Web Estatico
 
 ![Status](https://img.shields.io/badge/status-development-blue)
 ![Node](https://img.shields.io/badge/node->%3D24.0.0-green)
 ![pnpm](https://img.shields.io/badge/pnpm->%3D11.0.0-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-blue)
+![Next](https://img.shields.io/badge/Next-16-black)
 
-**GrabArte** es un catálogo de productos personalizados construido con **Gatsby** y **React** que permite a los clientes explorar y solicitar cotizaciones de objetos personalizados (termos, MDF, sellos, acrílico, cuero, figuras 3D, etc.).
+Este repositorio contiene el sitio publico de catalogo para productos personalizados. La arquitectura actual esta basada en **Next.js 16 + App Router + React 19 + Tailwind CSS 4** con **exportacion estatica** para despliegue en **S3/CDN**.
 
----
+## Estado de la arquitectura (actualizado)
 
-## 🎯 Características Principales
+- **Framework principal**: Next.js (`src/app`, App Router).
+- **Render objetivo**: sitio estatico (`next.config.ts` usa `output: "export"`).
+- **Salida de build para deploy**: carpeta `out/`.
+- **Imagenes**: `images.unoptimized: true` para compatibilidad con hosting estatico sin servidor de optimizacion de Next.
+- **Calidad**: ESLint + TypeScript + Stylelint + Prettier + Lighthouse CI.
+- **Datos locales**: existe `data/mydb.sqlite` como soporte local/roadmap.
 
-### 📱 Sitio Público
+## Requisitos
 
-- ✅ Catálogo de productos personalizados
-- ✅ Páginas de detalle de productos
-- ✅ Sistema de solicitud de cotizaciones
-- ✅ Información de contacto e integración de formularios
-- ✅ Optimización SEO con Gatsby
-- ✅ Sitemap automático
-
-### 🛠️ Panel Administrativo Local (En Desarrollo)
-
-- 🔲 Gestión de catálogo con SQLite
-- 🔲 Subida de archivos fuente (.psd, .ai, modelos 3D)
-- 🔲 Administración de productos, categorías y precios
-- 🔲 Respaldo de datos
-
----
-
-## 📋 Requisitos
-
-Asegúrate de tener instalados:
-
-- **Node.js**: >= 24.0.0
-- **pnpm**: >= 11.0.0
-- **Git**: Para control de versiones
-
-### Verifica las versiones:
+- **Node.js** >= 24.0.0
+- **pnpm** >= 11.0.0
 
 ```powershell
 node -v
 pnpm -v
 ```
 
-### Si pnpm no está instalado:
+Si falta pnpm en Windows:
 
 ```powershell
-# En Windows con Corepack (incluido en Node >= 16.13)
 corepack enable
 corepack prepare pnpm@latest --activate
 ```
 
----
+## Inicio rapido
 
-## 🚀 Instalación y Desarrollo
-
-### 1. Clonar el Repositorio
-
-```bash
-git clone <repository-url>
-cd grabarte.mx
-```
-
-### 2. Instalar Dependencias
+1) Instalar dependencias
 
 ```powershell
 pnpm install
 ```
 
-### 3. Iniciar Servidor de Desarrollo
+2) Levantar entorno local
 
 ```powershell
-pnpm run develop
+pnpm run dev
 ```
 
-El sitio estará disponible en **http://localhost:8000**
+3) Abrir en navegador
 
----
+- `http://localhost:3000`
 
-## 📦 Comandos Disponibles
+## Scripts disponibles
 
 ```powershell
-# Instalar todas las dependencias
-pnpm install
+# Desarrollo
+pnpm run dev
 
-# Iniciar desarrollo con hot reload
-pnpm run develop
-pnpm run start    # alias
-
-# Compilar para producción
+# Build de produccion
 pnpm run build
 
-# Servir la compilación local
-pnpm run serve    # requiere pnpm run build primero
+# Levantar modo produccion (Node server)
+pnpm run start
 
-# Verificar tipos TypeScript
-pnpm run typecheck
+# Calidad
+pnpm run test:typecheck
+pnpm run test:lint
+pnpm run test:style:check
+pnpm run test:format:check
+pnpm run test:lighthouse
+pnpm run test:all
 
-# Limpiar caché de Gatsby
-pnpm run clean
-
-# Limpieza profunda (nuclear option)
-pnpm run clean && pnpm install
+# Pipeline local CI
+pnpm run ci
 ```
 
----
+## Estructura actual
 
-## 📁 Estructura del Proyecto
-
-```
-grabarte.mx/
-├── .agents/                      # Guía para agentes
-│   ├── instructions.md           # Estándares de código
-│   └── workflows/
-│       └── check-style.md        # Checklist de verificación
-├── src/
-│   ├── components/               # Componentes React reutilizables
-│   │   └── (crear según necesidad)
-│   ├── images/                   # Imágenes optimizadas
-│   │   ├── icon.png
-│   │   ├── logo_01.png
-│   │   ├── logo_02.png
-│   │   └── logo_03.png
-│   ├── pages/                    # Páginas de Gatsby
-│   │   ├── 404.tsx               # Página de error
-│   │   └── index.tsx             # Página principal
-│   ├── styles/                   # Estilos globales
-│   │   └── global.css
-│   └── utils/                    # Funciones utilitarias
-│       └── (crear según necesidad)
-├── data/                         # Base de datos local
-│   └── catalog.db                # SQLite (crear según necesidad)
-├── .env.local                    # Variables de entorno local (NO comitees)
-├── .gitignore                    # Archivos ignorados por git
-├── gatsby-browser.js             # Hooks del navegador
-├── gatsby-config.ts              # Configuración de Gatsby
-├── package.json                  # Dependencias del proyecto
-├── pnpm-lock.yaml                # Lock file
-├── postcss.config.js             # Configuración de PostCSS
-├── tailwind.config.js            # Configuración de Tailwind CSS
-├── tsconfig.json                 # Configuración de TypeScript
-├── AGENTS.md                     # Guía para agentes
-└── README.md                     # Este archivo
+```text
+.
+|- src/
+|  |- app/                    # App Router de Next
+|  |  |- layout.tsx           # Layout raiz + metadata base
+|  |  |- page.tsx             # Home
+|  |  `- globals.css          # Estilos globales (Tailwind)
+|  |- components/
+|  |  |- custom/              # Secciones de negocio (hero, products, faq, etc.)
+|  |  |- structure/           # Header / Footer
+|  |  `- ui/                  # Componentes base UI
+|  |- hooks/
+|  `- lib/
+|- data/
+|  `- mydb.sqlite             # Base local (roadmap/admin local)
+|- next.config.ts             # output: export, images.unoptimized
+|- lighthouserc.cjs           # Auditoria sobre out/
+|- eslint.config.mjs          # Next core-web-vitals + TS + jsx-a11y
+|- package.json
+`- README.md
 ```
 
----
+## Build estatico y despliegue a S3
 
-## 🎨 Stack Tecnológico
+Generar build:
 
-| Herramienta      | Versión | Propósito            |
-| ---------------- | ------- | -------------------- |
-| **Gatsby**       | ^5.14.6 | Framework SSG/SSR    |
-| **React**        | ^18.2.0 | Componentes UI       |
-| **TypeScript**   | ^5.3.3  | Seguridad de tipos   |
-| **Tailwind CSS** | ^4.3.2  | Estilos utilitarios  |
-| **PostCSS**      | ^8.5.16 | Procesamiento de CSS |
-| **MDX**          | ^3.1.1  | Markdown + JSX       |
-| **SQLite**       | -       | Base de datos local  |
-
----
-
-## 📝 Convenciones de Código
-
-### Archivos
-
-```typescript
-// Componentes React
-PascalCase.tsx
-// Ejemplo: ProductCard.tsx, HeroSection.tsx
-
-// Páginas de Gatsby
-kebab-case.tsx
-// Ejemplo: catalog-page.tsx, about-page.tsx
-
-// Utilidades y hooks
-camelCase.ts
-// Ejemplo: useProductData.ts, fetchProducts.ts
+```powershell
+pnpm run build
 ```
 
-### TypeScript
+Carpeta que debes publicar en S3:
 
-- **Indentación**: 2 espacios
-- **Tipos**: Siempre explícitos (❌ `any` → ✅ `interface` o `type`)
-- **Exports**: Named exports preferidos
-- **Imports**: Externas → Utilidades → Componentes → Estilos
+- `out/`
 
-**Ejemplo:**
+Notas para deploy:
 
-```typescript
-import React from 'react';
-import { fetchProducts } from '../utils/api';
-import { ProductCard } from './ProductCard';
-import '../styles/products.css';
+- Sube el **contenido** de `out/` al bucket (no la carpeta contenedora vacia en un subnivel no deseado).
+- Configura `index.html` como documento principal del hosting estatico.
+- Si usas CDN (por ejemplo CloudFront), invalida cache tras cada release.
 
-interface Product {
-  id: string;
-  name: string;
-  image: string;
-}
+## Calidad y validaciones
 
-export const ProductList: React.FC = () => {
-  const [products, setProducts] = React.useState<Product[]>([]);
+- `test:all` ejecuta lint, style check, format check y typecheck.
+- `test:lighthouse` usa `lighthouserc.cjs` y audita el sitio estatico generado en `out/`.
+- Los reportes de Lighthouse se guardan en `ci/lighthouse/`.
 
-  React.useEffect(() => {
-    fetchProducts().then(setProducts);
-  }, []);
+## Variables de entorno (referencia)
 
-  return (
-    <div className="products-grid">
-      {products.map(product => (
-        <ProductCard key={product.id} {...product} />
-      ))}
-    </div>
-  );
-};
-```
-
-### React + JSX
-
-- ✅ Componentes nombrados (no anonymous functions)
-- ✅ Props con `interface` o `type`
-- ✅ Imágenes con `alt` descriptivo
-- ✅ Accesibilidad: headings semánticamente correctos
-- ✅ Tailwind CSS para estilos
-
-### Accesibilidad
-
-```typescript
-// ✅ Correcto
-<img
-  src="product.jpg"
-  alt="Termo personalizado rojo - GrabArte"
-/>
-
-// ✅ Correcto
-<h1>Catálogo de Productos</h1>
-<h2>Selecciona tu categoría</h2>
-
-// ❌ Incorrecto
-<img src="product.jpg" />
-<div className="title">Catálogo de Productos</div>
-```
-
----
-
-## 🔐 Seguridad
-
-### ⚠️ Nunca Comitees
-
-- API keys o credenciales
-- Archivos `.env.local`
-- Datos sensibles
-- Contraseñas
-
-### ✅ Mejores Prácticas
-
-1. Crea `.env.local` para desarrollo local:
+Segun el roadmap/documentacion interna, se contemplan variables como:
 
 ```env
-GATSBY_ADMIN_ENABLED=true
-GATSBY_DB_PATH=./data/catalog.db
+NEXT_ADMIN_ENABLED=true
+NEXT_DB_PATH=./data/catalog.db
+NEXT_UPLOAD_DIR=./data/uploads/
 ```
 
-2. Agrega a `.gitignore`:
+No comitear `.env.local` ni secretos.
 
-```
-.env.local
-data/catalog.db
-node_modules/
-.cache/
-public/
-```
+## Troubleshooting rapido
 
-3. Revisa dependencias nuevas:
+Puerto 3000 en uso:
 
 ```powershell
-pnpm audit
-pnpm add <package>  # solo si no hay vulnerabilidades críticas
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Puerto 8000 ya en uso
-
-```powershell
-# Encuentra el proceso
-netstat -ano | findstr :8000
-
-# Mata el proceso
+netstat -ano | findstr :3000
 taskkill /PID <PID> /F
-
-# O usa otro puerto
-gatsby develop -p 3000
 ```
 
-### Errores de TypeScript
+Cache/build inconsistente:
 
 ```powershell
-pnpm run typecheck
-
-# Corrige el tipo
-❌ const data: any = {}
-✅ interface Product { id: string; }
-   const data: Product = { id: '1' };
-```
-
-### Caché corrupto de Gatsby
-
-```powershell
-pnpm run clean
+Remove-Item .next -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item out -Recurse -Force -ErrorAction SilentlyContinue
 pnpm install
-pnpm run develop
-```
-
-### Build falla
-
-```powershell
-# Verifica tipos primero
-pnpm run typecheck
-
-# Luego intenta compilar
-pnpm run build
-
-# Si persiste, limpia completamente
-pnpm run clean && pnpm install && pnpm run build
-```
-
----
-
-## 📚 Antes de Hacer Commit
-
-**Checklist obligatorio:**
-
-```powershell
-# 1. Verifica tipos
-pnpm run typecheck
-
-# 2. Compila para producción
-pnpm run build
-
-# 3. Si ambos pasan, haz commit
-git add .
-git commit -m "feat: descripción clara en español"
-```
-
-**Formato de mensaje:**
-
-```
-feat: agregar página de catálogo de productos
-fix: corregir responsive en mobile
-docs: actualizar README
-```
-
----
-
-## 📱 Responsive Design
-
-El sitio debe funcionar correctamente en:
-
-- **Desktop**: 1920px, 1366px, 1024px
-- **Tablet**: 768px, 812px
-- **Mobile**: 375px, 414px, 390px
-
-Prueba con:
-
-```powershell
-pnpm run develop
-# En DevTools: F12 → Device Toolbar (Ctrl+Shift+M)
-```
-
----
-
-## 🚢 Despliegue
-
-### Build de Producción
-
-```powershell
 pnpm run build
 ```
 
-Genera:
+## Convenciones de commit
 
-- `public/` - Sitio estático optimizado
-- `pnpm-lock.yaml` - Dependencias fijadas
-
-### Servir Localmente
-
-```powershell
-pnpm run serve
-# http://localhost:9000
+```text
+feat: descripcion clara en espanol
+fix: correccion de bug especifico
+docs: actualizacion de documentacion
 ```
 
----
+## Referencias internas
 
-## 📊 SEO y Performance
-
-### Optimizaciones Incluidas
-
-- ✅ Sitemap automático (`gatsby-plugin-sitemap`)
-- ✅ Imágenes optimizadas (`gatsby-plugin-image`)
-- ✅ Meta tags (`gatsby-plugin-manifest`)
-- ✅ Analytics (`gatsby-plugin-google-gtag`)
-
-### Mejora Manual
-
-1. Agrega meta tags en `gatsby-config.ts`
-2. Describe productos con contenido único
-3. Optimiza imágenes antes de subir
-4. Usa palabras clave en headings
+- `AGENTS.md`
+- `.agents/instructions.md`
+- `.agents/workflows/`
 
 ---
 
-## 📞 Soporte y Contacto
-
-- **Documentación de Desarrollo**: Ver `.agents/instructions.md`
-- **Guía de Agentes**: Ver `AGENTS.md`
-- **Workflows y Checklists**: Ver `.agents/workflows/`
-- **Issues**: Crear una issue en el repositorio
-
----
-
-## 📄 Licencia
-
-(Por definir)
-
----
-
-## 🙏 Créditos
-
-- **Equipo GrabArte**
-- **Stack**: Gatsby + React + TypeScript + Tailwind CSS
-- **Última actualización**: Julio 2026
-
----
-
-## 🔄 Control de Versiones
-
-- **Rama principal**: `main` (producción)
-- **Rama de desarrollo**: `develop` (desarrollo)
-- **Ramas de feature**: `feature/descripcion` o `feat/descripcion`
-
-Usa commits semánticos (feat, fix, docs, style, refactor, test, chore)
-
----
-
-**Para comenzar**: `pnpm install && pnpm run develop` 🚀
+Ultima actualizacion: Julio 2026

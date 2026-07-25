@@ -6,6 +6,12 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      ...jsxA11y.flatConfigs.recommended.rules,
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

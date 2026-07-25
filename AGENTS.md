@@ -1,6 +1,6 @@
 ## AGENTS.md — guía para agentes
 
-Este repositorio es **GrabArte**, un catálogo de productos personalizados construido con **Gatsby** (React + TypeScript) que permite mostrar y solicitar cotizaciones de objetos personalizados (termos, MDF, sellos, acrílico, cuero, figuras 3D, etc.). Incluye un panel de administración local con base de datos SQLite.
+Este repositorio es **InspirArte**, un catálogo de productos personalizados construido con **next** (React + TypeScript) que permite mostrar y solicitar cotizaciones de objetos personalizados (termos, MDF, sellos, acrílico, cuero, figuras 3D, etc.). Incluye un panel de administración local con base de datos SQLite.
 
 ### Descripción del Proyecto
 
