@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { ContactMethods } from "@/components/custom/contact-methods"
+import { sendGTMEvent } from "@next/third-parties/google";
 
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -28,9 +29,16 @@ export function Contact() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
+    const formData = new FormData(e.currentTarget)
+    const name = String(formData.get("name") ?? "").trim()
 
     // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        sendGTMEvent({ event: "formContactSend", value: name })
+        resolve()
+      }, 2000)
+    })
 
     setIsSubmitting(false)
     setIsSubmitted(true)

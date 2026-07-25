@@ -3,7 +3,7 @@ import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/structure/header";
 import { Footer } from "@/components/structure/footer";
-
+import { GoogleTagManager } from "@next/third-parties/google";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -52,6 +52,9 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          {process.env.NEXT_GTM && (
+            <GoogleTagManager gtmId={process.env.NEXT_GTM} />
+          )}
         </main>
       </body>
     </html>
