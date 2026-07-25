@@ -14,6 +14,8 @@
     "prisma:validate": "npx prisma validate",
     "prisma:reset": "npx prisma migrate reset",
     "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:generate": "npx prisma generate",
+    "prisma:seed": "npx prisma db seed",
     "test:typecheck": "tsc --noEmit",
     "test:lint": "eslint .",
     "test:style:check": "stylelint \"src/**/*.{scss,css}\"",
