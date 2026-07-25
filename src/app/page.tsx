@@ -1,0 +1,42 @@
+import Image from "next/image";
+import { Metadata } from "next";
+import { Hero } from "@/components/custom/hero";
+import { Products } from "@/components/custom/products";
+import { Process } from "@/components/custom/process";
+import { Testimonials } from "@/components/custom/testimonials";
+import { FAQ } from "@/components/custom/faq";
+import { Contact } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "InspirArte | Personalización sin límites: del diseño a la realidad",
+  description:
+    "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+  keywords: [
+    "corte láser",
+    "grabado láser",
+    "termos personalizados",
+    "corte en MDF",
+    "grabado en acrílico",
+    "regalos personalizados",
+    "sellos a medida",
+  ],
+  openGraph: {
+    title: "InspirArte | Productos Personalizados",
+    description: "Materializamos tus ideas con precisión y detalle.",
+    type: "website",
+    locale: "es_MX",
+  },
+};
+
+export default function Home() {
+  return (
+    <>
+      <Hero />
+      <Products />
+      <Process />
+      <Testimonials />
+      <FAQ />
+      <Contact />
+    </>
+  );
+}

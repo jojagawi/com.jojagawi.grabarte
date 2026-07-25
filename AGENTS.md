@@ -4,7 +4,7 @@ Este repositorio es **GrabArte**, un catálogo de productos personalizados const
 
 ### Descripción del Proyecto
 
-**GrabArte** tiene dos vertientes principales:
+**InspirArte** tiene dos vertientes principales:
 
 1. **Sitio Público** (`localhost:8000`):
    - Catálogo de productos personalizados
@@ -23,32 +23,20 @@ Mantén estas versiones a menos que se justifique en un PR:
 
 **Core Framework:**
 
-- gatsby: ^5.14.6
-- react: ^18.2.0
-- react-dom: ^18.2.0
-- typescript: ^5.3.3
+- next: ^16
+- react: ^19
+- react-dom: ^19
+- typescript: ^5
 
 **Styling:**
 
-- tailwindcss: ^4.3.2
-- postcss: ^8.5.16
+- tailwindcss: ^4
+- postcss: ^8
 
-**Gatsby Plugins:**
+**Next Plugins:**
 
-- gatsby-plugin-image: ^3.16.0 (optimización de imágenes)
-- gatsby-plugin-sharp: ^5.16.0 (procesamiento de imágenes)
-- gatsby-transformer-sharp: ^5.16.0
-- gatsby-source-filesystem: ^5.16.0 (acceso a archivos)
-- gatsby-plugin-mdx: ^5.16.0 (soporte MDX)
-- gatsby-plugin-postcss: ^6.16.0
-- gatsby-plugin-manifest: ^5.16.0 (PWA)
-- gatsby-plugin-sitemap: ^6.16.0 (SEO)
-- gatsby-plugin-google-gtag: ^5.16.0 (analytics)
 
 **Otras:**
-
-- @mdx-js/react: ^3.1.1
-- autoprefixer: ^10.5.2
 
 ---
 
@@ -78,10 +66,10 @@ corepack prepare pnpm@latest --activate
 pnpm install
 
 # Iniciar servidor de desarrollo (hot reload)
-pnpm run develop
+pnpm run dev
 # o
 pnpm run start
-# Accede a: http://localhost:8000
+# Accede a: http://localhost:3000
 
 # Compilar para producción
 pnpm run build
@@ -92,11 +80,11 @@ pnpm run serve
 # Verificar tipos TypeScript
 pnpm run typecheck
 
-# Limpiar caché de Gatsby
-pnpm run clean
+# Limpiar caché de Next
+pnpm store prune
 
 # Limpia + reinstala dependencias (para troubleshooting)
-pnpm run clean && pnpm install
+pnpm store prune && pnpm install
 ```
 
 ---
@@ -104,18 +92,13 @@ pnpm run clean && pnpm install
 ## Estructura del Proyecto
 
 ```
-grabarte.mx/
+/
 ├── .agents/
 │   ├── instructions.md      # Estándares y guía de desarrollo
 │   └── workflows/
 │       └── check-style.md   # Checklist de verificación
 ├── src/
-│   ├── images/              # Imágenes optimizadas (PNG, JPG, WebP)
-│   │   ├── icon.png
-│   │   ├── logo_01.png
-│   │   ├── logo_02.png
-│   │   └── logo_03.png
-│   ├── pages/               # Páginas de Gatsby (generan rutas)
+│   ├── app/               # Páginas de next (generan rutas)
 │   │   ├── 404.tsx          # Página de error
 │   │   └── index.tsx        # Página principal
 │   ├── components/          # Componentes React reutilizables (crear si es necesario)
@@ -124,8 +107,7 @@ grabarte.mx/
 │   └── utils/               # Funciones utilitarias (crear si es necesario)
 ├── data/                    # Catálogo SQLite (crear si es necesario)
 │   └── catalog.db           # Base de datos local
-├── gatsby-config.ts         # Configuración de Gatsby
-├── gatsby-browser.js        # Hooks del navegador
+├── next.config.ts           # Configuración de Next.js
 ├── tailwind.config.js       # Configuración de Tailwind CSS
 ├── postcss.config.js        # Configuración de PostCSS
 ├── tsconfig.json            # Configuración de TypeScript
@@ -158,10 +140,10 @@ grabarte.mx/
 3. Inicia el servidor de desarrollo:
 
    ```powershell
-   pnpm run develop
+   pnpm run dev
    ```
 
-   Verifica que funciona en `http://localhost:8000`
+   Verifica que funciona en `http://localhost:3000`
 
 4. Verifica que no hay errores de TypeScript:
 
@@ -210,7 +192,7 @@ grabarte.mx/
 
 ```powershell
 # Verifica tipos
-pnpm run typecheck
+pnpm run test:typecheck
 
 # Compila para producción
 pnpm run build
@@ -238,38 +220,36 @@ fix: corregir responsive del hero en mobile
 ## Notas de Seguridad
 
 - ❌ Nunca comitees: API keys, secretos, credenciales, o archivos `.env.local`
-- ✅ Usa variables de entorno con prefijo `GATSBY_` para datos públicos
+- ✅ Usa variables de entorno con prefijo `NEXT_` para datos públicos
 - ✅ Crea `.env.local` para desarrollo local (agrega a `.gitignore`)
 - ✅ Revisa dependencias nuevas con `pnpm audit` antes de instalar
 
 Ejemplo `.env.local` (NO comitees esto):
 
 ```env
-GATSBY_ADMIN_ENABLED=true
-GATSBY_DB_PATH=./data/catalog.db
+NEXT_ADMIN_ENABLED=true
+NEXT_DB_PATH=./data/catalog.db
 ```
 
 ---
 
 ## Troubleshooting
 
-### Puerto 8000 ya está en uso
+### Puerto 3000 ya está en uso
 
 ```powershell
 # Encuentra el proceso
-netstat -ano | findstr :8000
+netstat -ano | findstr :3000
 
 # Mata el proceso por PID
 taskkill /PID <PID> /F
 
-# O usa un puerto diferente
-gatsby develop -p 3000
 ```
 
 ### Errores de TypeScript
 
 ```powershell
-pnpm run typecheck
+pnpm run test:typecheck
 # Lee los errores y corrígelos
 
 # Evita usar 'any'
@@ -278,12 +258,12 @@ pnpm run typecheck
    const data: Product = {}
 ```
 
-### Gatsby caché corrupto
+### Next caché corrupto
 
 ```powershell
 pnpm run clean
 pnpm install
-pnpm run develop
+pnpm run dev
 ```
 
 ### Build falla
@@ -294,7 +274,7 @@ pnpm run clean
 pnpm run build
 
 # Si persiste, revisa que no haya errores de TypeScript
-pnpm run typecheck
+pnpm run test:typecheck
 ```
 
 ---
@@ -303,24 +283,24 @@ pnpm run typecheck
 
 **Estructura esperada** (cuando esté implementado):
 
-- Base de datos: `./data/catalog.db`
+- Base de datos: `./data/mydb.sqlite`
 - Schema: Productos, categorías, atributos personalizables
-- Archivos subidos: Almacenados en `./data/uploads/`
+- Archivos subidos: Almacenados en un s3 de amazon o localmente en `./data/uploads/`
 - API local: Endpoints en `src/api/` (si se usa serverless functions)
 
 **Variables de entorno necesarias:**
 
 ```env
-GATSBY_ADMIN_ENABLED=true
-GATSBY_DB_PATH=./data/catalog.db
-GATSBY_UPLOAD_DIR=./data/uploads/
+NEXT_ADMIN_ENABLED=true
+NEXT_DB_PATH=./data/catalog.db
+NEXT_UPLOAD_DIR=./data/uploads/
 ```
 
 ---
 
 ## Contacto y Referencias
 
-- **Mantenedor**: Equipo GrabArte
+- **Mantenedor**: Equipo InspirArte
 - **Documentación**: Ver `README.md` para guía de usuario
 - **Estándares**: Ver `.agents/instructions.md` para detalles de código
 - **Workflows**: Ver `.agents/workflows/` para checklists
@@ -328,6 +308,6 @@ GATSBY_UPLOAD_DIR=./data/uploads/
 ---
 
 **Última actualización**: Julio 2026
-**Stack**: Gatsby 5 + React 18 + TypeScript + Tailwind CSS
-**Hosting**: (Por configurar)
-**Base de datos**: SQLite (local) / (Por configurar en producción)
+**Stack**: Next 16 + React 19 + TypeScript + Tailwind CSS
+**Hosting**: AWS S3 + CloudFlare CDN
+**Base de datos**: SQLite (local)
