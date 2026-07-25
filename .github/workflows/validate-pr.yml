@@ -24,6 +24,39 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           committer-email-regex: '@((adobe|github)\.com|puntos\.net)$'
+  validate-aws:
+    name: Validate AWS Cloud Formation YAML
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Cloud Formation Linter with Latest Version
+        uses: scottbrenner/cfn-lint-action@v2.7.0
+        with:
+          command: cfn-lint -t ./.aws/infra.yml
+      - name: Configure AWS credentials
+        id: creds-stack
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "value=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Create CloudFormation Change Set (Dry Run)
+        id: dry-run-stack
+        uses: aws-actions/aws-cloudformation-github-deploy@v2.2.0
+        with:
+          name: "inspirarte-com"
+          template: "./.aws/infra.yml"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
+          capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
+          no-execute-changeset: 1
+
   static-site:
     name: Validate and build static-site
     runs-on: ubuntu-latest
