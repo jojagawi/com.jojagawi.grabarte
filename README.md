@@ -35,19 +35,19 @@ corepack prepare pnpm@latest --activate
 
 ## Inicio rapido
 
-1) Instalar dependencias
+1. Instalar dependencias
 
 ```powershell
 pnpm install
 ```
 
-2) Levantar entorno local
+2. Levantar entorno local
 
 ```powershell
 pnpm run dev
 ```
 
-3) Abrir en navegador
+3. Abrir en navegador
 
 - `http://localhost:3000`
 

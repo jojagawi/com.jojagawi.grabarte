@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
     "test:typecheck": "tsc --noEmit",
     "test:lint": "eslint .",
     "test:style:check": "stylelint \"src/**/*.{scss,css}\"",

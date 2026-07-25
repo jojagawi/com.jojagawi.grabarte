@@ -35,7 +35,6 @@ Mantén estas versiones a menos que se justifique en un PR:
 
 **Next Plugins:**
 
-
 **Otras:**
 
 ---
