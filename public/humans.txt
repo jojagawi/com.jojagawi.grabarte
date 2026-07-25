@@ -1,0 +1,7 @@
+/* TEAM */
+Chef Developer: Jorge Garduño
+Contact: jojagawi@gmail.com
+
+/* SITE */
+Standards: HTML5, CSS3, React
+Components: Next.js, Tailwind CSS
