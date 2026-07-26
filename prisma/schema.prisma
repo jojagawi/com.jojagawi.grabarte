@@ -15,12 +15,6 @@ datasource db {
   provider = "sqlite"
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-}
-
 model CatCategories {
   id                   Int                    @id @default(autoincrement())
   name                 String?
@@ -71,8 +65,14 @@ model Designs {
   description          String?
   author               String?
   status               Int                    @default(1)
+  isTested             Int                    @default(0)
+  isCustomizable       Int                    @default(0)
+  showInHome           Int                    @default(0)
+  showInSite           Int                    @default(0)
   createdAt            DateTime               @default(now())
   materialId           Int?
+  numberMdfTables      Int                    @default(0)
+  timeMachine          Int                    @default(0)
   material             CatMaterials?          @relation(fields: [materialId], references: [id])
   relDesignsCategories RelDesignsCategories[]
   relDesignsFiles      RelDesignsFiles[]

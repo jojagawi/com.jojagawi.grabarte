@@ -161,16 +161,34 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
     const formData = new FormData(e.currentTarget)
     const name = String(formData.get("name") ?? "").trim()
 
-    // Simulate form submission
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        sendGTMEvent({ event: "formContactSend", value: name })
-        resolve()
-      }, 2000)
-    })
+    formData.delete("previewFile")
+    formData.delete("instructionFile")
+    formData.delete("designImages")
+    formData.delete("sourceFiles")
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+    if (previewFile) formData.append("previewFile", previewFile)
+    if (instructionFile) formData.append("instructionFile", instructionFile)
+    designImages.forEach((file) => formData.append("designImages", file))
+    sourceFiles.forEach((file) => formData.append("sourceFiles", file))
+
+    try {
+      const response = await fetch("/api/admin/designs", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error("No se pudo guardar el diseño")
+      }
+
+      sendGTMEvent({ event: "formContactSend", value: name })
+      setIsSubmitted(true)
+    } catch (error) {
+      console.error(error)
+      alert("No se pudo guardar el diseño. Verifica los datos e inténtalo de nuevo.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isSubmitted) {
@@ -182,17 +200,17 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               <CheckCircle2 className="w-10 h-10 text-[#00B003]" />
             </div>
             <h2 className="font-serif text-3xl font-bold text-foreground mb-4">
-              ¡Mensaje enviado!
+              ¡Diseño agregado correctamente!
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Recibimos tu solicitud. Te contactaremos en menos de 24 horas para comenzar a crear algo increíble juntos.
+              Tu diseño ya forma parte de nuestra base de datos, gracias por el aporte.
             </p>
             <Button
               onClick={() => setIsSubmitted(false)}
               variant="outline"
               className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
             >
-              Enviar otra solicitud
+              Enviar mas materiales
             </Button>
           </div>
         </div>
@@ -218,7 +236,9 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
         <div className="bg-muted/50 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">1. Información base</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                1. Información base
+              </legend>
 
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre *</Label>
@@ -241,7 +261,11 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               </div>
 
               <label className="flex items-center gap-2 text-sm text-foreground">
-                <input type="checkbox" name="isCustomizable" className="size-4" />
+                <input
+                  type="checkbox"
+                  name="isCustomizable"
+                  className="size-4"
+                />
                 Se puede personalizar
               </label>
 
@@ -249,7 +273,12 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <Label htmlFor="materialType">Tipo de material</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingMaterial(true)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsAddingMaterial(true)}
+                    >
                       Agregar nuevo
                     </Button>
                   </div>
@@ -273,7 +302,12 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <Label htmlFor="categories">Categorías del catálogo *</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingCategory(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAddingCategory(true)}
+                  >
                     Agregar nueva
                   </Button>
                 </div>
@@ -292,12 +326,16 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-muted-foreground">Puedes seleccionar múltiples categorías.</p>
+                <p className="text-xs text-muted-foreground">
+                  Puedes seleccionar múltiples categorías.
+                </p>
               </div>
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">2. Producción</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                2. Producción
+              </legend>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -313,7 +351,9 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="workTimeMinutes">Tiempo de trabajo (minutos)</Label>
+                  <Label htmlFor="workTimeMinutes">
+                    Tiempo de trabajo (minutos)
+                  </Label>
                   <Input
                     id="workTimeMinutes"
                     name="workTimeMinutes"
@@ -326,15 +366,22 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">3. Visibilidad</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                3. Visibilidad
+              </legend>
 
               <div className="grid sm:grid-cols-2 gap-3">
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" name="status" className="size-4" defaultChecked />
+                  <input
+                    type="checkbox"
+                    name="status"
+                    className="size-4"
+                    defaultChecked
+                  />
                   Status
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" name="tested" className="size-4" />
+                  <input type="checkbox" name="isTested" className="size-4" />
                   Probado
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
@@ -342,14 +389,21 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                   Mostrar en el home
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" name="showInSite" className="size-4" defaultChecked />
+                  <input
+                    type="checkbox"
+                    name="showInSite"
+                    className="size-4"
+                    defaultChecked
+                  />
                   Mostrar en el sitio
                 </label>
               </div>
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">4. Archivos</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                4. Archivos
+              </legend>
 
               <div className="space-y-2">
                 <Label htmlFor="preview-file">Vista previa</Label>
@@ -359,9 +413,14 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Arrastra una imagen o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                    Arrastra una imagen o{" "}
+                    <span className="text-[#4290A3] font-medium">
+                      haz clic para subir
+                    </span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">PNG, JPG, WEBP</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    PNG, JPG, WEBP
+                  </p>
                   <input
                     id="preview-file"
                     name="previewFile"
@@ -371,7 +430,11 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     className="hidden"
                   />
                 </label>
-                {previewFile && <p className="text-xs text-muted-foreground">{previewFile.name}</p>}
+                {previewFile && (
+                  <p className="text-xs text-muted-foreground">
+                    {previewFile.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -382,27 +445,41 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Arrastra imágenes o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                    Arrastra imágenes o{" "}
+                    <span className="text-[#4290A3] font-medium">
+                      haz clic para subir
+                    </span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">Puedes subir múltiples archivos</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Puedes subir múltiples archivos
+                  </p>
                   <input
                     id="design-images"
                     name="designImages"
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={(e) => handleMultiFileChange(e, setDesignImages, 20)}
+                    onChange={(e) =>
+                      handleMultiFileChange(e, setDesignImages, 20)
+                    }
                     className="hidden"
                   />
                 </label>
                 {designImages.length > 0 && (
                   <div className="space-y-2 mt-2">
                     {designImages.map((file, index) => (
-                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
-                        <span className="text-sm text-foreground truncate">{file.name}</span>
+                      <div
+                        key={`${file.name}-${index}`}
+                        className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2"
+                      >
+                        <span className="text-sm text-foreground truncate">
+                          {file.name}
+                        </span>
                         <button
                           type="button"
-                          onClick={() => removeFileAtIndex(index, setDesignImages)}
+                          onClick={() =>
+                            removeFileAtIndex(index, setDesignImages)
+                          }
                           className="ml-2 p-1 hover:bg-muted rounded"
                           aria-label={`Eliminar ${file.name}`}
                         >
@@ -422,19 +499,30 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Arrastra el archivo o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                    Arrastra el archivo o{" "}
+                    <span className="text-[#4290A3] font-medium">
+                      haz clic para subir
+                    </span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">PDF, TXT, MD, DOC, DOCX</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    PDF, TXT, MD, DOC, DOCX
+                  </p>
                   <input
                     id="instruction-file"
                     name="instructionFile"
                     type="file"
                     accept=".pdf,.txt,.md,.doc,.docx"
-                    onChange={(e) => handleSingleFileChange(e, setInstructionFile)}
+                    onChange={(e) =>
+                      handleSingleFileChange(e, setInstructionFile)
+                    }
                     className="hidden"
                   />
                 </label>
-                {instructionFile && <p className="text-xs text-muted-foreground">{instructionFile.name}</p>}
+                {instructionFile && (
+                  <p className="text-xs text-muted-foreground">
+                    {instructionFile.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -445,27 +533,41 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Arrastra archivos fuente o <span className="text-[#4290A3] font-medium">haz clic para subir</span>
+                    Arrastra archivos fuente o{" "}
+                    <span className="text-[#4290A3] font-medium">
+                      haz clic para subir
+                    </span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">AI, EPS, SVG, PDF, PSD, CDR, LBRN2, DXF, STL, OBJ</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    AI, EPS, SVG, PDF, PSD, CDR, LBRN2, DXF, STL, OBJ
+                  </p>
                   <input
                     id="source-files"
                     name="sourceFiles"
                     type="file"
                     multiple
                     accept=".ai,.eps,.svg,.pdf,.psd,.cdr,.lbrn2,.dxf,.stl,.obj"
-                    onChange={(e) => handleMultiFileChange(e, setSourceFiles, 20)}
+                    onChange={(e) =>
+                      handleMultiFileChange(e, setSourceFiles, 20)
+                    }
                     className="hidden"
                   />
                 </label>
                 {sourceFiles.length > 0 && (
                   <div className="space-y-2 mt-2">
                     {sourceFiles.map((file, index) => (
-                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
-                        <span className="text-sm text-foreground truncate">{file.name}</span>
+                      <div
+                        key={`${file.name}-${index}`}
+                        className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2"
+                      >
+                        <span className="text-sm text-foreground truncate">
+                          {file.name}
+                        </span>
                         <button
                           type="button"
-                          onClick={() => removeFileAtIndex(index, setSourceFiles)}
+                          onClick={() =>
+                            removeFileAtIndex(index, setSourceFiles)
+                          }
                           className="ml-2 p-1 hover:bg-muted rounded"
                           aria-label={`Eliminar ${file.name}`}
                         >
@@ -478,91 +580,101 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               </div>
             </fieldset>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Guardar diseño
+                </>
+              )}
+            </Button>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Al enviar, aceptas nuestro{" "}
+              <a
+                href="/aviso-de-privacidad"
+                className="text-[#4290A3] hover:underline"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 mr-2" />
-                    Guardar diseño
-                  </>
-                )}
-              </Button>
+                aviso de privacidad
+              </a>
+              .
+            </p>
+          </form>
 
-              <p className="text-xs text-muted-foreground text-center">
-                Al enviar, aceptas nuestro{" "}
-                <a
-                  href="/aviso-de-privacidad"
-                  className="text-[#4290A3] hover:underline"
+          <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Nueva categoría</DialogTitle>
+                <DialogDescription>
+                  Escribe el nombre de la categoría para guardarla y
+                  seleccionarla automáticamente.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="new-category-name">Nombre</Label>
+                <Input
+                  id="new-category-name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Ej. San Valentín"
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddingCategory(false)}
                 >
-                  aviso de privacidad
-                </a>
-                .
-              </p>
-            </form>
+                  Cancelar
+                </Button>
+                <Button type="button" onClick={handleCreateCategory}>
+                  Guardar categoría
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
-            <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Nueva categoría</DialogTitle>
-                  <DialogDescription>
-                    Escribe el nombre de la categoría para guardarla y seleccionarla automáticamente.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-2">
-                  <Label htmlFor="new-category-name">Nombre</Label>
-                  <Input
-                    id="new-category-name"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    placeholder="Ej. San Valentín"
-                  />
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsAddingCategory(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="button" onClick={handleCreateCategory}>
-                    Guardar categoría
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={isAddingMaterial} onOpenChange={setIsAddingMaterial}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Nuevo material</DialogTitle>
-                  <DialogDescription>
-                    Escribe el nombre del material para guardarlo y seleccionarlo automáticamente.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-2">
-                  <Label htmlFor="new-material-name">Nombre</Label>
-                  <Input
-                    id="new-material-name"
-                    value={newMaterialName}
-                    onChange={(e) => setNewMaterialName(e.target.value)}
-                    placeholder="Ej. Vinil reflectivo"
-                  />
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setIsAddingMaterial(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="button" onClick={handleCreateMaterial}>
-                    Guardar material
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+          <Dialog open={isAddingMaterial} onOpenChange={setIsAddingMaterial}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Nuevo material</DialogTitle>
+                <DialogDescription>
+                  Escribe el nombre del material para guardarlo y seleccionarlo
+                  automáticamente.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="new-material-name">Nombre</Label>
+                <Input
+                  id="new-material-name"
+                  value={newMaterialName}
+                  onChange={(e) => setNewMaterialName(e.target.value)}
+                  placeholder="Ej. Vinil reflectivo"
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddingMaterial(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button type="button" onClick={handleCreateMaterial}>
+                  Guardar material
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>

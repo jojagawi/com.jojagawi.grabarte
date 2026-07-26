@@ -1,0 +1,127 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table CatCategories {
+  id Int [pk, increment]
+  name String
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  relDesignsCategories RelDesignsCategories [not null]
+}
+
+Table CatDesignsType {
+  id Int [pk, increment]
+  name String
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  relDesignsTypes RelDesignsTypes [not null]
+}
+
+Table CatFileExtension {
+  id Int [pk, increment]
+  name String
+  extension String
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  files Files [not null]
+}
+
+Table CatFileType {
+  id Int [pk, increment]
+  name String
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  files Files [not null]
+}
+
+Table CatMaterials {
+  id Int [pk, increment]
+  name String
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  slug String [unique]
+  description String
+  icon String
+  designs Designs [not null]
+}
+
+Table Designs {
+  id Int [pk, increment]
+  name String
+  description String
+  author String
+  status Int [not null, default: 1]
+  isTested Int [not null, default: 0]
+  isCustomizable Int [not null, default: 0]
+  showInHome Int [not null, default: 0]
+  showInSite Int [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  materialId Int
+  numberMdfTables Int [not null, default: 0]
+  timeMachine Int [not null, default: 0]
+  material CatMaterials
+  relDesignsCategories RelDesignsCategories [not null]
+  relDesignsFiles RelDesignsFiles [not null]
+  relDesignsTypes RelDesignsTypes [not null]
+}
+
+Table Files {
+  id Int [pk, increment]
+  fileTypeId Int
+  fileExtensionId Int
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  fileData Bytes [not null]
+  fileType CatFileType
+  fileExtension CatFileExtension
+  relDesignsFiles RelDesignsFiles [not null]
+}
+
+Table RelDesignsCategories {
+  id Int [pk, increment]
+  designId Int
+  categoryId Int
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  design Designs
+  category CatCategories
+}
+
+Table RelDesignsFiles {
+  id Int [pk, increment]
+  designId Int
+  typeId Int
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  design Designs
+  file Files
+}
+
+Table RelDesignsTypes {
+  id Int [pk, increment]
+  designId Int
+  typeId Int
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+  design Designs
+  designType CatDesignsType
+}
+
+Ref: Designs.materialId > CatMaterials.id
+
+Ref: Files.fileTypeId > CatFileType.id
+
+Ref: Files.fileExtensionId > CatFileExtension.id
+
+Ref: RelDesignsCategories.designId > Designs.id
+
+Ref: RelDesignsCategories.categoryId > CatCategories.id
+
+Ref: RelDesignsFiles.designId > Designs.id
+
+Ref: RelDesignsFiles.typeId > Files.id
+
+Ref: RelDesignsTypes.designId > Designs.id
+
+Ref: RelDesignsTypes.typeId > CatDesignsType.id

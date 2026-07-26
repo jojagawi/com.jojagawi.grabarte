@@ -49,8 +49,13 @@ CREATE TABLE "Designs" (
     "description" TEXT,
     "author" TEXT,
     "status" INTEGER NOT NULL DEFAULT 1,
+    "isTested" INTEGER NOT NULL DEFAULT 0,
+    "showInHome" INTEGER NOT NULL DEFAULT 0,
+    "showInSite" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "materialId" INTEGER,
+    "numberMdfTables" INTEGER NOT NULL DEFAULT 0,
+    "timeMachine" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Designs_materialId_fkey" FOREIGN KEY ("materialId") REFERENCES "CatMaterials" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
