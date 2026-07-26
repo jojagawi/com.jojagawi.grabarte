@@ -73,6 +73,37 @@ export async function POST(request: Request) {
   const s3AccessKeyId = process.env.NEXT_AWS_ACCESS_KEY_ID;
   const s3SecretAccessKey = process.env.NEXT_AWS_SECRET_ACCESS_KEY;
 
+  const ensureExtensionId = async (extension: string, mimeType?: string) => {
+    const normalizedExtension = extension.toLowerCase();
+
+    const existing = await prisma.catFileExtension.findFirst({
+      where: { extension: normalizedExtension },
+      select: { id: true, mimeType: true },
+    });
+
+    if (existing) {
+      if (!existing.mimeType && mimeType) {
+        await prisma.catFileExtension.update({
+          where: { id: existing.id },
+          data: { mimeType },
+        });
+      }
+      return existing.id;
+    }
+
+    const created = await prisma.catFileExtension.create({
+      data: {
+        name: normalizedExtension.toUpperCase(),
+        extension: normalizedExtension,
+        mimeType: mimeType || null,
+        status: 1,
+      },
+      select: { id: true },
+    });
+
+    return created.id;
+  };
+
 
   const design = await prisma.$transaction(async (tx) => {
     const created = await tx.designs.create({
@@ -283,6 +314,155 @@ export async function POST(request: Request) {
           Key: objectKey,
           Body: finalBuffer,
           ContentType: finalMimeType,
+          CacheControl: "public, max-age=31536000, immutable",
+        }),
+      );
+
+      await prisma.files.update({
+        where: { id: fileRecord.id },
+        data: { filePath: objectKey },
+      });
+
+      await prisma.relDesignsFiles.create({
+        data: {
+          designId: design.id,
+          typeId: fileRecord.id,
+          status: 1,
+        },
+      });
+    }
+  }
+
+  const uploadedInstruction =
+    instructionFile instanceof File && instructionFile.size > 0
+      ? instructionFile
+      : null;
+
+  if (uploadedInstruction) {
+    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
+      return NextResponse.json(
+        { error: "Faltan variables de entorno para subir archivos a S3" },
+        { status: 500 },
+      );
+    }
+
+    const instructionType = await prisma.catFileType.findFirst({
+      where: { name: "Instrucciones", status: 1 },
+      select: { id: true },
+    });
+
+    if (!instructionType) {
+      return NextResponse.json(
+        { error: "No se encontró el tipo de archivo 'Instrucciones'" },
+        { status: 500 },
+      );
+    }
+
+    const s3Client = new S3Client({
+      region: s3Region,
+      credentials: {
+        accessKeyId: s3AccessKeyId,
+        secretAccessKey: s3SecretAccessKey,
+      },
+    });
+
+    const extension = extensionFromFileName(uploadedInstruction.name) || "bin";
+    const mimeType = uploadedInstruction.type || "application/octet-stream";
+    const fileExtensionId = await ensureExtensionId(extension, mimeType);
+    const fileBuffer = Buffer.from(await uploadedInstruction.arrayBuffer());
+
+    const fileRecord = await prisma.files.create({
+      data: {
+        fileTypeId: instructionType.id,
+        fileExtensionId,
+        filePath: "",
+        status: 1,
+      },
+      select: { id: true },
+    });
+
+    const objectKey = `files/${design.id}/${fileRecord.id}.${extension}`;
+
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: s3Bucket,
+        Key: objectKey,
+        Body: fileBuffer,
+        ContentType: mimeType,
+        CacheControl: "public, max-age=31536000, immutable",
+      }),
+    );
+
+    await prisma.files.update({
+      where: { id: fileRecord.id },
+      data: { filePath: objectKey },
+    });
+
+    await prisma.relDesignsFiles.create({
+      data: {
+        designId: design.id,
+        typeId: fileRecord.id,
+        status: 1,
+      },
+    });
+  }
+
+  const uploadedSourceFiles = sourceFiles.filter(
+    (value): value is File => value instanceof File && value.size > 0,
+  );
+
+  if (uploadedSourceFiles.length > 0) {
+    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
+      return NextResponse.json(
+        { error: "Faltan variables de entorno para subir archivos a S3" },
+        { status: 500 },
+      );
+    }
+
+    const sourceType = await prisma.catFileType.findFirst({
+      where: { name: "Archivos fuente", status: 1 },
+      select: { id: true },
+    });
+
+    if (!sourceType) {
+      return NextResponse.json(
+        { error: "No se encontró el tipo de archivo 'Archivos fuente'" },
+        { status: 500 },
+      );
+    }
+
+    const s3Client = new S3Client({
+      region: s3Region,
+      credentials: {
+        accessKeyId: s3AccessKeyId,
+        secretAccessKey: s3SecretAccessKey,
+      },
+    });
+
+    for (const sourceFile of uploadedSourceFiles) {
+      const extension = extensionFromFileName(sourceFile.name) || "bin";
+      const mimeType = sourceFile.type || "application/octet-stream";
+      const fileExtensionId = await ensureExtensionId(extension, mimeType);
+      const fileBuffer = Buffer.from(await sourceFile.arrayBuffer());
+
+      const fileRecord = await prisma.files.create({
+        data: {
+          fileTypeId: sourceType.id,
+          fileExtensionId,
+          filePath: "",
+          status: 1,
+        },
+        select: { id: true },
+      });
+
+      const objectKey = `files/${design.id}/${fileRecord.id}.${extension}`;
+
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: s3Bucket,
+          Key: objectKey,
+          Body: fileBuffer,
+          ContentType: mimeType,
           CacheControl: "public, max-age=31536000, immutable",
         }),
       );

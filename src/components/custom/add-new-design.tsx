@@ -35,6 +35,7 @@ type AddNewDesignProps = {
 export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [formResetKey, setFormResetKey] = useState(0)
   const [isAddingCategory, setIsAddingCategory] = useState(false)
   const [isAddingMaterial, setIsAddingMaterial] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState("")
@@ -234,6 +235,26 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
         : "border-border bg-white hover:border-[#4290A3]"
     }`
 
+  const resetFormState = () => {
+    setSelectedCategoryIds([])
+    setSelectedMaterialId("")
+    setPreviewFile(null)
+    setDesignImages([])
+    setInstructionFile(null)
+    setSourceFiles([])
+    setActiveDropzone(null)
+    setNewCategoryName("")
+    setNewMaterialName("")
+    setIsAddingCategory(false)
+    setIsAddingMaterial(false)
+    setFormResetKey((prev) => prev + 1)
+  }
+
+  const handleSendMoreMaterials = () => {
+    resetFormState()
+    setIsSubmitted(false)
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -285,7 +306,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               Tu diseño ya forma parte de nuestra base de datos, gracias por el aporte.
             </p>
             <Button
-              onClick={() => setIsSubmitted(false)}
+              onClick={handleSendMoreMaterials}
               variant="outline"
               className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
             >
@@ -313,7 +334,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
 
         {/* Form */}
         <div className="bg-muted/50 rounded-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form key={formResetKey} onSubmit={handleSubmit} className="space-y-8">
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
               <legend className="px-2 text-sm font-semibold text-foreground">
                 1. Información base
