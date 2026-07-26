@@ -22,6 +22,7 @@ Table CatFileExtension {
   id Int [pk, increment]
   name String
   extension String
+  mimeType String
   status Int [not null, default: 1]
   createdAt DateTime [default: `now()`, not null]
   files Files [not null]
@@ -30,6 +31,7 @@ Table CatFileExtension {
 Table CatFileType {
   id Int [pk, increment]
   name String
+  description String
   status Int [not null, default: 1]
   createdAt DateTime [default: `now()`, not null]
   files Files [not null]
@@ -50,6 +52,7 @@ Table Designs {
   id Int [pk, increment]
   name String
   description String
+  notes String
   author String
   status Int [not null, default: 1]
   isTested Int [not null, default: 0]
@@ -70,6 +73,7 @@ Table Files {
   id Int [pk, increment]
   fileTypeId Int
   fileExtensionId Int
+  filePath String
   status Int [not null, default: 1]
   createdAt DateTime [default: `now()`, not null]
   fileData Bytes [not null]

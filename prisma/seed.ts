@@ -46,14 +46,30 @@ const categoryNames = [
 ] as const;
 
 const fileExtensions = [
-  { name: "SVG", extension: "svg" },
-  { name: "LightBurn", extension: "lbrn2" },
-  { name: "PDF", extension: "pdf" },
-  { name: "AI", extension: "ai" },
-  { name: "DFX", extension: "dfx" },
-  { name: "EPS", extension: "eps" },
-  { name: "PNG", extension: "png" },
-  { name: "WEBP", extension: "webp" },
+  { name: "SVG", extension: "svg", mimeType: "image/svg+xml" },
+  { name: "LightBurn", extension: "lbrn2", mimeType: "application/octet-stream" },
+  { name: "PDF", extension: "pdf", mimeType: "application/pdf" },
+  { name: "AI", extension: "ai", mimeType: "application/postscript" },
+  { name: "DFX", extension: "dfx", mimeType: "application/octet-stream" },
+  { name: "EPS", extension: "eps", mimeType: "application/postscript" },
+  { name: "PNG", extension: "png", mimeType: "image/png" },
+  { name: "WEBP", extension: "webp", mimeType: "image/webp" },
+] as const;
+
+const fileTypes = [
+  { name: "Vista previa", description: "Usado como thumb en el sitio" },
+  {
+    name: "Imagenes del diseño",
+    description: "Fotos y videos usados para mostrar el diseño desde diferentes angulos",
+  },
+  {
+    name: "Instrucciones",
+    description: "PDF, textos y/o videos con instrucciones adicionales, o implementaciones",
+  },
+  {
+    name: "Archivos fuente",
+    description: "Archivos necesarios para el proyecto",
+  },
 ] as const;
 
 const materials = [
@@ -126,8 +142,10 @@ async function main() {
       })),
     },
     select: {
+      id: true,
       name: true,
       extension: true,
+      mimeType: true,
     },
   });
 
@@ -144,6 +162,22 @@ async function main() {
       status: 1,
     }));
 
+  const mimeTypeUpdates = existingExtensions
+    .map((existing) => {
+      const target = fileExtensions.find(
+        (item) => item.name === existing.name && item.extension === existing.extension,
+      );
+
+      if (!target) return null;
+      if (existing.mimeType === target.mimeType) return null;
+
+      return {
+        id: existing.id,
+        mimeType: target.mimeType,
+      };
+    })
+    .filter(Boolean) as Array<{ id: number; mimeType: string }>;
+
   if (pendingExtensions.length === 0) {
     console.log("[prisma:seed] CatFileExtension ya contiene todos los valores esperados.");
   } else {
@@ -153,6 +187,56 @@ async function main() {
 
     console.log(
       `[prisma:seed] CatFileExtension: insertados ${extensionResult.count} registros (faltaban ${pendingExtensions.length}).`,
+    );
+  }
+
+  if (mimeTypeUpdates.length > 0) {
+    await Promise.all(
+      mimeTypeUpdates.map((item) =>
+        prisma.catFileExtension.update({
+          where: { id: item.id },
+          data: { mimeType: item.mimeType },
+        }),
+      ),
+    );
+
+    console.log(
+      `[prisma:seed] CatFileExtension: actualizados ${mimeTypeUpdates.length} mime-types.`,
+    );
+  }
+
+  const existingFileTypes = await prisma.catFileType.findMany({
+    where: {
+      name: {
+        in: fileTypes.map((item) => item.name),
+      },
+    },
+    select: {
+      name: true,
+    },
+  });
+
+  const existingFileTypeNames = new Set(
+    existingFileTypes.map((item) => item.name).filter(Boolean),
+  );
+
+  const pendingFileTypes = fileTypes
+    .filter((item) => !existingFileTypeNames.has(item.name))
+    .map((item) => ({
+      name: item.name,
+      description: item.description,
+      status: 1,
+    }));
+
+  if (pendingFileTypes.length === 0) {
+    console.log("[prisma:seed] CatFileType ya contiene todos los valores esperados.");
+  } else {
+    const fileTypeResult = await prisma.catFileType.createMany({
+      data: pendingFileTypes,
+    });
+
+    console.log(
+      `[prisma:seed] CatFileType: insertados ${fileTypeResult.count} registros (faltaban ${pendingFileTypes.length}).`,
     );
   }
 

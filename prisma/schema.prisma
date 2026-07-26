@@ -35,17 +35,19 @@ model CatFileExtension {
   id        Int      @id @default(autoincrement())
   name      String?
   extension String?
+  mimeType  String?
   status    Int      @default(1)
   createdAt DateTime @default(now())
   files     Files[]
 }
 
 model CatFileType {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  status    Int      @default(1)
-  createdAt DateTime @default(now())
-  files     Files[]
+  id          Int      @id @default(autoincrement())
+  name        String?
+  description String?
+  status      Int      @default(1)
+  createdAt   DateTime @default(now())
+  files       Files[]
 }
 
 model CatMaterials {
@@ -63,6 +65,7 @@ model Designs {
   id                   Int                    @id @default(autoincrement())
   name                 String?
   description          String?
+  notes                String?
   author               String?
   status               Int                    @default(1)
   isTested             Int                    @default(0)
@@ -83,6 +86,7 @@ model Files {
   id              Int               @id @default(autoincrement())
   fileTypeId      Int?
   fileExtensionId Int?
+  filePath        String?
   status          Int               @default(1)
   createdAt       DateTime          @default(now())
   fileData        Bytes
