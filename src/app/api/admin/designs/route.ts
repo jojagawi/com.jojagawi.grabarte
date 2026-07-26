@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
+import sharp from "sharp";
 
 function parseOptionalInt(value: FormDataEntryValue | null) {
   const numeric = Number(String(value ?? "").trim());
   return Number.isFinite(numeric) ? numeric : null;
+}
+
+function extensionFromFileName(fileName: string) {
+  const parts = fileName.split(".");
+  if (parts.length < 2) return "";
+  return parts.pop()?.toLowerCase() ?? "";
 }
 
 export async function POST(request: Request) {
@@ -12,7 +20,6 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
-  console.log(formData);
 
   const name = String(formData.get("name") ?? "").trim();
   if (!name) {
@@ -61,6 +68,11 @@ export async function POST(request: Request) {
       .length,
   };
 
+  const s3Bucket = process.env.NEXT_PUBLIC_S3;
+  const s3Region = process.env.NEXT_AWS_REGION;
+  const s3AccessKeyId = process.env.NEXT_AWS_ACCESS_KEY_ID;
+  const s3SecretAccessKey = process.env.NEXT_AWS_SECRET_ACCESS_KEY;
+
 
   const design = await prisma.$transaction(async (tx) => {
     const created = await tx.designs.create({
@@ -89,6 +101,206 @@ export async function POST(request: Request) {
 
     return created;
   });
+
+  if (previewFile instanceof File && previewFile.size > 0) {
+    if (!previewFile.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "El archivo de vista previa debe ser una imagen" },
+        { status: 400 },
+      );
+    }
+
+    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
+      return NextResponse.json(
+        { error: "Faltan variables de entorno para subir archivos a S3" },
+        { status: 500 },
+      );
+    }
+
+    const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
+    const webpBuffer = await sharp(previewBuffer).webp({ quality: 90 }).toBuffer();
+
+    const webpExtension = await prisma.catFileExtension.findFirst({
+      where: { extension: "webp", status: 1 },
+      select: { id: true },
+    });
+
+    const previewType = await prisma.catFileType.findFirst({
+      where: { name: "Vista previa", status: 1 },
+      select: { id: true },
+    });
+
+    if (!webpExtension || !previewType) {
+      return NextResponse.json(
+        { error: "No se encontró la configuración de extensión o tipo de archivo" },
+        { status: 500 },
+      );
+    }
+
+    const s3Client = new S3Client({
+      region: s3Region,
+      credentials: {
+        accessKeyId: s3AccessKeyId,
+        secretAccessKey: s3SecretAccessKey,
+      },
+    });
+
+    const objectKey = `preview/${design.id}.webp`;
+
+    await s3Client.send(
+      new PutObjectCommand({
+        Bucket: s3Bucket,
+        Key: objectKey,
+        Body: webpBuffer,
+        ContentType: "image/webp",
+        CacheControl: "public, max-age=31536000, immutable",
+      }),
+    );
+
+    const fileRecord = await prisma.files.create({
+      data: {
+        fileTypeId: previewType.id,
+        fileExtensionId: webpExtension.id,
+        filePath: objectKey,
+        status: 1,
+      },
+      select: { id: true },
+    });
+
+    await prisma.relDesignsFiles.create({
+      data: {
+        designId: design.id,
+        typeId: fileRecord.id,
+        status: 1,
+      },
+    });
+  }
+
+  const uploadedDesignImages = designImages.filter(
+    (value): value is File => value instanceof File && value.size > 0,
+  );
+
+  if (uploadedDesignImages.length > 0) {
+    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
+      return NextResponse.json(
+        { error: "Faltan variables de entorno para subir archivos a S3" },
+        { status: 500 },
+      );
+    }
+
+    const webpExtension = await prisma.catFileExtension.findFirst({
+      where: { extension: "webp", status: 1 },
+      select: { id: true },
+    });
+
+    const designImagesType = await prisma.catFileType.findFirst({
+      where: { name: "Imagenes del diseño", status: 1 },
+      select: { id: true },
+    });
+
+    if (!webpExtension || !designImagesType) {
+      return NextResponse.json(
+        { error: "No se encontró la configuración de extensiones o tipo de archivo" },
+        { status: 500 },
+      );
+    }
+
+    const s3Client = new S3Client({
+      region: s3Region,
+      credentials: {
+        accessKeyId: s3AccessKeyId,
+        secretAccessKey: s3SecretAccessKey,
+      },
+    });
+
+    for (const uploadedFile of uploadedDesignImages) {
+      const isImage = uploadedFile.type.startsWith("image/");
+      const isVideo = uploadedFile.type.startsWith("video/");
+
+      if (!isImage && !isVideo) {
+        return NextResponse.json(
+          { error: `Tipo de archivo no soportado en imágenes del diseño: ${uploadedFile.name}` },
+          { status: 400 },
+        );
+      }
+
+      let finalBuffer: Buffer;
+      let finalExtension: string;
+      let finalMimeType: string;
+      let fileExtensionId: number;
+
+      if (isImage) {
+        const originalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
+        finalBuffer = await sharp(originalBuffer).webp({ quality: 90 }).toBuffer();
+        finalExtension = "webp";
+        finalMimeType = "image/webp";
+        fileExtensionId = webpExtension.id;
+      } else {
+        finalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
+        finalExtension = extensionFromFileName(uploadedFile.name);
+        finalMimeType = uploadedFile.type || "video/mp4";
+
+        if (!finalExtension) {
+          return NextResponse.json(
+            { error: `No fue posible identificar la extensión del video: ${uploadedFile.name}` },
+            { status: 400 },
+          );
+        }
+
+        const sourceVideoExtension = await prisma.catFileExtension.findFirst({
+          where: {
+            extension: finalExtension,
+            status: 1,
+          },
+          select: { id: true },
+        });
+
+        if (!sourceVideoExtension) {
+          return NextResponse.json(
+            { error: `No existe configuración para la extensión .${finalExtension}` },
+            { status: 400 },
+          );
+        }
+
+        fileExtensionId = sourceVideoExtension.id;
+      }
+
+      const fileRecord = await prisma.files.create({
+        data: {
+          fileTypeId: designImagesType.id,
+          fileExtensionId,
+          status: 1,
+          filePath: "",
+        },
+        select: { id: true },
+      });
+
+      const objectKey = `preview/${design.id}/${fileRecord.id}.${finalExtension}`;
+
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: s3Bucket,
+          Key: objectKey,
+          Body: finalBuffer,
+          ContentType: finalMimeType,
+          CacheControl: "public, max-age=31536000, immutable",
+        }),
+      );
+
+      await prisma.files.update({
+        where: { id: fileRecord.id },
+        data: { filePath: objectKey },
+      });
+
+      await prisma.relDesignsFiles.create({
+        data: {
+          designId: design.id,
+          typeId: fileRecord.id,
+          status: 1,
+        },
+      });
+    }
+  }
 
   return NextResponse.json({
     id: design.id,

@@ -89,7 +89,6 @@ model Files {
   filePath        String?
   status          Int               @default(1)
   createdAt       DateTime          @default(now())
-  fileData        Bytes
   fileType        CatFileType?      @relation(fields: [fileTypeId], references: [id])
   fileExtension   CatFileExtension? @relation(fields: [fileExtensionId], references: [id])
   relDesignsFiles RelDesignsFiles[]

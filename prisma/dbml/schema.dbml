@@ -76,7 +76,6 @@ Table Files {
   filePath String
   status Int [not null, default: 1]
   createdAt DateTime [default: `now()`, not null]
-  fileData Bytes [not null]
   fileType CatFileType
   fileExtension CatFileExtension
   relDesignsFiles RelDesignsFiles [not null]

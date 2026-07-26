@@ -47,6 +47,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const [designImages, setDesignImages] = useState<File[]>([])
   const [instructionFile, setInstructionFile] = useState<File | null>(null)
   const [sourceFiles, setSourceFiles] = useState<File[]>([])
+  const [activeDropzone, setActiveDropzone] = useState<string | null>(null)
 
   const handleCategoriesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions).map((option) => option.value)
@@ -137,6 +138,77 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
     setter(e.target.files?.[0] ?? null)
   }
 
+  const isImageFile = (file: File) => file.type.startsWith("image/")
+
+  const handlePreviewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!isImageFile(file)) {
+      alert("La vista previa solo acepta archivos de tipo imagen.")
+      e.target.value = ""
+      return
+    }
+
+    setPreviewFile(file)
+  }
+
+  const preventDragDefaults = (e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLElement>, zone: string) => {
+    preventDragDefaults(e)
+    if (activeDropzone !== zone) {
+      setActiveDropzone(zone)
+    }
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLElement>) => {
+    preventDragDefaults(e)
+    setActiveDropzone(null)
+  }
+
+  const handleSingleFileDrop = (
+    e: React.DragEvent<HTMLElement>,
+    setter: (file: File | null) => void,
+  ) => {
+    preventDragDefaults(e)
+    setActiveDropzone(null)
+    const droppedFiles = e.dataTransfer.files
+    if (!droppedFiles || droppedFiles.length === 0) return
+    setter(droppedFiles[0])
+  }
+
+  const handlePreviewFileDrop = (e: React.DragEvent<HTMLElement>) => {
+    preventDragDefaults(e)
+    setActiveDropzone(null)
+
+    const droppedFiles = e.dataTransfer.files
+    if (!droppedFiles || droppedFiles.length === 0) return
+
+    const file = droppedFiles[0]
+    if (!isImageFile(file)) {
+      alert("La vista previa solo acepta archivos de tipo imagen.")
+      return
+    }
+
+    setPreviewFile(file)
+  }
+
+  const handleMultiFileDrop = (
+    e: React.DragEvent<HTMLElement>,
+    setter: React.Dispatch<React.SetStateAction<File[]>>,
+    maxFiles = 10,
+  ) => {
+    preventDragDefaults(e)
+    setActiveDropzone(null)
+    const droppedFiles = Array.from(e.dataTransfer.files || [])
+    if (droppedFiles.length === 0) return
+    setter((prev) => [...prev, ...droppedFiles].slice(0, maxFiles))
+  }
+
   const handleMultiFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setter: React.Dispatch<React.SetStateAction<File[]>>,
@@ -154,6 +226,13 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   ) => {
     setter((prev) => prev.filter((_, i) => i !== index))
   }
+
+  const dropzoneClassName = (zone: string) =>
+    `border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer block ${
+      activeDropzone === zone
+        ? "border-[#1FA4A7] bg-[#4290A3]/5"
+        : "border-border bg-white hover:border-[#4290A3]"
+    }`
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -409,7 +488,10 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 <Label htmlFor="preview-file">Vista previa</Label>
                 <label
                   htmlFor="preview-file"
-                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                  className={dropzoneClassName("preview")}
+                  onDragOver={(e) => handleDragOver(e, "preview")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handlePreviewFileDrop}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
@@ -426,7 +508,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     name="previewFile"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleSingleFileChange(e, setPreviewFile)}
+                    onChange={handlePreviewFileChange}
                     className="hidden"
                   />
                 </label>
@@ -441,7 +523,10 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 <Label htmlFor="design-images">Imágenes del diseño</Label>
                 <label
                   htmlFor="design-images"
-                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                  className={dropzoneClassName("designImages")}
+                  onDragOver={(e) => handleDragOver(e, "designImages")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleMultiFileDrop(e, setDesignImages, 20)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
@@ -495,7 +580,10 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 <Label htmlFor="instruction-file">Instrucciones</Label>
                 <label
                   htmlFor="instruction-file"
-                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                  className={dropzoneClassName("instruction")}
+                  onDragOver={(e) => handleDragOver(e, "instruction")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleSingleFileDrop(e, setInstructionFile)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
@@ -529,7 +617,10 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 <Label htmlFor="source-files">Archivos fuente</Label>
                 <label
                   htmlFor="source-files"
-                  className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-[#4290A3] transition-colors cursor-pointer bg-white block"
+                  className={dropzoneClassName("sourceFiles")}
+                  onDragOver={(e) => handleDragOver(e, "sourceFiles")}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleMultiFileDrop(e, setSourceFiles, 20)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
