@@ -29,7 +29,7 @@
     "test:format:check": "prettier --check \"src/**/*.{js,jsx,css,scss}\" \"*.{js,json,md}\"",
     "test:lighthouse": "lhci autorun",
     "test:all": "run-s test:lint test:style:check test:format:check test:typecheck",
-    "ci": "run-s test:all prebuild build postbuild test:lighthouse"
+    "ci": "run-s test:all build test:lighthouse"
   },
   "browserslist": [
     "baseline widely available"
