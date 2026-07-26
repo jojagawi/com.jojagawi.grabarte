@@ -3,87 +3,129 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(98% 0.005 90deg);
-  --foreground: oklch(25% 0.02 85deg);
+  /* --- PALETA BASE DE INSPIRARTE (Extraída del Logo) --- */
+  /* Fondo: Un blanco muy limpio con un toque de calidez (inspirado en la madera clara) */
+  --background: oklch(99% 0.005 90deg);
+  /* Texto Principal (Foreground): Gris carbón oscuro, casi negro, neutral y legible (como el texto del logo) */
+  --foreground: oklch(20% 0.01 240deg);
+
+  /* Tarjetas y Popovers: Blanco puro para máximo contraste */
   --card: oklch(100% 0 0deg);
-  --card-foreground: oklch(25% 0.02 85deg);
+  --card-foreground: var(--foreground);
   --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(25% 0.02 85deg);
-  --primary: oklch(55% 0.12 195deg);
+  --popover-foreground: var(--foreground);
+
+  /* --- COLORES DE MARCA --- */
+  /* Primary (Teal): El color dominante y "tecnológico" de la chispa. Para botones principales, enlaces activos. */
+  /* Corresponde aproximadamente a #1FA4A7 de tu CSS actual */
+  --primary: oklch(65% 0.12 195deg);
   --primary-foreground: oklch(99% 0 0deg);
-  --secondary: oklch(58% 0.14 175deg);
+
+  /* Secondary (Purple): El color "creativo" y profundo del cubo. Para elementos destacados secundarios. */
+  --secondary: oklch(50% 0.18 280deg);
   --secondary-foreground: oklch(99% 0 0deg);
-  --muted: oklch(95% 0.01 90deg);
-  --muted-foreground: oklch(45% 0.02 85deg);
-  --accent: oklch(75% 0.18 210deg);
-  --accent-foreground: oklch(15% 0.02 85deg);
+
+  /* Accent (Cian Brillante): El punto de inicio del degradado. Para elementos interactivos sutiles, hover, anillos de enfoque. */
+  /* Corresponde aproximadamente a #3ACBFE de tu CSS actual */
+  --accent: oklch(80% 0.15 210deg);
+  --accent-foreground: oklch(15% 0.02 240deg);
+
+  /* --- ELEMENTOS DE INTERFAZ MUDOS --- */
+  /* Muted: Fondos secundarios suaves, como áreas de contenido secundario */
+  --muted: oklch(95% 0.01 240deg);
+  --muted-foreground: oklch(55% 0.02 240deg);
+
+  /* Bordes y Entradas: Gris sutil, neutral, limpio */
+  --border: oklch(90% 0.01 240deg);
+  --input: oklch(92% 0.01 240deg);
+  --ring: var(--accent); /* Anillos de enfoque usando el cian brillante */
+
+  /* --- OTROS --- */
   --destructive: oklch(57.7% 0.245 27.325deg);
   --destructive-foreground: oklch(99% 0 0deg);
-  --border: oklch(90% 0.01 90deg);
-  --input: oklch(92% 0.01 90deg);
-  --ring: oklch(55% 0.12 195deg);
-  --chart-1: oklch(55% 0.12 195deg);
-  --chart-2: oklch(58% 0.14 175deg);
-  --chart-3: oklch(75% 0.18 210deg);
-  --chart-4: oklch(60% 0.2 145deg);
-  --chart-5: oklch(45% 0.08 85deg);
-  --radius: 0.75rem;
-  --sidebar: oklch(98% 0.005 90deg);
-  --sidebar-foreground: oklch(25% 0.02 85deg);
-  --sidebar-primary: oklch(55% 0.12 195deg);
-  --sidebar-primary-foreground: oklch(99% 0 0deg);
-  --sidebar-accent: oklch(95% 0.01 90deg);
-  --sidebar-accent-foreground: oklch(25% 0.02 85deg);
-  --sidebar-border: oklch(90% 0.01 90deg);
-  --sidebar-ring: oklch(55% 0.12 195deg);
 
-  /* Custom brand colors */
-  --teal: #4290a3;
-  --cyan-teal: #1fa4a7;
-  --bright-cyan: #3acbfe;
-  --green: #00b003;
-  --olive: #585106;
+  /* Gráficos: Usando la progresión del degradado */
+  --chart-1: var(--primary);    /* Teal principal */
+  --chart-2: var(--secondary);  /* Púrpura */
+  --chart-3: var(--accent);     /* Cian brillante */
+  --chart-4: oklch(70% 0.15 170deg); /* Un verde-teal complementario suave */
+  --chart-5: oklch(85% 0.03 90deg);  /* Un dorado/madera muy pálido */
+
+  --radius: 0.75rem;
+
+  /* Sidebar: Usando tonos limpios */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--accent);
+
+  /* --- COLORES DE MARCA PERSONALIZADOS (HEX exactos para referencia) --- */
+  /* Actualizados para coincidir exactamente con el degradado y texto del logo */
+  --inspirarte-teal-primary: #1fa4a7;   /* El color principal de la marca */
+  --inspirarte-cyan-bright: #3acbfe;    /* El cian vibrante */
+  --inspirarte-purple-deep: #7e3af2;   /* El púrpura creativo */
+  --inspirarte-charcoal-text: #323236; /* Gris oscuro del texto del logo */
+  --inspirarte-placeholder-grey: #676767; /* Gris de la leyenda 'ejemplos de acabado' */
 }
 
+/* --- MODO OSCURO ACTUALIZADO --- */
 .dark {
-  --background: oklch(18% 0.02 85deg);
-  --foreground: oklch(95% 0.005 90deg);
-  --card: oklch(22% 0.02 85deg);
-  --card-foreground: oklch(95% 0.005 90deg);
-  --popover: oklch(22% 0.02 85deg);
-  --popover-foreground: oklch(95% 0.005 90deg);
-  --primary: oklch(65% 0.15 195deg);
-  --primary-foreground: oklch(15% 0.02 85deg);
-  --secondary: oklch(65% 0.15 175deg);
-  --secondary-foreground: oklch(15% 0.02 85deg);
-  --muted: oklch(28% 0.02 85deg);
-  --muted-foreground: oklch(65% 0.01 90deg);
-  --accent: oklch(75% 0.18 210deg);
-  --accent-foreground: oklch(15% 0.02 85deg);
+  /* Fondo: Un gris azulado muy oscuro y profundo, profesional y tecnológico */
+  --background: oklch(15% 0.01 240deg);
+  --foreground: oklch(98% 0.005 240deg); /* Texto claro casi blanco */
+
+  --card: oklch(20% 0.01 240deg);
+  --card-foreground: var(--foreground);
+  --popover: oklch(20% 0.01 240deg);
+  --popover-foreground: var(--foreground);
+
+  /* Colores de marca vibrantes sobre fondo oscuro */
+  --primary: oklch(75% 0.15 195deg); /* Teal más brillante para modo oscuro */
+  --primary-foreground: oklch(15% 0.02 240deg);
+
+  --secondary: oklch(65% 0.18 280deg); /* Púrpura más brillante */
+  --secondary-foreground: oklch(15% 0.02 240deg);
+
+  --muted: oklch(25% 0.02 240deg);
+  --muted-foreground: oklch(70% 0.01 240deg);
+
+  --accent: oklch(85% 0.18 210deg); /* Cian brillante muy vibrante */
+  --accent-foreground: oklch(15% 0.02 240deg);
+
   --destructive: oklch(50% 0.2 27.325deg);
   --destructive-foreground: oklch(99% 0 0deg);
-  --border: oklch(32% 0.02 85deg);
-  --input: oklch(28% 0.02 85deg);
-  --ring: oklch(65% 0.15 195deg);
-  --chart-1: oklch(65% 0.15 195deg);
-  --chart-2: oklch(65% 0.15 175deg);
-  --chart-3: oklch(75% 0.18 210deg);
-  --chart-4: oklch(65% 0.22 145deg);
-  --chart-5: oklch(55% 0.08 85deg);
-  --sidebar: oklch(22% 0.02 85deg);
-  --sidebar-foreground: oklch(95% 0.005 90deg);
-  --sidebar-primary: oklch(65% 0.15 195deg);
-  --sidebar-primary-foreground: oklch(15% 0.02 85deg);
-  --sidebar-accent: oklch(28% 0.02 85deg);
-  --sidebar-accent-foreground: oklch(95% 0.005 90deg);
-  --sidebar-border: oklch(32% 0.02 85deg);
-  --sidebar-ring: oklch(65% 0.15 195deg);
+
+  --border: oklch(30% 0.02 240deg);
+  --input: oklch(28% 0.02 240deg);
+  --ring: var(--accent);
+
+  /* Gráficos en modo oscuro */
+  --chart-1: var(--primary);
+  --chart-2: var(--secondary);
+  --chart-3: var(--accent);
+  --chart-4: oklch(75% 0.2 170deg);
+  --chart-5: oklch(80% 0.05 90deg);
+
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--accent);
 }
 
 @theme inline {
+  /* ... (Fuentes y radios se mantienen igual, mapeamos los nuevos colores) ... */
   --font-sans: "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Playfair Display Fallback", georgia, serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -120,13 +162,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-teal: var(--teal);
-  --color-cyan-teal: var(--cyan-teal);
-  --color-bright-cyan: var(--bright-cyan);
-  --color-green: var(--green);
-  --color-olive: var(--olive);
-}
 
+  /* Mapeo de colores personalizados exactos para referencia rápida en la UI */
+  --color-inspirarte-teal: var(--inspirarte-teal-primary);
+  --color-inspirarte-cyan: var(--inspirarte-cyan-bright);
+  --color-inspirarte-purple: var(--inspirarte-purple-deep);
+  --color-inspirarte-charcoal: var(--inspirarte-charcoal-text);
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

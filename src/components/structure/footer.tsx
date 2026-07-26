@@ -118,7 +118,10 @@ export function Footer() {
                 <li className="flex items-center gap-3">
                   <FaEnvelope className="w-5 h-5 text-[#3ACBFE]" />
                   <span className="text-white/80 text-sm">
-                    <Link href={"mailto:" + process.env.NEXT_PUBLIC_EMAIL}>
+                    <Link
+                      rel="noopener noreferrer"
+                      href={"mailto:" + process.env.NEXT_PUBLIC_EMAIL}
+                    >
                       {process.env.NEXT_PUBLIC_EMAIL}
                     </Link>
                   </span>
@@ -129,6 +132,7 @@ export function Footer() {
                   <FaWhatsapp className="w-5 h-5 text-[#3ACBFE]" />
                   <span className="text-white/80 text-sm">
                     <Link
+                      rel="noopener noreferrer"
                       href={
                         "https://wa.me/" +
                         process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")

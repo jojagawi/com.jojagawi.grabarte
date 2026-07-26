@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
-const INPUT_DIR = path.resolve("public/images");
+const INPUT_DIR = path.resolve("public/dam");
 const QUALITY = 82;
 
 async function exists(dirPath) {
