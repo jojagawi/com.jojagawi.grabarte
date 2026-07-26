@@ -614,13 +614,13 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    PDF, TXT, MD, DOC, DOCX
+                    Puedes subir cualquier tipo de archivo
                   </p>
                   <input
                     id="instruction-file"
                     name="instructionFile"
                     type="file"
-                    accept=".pdf,.txt,.md,.doc,.docx"
+                    accept="*/*"
                     onChange={(e) =>
                       handleSingleFileChange(e, setInstructionFile)
                     }
@@ -651,14 +651,14 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    AI, EPS, SVG, PDF, PSD, CDR, LBRN2, DXF, STL, OBJ
+                    Puedes subir cualquier tipo de archivo
                   </p>
                   <input
                     id="source-files"
                     name="sourceFiles"
                     type="file"
                     multiple
-                    accept=".ai,.eps,.svg,.pdf,.psd,.cdr,.lbrn2,.dxf,.stl,.obj"
+                    accept="*/*"
                     onChange={(e) =>
                       handleMultiFileChange(e, setSourceFiles, 20)
                     }
