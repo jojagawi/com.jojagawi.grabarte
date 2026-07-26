@@ -1,4 +1,4 @@
-# InspirArte - Catalogo Web Estatico
+# InspiraArte - Catalogo Web Estatico
 
 ![Status](https://img.shields.io/badge/status-development-blue)
 ![Node](https://img.shields.io/badge/node->%3D24.0.0-green)

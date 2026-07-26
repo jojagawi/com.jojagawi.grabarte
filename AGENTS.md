@@ -1,10 +1,10 @@
 ## AGENTS.md — guía para agentes
 
-Este repositorio es **InspirArte**, un catálogo de productos personalizados construido con **next** (React + TypeScript) que permite mostrar y solicitar cotizaciones de objetos personalizados (termos, MDF, sellos, acrílico, cuero, figuras 3D, etc.). Incluye un panel de administración local con base de datos SQLite.
+Este repositorio es **InspiraArte**, un catálogo de productos personalizados construido con **next** (React + TypeScript) que permite mostrar y solicitar cotizaciones de objetos personalizados (termos, MDF, sellos, acrílico, cuero, figuras 3D, etc.). Incluye un panel de administración local con base de datos SQLite.
 
 ### Descripción del Proyecto
 
-**InspirArte** tiene dos vertientes principales:
+**InspiraArte** tiene dos vertientes principales:
 
 1. **Sitio Público** (`localhost:8000`):
    - Catálogo de productos personalizados
@@ -299,7 +299,7 @@ NEXT_UPLOAD_DIR=./data/uploads/
 
 ## Contacto y Referencias
 
-- **Mantenedor**: Equipo InspirArte
+- **Mantenedor**: Equipo InspiraArte
 - **Documentación**: Ver `README.md` para guía de usuario
 - **Estándares**: Ver `.agents/instructions.md` para detalles de código
 - **Workflows**: Ver `.agents/workflows/` para checklists

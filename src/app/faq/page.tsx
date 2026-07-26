@@ -3,7 +3,7 @@ import { FAQ } from "@/components/custom/faq";
 
 
 export const metadata: Metadata = {
-  title: "InspirArte | Personalización sin límites: del diseño a la realidad",
+  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
   description:
     "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
   keywords: [
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "sellos a medida",
   ],
   openGraph: {
-    title: "InspirArte | Productos Personalizados",
+    title: "InspiraArte | Productos Personalizados",
     description: "Materializamos tus ideas con precisión y detalle.",
     type: "website",
     locale: "es_MX",

@@ -1,6 +1,6 @@
 # Instrucciones del proyecto GrabArte
 
-Este documento contiene los estandares obligatorios para contribuir al sitio web de **GrabArte/InspirArte**.
+Este documento contiene los estandares obligatorios para contribuir al sitio web de **GrabArte/InspiraArte**.
 
 ## Contexto del proyecto
 

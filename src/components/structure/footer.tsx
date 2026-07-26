@@ -19,7 +19,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-lg bg-[#4290A3] flex items-center justify-center">
                 <Image
                   src="/dam/logos/logo.svg"
-                  alt="Logo InspirArte"
+                  alt="Logo InspiraArte"
                   width={20}
                   height={20}
                   className="w-5 h-5 filter-[brightness(0)_invert(1)]"

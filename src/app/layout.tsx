@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "InspirArte | Personalización sin límites: del diseño a la realidad",
+  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
   description:
     "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
   icons: {

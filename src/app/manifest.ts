@@ -4,8 +4,8 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "InspirArte",
-    short_name: "inspirarte",
+    name: "InspiraArte",
+    short_name: "inspiraarte",
     start_url: "/",
     display: "standalone",
     background_color: "#fff",
