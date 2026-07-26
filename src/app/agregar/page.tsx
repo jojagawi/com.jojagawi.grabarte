@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { AddNewDesign } from "@/components/custom/add-new-design";
 import { prisma } from "@/lib/prisma";
 
@@ -18,6 +19,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Agregar() {
+
+  if (process.env.NODE_ENV !== "development") {
+    notFound();
+  }
+
   const categories = await prisma.catCategories.findMany({
     where: {
       status: 1,

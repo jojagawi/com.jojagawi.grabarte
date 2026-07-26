@@ -6,6 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { sendGTMEvent } from "@next/third-parties/google";
 
 type CategoryOption = {
@@ -27,10 +35,100 @@ type AddNewDesignProps = {
 export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isAddingCategory, setIsAddingCategory] = useState(false)
+  const [isAddingMaterial, setIsAddingMaterial] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState("")
+  const [newMaterialName, setNewMaterialName] = useState("")
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>(categories)
+  const [materialOptions, setMaterialOptions] = useState<MaterialOption[]>(materials)
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([])
+  const [selectedMaterialId, setSelectedMaterialId] = useState("")
   const [previewFile, setPreviewFile] = useState<File | null>(null)
   const [designImages, setDesignImages] = useState<File[]>([])
   const [instructionFile, setInstructionFile] = useState<File | null>(null)
   const [sourceFiles, setSourceFiles] = useState<File[]>([])
+
+  const handleCategoriesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = Array.from(e.target.selectedOptions).map((option) => option.value)
+    setSelectedCategoryIds(selected)
+  }
+
+  const handleCreateCategory = async () => {
+    const name = newCategoryName.trim()
+    if (!name) return
+
+    try {
+      const response = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      })
+
+      if (!response.ok) {
+        throw new Error("No se pudo guardar la categoría")
+      }
+
+      const created: { id: number; name: string } = await response.json()
+
+      setCategoryOptions((prev) => {
+        if (prev.some((item) => item.id === created.id)) return prev
+        return [...prev, { id: created.id, name: created.name }].sort((a, b) =>
+          a.name.localeCompare(b.name),
+        )
+      })
+
+      setSelectedCategoryIds((prev) => {
+        const id = String(created.id)
+        return prev.includes(id) ? prev : [...prev, id]
+      })
+
+      setNewCategoryName("")
+      setIsAddingCategory(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleCreateMaterial = async () => {
+    const name = newMaterialName.trim()
+    if (!name) return
+
+    try {
+      const response = await fetch("/api/admin/materials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      })
+
+      if (!response.ok) {
+        throw new Error("No se pudo guardar el material")
+      }
+
+      const created: { id: number; name: string; slug: string } = await response.json()
+
+      setMaterialOptions((prev) => {
+        if (prev.some((item) => item.id === created.id)) return prev
+        return [
+          ...prev,
+          {
+            id: created.id,
+            name: created.name,
+            slug: created.slug,
+          },
+        ].sort((a, b) => a.name.localeCompare(b.name))
+      })
+
+      setSelectedMaterialId(String(created.id))
+      setNewMaterialName("")
+      setIsAddingMaterial(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const handleSingleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -149,42 +247,46 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="materialType">Tipo de material</Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <Label htmlFor="materialType">Tipo de material</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingMaterial(true)}>
+                      Agregar nuevo
+                    </Button>
+                  </div>
                   <select
                     id="materialType"
                     name="materialType"
+                    value={selectedMaterialId}
+                    onChange={(e) => setSelectedMaterialId(e.target.value)}
                     className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
                   >
                     <option value="">Selecciona un material</option>
-                    {materials.map((material) => (
-                      <option key={material.id} value={material.slug || material.id}>
+                    {materialOptions.map((material) => (
+                      <option key={material.id} value={String(material.id)}>
                         {material.name}
                       </option>
                     ))}
                   </select>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tags">Tags *</Label>
-                  <Input
-                    id="tags"
-                    name="tags"
-                    required
-                    placeholder="Ej. navidad, adorno, mdf"
-                  />
-                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="categories">Categorías del catálogo *</Label>
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="categories">Categorías del catálogo *</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingCategory(true)}>
+                    Agregar nueva
+                  </Button>
+                </div>
                 <select
                   id="categories"
                   name="categories"
                   required
                   multiple
+                  value={selectedCategoryIds}
+                  onChange={handleCategoriesChange}
                   className="w-full min-h-32 px-3 py-2 rounded-md border border-input bg-white text-sm"
                 >
-                  {categories.map((category) => (
+                  {categoryOptions.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
@@ -405,6 +507,62 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 .
               </p>
             </form>
+
+            <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Nueva categoría</DialogTitle>
+                  <DialogDescription>
+                    Escribe el nombre de la categoría para guardarla y seleccionarla automáticamente.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-2">
+                  <Label htmlFor="new-category-name">Nombre</Label>
+                  <Input
+                    id="new-category-name"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Ej. San Valentín"
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setIsAddingCategory(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="button" onClick={handleCreateCategory}>
+                    Guardar categoría
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={isAddingMaterial} onOpenChange={setIsAddingMaterial}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Nuevo material</DialogTitle>
+                  <DialogDescription>
+                    Escribe el nombre del material para guardarlo y seleccionarlo automáticamente.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-2">
+                  <Label htmlFor="new-material-name">Nombre</Label>
+                  <Input
+                    id="new-material-name"
+                    value={newMaterialName}
+                    onChange={(e) => setNewMaterialName(e.target.value)}
+                    placeholder="Ej. Vinil reflectivo"
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setIsAddingMaterial(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="button" onClick={handleCreateMaterial}>
+                    Guardar material
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
         </div>
       </div>
     </section>
