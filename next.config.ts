@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: isStaticExport,
+    remotePatterns: [
+      new URL("http://dam.inspiraarte.com/preview/**"),
+      new URL("https://dam.inspiraarte.com/preview/**")
+    ],
   },
 };
 

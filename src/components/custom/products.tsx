@@ -5,61 +5,33 @@ import Image from "next/image"
 import { Gift, Calendar, Briefcase, Heart, GraduationCap, Baby, PartyPopper, Church } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const products = [
-  {
-    id: 1,
-    name: "Termos Personalizados",
-    description:
-      "Grabado láser de alta precisión en acero inoxidable. Perfectos para regalar o uso diario.",
-    image: "/dam/productos/termo-personalizado.webp",
-    color: "from-[#4290A3]/10 to-[#1FA4A7]/10",
-    occasions: ["Día del Padre", "Graduaciones", "Corporativo"],
-  },
-  {
-    id: 2,
-    name: "Llaveros Grabados",
-    description:
-      "Diseños únicos en madera, acrílico o metal. Ideales para recuerdos de eventos.",
-    image: "/dam/productos/llaveros-grabados.webp",
-    color: "from-[#1FA4A7]/10 to-[#3ACBFE]/10",
-    occasions: ["Bodas", "XV Años", "Cumpleaños"],
-  },
-  {
-    id: 3,
-    name: "Carteras y Carpetas de Piel",
-    description:
-      "Grabado elegante en piel genuina. Un regalo con clase y personalidad.",
-    image: "/dam/productos/cartera-piel.webp",
-    color: "from-[#585106]/10 to-[#4290A3]/10",
-    occasions: ["Día del Padre", "Graduaciones", "Ejecutivo"],
-  },
-  {
-    id: 4,
-    name: "Figuras Decorativas MDF",
-    description:
-      "Corte láser de precisión para crear decoraciones únicas para cualquier ocasión.",
-    image: "/dam/productos/figuras-mdf.webp",
-    color: "from-[#00B003]/10 to-[#1FA4A7]/10",
-    occasions: ["Navidad", "Día de la Madre", "Decoración"],
-  },
-];
+type ProductListItem = {
+  id: number
+  name: string
+  description: string
+  image: string
+  color: string
+  categories: string[]
+}
 
-const occasions = [
-  { name: "Navidad", icon: Gift, color: "#00B003" },
-  { name: "Día del Padre", icon: Briefcase, color: "#4290A3" },
-  { name: "Día de la Madre", icon: Heart, color: "#1FA4A7" },
-  { name: "Bodas", icon: Church, color: "#585106" },
-  { name: "XV Años", icon: PartyPopper, color: "#3ACBFE" },
-  { name: "Graduaciones", icon: GraduationCap, color: "#4290A3" },
-  { name: "Día del Niño", icon: Baby, color: "#00B003" },
-  { name: "Cumpleaños", icon: Calendar, color: "#1FA4A7" },
-]
+type ProductCategory = {
+  id: number
+  name: string
+}
 
-export function Products() {
-  const [selectedOccasion, setSelectedOccasion] = useState<string | null>(null)
+interface ProductsProps {
+  products: ProductListItem[]
+  categories: ProductCategory[]
+}
 
-  const filteredProducts = selectedOccasion
-    ? products.filter(p => p.occasions.some(o => o.toLowerCase().includes(selectedOccasion.toLowerCase())))
+const categoryIcons = [Gift, Briefcase, Heart, Church, PartyPopper, GraduationCap, Baby, Calendar]
+const categoryColors = ["#00B003", "#4290A3", "#1FA4A7", "#585106", "#3ACBFE"]
+
+export function Products({ products, categories }: ProductsProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.categories.includes(selectedCategory))
     : products
 
   return (
@@ -79,34 +51,37 @@ export function Products() {
           </p>
         </div>
 
-        {/* Occasions Filter */}
+        {/* Categories Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           <button
-            onClick={() => setSelectedOccasion(null)}
+            onClick={() => setSelectedCategory(null)}
             className={cn(
               "px-4 py-2 rounded-full text-sm font-medium transition-all",
-              !selectedOccasion
+              !selectedCategory
                 ? "bg-[#4290A3] text-white shadow-lg shadow-[#4290A3]/25"
                 : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
             )}
           >
             Todos
           </button>
-          {occasions.map((occasion) => {
-            const Icon = occasion.icon
+          {categories.map((category, index) => {
+            const Icon = categoryIcons[index % categoryIcons.length]
             return (
               <button
-                key={occasion.name}
-                onClick={() => setSelectedOccasion(occasion.name === selectedOccasion ? null : occasion.name)}
+                key={category.id}
+                onClick={() => setSelectedCategory(category.name === selectedCategory ? null : category.name)}
                 className={cn(
                   "px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
-                  selectedOccasion === occasion.name
+                  selectedCategory === category.name
                     ? "bg-[#4290A3] text-white shadow-lg shadow-[#4290A3]/25"
                     : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
                 )}
+                style={{
+                  borderColor: selectedCategory === category.name ? "transparent" : categoryColors[index % categoryColors.length],
+                }}
               >
                 <Icon className="w-4 h-4" />
-                {occasion.name}
+                {category.name}
               </button>
             )
           })}
@@ -142,12 +117,20 @@ export function Products() {
                   {product.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {product.occasions.map((occasion) => (
+                  {product.categories.length === 0 && (
                     <span
-                      key={occasion}
+                      key={`sin-categoria-${product.id}`}
                       className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
                     >
-                      {occasion}
+                      Sin categoria
+                    </span>
+                  )}
+                  {product.categories.map((categoryName) => (
+                    <span
+                      key={`${product.id}-${categoryName}`}
+                      className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
+                    >
+                      {categoryName}
                     </span>
                   ))}
                 </div>
@@ -155,6 +138,12 @@ export function Products() {
             </div>
           ))}
         </div>
+
+        {filteredProducts.length === 0 && (
+          <p className="text-center text-muted-foreground mt-8">
+            No hay diseños publicados para esta categoria por el momento.
+          </p>
+        )}
 
         {/* CTA */}
         <div className="text-center mt-12">
