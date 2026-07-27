@@ -365,6 +365,27 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 />
               </div>
 
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="author">Autor</Label>
+                  <Input
+                    id="author"
+                    name="author"
+                    placeholder="Nombre del autor o creador"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Notas</Label>
+                  <Textarea
+                    id="notes"
+                    name="notes"
+                    placeholder="Notas internas o comentarios adicionales"
+                    className="min-h-20"
+                  />
+                </div>
+              </div>
+
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <input
                   type="checkbox"
@@ -459,6 +480,30 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     type="number"
                     min={0}
                     placeholder="120"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="suggestedPrice">Precio sugerido</Label>
+                  <Input
+                    id="suggestedPrice"
+                    name="suggestedPrice"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="minimumPrice">Precio mínimo</Label>
+                  <Input
+                    id="minimumPrice"
+                    name="minimumPrice"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    placeholder="0.00"
                   />
                 </div>
               </div>

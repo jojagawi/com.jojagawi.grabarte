@@ -63,6 +63,8 @@ Table Designs {
   materialId Int
   numberMdfTables Int [not null, default: 0]
   timeMachine Int [not null, default: 0]
+  suggestedPrice Float
+  minimumPrice Float
   material CatMaterials
   relDesignsCategories RelDesignsCategories [not null]
   relDesignsFiles RelDesignsFiles [not null]

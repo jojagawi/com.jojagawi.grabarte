@@ -8,6 +8,14 @@ function parseOptionalInt(value: FormDataEntryValue | null) {
   return Number.isFinite(numeric) ? numeric : null;
 }
 
+function parseOptionalNumber(value: FormDataEntryValue | null) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return null;
+
+  const numeric = Number(raw);
+  return Number.isFinite(numeric) ? numeric : null;
+}
+
 function extensionFromFileName(fileName: string) {
   const parts = fileName.split(".");
   if (parts.length < 2) return "";
@@ -42,14 +50,31 @@ export async function POST(request: Request) {
   }
 
   const description = String(formData.get("description") ?? "").trim() || null;
+  const author = String(formData.get("author") ?? "").trim() || null;
+  const notes = String(formData.get("notes") ?? "").trim() || null;
   const materialId = parseOptionalInt(formData.get("materialType"));
   const materialConnect =
     materialId && materialId > 0 ? { connect: { id: materialId } } : undefined;
   const numberMdfTablesRaw = parseOptionalInt(formData.get("mdfBoards"));
   const timeMachineRaw = parseOptionalInt(formData.get("workTimeMinutes"));
+  const suggestedPriceRaw = parseOptionalNumber(formData.get("suggestedPrice"));
+  const minimumPriceRaw = parseOptionalNumber(formData.get("minimumPrice"));
 
   const numberMdfTables = Math.max(0, Math.min(99, numberMdfTablesRaw ?? 0));
   const timeMachine = Math.max(0, timeMachineRaw ?? 0);
+  const suggestedPrice = suggestedPriceRaw === null ? null : Math.max(0, suggestedPriceRaw);
+  const minimumPrice = minimumPriceRaw === null ? null : Math.max(0, minimumPriceRaw);
+
+  if (
+    suggestedPrice !== null &&
+    minimumPrice !== null &&
+    minimumPrice > suggestedPrice
+  ) {
+    return NextResponse.json(
+      { error: "El precio minimo no puede ser mayor al precio sugerido" },
+      { status: 400 },
+    );
+  }
 
   // Files are received in the payload; persistence in Files table is pending.
   const previewFile = formData.get("previewFile");
@@ -110,6 +135,8 @@ export async function POST(request: Request) {
       data: {
         name,
         description,
+        author,
+        notes,
         material: materialConnect,
         status: formData.has("status") ? 1 : 0,
         isTested: formData.has("isTested") ? 1 : 0,
@@ -118,6 +145,8 @@ export async function POST(request: Request) {
         showInSite: formData.has("showInSite") ? 1 : 0,
         numberMdfTables,
         timeMachine,
+        suggestedPrice,
+        minimumPrice,
       },
       select: { id: true, name: true },
     });

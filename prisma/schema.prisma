@@ -76,6 +76,8 @@ model Designs {
   materialId           Int?
   numberMdfTables      Int                    @default(0)
   timeMachine          Int                    @default(0)
+  suggestedPrice       Float?
+  minimumPrice         Float?
   material             CatMaterials?          @relation(fields: [materialId], references: [id])
   relDesignsCategories RelDesignsCategories[]
   relDesignsFiles      RelDesignsFiles[]
