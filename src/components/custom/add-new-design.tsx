@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { CategoryMultiSelect } from "@/components/custom/CategoryMultiSelect"
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { sendGTMEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from "@next/third-parties/google"
 
 type CategoryOption = {
   id: number
@@ -49,11 +50,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const [instructionFile, setInstructionFile] = useState<File | null>(null)
   const [sourceFiles, setSourceFiles] = useState<File[]>([])
   const [activeDropzone, setActiveDropzone] = useState<string | null>(null)
-
-  const handleCategoriesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = Array.from(e.target.selectedOptions).map((option) => option.value)
-    setSelectedCategoryIds(selected)
-  }
+  const [categoryError, setCategoryError] = useState<string | null>(null)
 
   const handleCreateCategory = async () => {
     const name = newCategoryName.trim()
@@ -247,6 +244,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
     setNewMaterialName("")
     setIsAddingCategory(false)
     setIsAddingMaterial(false)
+    setCategoryError(null)
     setFormResetKey((prev) => prev + 1)
   }
 
@@ -257,6 +255,13 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (selectedCategoryIds.length === 0) {
+      setCategoryError("Selecciona al menos una categoría del catálogo.")
+      return
+    }
+
+    setCategoryError(null)
     setIsSubmitting(true)
     const formData = new FormData(e.currentTarget)
     const name = String(formData.get("name") ?? "").trim()
@@ -411,24 +416,18 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                     Agregar nueva
                   </Button>
                 </div>
-                <select
-                  id="categories"
+                <CategoryMultiSelect
                   name="categories"
-                  required
-                  multiple
-                  value={selectedCategoryIds}
-                  onChange={handleCategoriesChange}
-                  className="w-full min-h-32 px-3 py-2 rounded-md border border-input bg-white text-sm"
-                >
-                  {categoryOptions.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-muted-foreground">
-                  Puedes seleccionar múltiples categorías.
-                </p>
+                  options={categoryOptions}
+                  selectedValues={selectedCategoryIds}
+                  error={categoryError}
+                  onChangeAction={(values) => {
+                    setSelectedCategoryIds(values)
+                    if (values.length > 0) {
+                      setCategoryError(null)
+                    }
+                  }}
+                />
               </div>
             </fieldset>
 
@@ -790,5 +789,5 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
         </div>
       </div>
     </section>
-  );
+  )
 }
