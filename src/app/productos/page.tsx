@@ -84,6 +84,7 @@ export default async function Productos() {
           status: 1,
           file: {
             status: 1,
+            fileTypeId: 1,
             filePath: { not: null },
           },
         },

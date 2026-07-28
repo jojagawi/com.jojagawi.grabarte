@@ -213,6 +213,9 @@ importers:
       eslint-plugin-jsx-a11y:
         specifier: ^6.7.1
         version: 6.10.2(eslint@9.39.5(jiti@2.7.0))
+      next-llms-txt:
+        specifier: ~1.0.2
+        version: 1.0.2(next@16.2.11(@babel/core@7.29.7)(@opentelemetry/api@1.4.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -4422,6 +4425,15 @@ packages:
   new-github-issue-url@0.2.1:
     resolution: {integrity: sha512-md4cGoxuT4T4d/HDOXbrUHkTKrp/vp+m3aOA7XXVYwNsUNMK49g3SQicTSeV5GIz/5QVGAeYRAOlyp9OvlgsYA==}
     engines: {node: '>=10'}
+
+  next-llms-txt@1.0.2:
+    resolution: {integrity: sha512-v5YtAJiT0JC4C4kQ2Z5QCgc2NwOVy6wYRrLga8SBtSsOffp8L66HGaNMnTQySpgCfhB+Z3I3OdxuAeHDktFHGA==}
+    engines: {node: ^22.0.0 || ^24.0.0}
+    peerDependencies:
+      next: ^16.0.0
+      react: ^19.2.0
+      react-dom: ^19.2.0
+      typescript: ^5.9.3
 
   next-sitemap@4.2.3:
     resolution: {integrity: sha512-vjdCxeDuWDzldhCnyFCQipw5bfpl4HmZA7uoo3GAaYGjGgfL4Cxb1CiztPuWGmS+auYs7/8OekRS8C2cjdAsjQ==}
@@ -10458,6 +10470,20 @@ snapshots:
   netmask@2.1.1: {}
 
   new-github-issue-url@0.2.1: {}
+
+  next-llms-txt@1.0.2(next@16.2.11(@babel/core@7.29.7)(@opentelemetry/api@1.4.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3):
+    dependencies:
+      '@babel/generator': 7.29.7
+      '@babel/parser': 7.29.7
+      '@babel/traverse': 7.29.7
+      '@babel/types': 7.29.7
+      debug: 4.4.3
+      next: 16.2.11(@babel/core@7.29.7)(@opentelemetry/api@1.4.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
 
   next-sitemap@4.2.3(next@16.2.11(@babel/core@7.29.7)(@opentelemetry/api@1.4.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
     dependencies:

@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: isStaticExport,
     remotePatterns: [
-      new URL("http://dam.inspiraarte.com/preview/**"),
-      new URL("https://dam.inspiraarte.com/preview/**")
+      new URL("http://dam.inspiraarte.com/**"),
+      new URL("https://dam.inspiraarte.com/**")
     ],
   },
 };
