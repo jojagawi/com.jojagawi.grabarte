@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Setup Cloud Formation Linter with Latest Version
-        uses: scottbrenner/cfn-lint-action@v2.7.0
+        uses: scottbrenner/cfn-lint-action@v2.7.1
         with:
           command: cfn-lint -t ./.aws/infra.yml
       - name: Configure AWS credentials
