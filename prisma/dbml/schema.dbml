@@ -113,6 +113,17 @@ Table RelDesignsTypes {
   designType CatDesignsType
 }
 
+Table testimonials {
+  id Int [pk, increment]
+  name String [not null]
+  role String [not null]
+  content String [not null]
+  product String [not null]
+  rating Int [not null]
+  status Int [not null, default: 1]
+  createdAt DateTime [default: `now()`, not null]
+}
+
 Ref: Designs.materialId > CatMaterials.id
 
 Ref: Files.fileTypeId > CatFileType.id

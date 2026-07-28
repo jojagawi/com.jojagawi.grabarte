@@ -1,39 +1,21 @@
 import { Star } from "lucide-react"
 
-const testimonials = [
-  {
-    name: "María González",
-    role: "Organizadora de eventos",
-    content: "Pedí 150 llaveros para una boda y quedaron hermosos. El equipo fue súper atento con los cambios de diseño. ¡100% recomendados!",
-    rating: 5,
-    product: "Llaveros para boda",
-  },
-  {
-    name: "Carlos Rodríguez",
-    role: "Emprendedor",
-    content: "Uso sus termos grabados como regalo corporativo para mis clientes. La calidad del grabado es impecable y siempre entregan a tiempo.",
-    rating: 5,
-    product: "Termos corporativos",
-  },
-  {
-    name: "Ana Martínez",
-    role: "Mamá creativa",
-    content: "Las figuras de MDF para el cumpleaños de mi hija fueron el hit de la fiesta. Personalizaron todo con su nombre y los colores que quería.",
-    rating: 5,
-    product: "Decoración cumpleaños",
-  },
-  {
-    name: "Roberto Sánchez",
-    role: "Profesor",
-    content: "Regalé carteras grabadas a mis compañeros de trabajo. El detalle del grabado en piel es muy elegante. Excelente relación calidad-precio.",
-    rating: 5,
-    product: "Carteras de piel",
-  },
-]
+export type TestimonialItem = {
+  id: number
+  name: string
+  role: string
+  content: string
+  rating: number
+  product: string
+}
 
-export function Testimonials() {
+type TestimonialsProps = {
+  testimonials: TestimonialItem[]
+}
+
+export function Testimonials({ testimonials }: TestimonialsProps) {
   return (
-    <section className="py-24 bg-gradient-to-br from-[#4290A3]/5 to-[#1FA4A7]/5">
+    <section className="py-24 bg-linear-to-br from-[#4290A3]/5 to-[#1FA4A7]/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -52,9 +34,9 @@ export function Testimonials() {
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.id}
               className="bg-white rounded-2xl p-6 border border-border hover:shadow-lg transition-shadow"
             >
               {/* Stars */}
@@ -74,7 +56,7 @@ export function Testimonials() {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4290A3] to-[#1FA4A7] flex items-center justify-center text-white font-semibold text-sm">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#4290A3] to-[#1FA4A7] flex items-center justify-center text-white font-semibold text-sm">
                   {testimonial.name
                     .split(" ")
                     .map((n) => n[0])

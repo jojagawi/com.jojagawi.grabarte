@@ -29,7 +29,6 @@ export const metadata: Metadata = {
 const defaultImage = "/dam/dafault-image-product.webp";
 
 export default async function Home() {
-  const isDevelopment = process.env.NODE_ENV === "development";
 
   const categories = await prisma.catCategories.findMany({
     where: {
@@ -154,11 +153,29 @@ export default async function Home() {
     ),
   );
 
+  const testimonials = await prisma.testimonials.findMany({
+    where: {
+      status: 1,
+    },
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      content: true,
+      rating: true,
+      product: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 4,
+  });
+
   return (
     <>
       <Hero designs={heroDesigns} marqueeCategories={marqueeCategories} />
       <Process />
-      <Testimonials />
+      <Testimonials testimonials={testimonials} />
     </>
   );
 }

@@ -127,12 +127,12 @@ model RelDesignsTypes {
 }
 
 model testimonials {
-  id          Int      @id @default(autoincrement())
-  name        String
-  position    String
-  description String
-  product     String
-  stars       Int
-  status      Int      @default(1)
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  role      String
+  content   String
+  product   String
+  rating    Int
+  status    Int      @default(1)
+  createdAt DateTime @default(now())
 }
