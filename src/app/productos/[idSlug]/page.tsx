@@ -268,6 +268,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   preload="metadata"
                 >
                   <source src={previewItem.url} />
+                  <track
+                    kind="captions"
+                    srcLang="es"
+                    label="Subtitulos"
+                    src="data:text/vtt,WEBVTT%0A%0A"
+                  />
                   Tu navegador no soporta la reproducción de video.
                 </video>
               ) : (
@@ -351,6 +357,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         preload="metadata"
                       >
                         <source src={item.url} />
+                        <track
+                          kind="captions"
+                          srcLang="es"
+                          label="Subtitulos"
+                          src="data:text/vtt,WEBVTT%0A%0A"
+                        />
                         Tu navegador no soporta la reproducción de video.
                       </video>
                     ) : (

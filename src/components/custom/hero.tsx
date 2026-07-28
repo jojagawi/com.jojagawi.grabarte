@@ -5,7 +5,38 @@ import Image from "next/image"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export function Hero() {
+const defaultHeroImage = "/dam/dafault-image-product.webp"
+
+const fallbackMarqueeCategories = [
+  "Navidad",
+  "Dia del Padre",
+  "Dia de la Madre",
+  "Bodas",
+  "XV Anos",
+  "Cumpleanos",
+  "Graduaciones",
+  "Dia del Nino",
+]
+
+export type HeroDesignItem = {
+  id: number
+  name: string
+  description: string
+  image: string
+  categories: string[]
+}
+
+type HeroProps = {
+  designs: HeroDesignItem[]
+  marqueeCategories: string[]
+}
+
+export function Hero({ designs, marqueeCategories }: HeroProps) {
+  const featuredDesign = designs[0]
+  const secondaryDesigns = designs.slice(1, 3)
+  const marqueeItems = marqueeCategories.length > 0 ? marqueeCategories : fallbackMarqueeCategories
+  const marqueeText = `✦ ${marqueeItems.join(" ✦ ")}`
+
   return (
     <section
       id="inicio"
@@ -65,6 +96,8 @@ export function Hero() {
             </div>
 
             {/* Stats */}
+            {/*
+            //TODO Agregar cuando se tengan estadísticas
             <div className="flex gap-8 pt-4">
               <div>
                 <div className="text-3xl font-bold text-[#1FA4A7]">500+</div>
@@ -85,6 +118,7 @@ export function Hero() {
                 </div>
               </div>
             </div>
+            */}
           </div>
 
           {/* Hero Image Grid */}
@@ -93,8 +127,8 @@ export function Hero() {
               {/* Main Product Image */}
               <div className="col-span-2 relative aspect-4/3 rounded-2xl overflow-hidden group shadow-lg">
                 <Image
-                  src="/dam/productos/termo-personalizado.webp"
-                  alt="Termo personalizado con grabado láser"
+                  src={featuredDesign?.image || defaultHeroImage}
+                  alt={`Diseno destacado: ${featuredDesign?.name || "Producto personalizado"}`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -103,43 +137,39 @@ export function Hero() {
                 <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-[#4290A3] mb-2">
-                    Más vendido
+                    Destacado
                   </span>
-                  <p className="text-white font-medium">Termo Personalizado</p>
+                  <p className="text-white font-medium">
+                    {featuredDesign?.name || "Producto personalizado"}
+                  </p>
                   <p className="text-white/80 text-sm">
-                    Con grabado láser de precisión
+                    {featuredDesign?.description || "Con grabado laser de precision"}
                   </p>
                 </div>
               </div>
 
               {/* Secondary Images */}
-              <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
-                <Image
-                  src="/dam/productos/llaveros-grabados.webp"
-                  alt="Llaveros grabados en madera"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-white text-sm font-medium">Llaveros</p>
-                </div>
-              </div>
+              {Array.from({ length: 2 }).map((_, index) => {
+                const design = secondaryDesigns[index]
 
-              <div className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
-                <Image
-                  src="/dam/productos/figuras-mdf.webp"
-                  alt="Figuras decorativas en MDF"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-white text-sm font-medium">Figuras MDF</p>
-                </div>
-              </div>
+                return (
+                  <div key={design?.id ?? `fallback-secondary-${index}`} className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
+                    <Image
+                      src={design?.image || featuredDesign?.image || defaultHeroImage}
+                      alt={`Diseno: ${design?.name || "Producto personalizado"}`}
+                      fill
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-3 left-3">
+                      <p className="text-white text-sm font-medium">
+                        {design?.categories[0] || design?.name || "Personalizado"}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Floating Badge */}
@@ -179,8 +209,7 @@ export function Hero() {
         <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite]">
           {Array.from({ length: 10 }).map((_, i) => (
             <span key={i} className="mx-8 text-white/90 text-sm font-medium">
-              ✦ Navidad ✦ Día del Padre ✦ Día de la Madre ✦ Bodas ✦ XV Años ✦
-              Cumpleaños ✦ Graduaciones ✦ Día del Niño
+              {marqueeText}
             </span>
           ))}
         </div>

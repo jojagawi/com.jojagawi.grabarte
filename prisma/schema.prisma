@@ -125,3 +125,14 @@ model RelDesignsTypes {
   design     Designs?        @relation(fields: [designId], references: [id])
   designType CatDesignsType? @relation(fields: [typeId], references: [id])
 }
+
+model testimonials {
+  id          Int      @id @default(autoincrement())
+  name        String
+  position    String
+  description String
+  product     String
+  stars       Int
+  status      Int      @default(1)
+  createdAt   DateTime @default(now())
+}

@@ -6,9 +6,12 @@ const styleIntConfig = {
   extends: [
     "stylelint-config-standard-scss",
     "stylelint-config-recommended-scss",
-    "stylelint-config-tailwindcss"
+    "stylelint-config-tailwindcss",
   ],
-  plugins: ["stylelint-no-unsupported-browser-features"],
+  plugins: [
+    "stylelint-no-unsupported-browser-features",
+    "stylelint-browser-compat",
+  ],
   rules: {
     "scss/at-rule-no-unknown": [
       true,
@@ -32,6 +35,12 @@ const styleIntConfig = {
       {
         browsers,
         severity: "warning",
+      },
+    ],
+    "plugin/browser-compat": [
+      true,
+      {
+        browserslist: ["baseline widely available"],
       },
     ],
   },
