@@ -99,6 +99,12 @@ pnpm run ci
 `- README.md
 ```
 
+## Utilidad de slugs
+
+- Se centralizo `slugify` en `src/lib/slug.ts` para generar rutas URL-safe.
+- Reglas: minusculas, sin acentos/caracteres especiales y espacios convertidos a `-`.
+- Uso recomendado: construir rutas como `/productos/[id]-[slug]`.
+
 ## Build estatico y despliegue a S3
 
 Generar build:

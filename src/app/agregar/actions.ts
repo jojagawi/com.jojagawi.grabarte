@@ -1,6 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
+import { slugify } from "@/lib/slug"
 
 type CategoryResult = {
   id: number
@@ -15,14 +16,6 @@ type MaterialResult = {
   created: boolean
 }
 
-function slugify(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-}
 
 async function getUniqueSlug(baseSlug: string) {
   let slug = baseSlug || "material"

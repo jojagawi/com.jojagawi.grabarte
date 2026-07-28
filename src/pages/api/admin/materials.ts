@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/slug";
 
 type MaterialPayload = {
   id: number;
@@ -12,14 +13,6 @@ type ErrorPayload = {
   error: string;
 };
 
-function slugify(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 async function uniqueSlug(base: string) {
   const baseSlug = base || "material";

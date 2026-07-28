@@ -2,7 +2,9 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Gift, Calendar, Briefcase, Heart, GraduationCap, Baby, PartyPopper, Church } from "lucide-react"
+import { slugify } from "@/lib/slug"
 import { cn } from "@/lib/utils"
 
 type ProductListItem = {
@@ -90,9 +92,10 @@ export function Products({ products, categories }: ProductsProps) {
         {/* Products Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <div
+            <Link
               key={product.id}
-              className="group bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-[#4290A3]/10 transition-all duration-300 hover:-translate-y-1"
+              href={`/productos/${product.id}-${slugify(product.name)}`}
+              className="group block bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-[#4290A3]/10 transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4290A3]/40"
             >
               {/* Product Image */}
               <div className={cn(
@@ -135,7 +138,7 @@ export function Products({ products, categories }: ProductsProps) {
                   ))}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
