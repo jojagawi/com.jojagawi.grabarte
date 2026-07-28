@@ -4,21 +4,22 @@ import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
 
 export const metadata: Metadata = {
-  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+  title: "InspiraArte | Regalos y productos personalizados en Mexico",
   description:
-    "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    "Creamos termos, llaveros, figuras MDF y mas con grabado y corte laser. Cotiza tu diseño personalizado para regalos, eventos y marcas.",
   keywords: [
-    "corte láser",
-    "grabado láser",
-    "termos personalizados",
-    "corte en MDF",
-    "grabado en acrílico",
+    "productos personalizados",
     "regalos personalizados",
-    "sellos a medida",
+    "grabado laser",
+    "corte laser",
+    "InspiraArte",
+    "termos personalizados",
+    "Mexico",
   ],
   openGraph: {
-    title: "InspiraArte | Productos Personalizados",
-    description: "Materializamos tus ideas con precisión y detalle.",
+    title: "InspiraArte | Productos personalizados para cada ocasion",
+    description:
+      "Transformamos tus ideas en productos personalizados con acabados de calidad y atencion cercana.",
     type: "website",
     locale: "es_MX",
   },

@@ -3,21 +3,19 @@ import { FAQ } from "@/components/custom/faq";
 
 
 export const metadata: Metadata = {
-  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+  title: "Preguntas frecuentes | InspiraArte",
   description:
-    "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    "Resuelve dudas sobre tiempos de entrega, pedidos mínimos, formatos de archivo, envios, pagos y garantías.",
   keywords: [
-    "corte láser",
-    "grabado láser",
-    "termos personalizados",
-    "corte en MDF",
-    "grabado en acrílico",
-    "regalos personalizados",
-    "sellos a medida",
+    "preguntas frecuentes",
+    "faq",
+    "envios",
+    "tiempos de entrega",
+    "InspiraArte",
   ],
   openGraph: {
-    title: "InspiraArte | Productos Personalizados",
-    description: "Materializamos tus ideas con precisión y detalle.",
+    title: "Preguntas frecuentes | InspiraArte",
+    description: "Encuentra respuestas rápidas sobre pedidos y personalización.",
     type: "website",
     locale: "es_MX",
   },

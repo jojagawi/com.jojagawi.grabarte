@@ -3,21 +3,19 @@ import { Process } from "@/components/custom/process";
 
 
 export const metadata: Metadata = {
-  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+  title: "Proceso de pedido | InspiraArte",
   description:
-    "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    "Conoce como trabajamos tu pedido personalizado: idea, propuesta de diseño, producción laser y entrega en Mexico.",
   keywords: [
-    "corte láser",
-    "grabado láser",
-    "termos personalizados",
-    "corte en MDF",
-    "grabado en acrílico",
-    "regalos personalizados",
-    "sellos a medida",
+    "proceso de pedido",
+    "personalización",
+    "producción laser",
+    "cotización",
+    "InspiraArte",
   ],
   openGraph: {
-    title: "InspiraArte | Productos Personalizados",
-    description: "Materializamos tus ideas con precisión y detalle.",
+    title: "Proceso de pedido | InspiraArte",
+    description: "Descubre los pasos para convertir tu idea en un producto personalizado.",
     type: "website",
     locale: "es_MX",
   },

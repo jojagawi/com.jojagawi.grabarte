@@ -4,8 +4,9 @@ import { EditDesign } from "@/components/custom/edit-design";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Editar producto | InspiraArte",
-  description: "Panel para editar productos del catalogo y administrar sus archivos.",
+  title: "Editar producto del catalogo | InspiraArte",
+  description:
+    "Panel interno para actualizar informacion, visibilidad, categorias, precios y archivos de un producto.",
 };
 
 export const dynamicParams = false;

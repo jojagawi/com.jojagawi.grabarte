@@ -4,21 +4,19 @@ import { prisma } from "@/lib/prisma";
 
 
 export const metadata: Metadata = {
-  title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+  title: "Catalogo de productos personalizados | InspiraArte",
   description:
-    "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    "Explora nuestro catalogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.",
   keywords: [
-    "corte láser",
-    "grabado láser",
-    "termos personalizados",
-    "corte en MDF",
-    "grabado en acrílico",
-    "regalos personalizados",
-    "sellos a medida",
+    "catalogo de productos",
+    "productos personalizados",
+    "diseños personalizados",
+    "regalos",
+    "InspiraArte",
   ],
   openGraph: {
-    title: "InspiraArte | Productos Personalizados",
-    description: "Materializamos tus ideas con precisión y detalle.",
+    title: "Catalogo de productos personalizados | InspiraArte",
+    description: "Encuentra ideas y productos personalizados para cualquier ocasion.",
     type: "website",
     locale: "es_MX",
   },

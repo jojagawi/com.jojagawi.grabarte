@@ -6,13 +6,13 @@ import { prisma } from "@/lib/prisma";
 
 
 export const metadata: Metadata = {
-  title: "Agregar nuevo diseño | InspiraArte",
+  title: "Agregar diseno al catalogo | InspiraArte",
   description:
-    "Aquí puedes agregar nuevos diseños para que se muestren en el catalogo, o simplemente para poder almacenarlos para después.",
-  keywords: ["diseños", "archivos", "agregar"],
+    "Panel interno para registrar nuevos disenos, categorias, materiales y archivos del catalogo de InspiraArte.",
+  keywords: ["panel interno", "agregar diseno", "catalogo", "InspiraArte"],
   openGraph: {
-    title: "Agregar nuevo diseño | InspiraArte",
-    description: "Agregar nuevos diseños para que se muestren en el catalogo.",
+    title: "Agregar diseno al catalogo | InspiraArte",
+    description: "Registro interno de nuevos productos y archivos del catalogo.",
     type: "website",
     locale: "es_MX",
   },
