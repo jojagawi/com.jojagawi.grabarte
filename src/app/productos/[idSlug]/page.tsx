@@ -69,10 +69,10 @@ function toFileItem(
 }
 
 export async function generateStaticParams(): Promise<Array<{ idSlug: string }>> {
+  const isDevelopment = process.env.NODE_ENV === "development";
   const designs = await prisma.designs.findMany({
     where: {
-      status: 1,
-      showInSite: 1,
+      ...(isDevelopment ? {} : { status: 1, showInSite: 1 }),
       name: { not: null },
     },
     select: {
@@ -91,6 +91,7 @@ export async function generateStaticParams(): Promise<Array<{ idSlug: string }>>
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { idSlug } = await params;
   const parsed = parseIdSlug(idSlug);
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   if (!parsed) {
     return {
@@ -101,8 +102,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const design = await prisma.designs.findFirst({
     where: {
       id: parsed.id,
-      status: 1,
-      showInSite: 1,
+      ...(isDevelopment ? {} : { status: 1, showInSite: 1 }),
       name: { not: null },
     },
     select: {
@@ -128,6 +128,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { idSlug } = await params;
   const parsed = parseIdSlug(idSlug);
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   if (!parsed) {
     notFound();
@@ -136,8 +137,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const design = await prisma.designs.findFirst({
     where: {
       id: parsed.id,
-      status: 1,
-      showInSite: 1,
+      ...(isDevelopment ? {} : { status: 1, showInSite: 1 }),
       name: { not: null },
     },
     select: {

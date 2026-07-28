@@ -34,6 +34,8 @@ const cardGradients = [
 ];
 
 export default async function Productos() {
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   const categories = await prisma.catCategories.findMany({
     where: {
       relDesignsCategories: {
@@ -56,8 +58,7 @@ export default async function Productos() {
 
   const designs = await prisma.designs.findMany({
     where: {
-      status: 1,
-      showInSite: 1,
+      ...(isDevelopment ? {} : { status: 1, showInSite: 1 }),
       name: { not: null },
     },
     select: {
