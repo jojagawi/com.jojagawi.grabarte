@@ -8,7 +8,13 @@ export const metadata: Metadata = {
   description: "Panel para editar productos del catalogo y administrar sus archivos.",
 };
 
-export function generateStaticParams(): Array<{ id: string }> {
+export const dynamicParams = false;
+
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  if (process.env.STATIC_EXPORT === "true") {
+    return [{ id: "0" }];
+  }
+
   return [];
 }
 

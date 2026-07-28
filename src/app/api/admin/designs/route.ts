@@ -3,6 +3,9 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
 import sharp from "sharp";
 
+export const dynamic = "force-static";
+export const revalidate = false;
+
 function parseOptionalInt(value: FormDataEntryValue | null) {
   const numeric = Number(String(value ?? "").trim());
   return Number.isFinite(numeric) ? numeric : null;

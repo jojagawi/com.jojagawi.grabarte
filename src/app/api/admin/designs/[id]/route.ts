@@ -3,6 +3,17 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client
 import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-static";
+export const revalidate = false;
+
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  if (process.env.STATIC_EXPORT === "true") {
+    return [{ id: "0" }];
+  }
+
+  return [];
+}
+
 function parseOptionalInt(value: FormDataEntryValue | null) {
   const numeric = Number(String(value ?? "").trim());
   return Number.isFinite(numeric) ? numeric : null;

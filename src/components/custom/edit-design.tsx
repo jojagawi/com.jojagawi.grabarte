@@ -82,7 +82,7 @@ function isVideoMime(mimeType: string): boolean {
 }
 
 function getPrivateFileProxyUrl(fileId: number): string {
-  return `/api/admin/designs/files/${fileId}/`;
+  return `/api/admin/designs/files/${fileId}`;
 }
 
 export function EditDesign({ categories, materials, design }: EditDesignProps) {
