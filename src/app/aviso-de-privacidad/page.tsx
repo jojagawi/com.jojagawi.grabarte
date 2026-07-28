@@ -145,12 +145,6 @@ export default function AvisoDePrivacidad() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-border bg-muted/30 p-5">
-            <p className="text-sm text-muted-foreground">
-              Nota informativa: este contenido es una base operativa y no sustituye asesoria legal
-              profesional. Se recomienda revisarlo con un especialista para su adopcion final.
-            </p>
-          </section>
         </article>
       </div>
     </section>

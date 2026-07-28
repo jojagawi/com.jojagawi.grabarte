@@ -151,12 +151,6 @@ export default function TerminosYCondiciones() {
             </p>
           </section>
 
-          <section className="rounded-xl border border-border bg-muted/30 p-5">
-            <p className="text-sm text-muted-foreground">
-              Nota informativa: este documento funciona como base general y no reemplaza asesoria
-              legal especializada. Se recomienda revision profesional para su version final.
-            </p>
-          </section>
         </article>
       </div>
     </section>
