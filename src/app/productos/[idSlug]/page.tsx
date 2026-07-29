@@ -8,6 +8,7 @@ import { slugify } from "@/lib/slug";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { FilePreview } from "@/components/custom/file-preview";
 
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -18,10 +19,13 @@ interface ProductDetailPageProps {
 
 type FileItem = {
   id: number;
-  url: string;
+  previewUrl: string;
+  downloadUrl: string;
   isVideo: boolean;
   isImage: boolean;
   fileName: string;
+  mimeType: string;
+  extension: string;
   key: string;
 };
 
@@ -78,20 +82,34 @@ function toFileItem(
   fileId: number,
   filePath: string | null | undefined,
   mimeType: string | null | undefined,
+  extension: string | null | undefined,
   preferPrivateProxy = false,
 ): FileItem | null {
-  const url = preferPrivateProxy ? getPrivateFileProxyUrl(fileId) : toMediaUrl(filePath);
-  if (!url) {
+  const normalizedExtension = String(extension || "").toLowerCase();
+  const proxyDownloadUrl = getPrivateFileProxyUrl(fileId);
+  const mediaDownloadUrl = preferPrivateProxy ? proxyDownloadUrl : toMediaUrl(filePath);
+
+  if (!mediaDownloadUrl && normalizedExtension !== "lbrn2") {
     return null;
   }
 
+  const previewUrl =
+    normalizedExtension === "lbrn2"
+      ? `${proxyDownloadUrl}?format=svg`
+      : mediaDownloadUrl ?? proxyDownloadUrl;
+
+  const downloadUrl = mediaDownloadUrl ?? proxyDownloadUrl;
+
   return {
     id: fileId,
-    url,
+    previewUrl,
+    downloadUrl,
     isVideo: isVideoMime(mimeType),
-    isImage: isImageMime(mimeType),
+    isImage: isImageMime(mimeType) || normalizedExtension === "svg" || normalizedExtension === "lbrn2",
     fileName: getFileNameFromPath(filePath),
-    key: `${fileId}-${filePath ?? url}`,
+    mimeType: mimeType || "",
+    extension: normalizedExtension,
+    key: `${fileId}-${filePath ?? previewUrl}`,
   };
 }
 
@@ -217,6 +235,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               fileExtension: {
                 select: {
                   mimeType: true,
+                  extension: true,
                 },
               },
             },
@@ -257,24 +276,25 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     previewRelation?.id ?? 0,
     previewRelation?.filePath,
     previewRelation?.fileExtension?.mimeType,
+    previewRelation?.fileExtension?.extension,
   );
 
   const galleryItems = fileRelations
     .filter((file) => file.fileTypeId === 2)
-    .map((file) => toFileItem(file.id, file.filePath, file.fileExtension?.mimeType))
+    .map((file) => toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension))
     .filter((item): item is FileItem => Boolean(item));
 
   const instructionItems = fileRelations
     .filter((file) => file.fileTypeId === 3)
     .map((file) =>
-      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, usePrivateFilesProxy),
+      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension, usePrivateFilesProxy),
     )
     .filter((item): item is FileItem => Boolean(item));
 
   const sourceFileItems = fileRelations
     .filter((file) => file.fileTypeId === 4)
     .map((file) =>
-      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, usePrivateFilesProxy),
+      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension, usePrivateFilesProxy),
     )
     .filter((item): item is FileItem => Boolean(item));
 
@@ -318,7 +338,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   className="w-full aspect-square object-cover bg-black"
                   preload="metadata"
                 >
-                  <source src={previewItem.url} />
+                  <source src={previewItem.previewUrl} />
                   <track
                     kind="captions"
                     srcLang="es"
@@ -330,7 +350,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               ) : (
                 <div className="relative aspect-square bg-gradient-to-br from-[#4290A3]/10 to-[#1FA4A7]/10">
                   <Image
-                    src={previewItem?.url || defaultImage}
+                    src={previewItem?.previewUrl || defaultImage}
                     alt={`Vista previa de ${design.name}`}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
@@ -432,7 +452,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         className="w-full aspect-[4/3] object-cover bg-black"
                         preload="metadata"
                       >
-                        <source src={item.url} />
+                        <source src={item.previewUrl} />
                         <track
                           kind="captions"
                           srcLang="es"
@@ -445,7 +465,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       item.isImage ? (
                         <div className="relative aspect-[4/3] bg-muted">
                           <Image
-                            src={item.url}
+                            src={item.previewUrl}
                             alt={`Imagen ${index + 1} del diseño ${design.name}`}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -489,7 +509,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             className="w-full aspect-[4/3] object-cover bg-black"
                             preload="metadata"
                           >
-                            <source src={item.url} />
+                            <source src={item.previewUrl} />
                             <track
                               kind="captions"
                               srcLang="es"
@@ -498,24 +518,19 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             />
                             Tu navegador no soporta la reproducción de video.
                           </video>
-                        ) : item.isImage ? (
-                          <div className="relative aspect-[4/3] bg-muted">
-                            <Image
-                              src={item.url}
-                              alt={`Archivo de instrucciones ${index + 1} de ${design.name}`}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover"
-                            />
-                          </div>
                         ) : (
-                          <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
-                            {item.fileName}
-                          </div>
+                          <FilePreview
+                            previewUrl={item.previewUrl}
+                            fileName={item.fileName}
+                            mimeType={item.mimeType}
+                            extension={item.extension}
+                            alt={`Archivo de instrucciones ${index + 1} de ${design.name}`}
+                            className="w-full aspect-[4/3] object-cover bg-muted"
+                          />
                         )}
                         <div className="p-4 border-t border-border">
                           <a
-                            href={item.url}
+                            href={item.downloadUrl}
                             download
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >
@@ -551,7 +566,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             className="w-full aspect-[4/3] object-cover bg-black"
                             preload="metadata"
                           >
-                            <source src={item.url} />
+                            <source src={item.previewUrl} />
                             <track
                               kind="captions"
                               srcLang="es"
@@ -560,24 +575,19 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             />
                             Tu navegador no soporta la reproducción de video.
                           </video>
-                        ) : item.isImage ? (
-                          <div className="relative aspect-[4/3] bg-muted">
-                            <Image
-                              src={item.url}
-                              alt={`Archivo fuente ${index + 1} de ${design.name}`}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover"
-                            />
-                          </div>
                         ) : (
-                          <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
-                            {item.fileName}
-                          </div>
+                          <FilePreview
+                            previewUrl={item.previewUrl}
+                            fileName={item.fileName}
+                            mimeType={item.mimeType}
+                            extension={item.extension}
+                            alt={`Archivo fuente ${index + 1} de ${design.name}`}
+                            className="w-full aspect-[4/3] object-cover bg-muted"
+                          />
                         )}
                         <div className="p-4 border-t border-border">
                           <a
-                            href={item.url}
+                            href={item.downloadUrl}
                             download
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >

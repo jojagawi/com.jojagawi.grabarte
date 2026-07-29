@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { lbrn2ToSvg, parseLbrn2 } from "lbrn2-to-svg";
 import { prisma } from "@/lib/prisma";
 
 type ErrorPayload = {
@@ -37,7 +38,7 @@ async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
   return Buffer.concat(chunks);
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<ErrorPayload | Buffer>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ErrorPayload | Buffer | string>) {
   const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
   if (process.env.NODE_ENV !== "development" || !canEditDesigns) {
     return res.status(404).json({ error: "Not found" });
@@ -71,6 +72,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       fileExtension: {
         select: {
           mimeType: true,
+          extension: true,
         },
       },
     },
@@ -112,6 +114,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const body = response.Body as unknown as NodeJS.ReadableStream;
   const buffer = await streamToBuffer(body);
+
+  const requestedFormat = String(req.query.format ?? "").toLowerCase();
+  const fileExtension = String(file.fileExtension?.extension ?? "").toLowerCase();
+
+  if (requestedFormat === "svg" && fileExtension === "lbrn2") {
+    try {
+      const project = parseLbrn2(buffer.toString("utf-8"));
+      const svg = lbrn2ToSvg(project);
+      const svgFileName = file.filePath.replace(/\.lbrn2$/i, ".svg").split("/").pop() || `archivo-${fileId}.svg`;
+
+      res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+      res.setHeader("Content-Disposition", `inline; filename=\"${svgFileName}\"`);
+      res.setHeader("Cache-Control", "private, max-age=0, must-revalidate");
+
+      return res.status(200).send(svg);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "No se pudo convertir el archivo LBRN2 a SVG" });
+    }
+  }
+
   const contentType = file.fileExtension?.mimeType || response.ContentType || "application/octet-stream";
   const fileName = file.filePath.split("/").pop() || `archivo-${fileId}`;
 
