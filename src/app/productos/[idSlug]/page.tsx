@@ -17,10 +17,15 @@ interface ProductDetailPageProps {
 }
 
 type FileItem = {
+  id: number;
   url: string;
   isVideo: boolean;
+  isImage: boolean;
+  fileName: string;
   key: string;
 };
+
+const usePrivateFilesProxy = process.env.NEXT_PUBLIC_S3_IS_PUBLIC !== "true";
 
 function parseIdSlug(value: string): { id: number } | null {
   const match = /^(\d+)-(.+)$/u.exec(value);
@@ -52,19 +57,41 @@ function isVideoMime(mimeType: string | null | undefined): boolean {
   return Boolean(mimeType?.startsWith("video/"));
 }
 
+function isImageMime(mimeType: string | null | undefined): boolean {
+  return Boolean(mimeType?.startsWith("image/"));
+}
+
+function getFileNameFromPath(filePath: string | null | undefined): string {
+  if (!filePath) {
+    return "archivo";
+  }
+
+  const parts = filePath.split("/");
+  return parts[parts.length - 1] || "archivo";
+}
+
+function getPrivateFileProxyUrl(fileId: number): string {
+  return `/api/admin/designs/files/${fileId}`;
+}
+
 function toFileItem(
+  fileId: number,
   filePath: string | null | undefined,
   mimeType: string | null | undefined,
+  preferPrivateProxy = false,
 ): FileItem | null {
-  const url = toMediaUrl(filePath);
+  const url = preferPrivateProxy ? getPrivateFileProxyUrl(fileId) : toMediaUrl(filePath);
   if (!url) {
     return null;
   }
 
   return {
+    id: fileId,
     url,
     isVideo: isVideoMime(mimeType),
-    key: filePath ?? url,
+    isImage: isImageMime(mimeType),
+    fileName: getFileNameFromPath(filePath),
+    key: `${fileId}-${filePath ?? url}`,
   };
 }
 
@@ -144,6 +171,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       id: true,
       name: true,
       description: true,
+      showInHome: true,
+      showInSite: true,
       material: {
         select: {
           name: true,
@@ -171,12 +200,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           file: {
             status: 1,
             filePath: { not: null },
-            fileTypeId: { in: [1, 2] },
+            fileTypeId: { in: [1, 2, 3, 4] },
           },
         },
         select: {
           file: {
             select: {
+              id: true,
               filePath: true,
               fileTypeId: true,
               fileType: {
@@ -224,13 +254,28 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const previewRelation = fileRelations.find((file) => file.fileTypeId === 1);
 
   const previewItem = toFileItem(
+    previewRelation?.id ?? 0,
     previewRelation?.filePath,
     previewRelation?.fileExtension?.mimeType,
   );
 
   const galleryItems = fileRelations
     .filter((file) => file.fileTypeId === 2)
-    .map((file) => toFileItem(file.filePath, file.fileExtension?.mimeType))
+    .map((file) => toFileItem(file.id, file.filePath, file.fileExtension?.mimeType))
+    .filter((item): item is FileItem => Boolean(item));
+
+  const instructionItems = fileRelations
+    .filter((file) => file.fileTypeId === 3)
+    .map((file) =>
+      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, usePrivateFilesProxy),
+    )
+    .filter((item): item is FileItem => Boolean(item));
+
+  const sourceFileItems = fileRelations
+    .filter((file) => file.fileTypeId === 4)
+    .map((file) =>
+      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, usePrivateFilesProxy),
+    )
     .filter((item): item is FileItem => Boolean(item));
 
   return (
@@ -343,6 +388,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     )}
                   </div>
                 </div>
+
+                {isDevelopment && (
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-2">Visibilidad (solo desarrollo)</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant={design.showInHome === 1 ? "secondary" : "outline"} className="text-sm">
+                        Show in home: {design.showInHome === 1 ? "Habilitado" : "Deshabilitado"}
+                      </Badge>
+                      <Badge variant={design.showInSite === 1 ? "secondary" : "outline"} className="text-sm">
+                        Show in site: {design.showInSite === 1 ? "Habilitado" : "Deshabilitado"}
+                      </Badge>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -383,15 +442,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         Tu navegador no soporta la reproducción de video.
                       </video>
                     ) : (
-                      <div className="relative aspect-[4/3] bg-muted">
-                        <Image
-                          src={item.url}
-                          alt={`Imagen ${index + 1} del diseño ${design.name}`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover"
-                        />
-                      </div>
+                      item.isImage ? (
+                        <div className="relative aspect-[4/3] bg-muted">
+                          <Image
+                            src={item.url}
+                            alt={`Imagen ${index + 1} del diseño ${design.name}`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
+                          {item.fileName}
+                        </div>
+                      )
                     )}
                   </CardContent>
                 </Card>
@@ -399,6 +464,134 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
           )}
         </div>
+
+        {isDevelopment && (
+          <>
+            <div className="space-y-4">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
+                Instrucciones
+              </h2>
+
+              {instructionItems.length === 0 ? (
+                <Card>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Este producto aun no tiene archivos de instrucciones.
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {instructionItems.map((item, index) => (
+                    <Card key={`${item.key}-${index}`} className="overflow-hidden py-0">
+                      <CardContent className="p-0">
+                        {item.isVideo ? (
+                          <video
+                            controls
+                            className="w-full aspect-[4/3] object-cover bg-black"
+                            preload="metadata"
+                          >
+                            <source src={item.url} />
+                            <track
+                              kind="captions"
+                              srcLang="es"
+                              label="Subtitulos"
+                              src="data:text/vtt,WEBVTT%0A%0A"
+                            />
+                            Tu navegador no soporta la reproducción de video.
+                          </video>
+                        ) : item.isImage ? (
+                          <div className="relative aspect-[4/3] bg-muted">
+                            <Image
+                              src={item.url}
+                              alt={`Archivo de instrucciones ${index + 1} de ${design.name}`}
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
+                            {item.fileName}
+                          </div>
+                        )}
+                        <div className="p-4 border-t border-border">
+                          <a
+                            href={item.url}
+                            download
+                            className="text-sm font-medium text-[#4290A3] hover:underline"
+                          >
+                            Descargar archivo
+                          </a>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
+                Archivos fuente
+              </h2>
+
+              {sourceFileItems.length === 0 ? (
+                <Card>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Este producto aun no tiene archivos fuente.
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sourceFileItems.map((item, index) => (
+                    <Card key={`${item.key}-${index}`} className="overflow-hidden py-0">
+                      <CardContent className="p-0">
+                        {item.isVideo ? (
+                          <video
+                            controls
+                            className="w-full aspect-[4/3] object-cover bg-black"
+                            preload="metadata"
+                          >
+                            <source src={item.url} />
+                            <track
+                              kind="captions"
+                              srcLang="es"
+                              label="Subtitulos"
+                              src="data:text/vtt,WEBVTT%0A%0A"
+                            />
+                            Tu navegador no soporta la reproducción de video.
+                          </video>
+                        ) : item.isImage ? (
+                          <div className="relative aspect-[4/3] bg-muted">
+                            <Image
+                              src={item.url}
+                              alt={`Archivo fuente ${index + 1} de ${design.name}`}
+                              fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
+                            {item.fileName}
+                          </div>
+                        )}
+                        <div className="p-4 border-t border-border">
+                          <a
+                            href={item.url}
+                            download
+                            className="text-sm font-medium text-[#4290A3] hover:underline"
+                          >
+                            Descargar archivo
+                          </a>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
