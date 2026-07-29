@@ -171,12 +171,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           file: {
             status: 1,
             filePath: { not: null },
+            fileTypeId: { in: [1, 2] },
           },
         },
         select: {
           file: {
             select: {
               filePath: true,
+              fileTypeId: true,
               fileType: {
                 select: {
                   name: true,
@@ -215,33 +217,31 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   const fileRelations = design.relDesignsFiles
     .map((relation) => relation.file)
-    .filter((file): file is NonNullable<typeof file> => Boolean(file?.filePath));
+    .filter((file): file is NonNullable<typeof file> =>
+      Boolean(file?.filePath),
+    );
 
-  const previewRelation =
-    fileRelations.find((file) => file.fileType?.name === "Vista previa") || fileRelations[0];
+  const previewRelation = fileRelations.find((file) => file.fileTypeId === 1);
 
   const previewItem = toFileItem(
     previewRelation?.filePath,
     previewRelation?.fileExtension?.mimeType,
   );
 
-  const possibleDesignItems = fileRelations
-    .filter((file) => file.fileType?.name === "Imagenes del diseño")
+  const galleryItems = fileRelations
+    .filter((file) => file.fileTypeId === 2)
     .map((file) => toFileItem(file.filePath, file.fileExtension?.mimeType))
     .filter((item): item is FileItem => Boolean(item));
-
-  const galleryItems =
-    possibleDesignItems.length > 0
-      ? possibleDesignItems
-      : previewItem
-        ? [previewItem]
-        : [];
 
   return (
     <section className="py-24 bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button asChild variant="ghost" className="text-[#4290A3] hover:text-[#1FA4A7]">
+          <Button
+            asChild
+            variant="ghost"
+            className="text-[#4290A3] hover:text-[#1FA4A7]"
+          >
             <Link href="/productos" className="inline-flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
               Volver a productos
@@ -249,8 +249,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </Button>
 
           {canEditDesigns && (
-            <Button asChild className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white">
-              <Link href={`/productos/editar/${design.id}`} className="inline-flex items-center gap-2">
+            <Button
+              asChild
+              className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
+            >
+              <Link
+                href={`/productos/editar/${design.id}`}
+                className="inline-flex items-center gap-2"
+              >
                 <Pencil className="w-4 h-4" />
                 Editar producto
               </Link>
@@ -307,18 +313,26 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">Material</p>
+                  <p className="text-sm font-semibold text-foreground mb-2">
+                    Material
+                  </p>
                   <Badge variant="outline" className="text-sm">
                     {design.material?.name?.trim() || "No especificado"}
                   </Badge>
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">Categoria</p>
+                  <p className="text-sm font-semibold text-foreground mb-2">
+                    Categoria
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {categories.length > 0 ? (
                       categories.map((categoryName) => (
-                        <Badge key={categoryName} variant="secondary" className="text-sm">
+                        <Badge
+                          key={categoryName}
+                          variant="secondary"
+                          className="text-sm"
+                        >
                           {categoryName}
                         </Badge>
                       ))
@@ -348,7 +362,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {galleryItems.map((item, index) => (
-                <Card key={`${item.key}-${index}`} className="overflow-hidden py-0">
+                <Card
+                  key={`${item.key}-${index}`}
+                  className="overflow-hidden py-0"
+                >
                   <CardContent className="p-0">
                     {item.isVideo ? (
                       <video

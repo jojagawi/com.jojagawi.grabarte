@@ -10,26 +10,31 @@ import { SiTiktok } from "@react-icons/all-files/si/SiTiktok";
 export function Footer() {
 
   return (
-    <footer id="legales" className="bg-[#585106] text-white">
+    <footer
+      id="legales"
+      style={{
+        backgroundImage: "url('/dam/background.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-[#4290A3] flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-48 h-16 rounded-lg  flex items-center justify-center">
                 <Image
-                  src="/dam/logos/logo.svg"
+                  src="/dam/logos/logo.webp"
                   alt="Logo InspiraArte"
-                  width={20}
-                  height={20}
-                  className="w-5 h-5 filter-[brightness(0)_invert(1)]"
+                  width={192}
+                  height={64}
+                  className="w-48 h-16"
                 />
               </div>
-              <span className="font-serif text-xl font-bold">
-                Inspir<span className="text-[#3ACBFE]">Arte</span>
-              </span>
             </Link>
-            <p className="text-white/80 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed">
               Materializamos tus ideas con precisión y detalle.
             </p>
             <div className="flex gap-4">
@@ -83,7 +88,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-white/80 hover:text-[#3ACBFE] transition-colors text-sm"
+                    className="hover:text-[#3ACBFE] transition-colors text-sm"
                   >
                     {link.name}
                   </Link>
@@ -104,7 +109,7 @@ export function Footer() {
                 "Regalos Corporativos",
               ].map((product) => (
                 <li key={product}>
-                  <span className="text-white/80 text-sm">{product}</span>
+                  <span className="text-sm">{product}</span>
                 </li>
               ))}
             </ul>
@@ -117,9 +122,10 @@ export function Footer() {
               {process.env.NEXT_PUBLIC_EMAIL && (
                 <li className="flex items-center gap-3">
                   <FaEnvelope className="w-5 h-5 text-[#3ACBFE]" />
-                  <span className="text-white/80 text-sm">
+                  <span className="text-sm">
                     <Link
                       rel="noopener noreferrer"
+                      className="hover:text-[#3ACBFE]"
                       href={"mailto:" + process.env.NEXT_PUBLIC_EMAIL}
                     >
                       {process.env.NEXT_PUBLIC_EMAIL}
@@ -130,9 +136,10 @@ export function Footer() {
               {process.env.NEXT_PUBLIC_WHATSAPP && (
                 <li className="flex items-center gap-3">
                   <FaWhatsapp className="w-5 h-5 text-[#3ACBFE]" />
-                  <span className="text-white/80 text-sm">
+                  <span className="text-sm">
                     <Link
                       rel="noopener noreferrer"
+                      className="hover:text-[#3ACBFE]"
                       href={
                         "https://wa.me/" +
                         process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")
@@ -146,9 +153,7 @@ export function Footer() {
               {process.env.NEXT_PUBLIC_DIR && (
                 <li className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-[#3ACBFE] shrink-0" />
-                  <span className="text-white/80 text-sm">
-                    {process.env.NEXT_PUBLIC_DIR}
-                  </span>
+                  <span className="text-sm">{process.env.NEXT_PUBLIC_DIR}</span>
                 </li>
               )}
             </ul>

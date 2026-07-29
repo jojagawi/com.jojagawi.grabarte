@@ -87,6 +87,7 @@ function getPrivateFileProxyUrl(fileId: number): string {
 
 export function EditDesign({ categories, materials, design }: EditDesignProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [isAddingMaterial, setIsAddingMaterial] = useState(false);
@@ -366,6 +367,36 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
       alert(error instanceof Error ? error.message : "No se pudo actualizar el diseno");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteDesign = async () => {
+    const shouldDelete = window.confirm(
+      "Esta accion eliminara el producto y sus archivos en S3 de forma permanente. ¿Deseas continuar?",
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`/api/admin/designs/${design.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || "No se pudo eliminar el diseno");
+      }
+
+      sendGTMEvent({ event: "formDesignDelete", value: name.trim() });
+      window.location.href = "/productos";
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "No se pudo eliminar el diseno");
+      setIsDeleting(false);
     }
   };
 
@@ -798,6 +829,23 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   <Save className="w-4 h-4 mr-2" />
                   Guardar cambios
                 </>
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isDeleting || isSubmitting}
+              onClick={handleDeleteDesign}
+              className="w-full h-12"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                "Eliminar"
               )}
             </Button>
           </form>

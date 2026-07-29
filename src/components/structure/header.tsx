@@ -37,23 +37,28 @@ export function Header() {
   const visibleNavigation = navigation.filter((item) => canShowByAcl(item.acl));
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 border-b border-border"
+      style={{
+        backgroundImage: "url('/dam/background.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-lg bg-[#4290A3] flex items-center justify-center group-hover:bg-[#1FA4A7] transition-colors">
+            <div className="w-48 h-16 rounded-lg  flex items-center justify-center">
               <Image
-                src="/dam/logos/logo.svg"
+                src="/dam/logos/logo.webp"
                 alt="Logo InspiraArte"
-                width={20}
-                height={20}
-                className="w-5 h-5 filter-[brightness(0)_invert(1)]"
+                width={192}
+                height={64}
+                className="w-48 h-16"
               />
             </div>
-            <span className="font-serif text-xl font-bold text-foreground">
-              Inspir<span className="text-[#1FA4A7]">Arte</span>
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -83,7 +88,7 @@ export function Header() {
                 <span className="sr-only">Abrir menú</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-75 sm:w-100">
               <div className="flex flex-col gap-6 mt-8">
                 {visibleNavigation.map((item) => (
                   <Link

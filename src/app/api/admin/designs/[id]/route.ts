@@ -592,5 +592,57 @@ export async function PUT(
   });
 }
 
+export async function DELETE(
+  _request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
+  if (process.env.NODE_ENV !== "development") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const { id: rawId } = await context.params;
+  const id = parseId(rawId);
+
+  if (!id) {
+    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+  }
+
+  const design = await prisma.designs.findFirst({
+    where: { id },
+    select: { id: true },
+  });
+
+  if (!design) {
+    return NextResponse.json({ error: "Diseño no encontrado" }, { status: 404 });
+  }
+
+  const fileIds = await prisma.relDesignsFiles.findMany({
+    where: {
+      designId: id,
+      status: 1,
+      typeId: { not: null },
+    },
+    select: { typeId: true },
+  });
+
+  await removeFilesFromDesign(
+    id,
+    fileIds
+      .map((relation) => relation.typeId)
+      .filter((fileId): fileId is number => Number.isInteger(fileId)),
+  );
+
+  await prisma.$transaction(async (tx) => {
+    await tx.relDesignsCategories.deleteMany({ where: { designId: id } });
+    await tx.relDesignsTypes.deleteMany({ where: { designId: id } });
+    await tx.designs.delete({ where: { id } });
+  });
+
+  return NextResponse.json({
+    id,
+    deleted: true,
+  });
+}
+
 
 
