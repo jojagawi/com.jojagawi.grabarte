@@ -348,7 +348,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   Tu navegador no soporta la reproducción de video.
                 </video>
               ) : (
-                <div className="relative aspect-square bg-gradient-to-br from-[#4290A3]/10 to-[#1FA4A7]/10">
+                <div className="relative aspect-square bg-linear-to-br from-[#4290A3]/10 to-[#1FA4A7]/10">
                   <Image
                     src={previewItem?.previewUrl || defaultImage}
                     alt={`Vista previa de ${design.name}`}
@@ -411,13 +411,31 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
                 {isDevelopment && (
                   <div>
-                    <p className="text-sm font-semibold text-foreground mb-2">Visibilidad (solo desarrollo)</p>
+                    <p className="text-sm font-semibold text-foreground mb-2">
+                      Visibilidad
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant={design.showInHome === 1 ? "secondary" : "outline"} className="text-sm">
-                        Show in home: {design.showInHome === 1 ? "Habilitado" : "Deshabilitado"}
+                      <Badge
+                        variant={
+                          design.showInHome === 1 ? "secondary" : "outline"
+                        }
+                        className="text-sm"
+                      >
+                        Show in home:{" "}
+                        {design.showInHome === 1
+                          ? "Habilitado"
+                          : "Deshabilitado"}
                       </Badge>
-                      <Badge variant={design.showInSite === 1 ? "secondary" : "outline"} className="text-sm">
-                        Show in site: {design.showInSite === 1 ? "Habilitado" : "Deshabilitado"}
+                      <Badge
+                        variant={
+                          design.showInSite === 1 ? "secondary" : "outline"
+                        }
+                        className="text-sm"
+                      >
+                        Show in site:{" "}
+                        {design.showInSite === 1
+                          ? "Habilitado"
+                          : "Deshabilitado"}
                       </Badge>
                     </div>
                   </div>
@@ -449,7 +467,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     {item.isVideo ? (
                       <video
                         controls
-                        className="w-full aspect-[4/3] object-cover bg-black"
+                        className="w-full aspect-4/3 object-cover bg-black"
                         preload="metadata"
                       >
                         <source src={item.previewUrl} />
@@ -461,22 +479,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         />
                         Tu navegador no soporta la reproducción de video.
                       </video>
+                    ) : item.isImage ? (
+                      <div className="relative aspect-4/3 bg-muted">
+                        <Image
+                          src={item.previewUrl}
+                          alt={`Imagen ${index + 1} del diseño ${design.name}`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover"
+                        />
+                      </div>
                     ) : (
-                      item.isImage ? (
-                        <div className="relative aspect-[4/3] bg-muted">
-                          <Image
-                            src={item.previewUrl}
-                            alt={`Imagen ${index + 1} del diseño ${design.name}`}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className="aspect-[4/3] bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
-                          {item.fileName}
-                        </div>
-                      )
+                      <div className="aspect-4/3 bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
+                        {item.fileName}
+                      </div>
                     )}
                   </CardContent>
                 </Card>
@@ -501,12 +517,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {instructionItems.map((item, index) => (
-                    <Card key={`${item.key}-${index}`} className="overflow-hidden py-0">
+                    <Card
+                      key={`${item.key}-${index}`}
+                      className="overflow-hidden py-0"
+                    >
                       <CardContent className="p-0">
                         {item.isVideo ? (
                           <video
                             controls
-                            className="w-full aspect-[4/3] object-cover bg-black"
+                            className="w-full aspect-4/3 object-cover bg-black"
                             preload="metadata"
                           >
                             <source src={item.previewUrl} />
@@ -525,7 +544,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             mimeType={item.mimeType}
                             extension={item.extension}
                             alt={`Archivo de instrucciones ${index + 1} de ${design.name}`}
-                            className="w-full aspect-[4/3] object-cover bg-muted"
+                            className="w-full aspect-4/3 object-cover bg-muted"
                           />
                         )}
                         <div className="p-4 border-t border-border">
@@ -558,12 +577,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {sourceFileItems.map((item, index) => (
-                    <Card key={`${item.key}-${index}`} className="overflow-hidden py-0">
+                    <Card
+                      key={`${item.key}-${index}`}
+                      className="overflow-hidden py-0"
+                    >
                       <CardContent className="p-0">
                         {item.isVideo ? (
                           <video
                             controls
-                            className="w-full aspect-[4/3] object-cover bg-black"
+                            className="w-full aspect-4/3 object-cover bg-black"
                             preload="metadata"
                           >
                             <source src={item.previewUrl} />
@@ -582,7 +604,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             mimeType={item.mimeType}
                             extension={item.extension}
                             alt={`Archivo fuente ${index + 1} de ${design.name}`}
-                            className="w-full aspect-[4/3] object-cover bg-muted"
+                            className="w-full aspect-4/3 object-cover bg-muted"
                           />
                         )}
                         <div className="p-4 border-t border-border">
