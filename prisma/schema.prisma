@@ -136,3 +136,13 @@ model testimonials {
   status    Int      @default(1)
   createdAt DateTime @default(now())
 }
+
+model Faqs {
+  id         Int    @id @default(autoincrement())
+  question   String @unique
+  answer     String
+  showInSite Int    @default(1)
+  showInMcp  Int    @default(1)
+  priority   Int    @default(1)
+}
+

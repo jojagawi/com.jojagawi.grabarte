@@ -124,6 +124,15 @@ Table testimonials {
   createdAt DateTime [default: `now()`, not null]
 }
 
+Table Faqs {
+  id Int [pk, increment]
+  question String [unique, not null]
+  answer String [not null]
+  showInSite Int [not null, default: 1]
+  showInMcp Int [not null, default: 1]
+  priority Int [not null, default: 1]
+}
+
 Ref: Designs.materialId > CatMaterials.id
 
 Ref: Files.fileTypeId > CatFileType.id

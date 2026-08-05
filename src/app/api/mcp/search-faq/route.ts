@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { faqEntries } from "@/lib/faq-data";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -14,31 +14,62 @@ function parseLimit(raw: string | null): number {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const query = (searchParams.get("q") || "").trim().toLowerCase();
-  const limit = parseLimit(searchParams.get("limit"));
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = (searchParams.get("q") || "").trim().toLowerCase();
+    const limit = parseLimit(searchParams.get("limit"));
 
-  const results = faqEntries
-    .filter((faq) => {
-      if (!query) {
-        return true;
-      }
+    const faqs = await prisma.faqs.findMany({
+      where: {
+        showInMcp: 1,
+      },
+      select: {
+        question: true,
+        answer: true,
+      },
+      orderBy: [
+        {
+          priority: "asc",
+        },
+        {
+          id: "asc",
+        },
+      ],
+    });
 
-      return faq.question.toLowerCase().includes(query) || faq.answer.toLowerCase().includes(query);
-    })
-    .slice(0, limit)
-    .map((faq) => ({
-      question: faq.question,
-      answer: faq.answer,
-    }));
+    const results = faqs
+      .filter((faq) => {
+        if (!query) {
+          return true;
+        }
 
-  return NextResponse.json({
-    success: true,
-    data: results,
-    meta: {
-      total: results.length,
-      query,
-    },
-  });
+        return faq.question.toLowerCase().includes(query) || faq.answer.toLowerCase().includes(query);
+      })
+      .slice(0, limit)
+      .map((faq) => ({
+        question: faq.question,
+        answer: faq.answer,
+      }));
+
+    return NextResponse.json({
+      success: true,
+      data: results,
+      meta: {
+        total: results.length,
+        query,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        errorCode: "MCP_SEARCH_FAQ_ERROR",
+        message: "No se pudieron consultar las preguntas frecuentes.",
+      },
+      { status: 500 },
+    );
+  }
 }
 

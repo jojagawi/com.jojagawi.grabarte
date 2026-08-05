@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
 import { FAQ } from "@/components/custom/faq";
+import { prisma } from "@/lib/prisma";
 
 
 export const metadata: Metadata = buildPageMetadata({
@@ -24,10 +25,29 @@ export const llmstxt = {
   description: "Respuestas rápidas sobre pedidos, entregas, envíos y pagos.",
 };
 
-export default function Faq() {
+export default async function Faq() {
+  const faqs = await prisma.faqs.findMany({
+    where: {
+      showInSite: 1,
+    },
+    select: {
+      id: true,
+      question: true,
+      answer: true,
+    },
+    orderBy: [
+      {
+        priority: "asc",
+      },
+      {
+        id: "asc",
+      },
+    ],
+  });
+
   return (
     <>
-      <FAQ />
+      <FAQ faqs={faqs} />
     </>
   );
 }

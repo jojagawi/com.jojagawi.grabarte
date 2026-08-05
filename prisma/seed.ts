@@ -105,6 +105,49 @@ const materials = [
   },
 ] as const;
 
+const faqs = [
+  {
+    question: "¿Cuánto tiempo tarda mi pedido?",
+    answer:
+      "El tiempo depende del producto y la cantidad. Generalmente, pedidos pequeños (1-10 piezas) están listos en 3-5 días hábiles. Para pedidos grandes o con diseños complejos, el tiempo puede ser de 7-15 días. Te confirmamos la fecha exacta al aprobar tu diseño.",
+  },
+  {
+    question: "¿Cuál es el pedido mínimo?",
+    answer:
+      "¡No hay mínimo! Puedes pedir desde una sola pieza. Sin embargo, para pedidos de 10 piezas o más, ofrecemos descuentos especiales. Para eventos o corporativos (50+ piezas), tenemos precios muy atractivos.",
+  },
+  {
+    question: "¿Qué formatos de imagen aceptan?",
+    answer:
+      "Aceptamos JPG, PNG, PDF y archivos vectoriales (AI, SVG, CDR). Para mejor calidad de grabado, te recomendamos enviar imágenes en alta resolución (300 DPI mínimo) o archivos vectoriales. Si solo tienes una foto o boceto, ¡no te preocupes! Nuestro equipo puede digitalizarlo.",
+  },
+  {
+    question: "¿Hacen envíos a todo México?",
+    answer:
+      "¡Sí! Enviamos a toda la República Mexicana a través de paqueterías confiables. El costo de envío depende del destino y el tamaño del paquete. También ofrecemos recolección en nuestro taller en CDMX sin costo adicional.",
+  },
+  {
+    question: "¿Puedo ver un diseño antes de producir?",
+    answer:
+      "¡Claro que sí! Siempre te enviamos una vista previa digital del diseño para tu aprobación antes de iniciar la producción. Puedes solicitar hasta 2 cambios sin costo adicional.",
+  },
+  {
+    question: "¿Qué métodos de pago aceptan?",
+    answer:
+      "Aceptamos transferencia bancaria, depósito en OXXO, tarjetas de crédito/débito y PayPal. Para iniciar tu pedido requerimos un anticipo del 50%, y el resto lo cubres al momento de la entrega o envío.",
+  },
+  {
+    question: "¿Los productos tienen garantía?",
+    answer:
+      "Garantizamos la calidad de nuestro trabajo. Si tu producto llega dañado o con errores de producción, lo reponemos sin costo. Las imágenes del producto final siempre se envían antes del envío para tu tranquilidad.",
+  },
+  {
+    question: "¿Trabajan con empresas o solo particulares?",
+    answer:
+      "¡Ambos! Trabajamos con personas que buscan un regalo especial, organizadores de eventos, empresas que necesitan merchandising y cualquier persona con una idea creativa. Emitimos facturas y ofrecemos precios especiales para clientes frecuentes o pedidos grandes.",
+  },
+] as const;
+
 async function main() {
   const existing = await prisma.catCategories.findMany({
     where: {
@@ -267,16 +310,50 @@ async function main() {
 
   if (pendingMaterials.length === 0) {
     console.log("[prisma:seed] CatMaterials ya contiene todos los valores esperados.");
-    return;
+  } else {
+    const materialsResult = await prisma.catMaterials.createMany({
+      data: pendingMaterials,
+    });
+
+    console.log(
+      `[prisma:seed] CatMaterials: insertados ${materialsResult.count} registros (faltaban ${pendingMaterials.length}).`,
+    );
   }
 
-  const materialsResult = await prisma.catMaterials.createMany({
-    data: pendingMaterials,
+  const existingFaqs = await prisma.faqs.findMany({
+    where: {
+      question: {
+        in: faqs.map((faq) => faq.question),
+      },
+    },
+    select: {
+      question: true,
+    },
   });
 
-  console.log(
-    `[prisma:seed] CatMaterials: insertados ${materialsResult.count} registros (faltaban ${pendingMaterials.length}).`,
-  );
+  const existingFaqQuestions = new Set(existingFaqs.map((faq) => faq.question));
+
+  const pendingFaqs = faqs
+    .filter((faq) => !existingFaqQuestions.has(faq.question))
+    .map((faq, index) => ({
+      question: faq.question,
+      answer: faq.answer,
+      showInSite: 1,
+      showInMcp: 1,
+      priority: index + 1,
+    }));
+
+  if (pendingFaqs.length === 0) {
+    console.log("[prisma:seed] Faqs ya contiene todos los valores esperados.");
+  } else {
+    const faqResult = await prisma.faqs.createMany({
+      data: pendingFaqs,
+    });
+
+    console.log(
+      `[prisma:seed] Faqs: insertados ${faqResult.count} registros (faltaban ${pendingFaqs.length}).`,
+    );
+  }
 }
 
 main()

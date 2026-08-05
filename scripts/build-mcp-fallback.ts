@@ -1,7 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { prisma } from "@/lib/prisma";
-import { faqEntries } from "@/lib/faq-data";
 import { slugify } from "@/lib/slug";
 
 type FallbackCategory = {
@@ -21,6 +20,11 @@ type FallbackProduct = {
   image: string | null;
   gallery: string[];
   url: string;
+};
+
+type FallbackFaq = {
+  question: string;
+  answer: string;
 };
 
 function toMediaUrl(path: string | null): string | null {
@@ -157,6 +161,31 @@ async function buildProducts(): Promise<FallbackProduct[]> {
     });
 }
 
+async function buildFaqs(): Promise<FallbackFaq[]> {
+  const faqs = await prisma.faqs.findMany({
+    where: {
+      showInMcp: 1,
+    },
+    select: {
+      question: true,
+      answer: true,
+    },
+    orderBy: [
+      {
+        priority: "asc",
+      },
+      {
+        id: "asc",
+      },
+    ],
+  });
+
+  return faqs.map((faq) => ({
+    question: faq.question,
+    answer: faq.answer,
+  }));
+}
+
 function buildBusinessInfo() {
   const scheduleText = process.env.NEXT_PUBLIC_SCHEDULES || "";
   const schedules = scheduleText
@@ -194,12 +223,16 @@ async function writeJsonFile(fileName: string, value: unknown): Promise<void> {
 }
 
 async function main() {
-  const [categories, products] = await Promise.all([buildCategories(), buildProducts()]);
+  const [categories, products, faqs] = await Promise.all([
+    buildCategories(),
+    buildProducts(),
+    buildFaqs(),
+  ]);
 
   await Promise.all([
     writeJsonFile("categories.json", categories),
     writeJsonFile("products.json", products),
-    writeJsonFile("faqs.json", faqEntries),
+    writeJsonFile("faqs.json", faqs),
     writeJsonFile("business-info.json", buildBusinessInfo()),
   ]);
 }

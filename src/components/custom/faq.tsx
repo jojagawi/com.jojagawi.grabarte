@@ -3,11 +3,18 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { faqEntries } from "@/lib/faq-data"
 
-const faqs = faqEntries
+type FaqItem = {
+  id: number
+  question: string
+  answer: string
+}
 
-export function FAQ() {
+type FAQProps = {
+  faqs: FaqItem[]
+}
+
+export function FAQ({ faqs }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
@@ -31,7 +38,7 @@ export function FAQ() {
         <div className="space-y-4">
           {faqs.map((faq, index) => (
             <div
-              key={index}
+              key={faq.id}
               className={cn(
                 "bg-white rounded-xl border border-border overflow-hidden transition-all",
                 openIndex === index && "shadow-lg shadow-[#4290A3]/5"
