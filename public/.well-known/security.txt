@@ -1,0 +1,7 @@
+Contact: mailto:security@inspiraarte.com
+Contact: https://www.inspiraarte.com/contacto/
+Expires: 2027-02-05T00:00:00.000Z
+Preferred-Languages: es, es-MX
+Canonical: https://www.inspiraarte.com/.well-known/security.txt
+Policy: https://www.inspiraarte.com/aviso-de-privacidad/
+Policy: https://www.inspiraarte.com/terminos-y-condiciones/
