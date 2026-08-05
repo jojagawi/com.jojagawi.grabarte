@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+	<tile>
+	  <square70x70logo src="/dam/logos/favicon-100.png"/>
+	  <square150x150logo src="/dam/logos/favicon-200.png"/>
+	  <square310x310logo src="/dam/logos/logo.png"/>
+	  <wide310x150logo src="/dam/logos/hero.png"/>
+	  <TileColor>#4290A3</TileColor>
+	</tile>
+  </msapplication>
+</browserconfig>
+
