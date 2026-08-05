@@ -19,6 +19,11 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Proceso de pedido de productos personalizados en InspiraArte",
 });
 
+export const llmstxt = {
+  title: "Proceso de pedido",
+  description: "Pasos para cotizar, validar y producir un producto personalizado.",
+};
+
 export default function Proceso() {
   return (
     <>

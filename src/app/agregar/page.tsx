@@ -17,6 +17,11 @@ export const metadata: Metadata = buildPageMetadata({
   noIndex: true,
 });
 
+export const llmstxt = {
+  title: "Agregar diseño",
+  description: "Panel interno para registrar nuevos productos y archivos.",
+};
+
 export default async function Agregar() {
 
   if (process.env.NODE_ENV !== "development") {

@@ -23,6 +23,11 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Catalogo de productos personalizados de InspiraArte",
 });
 
+export const llmstxt = {
+  title: "Inicio",
+  description: "Presentación general de InspiraArte y acceso al catálogo.",
+};
+
 const defaultImage = "/dam/dafault-image-product.webp";
 
 export default async function Home() {

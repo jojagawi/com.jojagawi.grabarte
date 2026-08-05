@@ -14,6 +14,11 @@ export const metadata: Metadata = buildPageMetadata({
   noIndex: true,
 });
 
+export const llmstxt = {
+  title: "Editar producto",
+  description: "Panel interno para modificar datos y archivos de un producto.",
+};
+
 export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ id: string }>> {

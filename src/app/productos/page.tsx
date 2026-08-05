@@ -20,6 +20,11 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Catalogo de productos personalizados de InspiraArte",
 });
 
+export const llmstxt = {
+  title: "Catálogo de productos",
+  description: "Listado de diseños personalizados disponibles en InspiraArte.",
+};
+
 const defaultImage = "/dam/dafault-image-product.webp";
 
 const cardGradients = [

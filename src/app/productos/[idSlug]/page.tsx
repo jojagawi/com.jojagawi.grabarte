@@ -14,6 +14,11 @@ import { Card, CardContent } from "@/components/ui/card";
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
 
+export const llmstxt = {
+  title: "Detalle de producto",
+  description: "Ficha de un diseño personalizado con galería y especificaciones.",
+};
+
 interface ProductDetailPageProps {
   params: Promise<{ idSlug: string }>;
 }
