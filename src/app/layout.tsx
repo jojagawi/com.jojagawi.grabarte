@@ -5,6 +5,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import { buildMetadataBase } from "@/lib/metadata";
 import { Footer } from "@/components/structure/footer";
 import { Header } from "@/components/structure/header";
+import { PwaAnalytics } from "@/components/structure/pwa-analytics";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -80,6 +81,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          <PwaAnalytics />
           {process.env.NEXT_GTM && (
             <GoogleTagManager gtmId={process.env.NEXT_GTM} />
           )}
