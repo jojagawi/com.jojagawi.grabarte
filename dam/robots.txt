@@ -1,0 +1,8 @@
+# *
+User-agent: *
+Deny: /
+
+# Host
+Host: //dam.inspiraarte.com
+
+# Sitemaps

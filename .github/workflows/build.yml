@@ -89,3 +89,13 @@ jobs:
             **/*.webp = public, max-age=31536000, immutable
             **/*.html = public, max-age=300
             **/* = public, max-age=31536000, immutable
+
+      - uses: osiegmar/s3-publisher-action@v3
+        with:
+          bucket: dam.inspiraarte.com
+          dir: dam
+          delete-orphaned: false
+          cache-control: |
+            **/*.webp = public, max-age=31536000, immutable
+            **/*.html = public, max-age=300
+            **/* = public, max-age=31536000, immutable
