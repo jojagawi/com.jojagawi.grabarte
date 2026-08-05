@@ -16,6 +16,11 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "200x200",
         type: "image/png",
       },
+      {
+        src: "/dam/logos/favicon.svg",
+        sizes: "512x512",
+        type: "image/svg",
+      },
     ],
     id: "com.jojagawi.inspiraarte",
     description: "PWA App for InspiraArte",
