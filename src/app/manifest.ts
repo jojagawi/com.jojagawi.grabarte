@@ -33,5 +33,27 @@ export default function manifest(): MetadataRoute.Manifest {
       "personalization",
       "shopping",
     ],
+    shortcuts: [
+      {
+        name: "Productos",
+        url: "https://www.inspiraarte.com/productos/",
+        description:
+          "Lista de productos que puedes solicitar dentro de InspiraArte",
+      },
+      {
+        name: "Proceso",
+        url: "https://www.inspiraarte.com/proceso/",
+        description:
+          "Analiza cual es el proceso que tenemos para fabricar nuestros productos",
+      },
+      {
+        name: "FAQ",
+        url: "https://www.inspiraarte.com/faq/",
+        description: "Preguntas frecuentes dentro de InspiraArte",
+      },
+    ],
+    launch_handler: {
+      client_mode: "navigate-new",
+    },
   };
 }
