@@ -10,6 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "fullscreen",
     background_color: "#fff",
     theme_color: "#000",
+    prefer_related_applications: true,
     icons: [
       {
         src: "/dam/logos/favicon-200.png",
