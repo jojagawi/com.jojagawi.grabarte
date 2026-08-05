@@ -1,11 +1,13 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
 import { Contact } from "@/components/custom/contact";
 
 
-export const metadata: Metadata = {
-  title: "Contacto y cotizacion | InspiraArte",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Contacto y cotización | InspiraArte",
   description:
     "Cuéntanos tu idea y solicita tu cotización de productos personalizados. Adjunta referencias y recibe respuesta en menos de 24 horas.",
+  path: "/contacto",
   keywords: [
     "contacto",
     "cotización",
@@ -13,13 +15,9 @@ export const metadata: Metadata = {
     "pedido personalizado",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Contacto y cotización | InspiraArte",
-    description: "Solicita tu cotización y comparte los detalles de tu proyecto personalizado.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Formulario de contacto para cotizaciones en InspiraArte",
+});
 
 export default function Contacto() {
   return (

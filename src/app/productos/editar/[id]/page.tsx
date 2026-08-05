@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EditDesign } from "@/components/custom/edit-design";
+import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
+import { EditDesign } from "@/components/custom/edit-design";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Editar producto del catalogo | InspiraArte",
   description:
     "Panel interno para actualizar informacion, visibilidad, categorias, precios y archivos de un producto.",
-};
+  path: "/productos/editar",
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Panel interno para editar productos en InspiraArte",
+  noIndex: true,
+});
 
 export const dynamicParams = false;
 

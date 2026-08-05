@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
-import "./globals.css";
-import { Header } from "@/components/structure/header";
-import { Footer } from "@/components/structure/footer";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { buildMetadataBase } from "@/lib/metadata";
+import { Footer } from "@/components/structure/footer";
+import { Header } from "@/components/structure/header";
+import "./globals.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -16,9 +17,32 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: buildMetadataBase(),
   title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
   description:
     "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+  openGraph: {
+    title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+    description:
+      "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    url: "/",
+    type: "website",
+    locale: "es_MX",
+    siteName: "InspiraArte",
+    images: [
+      {
+        url: "/dam/dafault-image-product.webp",
+        alt: "Productos personalizados de InspiraArte",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
+    description:
+      "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
+    images: ["/dam/dafault-image-product.webp"],
+  },
   icons: {
     icon: [
       {

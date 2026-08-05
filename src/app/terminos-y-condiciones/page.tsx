@@ -1,22 +1,20 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Términos y condiciones | InspiraArte",
   description:
     "Consulta las condiciones de uso del sitio, solicitudes de cotización, pedidos personalizados y limitaciones de responsabilidad de InspiraArte.",
+  path: "/terminos-y-condiciones",
   keywords: [
     "términos y condiciones",
     "condiciones de uso",
     "cotización",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Términos y condiciones | InspiraArte",
-    description: "Condiciones generales de uso y contratación de InspiraArte.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Terminos y condiciones de InspiraArte",
+});
 
 export default function TerminosYCondiciones() {
   const updateDate = "28 de julio de 2026";

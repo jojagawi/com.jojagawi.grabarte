@@ -1,25 +1,23 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
 import { FAQ } from "@/components/custom/faq";
 
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Preguntas frecuentes | InspiraArte",
   description:
     "Resuelve dudas sobre tiempos de entrega, pedidos mínimos, formatos de archivo, envios, pagos y garantías.",
+  path: "/faq",
   keywords: [
     "preguntas frecuentes",
     "faq",
-    "envios",
+    "envíos",
     "tiempos de entrega",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Preguntas frecuentes | InspiraArte",
-    description: "Encuentra respuestas rápidas sobre pedidos y personalización.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Preguntas frecuentes sobre pedidos personalizados en InspiraArte",
+});
 
 export default function Faq() {
   return (

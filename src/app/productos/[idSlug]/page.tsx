@@ -3,12 +3,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
+import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FilePreview } from "@/components/custom/file-preview";
 
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -139,9 +140,12 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const isDevelopment = process.env.NODE_ENV === "development";
 
   if (!parsed) {
-    return {
+    return buildPageMetadata({
       title: "Producto | InspiraArte",
-    };
+      description: "Explora productos personalizados de InspiraArte y solicita tu cotización.",
+      path: "/productos",
+      noIndex: true,
+    });
   }
 
   const design = await prisma.designs.findFirst({
@@ -151,23 +155,54 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
       name: { not: null },
     },
     select: {
+      id: true,
       name: true,
       description: true,
+      relDesignsFiles: {
+        where: {
+          status: 1,
+          file: {
+            status: 1,
+            filePath: { not: null },
+            fileTypeId: { in: [1, 2] },
+          },
+        },
+        select: {
+          file: {
+            select: {
+              fileTypeId: true,
+              filePath: true,
+            },
+          },
+        },
+      },
     },
   });
 
   if (!design?.name) {
-    return {
+    return buildPageMetadata({
       title: "Producto | InspiraArte",
-    };
+      description: "Explora productos personalizados de InspiraArte y solicita tu cotización.",
+      path: "/productos",
+      noIndex: true,
+    });
   }
 
-  return {
+  const canonicalPath = `/productos/${design.id}-${slugify(design.name)}`;
+  const firstPreviewPath = design.relDesignsFiles.find((relation) => relation.file?.fileTypeId === 1)?.file?.filePath;
+  const firstGalleryPath = design.relDesignsFiles.find((relation) => relation.file?.filePath)?.file?.filePath;
+  const selectedImagePath = firstPreviewPath ?? firstGalleryPath ?? defaultImage;
+  const socialImagePath = toMediaUrl(selectedImagePath) || defaultImage;
+
+  return buildPageMetadata({
     title: `${design.name} | InspiraArte`,
     description:
       design.description?.trim() ||
       "Conoce este diseño personalizado de InspiraArte y solicita tu cotización.",
-  };
+    path: canonicalPath,
+    imagePath: socialImagePath,
+    imageAlt: `Vista previa del producto ${design.name} de InspiraArte`,
+  });
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {

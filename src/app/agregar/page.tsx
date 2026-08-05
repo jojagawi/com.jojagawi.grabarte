@@ -1,22 +1,21 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AddNewDesign } from "@/components/custom/add-new-design";
+import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
+import { AddNewDesign } from "@/components/custom/add-new-design";
 
 
 
-export const metadata: Metadata = {
-  title: "Agregar diseno al catalogo | InspiraArte",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Agregar diseño al catálogo | InspiraArte",
   description:
-    "Panel interno para registrar nuevos disenos, categorias, materiales y archivos del catalogo de InspiraArte.",
-  keywords: ["panel interno", "agregar diseno", "catalogo", "InspiraArte"],
-  openGraph: {
-    title: "Agregar diseno al catalogo | InspiraArte",
-    description: "Registro interno de nuevos productos y archivos del catalogo.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+    "Panel interno para registrar nuevos diseños, categorías, materiales y archivos del catálogo de InspiraArte.",
+  path: "/agregar",
+  keywords: ["panel interno", "agregar diseño", "catálogo", "InspiraArte"],
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Panel interno para agregar productos en InspiraArte",
+  noIndex: true,
+});
 
 export default async function Agregar() {
 

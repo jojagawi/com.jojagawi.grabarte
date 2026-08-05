@@ -1,25 +1,23 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
 import { Process } from "@/components/custom/process";
 
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Proceso de pedido | InspiraArte",
   description:
-    "Conoce como trabajamos tu pedido personalizado: idea, propuesta de diseño, producción laser y entrega en Mexico.",
+    "Conoce cómo trabajamos tu pedido personalizado: idea, propuesta de diseño, producción láser y entrega en México.",
+  path: "/proceso",
   keywords: [
     "proceso de pedido",
     "personalización",
-    "producción laser",
+    "producción láser",
     "cotización",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Proceso de pedido | InspiraArte",
-    description: "Descubre los pasos para convertir tu idea en un producto personalizado.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Proceso de pedido de productos personalizados en InspiraArte",
+});
 
 export default function Proceso() {
   return (

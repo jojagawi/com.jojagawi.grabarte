@@ -1,9 +1,11 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Aviso de privacidad | InspiraArte",
   description:
     "Conoce cómo tratamos tus datos personales en InspiraArte conforme a la legislación mexicana aplicable y buenas prácticas internacionales de privacidad.",
+  path: "/aviso-de-privacidad",
   keywords: [
     "aviso de privacidad",
     "LFPDPPP",
@@ -11,13 +13,9 @@ export const metadata: Metadata = {
     "derechos ARCO",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Aviso de privacidad | InspiraArte",
-    description: "Conoce el tratamiento de datos personales de InspiraArte.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Aviso de privacidad de InspiraArte",
+});
 
 export default function AvisoDePrivacidad() {
   const updateDate = "28 de julio de 2026";

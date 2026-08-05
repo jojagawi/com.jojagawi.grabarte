@@ -1,12 +1,14 @@
 import { Metadata } from "next";
-import { Products } from "@/components/custom/products";
+import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
+import { Products } from "@/components/custom/products";
 
 
-export const metadata: Metadata = {
-  title: "Catalogo de productos personalizados | InspiraArte",
+export const metadata: Metadata = buildPageMetadata({
+  title: "Catálogo de productos personalizados | InspiraArte",
   description:
     "Explora nuestro catalogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.",
+  path: "/productos",
   keywords: [
     "catalogo de productos",
     "productos personalizados",
@@ -14,13 +16,9 @@ export const metadata: Metadata = {
     "regalos",
     "InspiraArte",
   ],
-  openGraph: {
-    title: "Catalogo de productos personalizados | InspiraArte",
-    description: "Encuentra ideas y productos personalizados para cualquier ocasion.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/dafault-image-product.webp",
+  imageAlt: "Catalogo de productos personalizados de InspiraArte",
+});
 
 const defaultImage = "/dam/dafault-image-product.webp";
 

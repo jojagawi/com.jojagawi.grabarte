@@ -1,30 +1,27 @@
 import { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
+import { prisma } from "@/lib/prisma";
 import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
-import { prisma } from "@/lib/prisma";
 
-export const metadata: Metadata = {
-  title: "InspiraArte | Regalos y productos personalizados en Mexico",
+export const metadata: Metadata = buildPageMetadata({
+  title: "InspiraArte | Regalos y productos personalizados en México",
   description:
-    "Creamos termos, llaveros, figuras MDF y mas con grabado y corte laser. Cotiza tu diseño personalizado para regalos, eventos y marcas.",
+    "Creamos termos, llaveros, figuras MDF y más con grabado y corte láser. Cotiza tu diseño personalizado para regalos, eventos y marcas.",
+  path: "/",
   keywords: [
     "productos personalizados",
     "regalos personalizados",
-    "grabado laser",
-    "corte laser",
+    "grabado láser",
+    "corte láser",
     "InspiraArte",
     "termos personalizados",
-    "Mexico",
+    "México",
   ],
-  openGraph: {
-    title: "InspiraArte | Productos personalizados para cada ocasion",
-    description:
-      "Transformamos tus ideas en productos personalizados con acabados de calidad y atencion cercana.",
-    type: "website",
-    locale: "es_MX",
-  },
-};
+  imagePath: "/dam/logos/hero.webp",
+  imageAlt: "Catalogo de productos personalizados de InspiraArte",
+});
 
 const defaultImage = "/dam/dafault-image-product.webp";
 
