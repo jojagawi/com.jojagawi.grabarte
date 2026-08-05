@@ -467,6 +467,7 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                       src={mediaUrl}
                       alt={file.filePath || `Archivo ${file.id}`}
                       fill
+                      loading="lazy"
                       sizes="(max-width: 768px) 100vw, 50vw"
                       unoptimized={usePrivateProxy}
                       className="object-cover"

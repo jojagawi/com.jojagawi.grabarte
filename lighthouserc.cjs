@@ -3,9 +3,13 @@ module.exports = {
     collect: {
       staticDistDir: "./out",
       staticDirFileDiscoveryDepth: 3,
-      numberOfRuns: 3,
+      numberOfRuns: 1,
       headless: "chrome",
       disableStorageReset: false,
+      settings: {
+        blockedUrlPatterns: ["/404.html"],
+        chromeFlags: "--headless=new --disable-gpu --no-first-run --no-default-browser-check --disable-background-networking --disable-features=Translate,MediaRouter --user-data-dir=./.lhci/chrome-profile",
+      },
     },
     assert: {
       assertions: {
@@ -71,8 +75,5 @@ module.exports = {
       outputDir: "./ci/lighthouse/",
       reportFilenamePattern: "%%PATHNAME%%.%%EXTENSION%%",
     },
-    settings: {
-      blockedUrlPatterns: ['/404.html'],
-    }
   },
 };

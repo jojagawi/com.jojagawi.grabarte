@@ -56,6 +56,7 @@ export function Header() {
                 alt="Logo InspiraArte"
                 width={192}
                 height={64}
+                loading="lazy"
                 className="w-48 h-16"
               />
             </div>

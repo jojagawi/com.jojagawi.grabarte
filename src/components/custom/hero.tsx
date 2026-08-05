@@ -130,9 +130,9 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                   src={featuredDesign?.image || defaultHeroImage}
                   alt={`Diseno destacado: ${featuredDesign?.name || "Producto personalizado"}`}
                   fill
+                  loading="lazy"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  priority
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
@@ -158,6 +158,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                       src={design?.image || featuredDesign?.image || defaultHeroImage}
                       alt={`Diseno: ${design?.name || "Producto personalizado"}`}
                       fill
+                      loading="lazy"
                       sizes="(max-width: 1024px) 50vw, 25vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />

@@ -114,6 +114,7 @@ export function FilePreview({
         alt={alt}
         width={1200}
         height={1200}
+        loading="lazy"
         sizes="(max-width: 768px) 100vw, 50vw"
         className={className}
         unoptimized

@@ -1,0 +1,115 @@
+[
+  {
+    "id": 29,
+    "idSlug": "29-nicho-para-altar-de-muertos",
+    "name": "Nicho para Altar de muertos",
+    "description": "Diferentes nichos y tamaños para tu decorar tu altar",
+    "categories": [
+      "Día de muertos",
+      "Tradiciones",
+      "México"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/29.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/29/129.webp"
+    ],
+    "url": "/productos/29-nicho-para-altar-de-muertos"
+  },
+  {
+    "id": 17,
+    "idSlug": "17-calendario-eterno",
+    "name": "Calendario eterno",
+    "description": "Ten este bonito calendario en tu escritorio, y siempre tendrás el mes actual",
+    "categories": [
+      "Oficina",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/17.webp",
+    "gallery": [],
+    "url": "/productos/17-calendario-eterno"
+  },
+  {
+    "id": 16,
+    "idSlug": "16-nacimiento-mini-con-vela",
+    "name": "Nacimiento mini con vela",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Adornos",
+      "Nacimiento",
+      "Navidad",
+      "Vela"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/16.webp",
+    "gallery": [],
+    "url": "/productos/16-nacimiento-mini-con-vela"
+  },
+  {
+    "id": 15,
+    "idSlug": "15-nacimiento",
+    "name": "Nacimiento",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Adornos",
+      "Nacimiento",
+      "Navidad"
+    ],
+    "material": "MDF",
+    "minimumPrice": 300,
+    "suggestedPrice": 350,
+    "image": "https://dam.inspiraarte.com/preview/15.webp",
+    "gallery": [],
+    "url": "/productos/15-nacimiento"
+  },
+  {
+    "id": 4,
+    "idSlug": "4-regalo-armable-navidad",
+    "name": "Regalo armable navidad",
+    "description": "Regala esta tarjeta que al armar y formar un bonito adorno navideño",
+    "categories": [
+      "Adornos",
+      "Navidad",
+      "Regalos",
+      "Rompecabezas 3D"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/4.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/4/1785261349516-hkqejmr1.webp",
+      "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp"
+    ],
+    "url": "/productos/4-regalo-armable-navidad"
+  },
+  {
+    "id": 3,
+    "idSlug": "3-altar-de-muertos",
+    "name": "Altar de muertos",
+    "description": "Perfecto para continuar con las tradiciones Mexicanas y colocar un altar de muertos para todos tus seres queridos.",
+    "categories": [
+      "Adornos",
+      "Día de muertos",
+      "México",
+      "Tradiciones"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/3.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/3/1785260700034-21p6rg5u.webp",
+      "https://dam.inspiraarte.com/preview/3/1785260707569-78f6n3h6.webp",
+      "https://dam.inspiraarte.com/preview/3/1785260710880-0clggm8e.webp"
+    ],
+    "url": "/productos/3-altar-de-muertos"
+  }
+]

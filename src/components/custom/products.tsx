@@ -106,6 +106,7 @@ export function Products({ products, categories }: ProductsProps) {
                   src={product.image}
                   alt={product.name}
                   fill
+                  loading="lazy"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />

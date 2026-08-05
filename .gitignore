@@ -3,6 +3,7 @@
 .lighthouseci/
 ci/
 .cache/
+.lhci
 
 # dependencies
 /node_modules
