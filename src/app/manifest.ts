@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "InspiraArte",
     short_name: "inspiraarte",
     start_url: "/",
-    display: "standalone",
+    display: "fullscreen",
     background_color: "#fff",
     theme_color: "#000",
     icons: [
@@ -16,6 +16,16 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "200x200",
         type: "image/png",
       },
+    ],
+    id: "com.jojagawi.inspiraarte",
+    description: "PWA App for InspiraArte",
+    lang: "es",
+    orientation: "natural",
+    categories: [
+      "design",
+      "graphics &amp; design",
+      "personalization",
+      "shopping",
     ],
   };
 }
