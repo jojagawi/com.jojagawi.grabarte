@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { buildMetadataBase } from "@/lib/metadata";
 import { Footer } from "@/components/structure/footer";
@@ -83,6 +84,11 @@ export default function RootLayout({
             <GoogleTagManager gtmId={process.env.NEXT_GTM} />
           )}
         </main>
+        <Script id="register-service-worker" strategy="afterInteractive">
+          {`if (typeof navigator.serviceWorker !== "undefined") {
+  navigator.serviceWorker.register("/service-worker.js")
+}`}
+        </Script>
       </body>
     </html>
   );
