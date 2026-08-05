@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Document, Page, pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -51,13 +52,13 @@ export function FilePreview({
 
     (async () => {
       try {
-        const module = await import("dxf-viewer");
+        const dxfViewerModule = await import("dxf-viewer");
         if (cancelled || !dxfContainerRef.current) {
           return;
         }
 
         const container = dxfContainerRef.current;
-        viewer = new module.DxfViewer(container, { autoResize: true });
+        viewer = new dxfViewerModule.DxfViewer(container, { autoResize: true });
         await viewer.Load({ url: previewUrl });
       } catch (error) {
         console.error(error);
@@ -107,7 +108,17 @@ export function FilePreview({
   }
 
   if (isImage(mimeType, extension)) {
-    return <img src={previewUrl} alt={alt} className={className} />;
+    return (
+      <Image
+        src={previewUrl}
+        alt={alt}
+        width={1200}
+        height={1200}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        className={className}
+        unoptimized
+      />
+    );
   }
 
   return (

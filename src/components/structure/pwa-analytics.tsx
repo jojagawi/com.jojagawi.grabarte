@@ -15,7 +15,6 @@ interface BeforeInstallPromptEvent extends Event {
 
 declare global {
   interface Window {
-    dataLayer?: Object[];
     gtag?: (
       command: "event",
       eventName: string,

@@ -4,8 +4,10 @@
 
 :root {
   /* --- PALETA BASE DE INSPIRARTE (Extraída del Logo) --- */
+
   /* Fondo: Un blanco muy limpio con un toque de calidez (inspirado en la madera clara) */
   --background: oklch(99% 0.005 90deg);
+
   /* Texto Principal (Foreground): Gris carbón oscuro, casi negro, neutral y legible (como el texto del logo) */
   --foreground: oklch(20% 0.01 240deg);
 
@@ -16,7 +18,9 @@
   --popover-foreground: var(--foreground);
 
   /* --- COLORES DE MARCA --- */
+
   /* Primary (Teal): El color dominante y "tecnológico" de la chispa. Para botones principales, enlaces activos. */
+
   /* Corresponde aproximadamente a #1FA4A7 de tu CSS actual */
   --primary: oklch(65% 0.12 195deg);
   --primary-foreground: oklch(99% 0 0deg);
@@ -26,11 +30,13 @@
   --secondary-foreground: oklch(99% 0 0deg);
 
   /* Accent (Cian Brillante): El punto de inicio del degradado. Para elementos interactivos sutiles, hover, anillos de enfoque. */
+
   /* Corresponde aproximadamente a #3ACBFE de tu CSS actual */
   --accent: oklch(80% 0.15 210deg);
   --accent-foreground: oklch(15% 0.02 240deg);
 
   /* --- ELEMENTOS DE INTERFAZ MUDOS --- */
+
   /* Muted: Fondos secundarios suaves, como áreas de contenido secundario */
   --muted: oklch(95% 0.01 240deg);
   --muted-foreground: oklch(55% 0.02 240deg);
@@ -45,12 +51,11 @@
   --destructive-foreground: oklch(99% 0 0deg);
 
   /* Gráficos: Usando la progresión del degradado */
-  --chart-1: var(--primary);    /* Teal principal */
-  --chart-2: var(--secondary);  /* Púrpura */
-  --chart-3: var(--accent);     /* Cian brillante */
+  --chart-1: var(--primary); /* Teal principal */
+  --chart-2: var(--secondary); /* Púrpura */
+  --chart-3: var(--accent); /* Cian brillante */
   --chart-4: oklch(70% 0.15 170deg); /* Un verde-teal complementario suave */
-  --chart-5: oklch(85% 0.03 90deg);  /* Un dorado/madera muy pálido */
-
+  --chart-5: oklch(85% 0.03 90deg); /* Un dorado/madera muy pálido */
   --radius: 0.75rem;
 
   /* Sidebar: Usando tonos limpios */
@@ -64,10 +69,11 @@
   --sidebar-ring: var(--accent);
 
   /* --- COLORES DE MARCA PERSONALIZADOS (HEX exactos para referencia) --- */
+
   /* Actualizados para coincidir exactamente con el degradado y texto del logo */
-  --inspirarte-teal-primary: #1fa4a7;   /* El color principal de la marca */
-  --inspirarte-cyan-bright: #3acbfe;    /* El cian vibrante */
-  --inspirarte-purple-deep: #7e3af2;   /* El púrpura creativo */
+  --inspirarte-teal-primary: #1fa4a7; /* El color principal de la marca */
+  --inspirarte-cyan-bright: #3acbfe; /* El cian vibrante */
+  --inspirarte-purple-deep: #7e3af2; /* El púrpura creativo */
   --inspirarte-charcoal-text: #323236; /* Gris oscuro del texto del logo */
   --inspirarte-placeholder-grey: #676767; /* Gris de la leyenda 'ejemplos de acabado' */
 }
@@ -77,7 +83,6 @@
   /* Fondo: Un gris azulado muy oscuro y profundo, profesional y tecnológico */
   --background: oklch(15% 0.01 240deg);
   --foreground: oklch(98% 0.005 240deg); /* Texto claro casi blanco */
-
   --card: oklch(20% 0.01 240deg);
   --card-foreground: var(--foreground);
   --popover: oklch(20% 0.01 240deg);
@@ -86,19 +91,14 @@
   /* Colores de marca vibrantes sobre fondo oscuro */
   --primary: oklch(75% 0.15 195deg); /* Teal más brillante para modo oscuro */
   --primary-foreground: oklch(15% 0.02 240deg);
-
   --secondary: oklch(65% 0.18 280deg); /* Púrpura más brillante */
   --secondary-foreground: oklch(15% 0.02 240deg);
-
   --muted: oklch(25% 0.02 240deg);
   --muted-foreground: oklch(70% 0.01 240deg);
-
   --accent: oklch(85% 0.18 210deg); /* Cian brillante muy vibrante */
   --accent-foreground: oklch(15% 0.02 240deg);
-
   --destructive: oklch(50% 0.2 27.325deg);
   --destructive-foreground: oklch(99% 0 0deg);
-
   --border: oklch(30% 0.02 240deg);
   --input: oklch(28% 0.02 240deg);
   --ring: var(--accent);
@@ -109,7 +109,6 @@
   --chart-3: var(--accent);
   --chart-4: oklch(75% 0.2 170deg);
   --chart-5: oklch(80% 0.05 90deg);
-
   --sidebar: var(--card);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -125,7 +124,6 @@
   --font-sans: "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Playfair Display Fallback", georgia, serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -169,6 +167,7 @@
   --color-inspirarte-purple: var(--inspirarte-purple-deep);
   --color-inspirarte-charcoal: var(--inspirarte-charcoal-text);
 }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

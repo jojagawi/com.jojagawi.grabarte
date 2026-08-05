@@ -12,4 +12,3 @@
   },
   "include": ["src/sw/service-worker.ts"]
 }
-
