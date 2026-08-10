@@ -4,7 +4,7 @@
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
-const SW_VERSION = "inspiraarte-sw-v2";
+const SW_VERSION = "inspiraarte-sw-v3";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
 
@@ -45,6 +45,10 @@ function isHttpRequest(request: Request): boolean {
 
 function isApiRequest(url: URL): boolean {
   return url.pathname.startsWith("/api/");
+}
+
+function isNextAsset(url: URL): boolean {
+  return url.pathname.startsWith("/_next/");
 }
 
 async function networkFirst(request: Request): Promise<Response> {
@@ -92,6 +96,11 @@ sw.addEventListener("fetch", (event) => {
   const requestUrl = new URL(request.url);
 
   if (!isHttpRequest(request) || isApiRequest(requestUrl)) {
+    return;
+  }
+
+  if (isNextAsset(requestUrl)) {
+    event.respondWith(networkFirst(request));
     return;
   }
 

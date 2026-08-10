@@ -393,7 +393,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     src={previewItem?.previewUrl || defaultImage}
                     alt={`Vista previa de ${design.name}`}
                     fill
-                    loading="lazy"
+                    loading="eager"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
                   />

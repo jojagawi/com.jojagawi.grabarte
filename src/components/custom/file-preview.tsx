@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Document, Page, pdfjs } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+type PdfComponents = {
+  Document: typeof import("react-pdf").Document;
+  Page: typeof import("react-pdf").Page;
+};
 
 type FilePreviewProps = {
   previewUrl: string;
@@ -41,6 +43,8 @@ export function FilePreview({
 }: FilePreviewProps) {
   const dxfContainerRef = useRef<HTMLDivElement | null>(null);
   const [dxfError, setDxfError] = useState<string | null>(null);
+  const [pdfComponents, setPdfComponents] = useState<PdfComponents | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isDxf(extension) || !dxfContainerRef.current) {
@@ -74,6 +78,38 @@ export function FilePreview({
     };
   }, [extension, previewUrl]);
 
+  useEffect(() => {
+    if (!isPdf(mimeType, extension)) {
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const reactPdfModule = await import("react-pdf");
+        reactPdfModule.pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${reactPdfModule.pdfjs.version}/build/pdf.worker.min.mjs`;
+
+        if (!cancelled) {
+          setPdfError(null);
+          setPdfComponents({
+            Document: reactPdfModule.Document,
+            Page: reactPdfModule.Page,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        if (!cancelled) {
+          setPdfError("No fue posible cargar la previsualizacion del PDF.");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mimeType, extension]);
+
   if (isVideo(mimeType)) {
     return (
       <video controls className={className} preload="metadata">
@@ -85,8 +121,20 @@ export function FilePreview({
   }
 
   if (isPdf(mimeType, extension)) {
+    const wrapperClass = className ? `${className} bg-muted overflow-hidden` : "bg-muted overflow-hidden";
+
+    if (pdfError) {
+      return <div className={`${wrapperClass} p-3 text-xs text-destructive`}>{pdfError}</div>;
+    }
+
+    if (!pdfComponents) {
+      return <div className={`${wrapperClass} p-4 text-xs text-muted-foreground`}>Cargando PDF...</div>;
+    }
+
+    const { Document, Page } = pdfComponents;
+
     return (
-      <div className={className ? `${className} bg-muted overflow-hidden` : "bg-muted overflow-hidden"}>
+      <div className={wrapperClass}>
         <Document file={previewUrl} loading={<div className="p-4 text-xs text-muted-foreground">Cargando PDF...</div>}>
           <Page pageNumber={1} width={420} renderTextLayer={false} renderAnnotationLayer={false} />
         </Document>

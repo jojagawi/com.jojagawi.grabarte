@@ -5,6 +5,8 @@
   "scripts": {
     "predev": "run-s build:sw",
     "dev": "next dev",
+    "predev:https": "run-s build:sw",
+    "dev:https": "next dev --hostname dev.inspiraarte.com --port 3000 --experimental-https --experimental-https-key ./certs/cer.key --experimental-https-cert ./certs/cer.pem",
     "build:sw": "tsc --project tsconfig.sw.json",
     "build:mcp": "tsx scripts/build-mcp-fallback.ts",
     "images:optimize": "node scripts/optimize-images.mjs",

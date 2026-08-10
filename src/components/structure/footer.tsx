@@ -162,22 +162,22 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/20 mt-12 pt-8">
+        <div className="border-t  mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/60 text-sm">
+            <p className="text-sm">
               © {new Date().getFullYear()} LaserCraft MX. Todos los derechos
               reservados.
             </p>
             <div className="flex gap-6">
               <Link
                 href="/aviso-de-privacidad"
-                className="text-white/60 hover:text-white text-sm transition-colors"
+                className="hover:text-[#3ACBFE] text-sm transition-colors"
               >
                 Aviso de Privacidad
               </Link>
               <Link
                 href="/terminos-y-condiciones"
-                className="text-white/60 hover:text-white text-sm transition-colors"
+                className="hover:text-[#3ACBFE] text-sm transition-colors"
               >
                 Términos y Condiciones
               </Link>

@@ -7,6 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "InspiraArte",
     short_name: "inspiraarte",
     start_url: "/",
+    scope: "/",
     display: "fullscreen",
     background_color: "#fff",
     theme_color: "#000",
@@ -36,19 +37,19 @@ export default function manifest(): MetadataRoute.Manifest {
     shortcuts: [
       {
         name: "Productos",
-        url: "https://www.inspiraarte.com/productos/",
+        url: "/productos/",
         description:
           "Lista de productos que puedes solicitar dentro de InspiraArte",
       },
       {
         name: "Proceso",
-        url: "https://www.inspiraarte.com/proceso/",
+        url: "/proceso/",
         description:
           "Analiza cual es el proceso que tenemos para fabricar nuestros productos",
       },
       {
         name: "FAQ",
-        url: "https://www.inspiraarte.com/faq/",
+        url: "/faq/",
         description: "Preguntas frecuentes dentro de InspiraArte",
       },
     ],

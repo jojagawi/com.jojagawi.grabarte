@@ -2,7 +2,7 @@
 /// <reference lib="webworker" />
 // Service worker source of truth. Build output goes to public/service-worker.js.
 const sw = self;
-const SW_VERSION = "inspiraarte-sw-v2";
+const SW_VERSION = "inspiraarte-sw-v3";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
 const STATIC_ASSETS = [
@@ -30,6 +30,9 @@ function isHttpRequest(request) {
 }
 function isApiRequest(url) {
     return url.pathname.startsWith("/api/");
+}
+function isNextAsset(url) {
+    return url.pathname.startsWith("/_next/");
 }
 async function networkFirst(request) {
     const cache = await caches.open(RUNTIME_CACHE);
@@ -69,6 +72,10 @@ sw.addEventListener("fetch", (event) => {
     const { request } = event;
     const requestUrl = new URL(request.url);
     if (!isHttpRequest(request) || isApiRequest(requestUrl)) {
+        return;
+    }
+    if (isNextAsset(requestUrl)) {
+        event.respondWith(networkFirst(request));
         return;
     }
     if (request.mode === "navigate") {

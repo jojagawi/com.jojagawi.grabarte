@@ -70,9 +70,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const shouldRegisterServiceWorker = process.env.NODE_ENV === "production";
+
   return (
     <html
       lang="es"
+      data-scroll-behavior="smooth"
       className={`bg-background` + dmSans.className + " " + playfair.className}
     >
       <body
@@ -89,8 +92,38 @@ export default function RootLayout({
           )}
         </main>
         <Script id="register-service-worker" strategy="afterInteractive">
-          {`if (typeof navigator.serviceWorker !== "undefined") {
-  navigator.serviceWorker.register("/service-worker.js")
+          {`if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+  const swPath = "/service-worker.js";
+  const swAbsoluteUrl = new URL(swPath, window.location.origin).href;
+
+  if (${shouldRegisterServiceWorker}) {
+    navigator.serviceWorker
+      .register(swPath, { scope: "/" })
+      .catch((error) => {
+        console.error("[SW] Error al registrar service worker", error);
+      });
+  } else {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) => {
+        registrations.forEach((registration) => {
+          const matchesScope = registration.scope.startsWith(window.location.origin + "/");
+          const matchesScriptUrl =
+            registration.active?.scriptURL === swAbsoluteUrl ||
+            registration.installing?.scriptURL === swAbsoluteUrl ||
+            registration.waiting?.scriptURL === swAbsoluteUrl;
+
+          if (matchesScope && matchesScriptUrl) {
+            registration.unregister().catch((error) => {
+              console.error("[SW] Error al desregistrar service worker", error);
+            });
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("[SW] Error al listar registros de service worker", error);
+      });
+  }
 }`}
         </Script>
       </body>
