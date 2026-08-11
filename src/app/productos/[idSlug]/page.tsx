@@ -6,6 +6,7 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import { buildProductCode } from "@/lib/utils";
 import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,11 @@ function getFileNameFromPath(filePath: string | null | undefined): string {
 
 function getPrivateFileProxyUrl(fileId: number): string {
   return `/api/admin/designs/files/${fileId}`;
+}
+
+function getFileExtensionLabel(extension: string): string {
+  const normalized = extension.trim();
+  return normalized ? normalized.toUpperCase() : "ARCHIVO";
 }
 
 function toFileItem(
@@ -231,6 +237,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       description: true,
       showInHome: true,
       showInSite: true,
+      minimumPrice: true,
+      suggestedPrice: true,
       material: {
         select: {
           name: true,
@@ -338,6 +346,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     )
     .filter((item): item is FileItem => Boolean(item));
 
+  const productCode =
+    typeof design.minimumPrice === "number" && typeof design.suggestedPrice === "number"
+      ? buildProductCode(design.id, Math.trunc(design.minimumPrice), Math.trunc(design.suggestedPrice))
+      : null;
+
   return (
     <section className="py-24 bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
@@ -424,6 +437,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   </p>
                   <Badge variant="outline" className="text-sm">
                     {design.material?.name?.trim() || "No especificado"}
+                  </Badge>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-foreground mb-2">
+                    Codigo
+                  </p>
+                  <Badge variant="outline" className="text-sm">
+                    {productCode || "No disponible"}
                   </Badge>
                 </div>
 
@@ -595,7 +617,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             download
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >
-                            Descargar archivo
+                            Descargar archivo ({getFileExtensionLabel(item.extension)})
                           </a>
                         </div>
                       </CardContent>
@@ -655,7 +677,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             download
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >
-                            Descargar archivo
+                            Descargar archivo ({getFileExtensionLabel(item.extension)})
                           </a>
                         </div>
                       </CardContent>
