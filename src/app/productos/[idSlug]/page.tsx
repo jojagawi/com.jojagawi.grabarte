@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -7,6 +6,7 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
 import { buildProductCode } from "@/lib/utils";
+import { DesignMediaGallery } from "@/components/custom/design-media-gallery";
 import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -382,39 +382,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           )}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          <Card className="overflow-hidden py-0">
-            <CardContent className="p-0">
-              {previewItem?.isVideo ? (
-                <video
-                  controls
-                  className="w-full aspect-square object-cover bg-black"
-                  preload="metadata"
-                >
-                  <source src={previewItem.previewUrl} />
-                  <track
-                    kind="captions"
-                    srcLang="es"
-                    label="Subtitulos"
-                    src="data:text/vtt,WEBVTT%0A%0A"
-                  />
-                  Tu navegador no soporta la reproducción de video.
-                </video>
-              ) : (
-                <div className="relative aspect-square bg-linear-to-br from-[#4290A3]/10 to-[#1FA4A7]/10">
-                  <Image
-                    src={previewItem?.previewUrl || defaultImage}
-                    alt={`Vista previa de ${design.name}`}
-                    fill
-                    loading="eager"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
+        <DesignMediaGallery
+          designName={design.name}
+          defaultImage={defaultImage}
+          previewItem={previewItem}
+          galleryItems={galleryItems}
+        >
           <Card className="py-0">
             <CardContent className="p-6 lg:p-8 space-y-6">
               <div className="space-y-3">
@@ -506,64 +479,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
-            Imagenes del diseno
-          </h2>
-
-          {galleryItems.length === 0 ? (
-            <Card>
-              <CardContent className="text-sm text-muted-foreground">
-                Este producto aun no tiene imagenes adicionales disponibles.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {galleryItems.map((item, index) => (
-                <Card
-                  key={`${item.key}-${index}`}
-                  className="overflow-hidden py-0"
-                >
-                  <CardContent className="p-0">
-                    {item.isVideo ? (
-                      <video
-                        controls
-                        className="w-full aspect-4/3 object-cover bg-black"
-                        preload="metadata"
-                      >
-                        <source src={item.previewUrl} />
-                        <track
-                          kind="captions"
-                          srcLang="es"
-                          label="Subtitulos"
-                          src="data:text/vtt,WEBVTT%0A%0A"
-                        />
-                        Tu navegador no soporta la reproducción de video.
-                      </video>
-                    ) : item.isImage ? (
-                      <div className="relative aspect-4/3 bg-muted">
-                        <Image
-                          src={item.previewUrl}
-                          alt={`Imagen ${index + 1} del diseño ${design.name}`}
-                          fill
-                          loading="lazy"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-4/3 bg-muted flex items-center justify-center text-xs text-muted-foreground px-4 text-center">
-                        {item.fileName}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+        </DesignMediaGallery>
 
         {isDevelopment && (
           <>
