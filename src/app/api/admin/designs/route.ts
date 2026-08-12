@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
+import { invalidateAssetCaches } from "@/lib/cacheInvalidation";
 import sharp from "sharp";
 
 export const dynamic = "force-static";
@@ -100,6 +101,8 @@ export async function POST(request: Request) {
   const s3Region = process.env.NEXT_AWS_REGION;
   const s3AccessKeyId = process.env.NEXT_AWS_ACCESS_KEY_ID;
   const s3SecretAccessKey = process.env.NEXT_AWS_SECRET_ACCESS_KEY;
+  const uploadedObjectKeys: string[] = [];
+  const registeredFileIds: number[] = [];
 
   const ensureExtensionId = async (extension: string, mimeType?: string) => {
     const normalizedExtension = extension.toLowerCase();
@@ -220,6 +223,8 @@ export async function POST(request: Request) {
       }),
     );
 
+    uploadedObjectKeys.push(objectKey);
+
     const fileRecord = await prisma.files.create({
       data: {
         fileTypeId: previewType.id,
@@ -229,6 +234,8 @@ export async function POST(request: Request) {
       },
       select: { id: true },
     });
+
+    registeredFileIds.push(fileRecord.id);
 
     await prisma.relDesignsFiles.create({
       data: {
@@ -350,6 +357,8 @@ export async function POST(request: Request) {
         }),
       );
 
+      uploadedObjectKeys.push(objectKey);
+
       await prisma.files.update({
         where: { id: fileRecord.id },
         data: { filePath: objectKey },
@@ -362,6 +371,8 @@ export async function POST(request: Request) {
           status: 1,
         },
       });
+
+      registeredFileIds.push(fileRecord.id);
     }
   }
 
@@ -425,6 +436,8 @@ export async function POST(request: Request) {
       }),
     );
 
+    uploadedObjectKeys.push(objectKey);
+
     await prisma.files.update({
       where: { id: fileRecord.id },
       data: { filePath: objectKey },
@@ -437,6 +450,8 @@ export async function POST(request: Request) {
         status: 1,
       },
     });
+
+    registeredFileIds.push(fileRecord.id);
   }
 
   const uploadedSourceFiles = sourceFiles.filter(
@@ -499,6 +514,8 @@ export async function POST(request: Request) {
         }),
       );
 
+      uploadedObjectKeys.push(objectKey);
+
       await prisma.files.update({
         where: { id: fileRecord.id },
         data: { filePath: objectKey },
@@ -511,7 +528,22 @@ export async function POST(request: Request) {
           status: 1,
         },
       });
+
+      registeredFileIds.push(fileRecord.id);
     }
+  }
+
+  const cacheInvalidationResult = await invalidateAssetCaches({
+    requestUrl: request.url,
+    objectKeys: uploadedObjectKeys,
+    fileIds: registeredFileIds,
+    flushViteCache: true,
+  });
+
+  if (cacheInvalidationResult.errors.length > 0) {
+    console.warn("No se completo toda la invalidacion de cache", {
+      errors: cacheInvalidationResult.errors,
+    });
   }
 
   return NextResponse.json({

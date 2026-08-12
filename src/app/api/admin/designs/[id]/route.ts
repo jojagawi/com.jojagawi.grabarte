@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
+import { invalidateAssetCaches } from "@/lib/cacheInvalidation";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -106,7 +107,7 @@ async function getFileTypeId(name: string) {
 
 async function removeFilesFromDesign(designId: number, fileIds: number[]) {
   if (fileIds.length === 0) {
-    return;
+    return { removedFileIds: [] as number[], removedObjectKeys: [] as string[] };
   }
 
   const uniqueFileIds = Array.from(new Set(fileIds));
@@ -128,7 +129,7 @@ async function removeFilesFromDesign(designId: number, fileIds: number[]) {
   });
 
   if (files.length === 0) {
-    return;
+    return { removedFileIds: [] as number[], removedObjectKeys: [] as string[] };
   }
 
   const s3Context = buildS3Client();
@@ -153,6 +154,9 @@ async function removeFilesFromDesign(designId: number, fileIds: number[]) {
   }
 
   const fileIdsToRemove = files.map((file) => file.id);
+  const removedObjectKeys = files
+    .map((file) => file.filePath)
+    .filter((filePath): filePath is string => Boolean(filePath));
 
   await prisma.$transaction(async (tx) => {
     await tx.relDesignsFiles.deleteMany({
@@ -168,6 +172,11 @@ async function removeFilesFromDesign(designId: number, fileIds: number[]) {
       },
     });
   });
+
+  return {
+    removedFileIds: fileIdsToRemove,
+    removedObjectKeys,
+  };
 }
 
 async function createAndAttachFileRecord(input: {
@@ -210,6 +219,8 @@ async function createAndAttachFileRecord(input: {
       status: 1,
     },
   });
+
+  return fileRecord.id;
 }
 
 export async function GET(
@@ -374,6 +385,9 @@ export async function PUT(
     .map((value) => Number(String(value)))
     .filter((value) => Number.isInteger(value) && value > 0);
 
+  const affectedObjectKeys: string[] = [];
+  const affectedFileIds: number[] = [];
+
   await prisma.$transaction(async (tx) => {
     await tx.designs.update({
       where: { id },
@@ -406,7 +420,9 @@ export async function PUT(
     });
   });
 
-  await removeFilesFromDesign(id, deletedFileIds);
+  const removedByUserRequest = await removeFilesFromDesign(id, deletedFileIds);
+  affectedObjectKeys.push(...removedByUserRequest.removedObjectKeys);
+  affectedFileIds.push(...removedByUserRequest.removedFileIds);
 
   const previewTypeId = await getFileTypeId("Vista previa");
   const designImagesTypeId = await getFileTypeId("Imagenes del diseño");
@@ -447,18 +463,20 @@ export async function PUT(
       select: { typeId: true },
     });
 
-    await removeFilesFromDesign(
+    const removedPreviousPreview = await removeFilesFromDesign(
       id,
       oldPreviewRelations
         .map((relation) => relation.typeId)
         .filter((fileId): fileId is number => Number.isInteger(fileId)),
     );
+    affectedObjectKeys.push(...removedPreviousPreview.removedObjectKeys);
+    affectedFileIds.push(...removedPreviousPreview.removedFileIds);
 
     const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
     const webpBuffer = await sharp(previewBuffer).webp({ quality: 90 }).toBuffer();
     const webpExtensionId = await ensureExtensionId("webp", "image/webp");
 
-    await createAndAttachFileRecord({
+    const previewFileId = await createAndAttachFileRecord({
       designId: id,
       fileTypeId: previewTypeId,
       fileExtensionId: webpExtensionId,
@@ -466,6 +484,8 @@ export async function PUT(
       body: webpBuffer,
       contentType: "image/webp",
     });
+    affectedObjectKeys.push(`preview/${id}.webp`);
+    affectedFileIds.push(previewFileId);
   }
 
   const uploadedDesignImages = designImages.filter(
@@ -519,7 +539,7 @@ export async function PUT(
 
       const objectKey = `preview/${id}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${finalExtension}`;
 
-      await createAndAttachFileRecord({
+      const fileId = await createAndAttachFileRecord({
         designId: id,
         fileTypeId: designImagesTypeId,
         fileExtensionId,
@@ -527,6 +547,8 @@ export async function PUT(
         body: finalBuffer,
         contentType: finalMimeType,
       });
+      affectedObjectKeys.push(objectKey);
+      affectedFileIds.push(fileId);
     }
   }
 
@@ -545,7 +567,7 @@ export async function PUT(
 
     const objectKey = `files/${id}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${extension}`;
 
-    await createAndAttachFileRecord({
+    const fileId = await createAndAttachFileRecord({
       designId: id,
       fileTypeId: instructionTypeId,
       fileExtensionId,
@@ -553,6 +575,8 @@ export async function PUT(
       body: fileBuffer,
       contentType: mimeType,
     });
+    affectedObjectKeys.push(objectKey);
+    affectedFileIds.push(fileId);
   }
 
   const uploadedSourceFiles = sourceFiles.filter(
@@ -575,7 +599,7 @@ export async function PUT(
 
       const objectKey = `files/${id}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${extension}`;
 
-      await createAndAttachFileRecord({
+      const fileId = await createAndAttachFileRecord({
         designId: id,
         fileTypeId: sourceTypeId,
         fileExtensionId,
@@ -583,7 +607,22 @@ export async function PUT(
         body: fileBuffer,
         contentType: mimeType,
       });
+      affectedObjectKeys.push(objectKey);
+      affectedFileIds.push(fileId);
     }
+  }
+
+  const cacheInvalidationResult = await invalidateAssetCaches({
+    requestUrl: request.url,
+    objectKeys: affectedObjectKeys,
+    fileIds: affectedFileIds,
+    flushViteCache: true,
+  });
+
+  if (cacheInvalidationResult.errors.length > 0) {
+    console.warn("No se completo toda la invalidacion de cache", {
+      errors: cacheInvalidationResult.errors,
+    });
   }
 
   return NextResponse.json({

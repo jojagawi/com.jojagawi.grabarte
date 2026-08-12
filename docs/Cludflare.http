@@ -1,0 +1,44 @@
+# curl -X GET "https://api.cloudflare.com/client/v4/accounts/95b36ba4700122c81555e59a40d1d7e0/tokens/verify"
+#     -H "Authorization: Bearer cfat_Q5SOt7JXZWhTvJYlcRpfCVM4k8MIhy3oB3VzaRlK41dbbb4a"
+GET https://api.cloudflare.com/client/v4/accounts/95b36ba4700122c81555e59a40d1d7e0/tokens/verify
+Authorization: Bearer cfat_Q5SOt7JXZWhTvJYlcRpfCVM4k8MIhy3oB3VzaRlK41dbbb4a
+
+###
+
+# curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/purge_cache"
+#     -H "Authorization: Bearer YOUR_API_TOKEN"
+#     -H "Content-Type: application/json"
+#     --data '{
+#       "files": [
+#         "https://example.com",
+#         "https://example.com"
+#       ]
+#     }'
+POST https://api.cloudflare.com/client/v4/zones/20f7ce51702d71f3f9c4d80a199c379f/purge_cache
+Authorization: Bearer cfat_Q5SOt7JXZWhTvJYlcRpfCVM4k8MIhy3oB3VzaRlK41dbbb4a
+Content-Type: application/json
+
+{
+  "files": [
+    "https://dam.inspiraarte.com/preview/46.webp",
+    "https://dam.inspiraarte.com/preview/30.webp"
+  ]
+}
+
+
+
+
+###
+# curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/purge_cache"
+#     -H "Authorization: Bearer YOUR_API_TOKEN"
+#     -H "Content-Type: application/json"
+#     --data '{"purge_everything":true}'
+POST https://api.cloudflare.com/client/v4/zones/20f7ce51702d71f3f9c4d80a199c379f/purge_cache
+Authorization: Bearer cfat_Q5SOt7JXZWhTvJYlcRpfCVM4k8MIhy3oB3VzaRlK41dbbb4a
+Content-Type: application/json
+
+{
+  "purge_everything": true
+}
+
+###
