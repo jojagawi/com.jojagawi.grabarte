@@ -14,6 +14,12 @@ type ProductListItem = {
   image: string
   color: string
   categories: string[]
+  materialName: string | null
+  isCustomizable: boolean
+  isActive: boolean
+  isTested: boolean
+  showInHome: boolean
+  showInSite: boolean
 }
 
 type ProductCategory = {
@@ -24,17 +30,43 @@ type ProductCategory = {
 interface ProductsProps {
   products: ProductListItem[]
   categories: ProductCategory[]
+  materialOptions: string[]
+  enableDevFilters?: boolean
+}
+
+type BooleanFilter = "all" | "yes" | "no"
+
+function matchesBooleanFilter(value: boolean, filter: BooleanFilter): boolean {
+  if (filter === "all") {
+    return true
+  }
+
+  return filter === "yes" ? value : !value
 }
 
 const categoryIcons = [Gift, Briefcase, Heart, Church, PartyPopper, GraduationCap, Baby, Calendar]
 const categoryColors = ["#00B003", "#4290A3", "#1FA4A7", "#585106", "#3ACBFE"]
 
-export function Products({ products, categories }: ProductsProps) {
+export function Products({ products, categories, materialOptions, enableDevFilters = false }: ProductsProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [customizableFilter, setCustomizableFilter] = useState<BooleanFilter>("all")
+  const [statusFilter, setStatusFilter] = useState<BooleanFilter>("all")
+  const [testedFilter, setTestedFilter] = useState<BooleanFilter>("all")
+  const [showInHomeFilter, setShowInHomeFilter] = useState<BooleanFilter>("all")
+  const [showInSiteFilter, setShowInSiteFilter] = useState<BooleanFilter>("all")
+  const [materialFilter, setMaterialFilter] = useState<string>("all")
 
-  const filteredProducts = selectedCategory
-    ? products.filter((product) => product.categories.includes(selectedCategory))
-    : products
+  const filteredProducts = products.filter((product) => {
+    const byCategory = !selectedCategory || product.categories.includes(selectedCategory)
+    const byCustomizable = matchesBooleanFilter(product.isCustomizable, customizableFilter)
+    const byStatus = matchesBooleanFilter(product.isActive, statusFilter)
+    const byTested = matchesBooleanFilter(product.isTested, testedFilter)
+    const byShowInHome = matchesBooleanFilter(product.showInHome, showInHomeFilter)
+    const byShowInSite = matchesBooleanFilter(product.showInSite, showInSiteFilter)
+    const byMaterial = materialFilter === "all" || product.materialName === materialFilter
+
+    return byCategory && byCustomizable && byStatus && byTested && byShowInHome && byShowInSite && byMaterial
+  })
 
   return (
     <section id="productos" className="py-24 bg-muted/30">
@@ -52,6 +84,80 @@ export function Products({ products, categories }: ProductsProps) {
             Explora nuestras categorías y encuentra el regalo perfecto.
           </p>
         </div>
+
+        {enableDevFilters && (
+          <div className="rounded-2xl border border-border bg-white p-4 mb-8">
+            <p className="text-sm font-medium text-foreground mb-3">Filtros de desarrollo</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+              <select
+                aria-label="Filtrar por personalizable"
+                value={customizableFilter}
+                onChange={(event) => setCustomizableFilter(event.target.value as BooleanFilter)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Personalizable: Todos</option>
+                <option value="yes">Personalizable: Si</option>
+                <option value="no">Personalizable: No</option>
+              </select>
+
+              <select
+                aria-label="Filtrar por material"
+                value={materialFilter}
+                onChange={(event) => setMaterialFilter(event.target.value)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Material: Todos</option>
+                {materialOptions.map((materialName) => (
+                  <option key={materialName} value={materialName}>{materialName}</option>
+                ))}
+              </select>
+
+              <select
+                aria-label="Filtrar por status"
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value as BooleanFilter)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Status: Todos</option>
+                <option value="yes">Status: Activo</option>
+                <option value="no">Status: Inactivo</option>
+              </select>
+
+              <select
+                aria-label="Filtrar por probado"
+                value={testedFilter}
+                onChange={(event) => setTestedFilter(event.target.value as BooleanFilter)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Probado: Todos</option>
+                <option value="yes">Probado: Si</option>
+                <option value="no">Probado: No</option>
+              </select>
+
+              <select
+                aria-label="Filtrar por mostrar en home"
+                value={showInHomeFilter}
+                onChange={(event) => setShowInHomeFilter(event.target.value as BooleanFilter)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Mostrar en home: Todos</option>
+                <option value="yes">Mostrar en home: Si</option>
+                <option value="no">Mostrar en home: No</option>
+              </select>
+
+              <select
+                aria-label="Filtrar por mostrar en sitio"
+                value={showInSiteFilter}
+                onChange={(event) => setShowInSiteFilter(event.target.value as BooleanFilter)}
+                className="h-10 rounded-md border border-border bg-background px-3 text-sm"
+              >
+                <option value="all">Mostrar en sitio: Todos</option>
+                <option value="yes">Mostrar en sitio: Si</option>
+                <option value="no">Mostrar en sitio: No</option>
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Categories Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">

@@ -66,6 +66,16 @@ export default async function Productos() {
       id: true,
       name: true,
       description: true,
+      isCustomizable: true,
+      status: true,
+      isTested: true,
+      showInHome: true,
+      showInSite: true,
+      material: {
+        select: {
+          name: true,
+        },
+      },
       relDesignsCategories: {
         where: {
           status: 1,
@@ -141,16 +151,32 @@ export default async function Productos() {
       image,
       color: cardGradients[index % cardGradients.length],
       categories: designCategories,
+      materialName: design.material?.name?.trim() || null,
+      isCustomizable: Number(design.isCustomizable) === 1,
+      isActive: Number(design.status) === 1,
+      isTested: Number(design.isTested) === 1,
+      showInHome: Number(design.showInHome) === 1,
+      showInSite: Number(design.showInSite) === 1,
     };
   });
+
+  const materialOptions = Array.from(
+    new Set(
+      designs
+        .map((design) => design.material?.name?.trim())
+        .filter((materialName): materialName is string => Boolean(materialName)),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
 
   return (
     <>
       <Products
+        enableDevFilters={isDevelopment}
         categories={categories.map((category) => ({
           id: category.id,
           name: category.name ?? "Sin nombre",
         }))}
+        materialOptions={materialOptions}
         products={products}
       />
     </>
