@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-static";
 export const revalidate = false;
 
+const isStaticExport = process.env.STATIC_EXPORT === "true";
+
+
 function parseLimit(raw: string | null): number {
   const parsed = Number(raw ?? "5");
   if (!Number.isInteger(parsed)) {
@@ -15,6 +18,17 @@ function parseLimit(raw: string | null): number {
 
 export async function GET(request: Request) {
   try {
+    if (isStaticExport) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: "MCP_STATIC_EXPORT_UNAVAILABLE",
+          message: "Ruta API no disponible en export estático.",
+        },
+        { status: 501 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const query = (searchParams.get("q") || "").trim().toLowerCase();
     const limit = parseLimit(searchParams.get("limit"));

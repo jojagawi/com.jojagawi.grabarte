@@ -51,7 +51,13 @@ type ModelContextCarrier = {
 };
 
 type WebMcpContext = {
-  registerTool: (toolConfig: unknown) => () => void;
+  registerTool: (toolConfig: unknown) => unknown;
+};
+
+const WEBMCP_TOOLS_GUARD_KEY = "__grabarte_webmcp_tools_initialized__";
+
+type WebMcpToolsGuardHost = typeof globalThis & {
+  [WEBMCP_TOOLS_GUARD_KEY]?: boolean;
 };
 
 const fallbackCache = new Map<string, unknown>();
@@ -147,6 +153,11 @@ function hasRegisterTool(context: unknown): context is WebMcpContext {
 }
 
 export function setupAiTools() {
+  const guardHost = globalThis as WebMcpToolsGuardHost;
+  if (guardHost[WEBMCP_TOOLS_GUARD_KEY]) {
+    return;
+  }
+
   // WebMCP movio modelContext a document; navigator queda como fallback temporal.
   const documentContext = getModelContext(document);
   const navigatorContext = documentContext ? null : getModelContext(navigator);
@@ -157,7 +168,10 @@ export function setupAiTools() {
     return;
   }
 
-  const unregisterTools: Array<() => void> = [];
+  // Evita re-registros en Strict Mode/HMR para el mismo documento.
+  guardHost[WEBMCP_TOOLS_GUARD_KEY] = true;
+
+  const unregisterTools: unknown[] = [];
 
   unregisterTools.push(
     ctx.registerTool({
@@ -485,6 +499,18 @@ export function setupAiTools() {
   );
 
   return () => {
-    unregisterTools.forEach((unregister) => unregister());
+    unregisterTools.forEach((entry) => {
+      if (typeof entry === "function") {
+        entry();
+        return;
+      }
+
+      if (entry && typeof entry === "object" && "unregister" in entry) {
+        const maybeUnregister = (entry as { unregister?: unknown }).unregister;
+        if (typeof maybeUnregister === "function") {
+          maybeUnregister.call(entry);
+        }
+      }
+    });
   };
 }

@@ -4,8 +4,11 @@ import { NextRequest } from "next/server";
 export const dynamic = "force-static";
 export const revalidate = false;
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com";
+const llmsUrl = new URL("/llms.txt", siteUrl).toString();
+
 const { GET: handleLLmsTxt } = createLLmsTxt({
-  baseUrl: process.env.NEXT_PUBLIC_SITE_URL,
+  baseUrl: siteUrl,
   showWarnings: process.env.NODE_ENV === "development",
   defaultConfig: {
     title: process.env.NEXT_PUBLIC_SITENAME || "InspiraArte",
@@ -17,15 +20,8 @@ const { GET: handleLLmsTxt } = createLLmsTxt({
   },
 });
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-
-  // Con trailingSlash=true, Next puede resolver esta ruta como /llms.txt/.
-  // next-llms-txt espera pathname exacto /llms.txt para generar el manifest.
-  if (url.pathname === "/llms.txt/") {
-    url.pathname = "/llms.txt";
-  }
-
-  return handleLLmsTxt(new NextRequest(url.toString()));
+export async function GET() {
+  // Evita request.url para mantener compatibilidad con static prerender.
+  return handleLLmsTxt(new NextRequest(llmsUrl));
 }
 

@@ -1,5 +1,61 @@
 [
   {
+    "id": 51,
+    "idSlug": "51-calavera-personalizada",
+    "name": "Calavera personalizada",
+    "description": "Esta calaverita complementa perfectamente tu altar de muertos, el cual puedes personalizar con el nombre de tus seres queridos.",
+    "categories": [
+      "Día de muertos",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/51.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/51/1786514912417-ygprsmk9.webp"
+    ],
+    "url": "/productos/51-calavera-personalizada"
+  },
+  {
+    "id": 46,
+    "idSlug": "46-marco-fotografico-para-altar",
+    "name": "Marco fotográfico para altar",
+    "description": "Diferentes modelos de marcos y/o tamaños de marcos para poner tus fotos en el altar de muertos.",
+    "categories": [
+      "Portaretrato",
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/46.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/46/1786515343253-k6ly4vgh.webp"
+    ],
+    "url": "/productos/46-marco-fotografico-para-altar"
+  },
+  {
+    "id": 30,
+    "idSlug": "30-mini-pesebre",
+    "name": "Mini pesebre",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Navidad",
+      "Regalos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 200,
+    "suggestedPrice": 300,
+    "image": "https://dam.inspiraarte.com/preview/30.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/30/1786425134344-03236ukc.webp",
+      "https://dam.inspiraarte.com/preview/30/1786425135246-imzpvyr7.webp",
+      "https://dam.inspiraarte.com/preview/30/1786425136137-i127r6do.webp"
+    ],
+    "url": "/productos/30-mini-pesebre"
+  },
+  {
     "id": 29,
     "idSlug": "29-nicho-para-altar-de-muertos",
     "name": "Nicho para Altar de muertos",
@@ -30,7 +86,7 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/17.webp",
+    "image": null,
     "gallery": [],
     "url": "/productos/17-calendario-eterno"
   },
@@ -46,8 +102,8 @@
       "Vela"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/16.webp",
     "gallery": [],
     "url": "/productos/16-nacimiento-mini-con-vela"
@@ -63,8 +119,8 @@
       "Navidad"
     ],
     "material": "MDF",
-    "minimumPrice": 300,
-    "suggestedPrice": 350,
+    "minimumPrice": 350,
+    "suggestedPrice": 500,
     "image": "https://dam.inspiraarte.com/preview/15.webp",
     "gallery": [],
     "url": "/productos/15-nacimiento"
@@ -81,8 +137,8 @@
       "Rompecabezas 3D"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 45,
+    "suggestedPrice": 80,
     "image": "https://dam.inspiraarte.com/preview/4.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/4/1785261349516-hkqejmr1.webp",
@@ -102,8 +158,8 @@
       "Tradiciones"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 250,
+    "suggestedPrice": 400,
     "image": "https://dam.inspiraarte.com/preview/3.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/3/1785260700034-21p6rg5u.webp",

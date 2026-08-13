@@ -5,6 +5,9 @@ import { slugify } from "@/lib/slug";
 export const dynamic = "force-static";
 export const revalidate = false;
 
+const isStaticExport = process.env.STATIC_EXPORT === "true";
+
+
 function parseIdSlug(value: string): { id: number } | null {
   const match = /^(\d+)-(.+)$/u.exec(value);
   if (!match) {
@@ -32,6 +35,17 @@ function toMediaUrl(path: string | null): string | null {
 
 export async function GET(request: Request) {
   try {
+    if (isStaticExport) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: "MCP_STATIC_EXPORT_UNAVAILABLE",
+          message: "Ruta API no disponible en export estático.",
+        },
+        { status: 501 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const rawId = (searchParams.get("id") || "").trim();
     const idSlug = (searchParams.get("idSlug") || "").trim();
