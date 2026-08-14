@@ -3,9 +3,9 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Gift, Calendar, Briefcase, Heart, GraduationCap, Baby, PartyPopper, Church } from "lucide-react"
 import { slugify } from "@/lib/slug"
 import { cn } from "@/lib/utils"
+import { CategoryIcon } from "@/components/custom/category-icon-registry"
 
 type ProductListItem = {
   id: number
@@ -25,6 +25,7 @@ type ProductListItem = {
 type ProductCategory = {
   id: number
   name: string
+  icon: string | null
 }
 
 interface ProductsProps {
@@ -44,7 +45,6 @@ function matchesBooleanFilter(value: boolean, filter: BooleanFilter): boolean {
   return filter === "yes" ? value : !value
 }
 
-const categoryIcons = [Gift, Briefcase, Heart, Church, PartyPopper, GraduationCap, Baby, Calendar]
 const categoryColors = ["#00B003", "#4290A3", "#1FA4A7", "#585106", "#3ACBFE"]
 
 export function Products({ products, categories, materialOptions, enableDevFilters = false }: ProductsProps) {
@@ -170,10 +170,10 @@ export function Products({ products, categories, materialOptions, enableDevFilte
                 : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
             )}
           >
+            <CategoryIcon iconKey="fa/FaHome" categoryName="Todos" className="w-4 h-4 inline mr-2" />
             Todos
           </button>
           {categories.map((category, index) => {
-            const Icon = categoryIcons[index % categoryIcons.length]
             return (
               <button
                 key={category.id}
@@ -188,7 +188,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
                   borderColor: selectedCategory === category.name ? "transparent" : categoryColors[index % categoryColors.length],
                 }}
               >
-                <Icon className="w-4 h-4" />
+                <CategoryIcon iconKey={category.icon} categoryName={category.name} className="w-4 h-4" />
                 {category.name}
               </button>
             )

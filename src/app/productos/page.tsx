@@ -51,6 +51,7 @@ export default async function Productos() {
     select: {
       id: true,
       name: true,
+      icon: true,
     },
     orderBy: {
       name: "asc",
@@ -175,6 +176,7 @@ export default async function Productos() {
         categories={categories.map((category) => ({
           id: category.id,
           name: category.name ?? "Sin nombre",
+          icon: category.icon?.trim() || null,
         }))}
         materialOptions={materialOptions}
         products={products}
