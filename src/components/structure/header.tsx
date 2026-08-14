@@ -5,6 +5,15 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const ACL_FLAGS = {
@@ -25,7 +34,6 @@ const navigation: NavItem[] = [
   { name: "Proceso", href: "/proceso" },
   { name: "FAQ", href: "/faq" },
   { name: "Contacto", href: "/contacto" },
-  { name: "Agregar", href: "/agregar", acl: "ADD_DESIGNS" },
 ];
 
 export function Header() {
@@ -35,6 +43,7 @@ export function Header() {
     return ACL_FLAGS[acl];
   };
   const visibleNavigation = navigation.filter((item) => canShowByAcl(item.acl));
+  const canShowAdmin = canShowByAcl("ADD_DESIGNS");
 
   return (
     <header
@@ -73,6 +82,31 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+            {canShowAdmin && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-[#4290A3]"
+                  >
+                    Administrar
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/agregar">Agregar producto</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Catalogos</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/categorias">Categorias</Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <Button
               asChild
               className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
@@ -101,6 +135,28 @@ export function Header() {
                     {item.name}
                   </Link>
                 ))}
+                {canShowAdmin && (
+                  <div className="flex flex-col gap-4">
+                    <span className="text-lg font-medium text-foreground">Administrar</span>
+                    <Link
+                      href="/agregar"
+                      onClick={() => setIsOpen(false)}
+                      className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                    >
+                      Agregar producto
+                    </Link>
+                    <div className="flex flex-col gap-2 pl-4">
+                      <span className="text-base font-medium text-muted-foreground">Catalogos</span>
+                      <Link
+                        href="/catalogos/categorias"
+                        onClick={() => setIsOpen(false)}
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                      >
+                        Categorias
+                      </Link>
+                    </div>
+                  </div>
+                )}
                 <Button
                   asChild
                   className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white mt-4"
