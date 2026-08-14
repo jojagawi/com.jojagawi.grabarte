@@ -5,6 +5,7 @@
 Table CatCategories {
   id Int [pk, increment]
   name String
+  icon String
   status Int [not null, default: 1]
   createdAt DateTime [default: `now()`, not null]
   relDesignsCategories RelDesignsCategories [not null]

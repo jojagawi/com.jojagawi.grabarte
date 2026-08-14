@@ -18,6 +18,7 @@ datasource db {
 model CatCategories {
   id                   Int                    @id @default(autoincrement())
   name                 String?
+  icon                 String?
   status               Int                    @default(1)
   createdAt            DateTime               @default(now())
   relDesignsCategories RelDesignsCategories[]
