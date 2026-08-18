@@ -44,13 +44,18 @@ jobs:
           mkdir -p .aws/dist
           cd .aws/lambda/rates
           zip -r ../../dist/rates-lambda.zip lambda-rates-handler.mjs
-          echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${GITHUB_SHA}.zip" >> $GITHUB_OUTPUT
+          CONTENT_HASH=$(sha256sum lambda-rates-handler.mjs | awk '{print $1}' | cut -c1-16)
+          echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload rates lambda zip to S3
         run: |
-          aws s3 cp \
-            .aws/dist/rates-lambda.zip \
-            s3://${RATES_LAMBDA_BUCKET}/${{ steps.rates-zip.outputs.artifact_key }}
+          if aws s3api head-object --bucket "${RATES_LAMBDA_BUCKET}" --key "${{ steps.rates-zip.outputs.artifact_key }}" > /dev/null 2>&1; then
+            echo "Artifact already exists. Skipping upload."
+          else
+            aws s3 cp \
+              .aws/dist/rates-lambda.zip \
+              s3://${RATES_LAMBDA_BUCKET}/${{ steps.rates-zip.outputs.artifact_key }}
+          fi
 
       - name: Deploy to AWS CloudFormation
         id: update-stack
@@ -58,7 +63,7 @@ jobs:
         with:
           name: "inspirarte-com"
           template: "./.aws/infra.yml"
-          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=true"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 
   static-site:
