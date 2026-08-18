@@ -4,8 +4,40 @@
     "name": "Adornos"
   },
   {
+    "id": 39,
+    "name": "Aretes"
+  },
+  {
+    "id": 46,
+    "name": "Cajas"
+  },
+  {
+    "id": 45,
+    "name": "Cocina"
+  },
+  {
     "id": 36,
     "name": "Día de muertos"
+  },
+  {
+    "id": 51,
+    "name": "Escuela"
+  },
+  {
+    "id": 5,
+    "name": "Halloween"
+  },
+  {
+    "id": 54,
+    "name": "Harry Potter"
+  },
+  {
+    "id": 21,
+    "name": "Juegos de Mesa"
+  },
+  {
+    "id": 22,
+    "name": "Llaveros"
   },
   {
     "id": 37,

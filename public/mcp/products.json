@@ -1,5 +1,249 @@
 [
   {
+    "id": 108,
+    "idSlug": "108-porta-servilletas",
+    "name": "Porta servilletas",
+    "description": "Perfecto para adornar tu mesa con un estilo unico",
+    "categories": [
+      "Cocina",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 30,
+    "suggestedPrice": 50,
+    "image": "https://dam.inspiraarte.com/preview/108.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/108/437.webp"
+    ],
+    "url": "/productos/108-porta-servilletas"
+  },
+  {
+    "id": 107,
+    "idSlug": "107-ataud-porta-velas-para-dia-de-muertos-halloween",
+    "name": "Ataud porta velas para dia de muertos / halloween",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Halloween",
+      "Adornos",
+      "Día de muertos",
+      "Vela"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 120,
+    "image": "https://dam.inspiraarte.com/preview/107.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/107/433.webp"
+    ],
+    "url": "/productos/107-ataud-porta-velas-para-dia-de-muertos-halloween"
+  },
+  {
+    "id": 92,
+    "idSlug": "92-adorno-de-halloween",
+    "name": "Adorno de halloween",
+    "description": "Estos bonitos adornos, utilizan la luz de una vela para proyectar figuras en la pared",
+    "categories": [
+      "Halloween",
+      "Vela",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 50,
+    "suggestedPrice": 80,
+    "image": "https://dam.inspiraarte.com/preview/92.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/92/378.webp",
+      "https://dam.inspiraarte.com/preview/92/379.webp",
+      "https://dam.inspiraarte.com/preview/92/380.webp"
+    ],
+    "url": "/productos/92-adorno-de-halloween"
+  },
+  {
+    "id": 91,
+    "idSlug": "91-mini-altar-de-muertos-en-caja",
+    "name": "Mini altar de muertos en caja",
+    "description": "Perfecto para espacios pequeños",
+    "categories": [
+      "Día de muertos",
+      "Regalos",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/91.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/91/1787087257715-x73ydc5g.webp",
+      "https://dam.inspiraarte.com/preview/91/1787087274308-z3dep9fx.webp"
+    ],
+    "url": "/productos/91-mini-altar-de-muertos-en-caja"
+  },
+  {
+    "id": 70,
+    "idSlug": "70-serpientes-y-escaleras",
+    "name": "Serpientes y escaleras",
+    "description": "Diviertete con este bonito tablera del clasico juego de mesa",
+    "categories": [
+      "Juegos de Mesa"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/70.webp",
+    "gallery": [],
+    "url": "/productos/70-serpientes-y-escaleras"
+  },
+  {
+    "id": 63,
+    "idSlug": "63-personalizacion-de-toallas-personalizadas",
+    "name": "Personalización de toallas personalizadas",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Regalos"
+    ],
+    "material": "Varios",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/63.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/63/1787035723573-tda1888g.webp"
+    ],
+    "url": "/productos/63-personalizacion-de-toallas-personalizadas"
+  },
+  {
+    "id": 62,
+    "idSlug": "62-termos-personalizados",
+    "name": "Termos personalizados",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Regalos"
+    ],
+    "material": "Termo",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/62.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/62/1787035520381-hdlp8fx9.webp"
+    ],
+    "url": "/productos/62-termos-personalizados"
+  },
+  {
+    "id": 61,
+    "idSlug": "61-lapices-y-plumas-personalizados",
+    "name": "Lapices y plumas personalizados",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Oficina",
+      "Escuela"
+    ],
+    "material": "Varios",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/61.webp",
+    "gallery": [],
+    "url": "/productos/61-lapices-y-plumas-personalizados"
+  },
+  {
+    "id": 60,
+    "idSlug": "60-adorno-halloween-calavera",
+    "name": "Adorno Halloween, calavera",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Halloween",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": 199.98,
+    "image": "https://dam.inspiraarte.com/preview/60.webp",
+    "gallery": [],
+    "url": "/productos/60-adorno-halloween-calavera"
+  },
+  {
+    "id": 59,
+    "idSlug": "59-grabado-de-piedra",
+    "name": "Grabado de Piedra",
+    "description": "Personalización de piedras con logos, tablas o nombres de las personas, ideal para restaurantes o regalos únicos.",
+    "categories": [
+      "Regalos",
+      "Oficina"
+    ],
+    "material": "Piedra",
+    "minimumPrice": 300,
+    "suggestedPrice": 400,
+    "image": "https://dam.inspiraarte.com/preview/59.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/59/1786653114876-dd50eham.webp"
+    ],
+    "url": "/productos/59-grabado-de-piedra"
+  },
+  {
+    "id": 57,
+    "idSlug": "57-lampara-halloween",
+    "name": "Lampara Halloween",
+    "description": "Usa esta lampara para decorar tu casa en esta epoca de halloween, puedes usar velas tradicionales o electrónicas.",
+    "categories": [
+      "Halloween",
+      "Vela"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/57.webp",
+    "gallery": [],
+    "url": "/productos/57-lampara-halloween"
+  },
+  {
+    "id": 54,
+    "idSlug": "54-lampara-hallowen",
+    "name": "Lampara Hallowen",
+    "description": "Diversas modelos de lámparas de adorno para este halloween, puedes usar velas tradicionales o de led.",
+    "categories": [
+      "Halloween",
+      "Adornos",
+      "Vela"
+    ],
+    "material": "MDF",
+    "minimumPrice": 200,
+    "suggestedPrice": 300,
+    "image": "https://dam.inspiraarte.com/preview/54.webp",
+    "gallery": [],
+    "url": "/productos/54-lampara-hallowen"
+  },
+  {
+    "id": 53,
+    "idSlug": "53-cajas-criptas-de-adorno",
+    "name": "Cajas / criptas de adorno",
+    "description": "Esta caja puede servir para adorno y/o guardar los dulces de las calaveritas",
+    "categories": [
+      "Adornos",
+      "Halloween",
+      "Cajas"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/53.webp",
+    "gallery": [],
+    "url": "/productos/53-cajas-criptas-de-adorno"
+  },
+  {
+    "id": 52,
+    "idSlug": "52-llaveros-de-harry-potter",
+    "name": "Llaveros de Harry Potter",
+    "description": "Varios modelos disponibles",
+    "categories": [
+      "Llaveros",
+      "Harry Potter"
+    ],
+    "material": "MDF",
+    "minimumPrice": 15,
+    "suggestedPrice": 30,
+    "image": "https://dam.inspiraarte.com/preview/52.webp",
+    "gallery": [],
+    "url": "/productos/52-llaveros-de-harry-potter"
+  },
+  {
     "id": 51,
     "idSlug": "51-calavera-personalizada",
     "name": "Calavera personalizada",
@@ -13,9 +257,27 @@
     "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/51.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/51/1786514912417-ygprsmk9.webp"
+      "https://dam.inspiraarte.com/preview/51/1787037093094-n7mdm81c.webp"
     ],
     "url": "/productos/51-calavera-personalizada"
+  },
+  {
+    "id": 47,
+    "idSlug": "47-adorno-calaverita",
+    "name": "Adorno Calaverita",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "México",
+      "Día de muertos",
+      "Tradiciones",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 30,
+    "suggestedPrice": 50,
+    "image": "https://dam.inspiraarte.com/preview/47.webp",
+    "gallery": [],
+    "url": "/productos/47-adorno-calaverita"
   },
   {
     "id": 46,
@@ -31,9 +293,26 @@
     "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/46.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/46/1786515343253-k6ly4vgh.webp"
+      "https://dam.inspiraarte.com/preview/46/1787037118079-kh9g1mr8.webp"
     ],
     "url": "/productos/46-marco-fotografico-para-altar"
+  },
+  {
+    "id": 41,
+    "idSlug": "41-adorno-navidad-luna-con-pesebre-navideno",
+    "name": "Adorno navidad, Luna con pesebre navideño",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Adornos",
+      "Navidad",
+      "Nacimiento"
+    ],
+    "material": "MDF",
+    "minimumPrice": 150,
+    "suggestedPrice": 300,
+    "image": "https://dam.inspiraarte.com/preview/41.webp",
+    "gallery": [],
+    "url": "/productos/41-adorno-navidad-luna-con-pesebre-navideno"
   },
   {
     "id": 30,
@@ -42,16 +321,17 @@
     "description": "Producto personalizado disponible bajo cotización.",
     "categories": [
       "Navidad",
-      "Regalos"
+      "Regalos",
+      "Nacimiento"
     ],
     "material": "MDF",
     "minimumPrice": 200,
     "suggestedPrice": 300,
     "image": "https://dam.inspiraarte.com/preview/30.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/30/1786425134344-03236ukc.webp",
-      "https://dam.inspiraarte.com/preview/30/1786425135246-imzpvyr7.webp",
-      "https://dam.inspiraarte.com/preview/30/1786425136137-i127r6do.webp"
+      "https://dam.inspiraarte.com/preview/30/1787037003703-tbskzb0f.webp",
+      "https://dam.inspiraarte.com/preview/30/1787037004390-l0emdkit.webp",
+      "https://dam.inspiraarte.com/preview/30/1787037004994-w0me5eqi.webp"
     ],
     "url": "/productos/30-mini-pesebre"
   },
@@ -75,6 +355,24 @@
     "url": "/productos/29-nicho-para-altar-de-muertos"
   },
   {
+    "id": 27,
+    "idSlug": "27-aretes-halloween",
+    "name": "Aretes Halloween",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Aretes",
+      "Halloween"
+    ],
+    "material": "MDF",
+    "minimumPrice": 15,
+    "suggestedPrice": 30,
+    "image": "https://dam.inspiraarte.com/preview/27.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/27/1786607285200-k9zne1g4.webp"
+    ],
+    "url": "/productos/27-aretes-halloween"
+  },
+  {
     "id": 17,
     "idSlug": "17-calendario-eterno",
     "name": "Calendario eterno",
@@ -86,7 +384,7 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": null,
+    "image": "https://dam.inspiraarte.com/preview/17.webp",
     "gallery": [],
     "url": "/productos/17-calendario-eterno"
   },
@@ -141,8 +439,8 @@
     "suggestedPrice": 80,
     "image": "https://dam.inspiraarte.com/preview/4.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/4/1785261349516-hkqejmr1.webp",
-      "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp"
+      "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp",
+      "https://dam.inspiraarte.com/preview/4/1786607440535-d1dqdezs.webp"
     ],
     "url": "/productos/4-regalo-armable-navidad"
   },

@@ -110,7 +110,7 @@ export async function handler(event) {
       new PutObjectCommand({
         Bucket: ratesBucket,
         Key: objectKey,
-        Body: JSON.stringify(payload, null, 2),
+          Body: JSON.stringify(payload),
         ContentType: "application/json",
         CacheControl: "no-store",
       }),

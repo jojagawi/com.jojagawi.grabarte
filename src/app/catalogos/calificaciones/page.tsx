@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { buildPageMetadata } from "@/lib/metadata";
 import { getLatestRatesFromAthena } from "@/lib/rates-athena.server";
 
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Calificaciones del catalogo | InspiraArte",
