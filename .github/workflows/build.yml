@@ -19,6 +19,9 @@ jobs:
   aws-infra:
     name: Setup infrastructure in AWS
     runs-on: ubuntu-latest
+    env:
+      RATES_LAMBDA_BUCKET: dam.inspiraarte.com
+      RATES_LAMBDA_KEY_PREFIX: lambda/rates
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -35,13 +38,27 @@ jobs:
         id: timestamp
         run: echo "value=$(date +%s)" >> $GITHUB_OUTPUT
 
+      - name: Build rates lambda zip
+        id: rates-zip
+        run: |
+          mkdir -p .aws/dist
+          cd .aws/lambda/rates
+          zip -r ../../dist/rates-lambda.zip lambda-rates-handler.mjs
+          echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${GITHUB_SHA}.zip" >> $GITHUB_OUTPUT
+
+      - name: Upload rates lambda zip to S3
+        run: |
+          aws s3 cp \
+            .aws/dist/rates-lambda.zip \
+            s3://${RATES_LAMBDA_BUCKET}/${{ steps.rates-zip.outputs.artifact_key }}
+
       - name: Deploy to AWS CloudFormation
         id: update-stack
         uses: aws-actions/aws-cloudformation-github-deploy@v2.2.0
         with:
           name: "inspirarte-com"
           template: "./.aws/infra.yml"
-          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=false,RatesLambdaCodeS3Bucket=${{ env.RATES_LAMBDA_BUCKET }},RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 
   static-site:
