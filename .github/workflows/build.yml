@@ -58,7 +58,7 @@ jobs:
         with:
           name: "inspirarte-com"
           template: "./.aws/infra.yml"
-          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=false"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=true"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 
   static-site:
