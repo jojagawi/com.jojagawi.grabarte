@@ -101,6 +101,7 @@ export async function handler(event) {
     id: uuid,
     ...input,
     createdAt: new Date().toISOString(),
+    status: 0,
     source: "web",
   };
 
