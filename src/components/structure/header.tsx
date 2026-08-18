@@ -102,6 +102,9 @@ export function Header() {
                       <DropdownMenuItem asChild>
                         <Link href="/catalogos/categorias">Categorias</Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/calificaciones">Calificaciones</Link>
+                      </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
                 </DropdownMenuContent>
@@ -153,6 +156,13 @@ export function Header() {
                         className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
                       >
                         Categorias
+                      </Link>
+                      <Link
+                        href="/catalogos/calificaciones"
+                        onClick={() => setIsOpen(false)}
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                      >
+                        Calificaciones
                       </Link>
                     </div>
                   </div>

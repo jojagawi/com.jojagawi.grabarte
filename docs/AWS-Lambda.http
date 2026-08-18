@@ -1,0 +1,9 @@
+POST https://ywxw4uislpuexpeqo255u76t4a0aeifl.lambda-url.us-east-1.on.aws/
+Content-Type: application/json
+
+{
+  "name":"Jorge G.",
+  "product":"Termo personalizado",
+  "description":"Pedi un termo personalizado y quedo perfecto, el mejor regalo",
+  "rating":5
+}
