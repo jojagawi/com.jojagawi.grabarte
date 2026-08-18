@@ -58,7 +58,7 @@ jobs:
         with:
           name: "inspirarte-com"
           template: "./.aws/infra.yml"
-          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=false,RatesLambdaCodeS3Bucket=${{ env.RATES_LAMBDA_BUCKET }},RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }}"
+          parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},CreateRatesLambda=false"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 
   static-site:
