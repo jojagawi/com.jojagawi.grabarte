@@ -13,7 +13,10 @@ export type SiteRateItem = {
   description: string;
   rating: number;
   createdAt: string;
+  status: number;
   source: string;
+  s3Path: string;
+  s3Key: string;
 };
 
 const POLL_INTERVAL_MS = 750;
@@ -34,6 +37,15 @@ function parseNumber(value: string | undefined) {
 
 function toFieldValue(value: string | undefined) {
   return String(value ?? "").trim();
+}
+
+function s3KeyFromPath(path: string) {
+  const normalizedPath = path.trim();
+  if (!normalizedPath.startsWith("s3://")) return "";
+
+  const firstSlash = normalizedPath.indexOf("/", 5);
+  if (firstSlash < 0) return "";
+  return normalizedPath.slice(firstSlash + 1);
 }
 
 function createAthenaClient() {
@@ -62,7 +74,7 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
   const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
 
   const query = [
-    "SELECT id, name, product, description, rating, createdat, source",
+    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path",
     `FROM ${database}.${table}`,
     "ORDER BY from_iso8601_timestamp(createdat) DESC",
     `LIMIT ${Math.max(1, Math.min(500, Math.floor(limit)))}`,
@@ -119,6 +131,7 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
 
   return dataRows.map((row) => {
     const cols = row.Data ?? [];
+    const path = toFieldValue(cols[8]?.VarCharValue);
 
     return {
       id: toFieldValue(cols[0]?.VarCharValue),
@@ -127,7 +140,10 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
       description: toFieldValue(cols[3]?.VarCharValue),
       rating: parseNumber(cols[4]?.VarCharValue),
       createdAt: toFieldValue(cols[5]?.VarCharValue),
-      source: toFieldValue(cols[6]?.VarCharValue),
+      status: parseNumber(cols[6]?.VarCharValue),
+      source: toFieldValue(cols[7]?.VarCharValue),
+      s3Path: path,
+      s3Key: s3KeyFromPath(path),
     };
   });
 }

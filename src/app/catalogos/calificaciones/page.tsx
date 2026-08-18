@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { buildPageMetadata } from "@/lib/metadata";
 import { getLatestRatesFromAthena } from "@/lib/rates-athena.server";
+import { RateStatusSwitch } from "@/components/custom/rate-status-switch";
 
 
 export const metadata: Metadata = buildPageMetadata({
@@ -60,6 +61,7 @@ export default async function CatalogRatesPage() {
                 <th className="px-4 py-3 text-left font-semibold text-foreground">Nombre</th>
                 <th className="px-4 py-3 text-left font-semibold text-foreground">Producto</th>
                 <th className="px-4 py-3 text-left font-semibold text-foreground">Calificacion</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground">Status</th>
                 <th className="px-4 py-3 text-left font-semibold text-foreground">Descripcion</th>
                 <th className="px-4 py-3 text-left font-semibold text-foreground">Origen</th>
               </tr>
@@ -67,7 +69,7 @@ export default async function CatalogRatesPage() {
             <tbody className="divide-y divide-border">
               {rows.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
+                  <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
                     No se encontraron calificaciones.
                   </td>
                 </tr>
@@ -78,6 +80,13 @@ export default async function CatalogRatesPage() {
                     <td className="px-4 py-3 text-foreground">{item.name || "-"}</td>
                     <td className="px-4 py-3 text-foreground">{item.product || "-"}</td>
                     <td className="px-4 py-3 text-foreground">{item.rating || 0}</td>
+                    <td className="px-4 py-3 text-foreground">
+                      <RateStatusSwitch
+                        rateId={item.id}
+                        initialStatus={item.status}
+                        name={item.name}
+                      />
+                    </td>
                     <td className="max-w-xl truncate px-4 py-3 text-muted-foreground" title={item.description}>
                       {item.description || "-"}
                     </td>
