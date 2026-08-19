@@ -68,20 +68,26 @@ function s3KeyFromPath(path: string) {
 }
 
 function createAthenaClient() {
-  const region = process.env.NEXT_AWS_REGION;
+  const region = process.env.NEXT_AWS_REGION || process.env.AWS_REGION;
   const accessKeyId = process.env.NEXT_AWS_ACCESS_KEY_ID;
   const secretAccessKey = process.env.NEXT_AWS_SECRET_ACCESS_KEY;
 
-  if (!region || !accessKeyId || !secretAccessKey) {
-    throw new Error("Missing NEXT_AWS_* credentials for Athena queries.");
+  if (!region) {
+    throw new Error("Missing AWS region for Athena queries.");
+  }
+
+  if (accessKeyId && secretAccessKey) {
+    return new AthenaClient({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
   }
 
   return new AthenaClient({
     region,
-    credentials: {
-      accessKeyId,
-      secretAccessKey,
-    },
   });
 }
 

@@ -156,13 +156,7 @@ export default async function Home() {
     ),
   );
 
-  let testimonials = [] as Awaited<ReturnType<typeof getRandomHomeTestimonialsFromAthena>>;
-
-  try {
-    testimonials = await getRandomHomeTestimonialsFromAthena(4);
-  } catch {
-    testimonials = [];
-  }
+  const testimonials = await getRandomHomeTestimonialsFromAthena(4);
 
   return (
     <>

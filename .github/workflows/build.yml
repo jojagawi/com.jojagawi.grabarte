@@ -90,9 +90,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build project
-        run: pnpm run build:all
-
       - name: Configure AWS credentials
         id: creds-stack
         uses: aws-actions/configure-aws-credentials@v6
@@ -100,6 +97,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Build project
+        run: pnpm run build:all
 
       - uses: osiegmar/s3-publisher-action@v3
         with:
