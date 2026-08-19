@@ -1,7 +1,9 @@
+import Link from "next/link"
 import { Star } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export type TestimonialItem = {
-  id: number
+  id: number | string
   name: string
   role: string
   content: string
@@ -80,6 +82,12 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Button asChild className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white">
+            <Link href="/agregar-calificacion">Agregar mi calificacion</Link>
+          </Button>
         </div>
 
         {/* Bottom Stats */}

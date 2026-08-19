@@ -25,6 +25,10 @@ const initialFormState: RateFormState = {
   rating: "5",
 };
 
+const ratesSubmitUrl =
+  process.env.NEXT_PUBLIC_RATES_LAMBDA_URL?.trim() || "/api/rates";
+const ratesSubmitApiKey = process.env.NEXT_PUBLIC_RATES_LAMBDA_API_KEY?.trim() || "";
+
 export function RateSiteForm() {
   const [formState, setFormState] = useState<RateFormState>(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,11 +42,17 @@ export function RateSiteForm() {
     setSubmitState(null);
 
     try {
-      const response = await fetch("/api/rates", {
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (ratesSubmitApiKey) {
+        headers["x-api-key"] = ratesSubmitApiKey;
+      }
+
+      const response = await fetch(ratesSubmitUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({
           name: formState.name,
           product: formState.product,
@@ -154,7 +164,7 @@ export function RateSiteForm() {
               <select
                 id="rate-rating"
                 name="rating"
-                className="focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-md border border-border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
+                className="focus-visible:border-ring focus-visible:ring-ring/50 h-10 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-[3px]"
                 value={formState.rating}
                 onChange={(event) =>
                   setFormState((current) => ({

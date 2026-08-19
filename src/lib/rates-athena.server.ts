@@ -6,6 +6,15 @@ import {
   StartQueryExecutionCommand,
 } from "@aws-sdk/client-athena";
 
+type PublicTestimonialItem = {
+  id: string;
+  name: string;
+  product: string;
+  content: string;
+  rating: number;
+  role: string;
+};
+
 export type SiteRateItem = {
   id: string;
   name: string;
@@ -21,6 +30,12 @@ export type SiteRateItem = {
 
 const POLL_INTERVAL_MS = 750;
 const MAX_POLL_ATTEMPTS = 30;
+const DEV_TESTIMONIALS_TTL_MS = 1000 * 60 * 10;
+
+const devTestimonialsCache = {
+  expiresAt: 0,
+  data: [] as PublicTestimonialItem[],
+};
 
 type AthenaRow = {
   Data?: Array<{ VarCharValue?: string }>;
@@ -33,6 +48,10 @@ function wait(ms: number) {
 function parseNumber(value: string | undefined) {
   const parsed = Number(value ?? "");
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function normalizeRating(value: number) {
+  return Math.max(1, Math.min(5, Math.round(value || 0)));
 }
 
 function toFieldValue(value: string | undefined) {
@@ -66,19 +85,9 @@ function createAthenaClient() {
   });
 }
 
-export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateItem[]> {
+async function executeAthenaQuery(query: string) {
   const client = createAthenaClient();
-
   const workGroup = process.env.NEXT_AWS_ATHENA_WORKGROUP || "inspiraarte-prod-rates";
-  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
-  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
-
-  const query = [
-    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path",
-    `FROM ${database}.${table}`,
-    "ORDER BY from_iso8601_timestamp(createdat) DESC",
-    `LIMIT ${Math.max(1, Math.min(500, Math.floor(limit)))}`,
-  ].join(" ");
 
   const startResponse = await client.send(
     new StartQueryExecutionCommand({
@@ -126,8 +135,21 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
     new GetQueryResultsCommand({ QueryExecutionId: queryExecutionId }),
   );
 
-  const rows = resultsResponse.ResultSet?.Rows ?? [];
-  const dataRows = rows.slice(1) as AthenaRow[];
+  return (resultsResponse.ResultSet?.Rows ?? []).slice(1) as AthenaRow[];
+}
+
+export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateItem[]> {
+  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
+  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
+
+  const query = [
+    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path",
+    `FROM ${database}.${table}`,
+    "ORDER BY from_iso8601_timestamp(createdat) DESC",
+    `LIMIT ${Math.max(1, Math.min(500, Math.floor(limit)))}`,
+  ].join(" ");
+
+  const dataRows = await executeAthenaQuery(query);
 
   return dataRows.map((row) => {
     const cols = row.Data ?? [];
@@ -146,6 +168,48 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
       s3Key: s3KeyFromPath(path),
     };
   });
+}
+
+export async function getRandomHomeTestimonialsFromAthena(limit = 4): Promise<PublicTestimonialItem[]> {
+  if (process.env.NODE_ENV === "development") {
+    const now = Date.now();
+    if (devTestimonialsCache.expiresAt > now && devTestimonialsCache.data.length > 0) {
+      return devTestimonialsCache.data;
+    }
+  }
+
+  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
+  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
+
+  const query = [
+    "SELECT id, name, product, description, rating",
+    `FROM ${database}.${table}`,
+    "WHERE coalesce(status, 0) = 1",
+    "  AND trim(coalesce(name, '')) <> ''",
+    "  AND trim(coalesce(description, '')) <> ''",
+    "ORDER BY rand()",
+    `LIMIT ${Math.max(1, Math.min(4, Math.floor(limit)))}`,
+  ].join(" ");
+
+  const rows = await executeAthenaQuery(query);
+  const mapped = rows.map((row) => {
+    const cols = row.Data ?? [];
+    return {
+      id: toFieldValue(cols[0]?.VarCharValue),
+      name: toFieldValue(cols[1]?.VarCharValue),
+      product: toFieldValue(cols[2]?.VarCharValue),
+      content: toFieldValue(cols[3]?.VarCharValue),
+      rating: normalizeRating(parseNumber(cols[4]?.VarCharValue)),
+      role: "Cliente",
+    };
+  });
+
+  if (process.env.NODE_ENV === "development") {
+    devTestimonialsCache.data = mapped;
+    devTestimonialsCache.expiresAt = Date.now() + DEV_TESTIMONIALS_TTL_MS;
+  }
+
+  return mapped;
 }
 
 

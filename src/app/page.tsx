@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
+import { getRandomHomeTestimonialsFromAthena } from "@/lib/rates-athena.server";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "InspiraArte | Regalos y productos personalizados en México",
@@ -155,23 +156,13 @@ export default async function Home() {
     ),
   );
 
-  const testimonials = await prisma.testimonials.findMany({
-    where: {
-      status: 1,
-    },
-    select: {
-      id: true,
-      name: true,
-      role: true,
-      content: true,
-      rating: true,
-      product: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 4,
-  });
+  let testimonials = [] as Awaited<ReturnType<typeof getRandomHomeTestimonialsFromAthena>>;
+
+  try {
+    testimonials = await getRandomHomeTestimonialsFromAthena(4);
+  } catch {
+    testimonials = [];
+  }
 
   return (
     <>
