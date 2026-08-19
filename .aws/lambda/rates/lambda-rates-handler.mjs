@@ -8,6 +8,8 @@ const s3Client = new S3Client({
 const ratesBucket = process.env.RATES_BUCKET || "dam.inspiraarte.com";
 const ratesPrefix = (process.env.RATES_PREFIX || "rates/").replace(/^\/+/, "");
 const ratesApiKey = String(process.env.RATES_API_KEY || "").trim();
+const googleRecaptchaSecretKey = String(process.env.NEXT_GOOGLE_SECRET_KEY || "").trim();
+const recaptchaExpectedAction = "add_client_rate";
 
 function createResponse(statusCode, body) {
   return {
@@ -59,6 +61,8 @@ function normalizeInput(payload) {
   const product = String(payload.product || "").trim();
   const description = String(payload.description || "").trim();
   const rating = Number(payload.rating);
+  const recaptchaToken = String(payload.recaptchaToken || "").trim();
+  const action = String(payload.action || "").trim();
 
   if (!name || !product || !description) {
     return null;
@@ -68,12 +72,53 @@ function normalizeInput(payload) {
     return null;
   }
 
+  if (!recaptchaToken || action !== recaptchaExpectedAction) {
+    return null;
+  }
+
   return {
     name,
     product,
     description,
     rating,
+    recaptchaToken,
+    action,
   };
+}
+
+async function verifyRecaptchaToken(token, action) {
+  if (!googleRecaptchaSecretKey) {
+    return false;
+  }
+
+  const params = new URLSearchParams({
+    secret: googleRecaptchaSecretKey,
+    response: token,
+  });
+
+  const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const payload = await response.json().catch(() => null);
+  if (!payload || payload.success !== true) {
+    return false;
+  }
+
+  if (payload.action !== action) {
+    return false;
+  }
+
+  const score = Number(payload.score ?? 0);
+  return Number.isFinite(score) && score >= 0.5;
 }
 
 export async function handler(event) {
@@ -95,6 +140,13 @@ export async function handler(event) {
     });
   }
 
+  const recaptchaValid = await verifyRecaptchaToken(input.recaptchaToken, input.action);
+  if (!recaptchaValid) {
+    return createResponse(400, {
+      message: "La validacion de reCAPTCHA no fue exitosa.",
+    });
+  }
+
   const uuid = randomUUID();
   const objectKey = `${ratesPrefix}${uuid}.json`;
   const payload = {
@@ -104,6 +156,9 @@ export async function handler(event) {
     status: 0,
     source: "web",
   };
+
+  delete payload.recaptchaToken;
+  delete payload.action;
 
   try {
     await s3Client.send(

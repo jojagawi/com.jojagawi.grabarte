@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Script from "next/script";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,39 @@ const initialFormState: RateFormState = {
 const ratesSubmitUrl =
   process.env.NEXT_PUBLIC_RATES_LAMBDA_URL?.trim() || "/api/rates";
 const ratesSubmitApiKey = process.env.NEXT_PUBLIC_RATES_LAMBDA_API_KEY?.trim() || "";
+const googleSiteKey = process.env.NEXT_PUBLIC_GOOGLE_SITE_KEY?.trim() || "";
+const recaptchaAction = "add_client_rate";
+
+declare global {
+  interface Window {
+    grecaptcha?: {
+      ready: (callback: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
+  }
+}
+
+function getRecaptchaToken(siteKey: string, action: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!window.grecaptcha) {
+      reject(new Error("reCAPTCHA no esta disponible."));
+      return;
+    }
+
+    window.grecaptcha.ready(() => {
+      window.grecaptcha
+        ?.execute(siteKey, { action })
+        .then((token) => {
+          if (!token) {
+            reject(new Error("No se pudo generar token de reCAPTCHA."));
+            return;
+          }
+          resolve(token);
+        })
+        .catch(() => reject(new Error("No se pudo completar la validacion reCAPTCHA.")));
+    });
+  });
+}
 
 export function RateSiteForm() {
   const [formState, setFormState] = useState<RateFormState>(initialFormState);
@@ -42,6 +76,16 @@ export function RateSiteForm() {
     setSubmitState(null);
 
     try {
+      if (!googleSiteKey) {
+        setSubmitState({
+          ok: false,
+          message: "No hay configuracion de reCAPTCHA para este formulario.",
+        });
+        return;
+      }
+
+      const recaptchaToken = await getRecaptchaToken(googleSiteKey, recaptchaAction);
+
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
@@ -58,6 +102,8 @@ export function RateSiteForm() {
           product: formState.product,
           description: formState.description,
           rating: Number(formState.rating),
+          recaptchaToken,
+          action: recaptchaAction,
         }),
       });
 
@@ -91,6 +137,12 @@ export function RateSiteForm() {
 
   return (
     <section className="py-20">
+      {googleSiteKey && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${googleSiteKey}`}
+          strategy="afterInteractive"
+        />
+      )}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
           <div className="mb-8">

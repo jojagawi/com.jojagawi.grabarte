@@ -5,6 +5,8 @@ type CreateRatePayload = {
   product: string;
   description: string;
   rating: number;
+  recaptchaToken: string;
+  action: string;
 };
 
 function getTrimmed(value: unknown) {
@@ -21,6 +23,8 @@ function parsePayload(payload: unknown): CreateRatePayload | null {
   const product = getTrimmed(body.product);
   const description = getTrimmed(body.description);
   const rating = Number(body.rating);
+  const recaptchaToken = getTrimmed(body.recaptchaToken);
+  const action = getTrimmed(body.action);
 
   if (!name || !product || !description) {
     return null;
@@ -30,11 +34,17 @@ function parsePayload(payload: unknown): CreateRatePayload | null {
     return null;
   }
 
+  if (!recaptchaToken || action !== "add_client_rate") {
+    return null;
+  }
+
   return {
     name,
     product,
     description,
     rating,
+    recaptchaToken,
+    action,
   };
 }
 
