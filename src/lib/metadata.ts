@@ -33,6 +33,15 @@ function toAbsoluteUrl(value: string): string {
   return new URL(value, getSiteUrl()).toString();
 }
 
+function normalizeCanonicalPath(path: string): string {
+  const withLeadingSlash = path.startsWith("/") ? path : `/${path}`;
+  if (withLeadingSlash === "/") {
+    return "/";
+  }
+
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+}
+
 export function buildMetadataBase(): URL {
   return new URL(getSiteUrl());
 }
@@ -49,7 +58,7 @@ export function buildPageMetadata({
 }: BuildPageMetadataInput): Metadata {
   const selectedImagePath = imagePath || DEFAULT_IMAGE_PATH;
   const selectedImageAlt = imageAlt || DEFAULT_IMAGE_ALT;
-  const canonicalPath = path.startsWith("/") ? path : `/${path}`;
+  const canonicalPath = normalizeCanonicalPath(path);
   const absoluteCanonicalUrl = toAbsoluteUrl(canonicalPath);
   const absoluteImageUrl = toAbsoluteUrl(selectedImagePath);
 
@@ -58,7 +67,7 @@ export function buildPageMetadata({
     description,
     ...(keywords ? { keywords } : {}),
     alternates: {
-      canonical: canonicalPath,
+      canonical: absoluteCanonicalUrl,
     },
     openGraph: {
       title,
