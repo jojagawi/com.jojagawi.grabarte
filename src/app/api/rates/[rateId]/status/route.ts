@@ -1,6 +1,17 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-static";
+export const revalidate = false;
+
+export async function generateStaticParams(): Promise<Array<{ rateId: string }>> {
+  if (process.env.STATIC_EXPORT === "true") {
+    return [{ rateId: "0" }];
+  }
+
+  return [];
+}
+
 type PatchPayload = {
   status: number;
 };

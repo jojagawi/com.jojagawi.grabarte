@@ -1,5 +1,21 @@
 [
   {
+    "id": 109,
+    "idSlug": "109-esferas-navidenas-personalizables",
+    "name": "Esferas navideñas personalizables",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Navidad",
+      "Esferas"
+    ],
+    "material": "MDF",
+    "minimumPrice": 50,
+    "suggestedPrice": 80,
+    "image": "https://dam.inspiraarte.com/preview/109.webp",
+    "gallery": [],
+    "url": "/productos/109-esferas-navidenas-personalizables"
+  },
+  {
     "id": 108,
     "idSlug": "108-porta-servilletas",
     "name": "Porta servilletas",

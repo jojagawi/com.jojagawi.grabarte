@@ -20,7 +20,8 @@ Content-Type: application/json
 
 {
   "files": [
-    "https://dam.inspiraarte.com/preview/47.webp"
+    "https://dam.inspiraarte.com/preview/47.webp",
+    "https://www.inspiraarte.com/agregar-calificacion/"
   ]
 }
 
