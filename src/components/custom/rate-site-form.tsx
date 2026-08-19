@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Script from "next/script";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,6 +71,13 @@ export function RateSiteForm() {
 
   const ratingPreview = useMemo(() => Number(formState.rating) || 0, [formState.rating]);
 
+  useEffect(() => {
+    sendGTMEvent({
+      event: "form_rate_load",
+      form_name: "RateSiteForm",
+    });
+  }, []);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -77,6 +85,11 @@ export function RateSiteForm() {
 
     try {
       if (!googleSiteKey) {
+        sendGTMEvent({
+          event: "form_rate_error",
+          form_name: "RateSiteForm",
+          error_type: "missing_recaptcha_site_key",
+        });
         setSubmitState({
           ok: false,
           message: "No hay configuracion de reCAPTCHA para este formulario.",
@@ -85,6 +98,12 @@ export function RateSiteForm() {
       }
 
       const recaptchaToken = await getRecaptchaToken(googleSiteKey, recaptchaAction);
+
+      sendGTMEvent({
+        event: "form_rate_send",
+        form_name: "RateSiteForm",
+        form_action: recaptchaAction,
+      });
 
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -112,6 +131,12 @@ export function RateSiteForm() {
         | null;
 
       if (!response.ok) {
+        sendGTMEvent({
+          event: "form_rate_error",
+          form_name: "RateSiteForm",
+          error_type: "submit_failed",
+          status_code: response.status,
+        });
         setSubmitState({
           ok: false,
           message:
@@ -120,12 +145,22 @@ export function RateSiteForm() {
         return;
       }
 
+      sendGTMEvent({
+        event: "form_rate_saved",
+        form_name: "RateSiteForm",
+      });
+
       setSubmitState({
         ok: true,
         message: "Gracias. Tu calificacion fue enviada correctamente.",
       });
       setFormState(initialFormState);
     } catch {
+      sendGTMEvent({
+        event: "form_rate_error",
+        form_name: "RateSiteForm",
+        error_type: "network_or_runtime",
+      });
       setSubmitState({
         ok: false,
         message: "No se pudo enviar la calificacion en este momento.",
