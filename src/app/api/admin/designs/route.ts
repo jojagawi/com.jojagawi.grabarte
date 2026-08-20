@@ -184,7 +184,25 @@ export async function POST(request: Request) {
     }
 
     const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
-    const webpBuffer = await sharp(previewBuffer).webp({ quality: 90 }).toBuffer();
+    let webpBuffer: Buffer;
+
+    try {
+      webpBuffer = await sharp(previewBuffer, { failOn: "none" })
+        .rotate()
+        .webp({ quality: 90 })
+        .toBuffer();
+    } catch (error) {
+      const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
+      return NextResponse.json(
+        {
+          error:
+            `No se pudo convertir la imagen de vista previa \"${previewFile.name}\" a WebP. ` +
+            "Verifica que el archivo sea una imagen válida y vuelve a exportarlo sin perfil de color especial." +
+            detail,
+        },
+        { status: 400 },
+      );
+    }
 
     const webpExtension = await prisma.catFileExtension.findFirst({
       where: { extension: "webp", status: 1 },
@@ -301,7 +319,23 @@ export async function POST(request: Request) {
 
       if (isImage) {
         const originalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-        finalBuffer = await sharp(originalBuffer).webp({ quality: 90 }).toBuffer();
+        try {
+          finalBuffer = await sharp(originalBuffer, { failOn: "none" })
+            .rotate()
+            .webp({ quality: 90 })
+            .toBuffer();
+        } catch (error) {
+          const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
+          return NextResponse.json(
+            {
+              error:
+                `No se pudo convertir la imagen \"${uploadedFile.name}\" a WebP. ` +
+                "Prueba con JPG/PNG estándar o vuelve a exportarla sin perfil de color especial." +
+                detail,
+            },
+            { status: 400 },
+          );
+        }
         finalExtension = "webp";
         finalMimeType = "image/webp";
         fileExtensionId = webpExtension.id;
