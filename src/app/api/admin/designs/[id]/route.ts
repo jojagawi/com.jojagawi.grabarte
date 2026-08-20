@@ -34,6 +34,25 @@ function extensionFromFileName(fileName: string) {
   return parts.pop()?.toLowerCase() ?? "";
 }
 
+async function convertImageToWebp(input: Buffer) {
+  try {
+    return await sharp(input).rotate().webp({ quality: 90 }).toBuffer();
+  } catch (error) {
+    // Fallback para archivos con metadatos o interpretación de color no estándar.
+    try {
+      const normalized = await sharp(input, { failOn: "none" })
+        .rotate()
+        .toColourspace("srgb")
+        .png()
+        .toBuffer();
+
+      return await sharp(normalized).webp({ quality: 90 }).toBuffer();
+    } catch {
+      throw error;
+    }
+  }
+}
+
 function parseId(rawId: string): number | null {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) {
@@ -473,7 +492,7 @@ export async function PUT(
     affectedFileIds.push(...removedPreviousPreview.removedFileIds);
 
     const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
-    const webpBuffer = await sharp(previewBuffer).webp({ quality: 90 }).toBuffer();
+    const webpBuffer = await convertImageToWebp(previewBuffer);
     const webpExtensionId = await ensureExtensionId("webp", "image/webp");
 
     const previewFileId = await createAndAttachFileRecord({
@@ -518,7 +537,7 @@ export async function PUT(
 
       if (isImage) {
         const originalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-        finalBuffer = await sharp(originalBuffer).webp({ quality: 90 }).toBuffer();
+        finalBuffer = await convertImageToWebp(originalBuffer);
         finalExtension = "webp";
         finalMimeType = "image/webp";
         fileExtensionId = await ensureExtensionId("webp", "image/webp");
