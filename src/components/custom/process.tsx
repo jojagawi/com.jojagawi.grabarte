@@ -61,10 +61,6 @@ export function Process() {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative group">
-                {/* Connector Line */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-border to-transparent z-0" />
-                )}
 
                 <div className="relative z-10 text-center">
                   {/* Step Number */}
