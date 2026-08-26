@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
+import { ProductCodeVisibility } from "@/components/custom/product-code-visibility";
 
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -393,14 +394,24 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     Number.isFinite(design.minimumPrice) &&
     Number.isFinite(design.suggestedPrice);
 
-  const productCode = hasNumericCodeValues
-    ? buildProductCode(
-        design.id,
-        Math.trunc(design.minimumPrice as number),
-        Math.trunc(design.suggestedPrice as number),
-        (design.mayoreo)?Math.trunc(design.mayoreo as number):0,
-      )
-    : null;
+  const minimumPrice = hasNumericCodeValues ? Math.trunc(design.minimumPrice as number) : null;
+  const suggestedPrice = hasNumericCodeValues ? Math.trunc(design.suggestedPrice as number) : null;
+  const mayoreoPrice = Number.isFinite(design.mayoreo) ? Math.trunc(design.mayoreo as number) : 0;
+
+  const productCode =
+    minimumPrice !== null && suggestedPrice !== null
+      ? buildProductCode(design.id, minimumPrice, suggestedPrice, mayoreoPrice)
+      : null;
+
+  const originalProductCode =
+    minimumPrice !== null && suggestedPrice !== null
+      ? [
+          toFourDigits(design.id),
+          toFourDigits(minimumPrice),
+          toFourDigits(suggestedPrice),
+          toFourDigits(mayoreoPrice),
+        ].join("-")
+      : null;
 
   return (
     <section className="py-24 bg-muted/30">
@@ -469,7 +480,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     Codigo
                   </p>
                   <Badge variant="outline" className="text-sm">
-                    {productCode || "No disponible"}
+                    <ProductCodeVisibility
+                      encodedCode={productCode}
+                      originalCode={originalProductCode}
+                      fallback="No disponible"
+                    />
                   </Badge>
                 </div>
 
@@ -658,4 +673,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       </div>
     </section>
   );
+}
+
+function toFourDigits(value: number): string {
+  return Math.trunc(value).toString().padStart(4, "0");
 }

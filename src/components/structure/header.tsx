@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { GoogleVisualLogin } from "@/components/custom/google-visual-login";
 
 const ACL_FLAGS = {
   ADD_DESIGNS: process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true",
@@ -110,6 +111,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+            <GoogleVisualLogin />
             <Button
               asChild
               className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
@@ -167,6 +169,7 @@ export function Header() {
                     </div>
                   </div>
                 )}
+                <GoogleVisualLogin fullWidth onAction={() => setIsOpen(false)} />
                 <Button
                   asChild
                   className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white mt-4"
