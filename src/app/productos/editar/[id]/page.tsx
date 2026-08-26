@@ -100,6 +100,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         numberMdfTables: true,
         timeMachine: true,
         suggestedPrice: true,
+        mayoreo: true,
         minimumPrice: true,
         relDesignsCategories: {
           where: { status: 1, categoryId: { not: null } },
@@ -164,6 +165,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         numberMdfTables: design.numberMdfTables,
         timeMachine: design.timeMachine,
         suggestedPrice: design.suggestedPrice,
+        mayoreo: design.mayoreo,
         minimumPrice: design.minimumPrice,
         categoryIds: design.relDesignsCategories
           .map((relation) => relation.categoryId)
@@ -181,4 +183,3 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     />
   );
 }
-

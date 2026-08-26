@@ -78,6 +78,7 @@ model Designs {
   numberMdfTables      Int                    @default(0)
   timeMachine          Int                    @default(0)
   suggestedPrice       Float?
+  mayoreo              Float?
   minimumPrice         Float?
   material             CatMaterials?          @relation(fields: [materialId], references: [id])
   relDesignsCategories RelDesignsCategories[]
@@ -146,4 +147,3 @@ model Faqs {
   showInMcp  Int    @default(1)
   priority   Int    @default(1)
 }
-

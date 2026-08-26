@@ -239,6 +239,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       showInSite: true,
       minimumPrice: true,
       suggestedPrice: true,
+      mayoreo: true,
       material: {
         select: {
           name: true,
@@ -342,14 +343,28 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const sourceFileItems = fileRelations
     .filter((file) => file.fileTypeId === 4)
     .map((file) =>
-      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension, usePrivateFilesProxy),
+      toFileItem(
+        file.id,
+        file.filePath,
+        file.fileExtension?.mimeType,
+        file.fileExtension?.extension,
+        usePrivateFilesProxy,
+      ),
     )
     .filter((item): item is FileItem => Boolean(item));
 
-  const productCode =
-    typeof design.minimumPrice === "number" && typeof design.suggestedPrice === "number"
-      ? buildProductCode(design.id, Math.trunc(design.minimumPrice), Math.trunc(design.suggestedPrice))
-      : null;
+  const hasNumericCodeValues =
+    Number.isFinite(design.minimumPrice) &&
+    Number.isFinite(design.suggestedPrice);
+
+  const productCode = hasNumericCodeValues
+    ? buildProductCode(
+        design.id,
+        Math.trunc(design.minimumPrice as number),
+        Math.trunc(design.suggestedPrice as number),
+        (design.mayoreo)?Math.trunc(design.mayoreo as number):0,
+      )
+    : null;
 
   return (
     <section className="py-24 bg-muted/30">
@@ -608,4 +623,3 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     </section>
   );
 }
-

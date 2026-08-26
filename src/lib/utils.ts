@@ -23,15 +23,16 @@ export function buildProductCode(
   productId: number,
   minimumPrice: number,
   suggestedPrice: number,
+  wholesalePrice: number
 ): string {
-  const wordCode = process.env.NEXT_PUBLIC_WORD_CODE ?? ''
+  const wordCode = process.env.NEXT_PUBLIC_WORD_CODE ?? "";
 
-  const idChunk = toFourDigits(productId)
-  const minimumChunk = toFourDigits(minimumPrice)
-  const suggestedChunk = toFourDigits(suggestedPrice)
+  const idChunk = toFourDigits(productId);
+  const minimumChunk = toFourDigits(minimumPrice);
+  const suggestedChunk = toFourDigits(suggestedPrice);
+  const wholesalePriceChunk = toFourDigits(wholesalePrice);
 
-  return [idChunk, minimumChunk, suggestedChunk]
+  return [idChunk, minimumChunk, suggestedChunk, wholesalePriceChunk]
     .map((chunk) => encodeDigits(chunk, wordCode))
-    .join('-')
+    .join("-");
 }
-

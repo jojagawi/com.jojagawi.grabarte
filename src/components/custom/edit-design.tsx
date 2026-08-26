@@ -51,6 +51,7 @@ type EditableDesign = {
   numberMdfTables: number;
   timeMachine: number;
   suggestedPrice: number | null;
+  mayoreo: number | null;
   minimumPrice: number | null;
   categoryIds: number[];
   files: ExistingFile[];
@@ -112,6 +113,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
   const [timeMachine, setTimeMachine] = useState(String(design.timeMachine || 0));
   const [suggestedPrice, setSuggestedPrice] = useState(
     design.suggestedPrice === null ? "" : String(design.suggestedPrice),
+  );
+  const [mayoreo, setMayoreo] = useState(
+    design.mayoreo === null ? "" : String(design.mayoreo),
   );
   const [minimumPrice, setMinimumPrice] = useState(
     design.minimumPrice === null ? "" : String(design.minimumPrice),
@@ -321,6 +325,7 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
     formData.append("mdfBoards", numberMdfTables);
     formData.append("workTimeMinutes", timeMachine);
     formData.append("suggestedPrice", suggestedPrice);
+    formData.append("mayoreo", mayoreo);
     formData.append("minimumPrice", minimumPrice);
 
     selectedCategoryIds.forEach((categoryId) => formData.append("categories", categoryId));
@@ -518,17 +523,25 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
           Editar <span className="text-[#4290A3]">producto</span>
         </h1>
         <p className="text-muted-foreground text-lg mb-8">
-          Ajusta los datos de este producto, actualiza su visibilidad y administra archivos.
+          Ajusta los datos de este producto, actualiza su visibilidad y
+          administra archivos.
         </p>
 
         <div className="bg-muted/50 rounded-2xl p-8">
           <form onSubmit={submitEdit} className="space-y-8">
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">1. Informacion base</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                1. Informacion base
+              </legend>
 
               <div className="space-y-2">
                 <Label htmlFor="name">Nombre *</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="space-y-2">
@@ -544,7 +557,11 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="author">Autor</Label>
-                  <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
+                  <Input
+                    id="author"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="notes">Notas</Label>
@@ -570,7 +587,12 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <Label htmlFor="materialType">Tipo de material</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingMaterial(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAddingMaterial(true)}
+                  >
                     Agregar nuevo
                   </Button>
                 </div>
@@ -592,7 +614,12 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
                   <Label htmlFor="categories">Categorias del catalogo *</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={() => setIsAddingCategory(true)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAddingCategory(true)}
+                  >
                     Agregar nueva
                   </Button>
                 </div>
@@ -612,7 +639,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">2. Produccion</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                2. Produccion
+              </legend>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="mdfBoards">Numero de tablones MDF</Label>
@@ -627,7 +656,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="workTimeMinutes">Tiempo de trabajo (minutos)</Label>
+                  <Label htmlFor="workTimeMinutes">
+                    Tiempo de trabajo (minutos)
+                  </Label>
                   <Input
                     id="workTimeMinutes"
                     type="number"
@@ -637,16 +668,30 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="suggestedPrice">Precio sugerido</Label>
-                  <Input
-                    id="suggestedPrice"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={suggestedPrice}
-                    onChange={(e) => setSuggestedPrice(e.target.value)}
-                  />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="mayoreo">Precio mayoreo</Label>
+                    <Input
+                      id="mayoreo"
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={mayoreo}
+                      onChange={(e) => setMayoreo(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="suggestedPrice">Precio sugerido</Label>
+                    <Input
+                      id="suggestedPrice"
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={suggestedPrice}
+                      onChange={(e) => setSuggestedPrice(e.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -664,37 +709,74 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">3. Visibilidad</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                3. Visibilidad
+              </legend>
               <div className="grid sm:grid-cols-2 gap-3">
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} className="size-4" />
+                  <input
+                    type="checkbox"
+                    checked={status}
+                    onChange={(e) => setStatus(e.target.checked)}
+                    className="size-4"
+                  />
                   Status
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" checked={isTested} onChange={(e) => setIsTested(e.target.checked)} className="size-4" />
+                  <input
+                    type="checkbox"
+                    checked={isTested}
+                    onChange={(e) => setIsTested(e.target.checked)}
+                    className="size-4"
+                  />
                   Probado
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" checked={showInHome} onChange={(e) => setShowInHome(e.target.checked)} className="size-4" />
+                  <input
+                    type="checkbox"
+                    checked={showInHome}
+                    onChange={(e) => setShowInHome(e.target.checked)}
+                    className="size-4"
+                  />
                   Mostrar en el home
                 </label>
                 <label className="flex items-center gap-2 text-sm text-foreground">
-                  <input type="checkbox" checked={showInSite} onChange={(e) => setShowInSite(e.target.checked)} className="size-4" />
+                  <input
+                    type="checkbox"
+                    checked={showInSite}
+                    onChange={(e) => setShowInSite(e.target.checked)}
+                    className="size-4"
+                  />
                   Mostrar en el sitio
                 </label>
               </div>
             </fieldset>
 
             <fieldset className="space-y-6 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">4. Archivos registrados</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                4. Archivos registrados
+              </legend>
               {renderExistingFiles("Vista previa", filesByType.preview)}
-              {renderExistingFiles("Imagenes del diseno", filesByType.designImages)}
-              {renderExistingFiles("Instrucciones", filesByType.instructions, true)}
-              {renderExistingFiles("Archivos fuente", filesByType.sourceFiles, true)}
+              {renderExistingFiles(
+                "Imagenes del diseno",
+                filesByType.designImages,
+              )}
+              {renderExistingFiles(
+                "Instrucciones",
+                filesByType.instructions,
+                true,
+              )}
+              {renderExistingFiles(
+                "Archivos fuente",
+                filesByType.sourceFiles,
+                true,
+              )}
             </fieldset>
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
-              <legend className="px-2 text-sm font-semibold text-foreground">5. Subir nuevos archivos</legend>
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                5. Subir nuevos archivos
+              </legend>
 
               <div className="space-y-2">
                 <Label htmlFor="preview-file">Reemplazar vista previa</Label>
@@ -706,7 +788,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   onDrop={(e) => handleSingleFileDrop(e, setPreviewFile)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Selecciona una nueva imagen de vista previa.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona una nueva imagen de vista previa.
+                  </p>
                   <input
                     id="preview-file"
                     type="file"
@@ -715,11 +799,17 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                     className="hidden"
                   />
                 </label>
-                {previewFile && <p className="text-xs text-muted-foreground">{previewFile.name}</p>}
+                {previewFile && (
+                  <p className="text-xs text-muted-foreground">
+                    {previewFile.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="design-images">Agregar imagenes del diseno</Label>
+                <Label htmlFor="design-images">
+                  Agregar imagenes del diseno
+                </Label>
                 <label
                   htmlFor="design-images"
                   className={dropzoneClassName("designImages")}
@@ -728,24 +818,35 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   onDrop={(e) => handleMultiFileDrop(e, setDesignImages, 20)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Puedes subir imagenes o videos.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Puedes subir imagenes o videos.
+                  </p>
                   <input
                     id="design-images"
                     type="file"
                     accept="image/*,video/*"
                     multiple
-                    onChange={(e) => handleMultiFileChange(e, setDesignImages, 20)}
+                    onChange={(e) =>
+                      handleMultiFileChange(e, setDesignImages, 20)
+                    }
                     className="hidden"
                   />
                 </label>
                 {designImages.length > 0 && (
                   <div className="space-y-2 mt-2">
                     {designImages.map((file, index) => (
-                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
-                        <span className="text-sm text-foreground truncate">{file.name}</span>
+                      <div
+                        key={`${file.name}-${index}`}
+                        className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2"
+                      >
+                        <span className="text-sm text-foreground truncate">
+                          {file.name}
+                        </span>
                         <button
                           type="button"
-                          onClick={() => removeFileAtIndex(index, setDesignImages)}
+                          onClick={() =>
+                            removeFileAtIndex(index, setDesignImages)
+                          }
                           className="ml-2 p-1 hover:bg-muted rounded"
                           aria-label={`Eliminar ${file.name}`}
                         >
@@ -767,16 +868,24 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   onDrop={(e) => handleSingleFileDrop(e, setInstructionFile)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Sube un archivo de instrucciones.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Sube un archivo de instrucciones.
+                  </p>
                   <input
                     id="instruction-file"
                     type="file"
                     accept="*/*"
-                    onChange={(e) => handleSingleFileChange(e, setInstructionFile)}
+                    onChange={(e) =>
+                      handleSingleFileChange(e, setInstructionFile)
+                    }
                     className="hidden"
                   />
                 </label>
-                {instructionFile && <p className="text-xs text-muted-foreground">{instructionFile.name}</p>}
+                {instructionFile && (
+                  <p className="text-xs text-muted-foreground">
+                    {instructionFile.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -789,24 +898,35 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   onDrop={(e) => handleMultiFileDrop(e, setSourceFiles, 20)}
                 >
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">Puedes subir multiples archivos fuente.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Puedes subir multiples archivos fuente.
+                  </p>
                   <input
                     id="source-files"
                     type="file"
                     multiple
                     accept="*/*"
-                    onChange={(e) => handleMultiFileChange(e, setSourceFiles, 20)}
+                    onChange={(e) =>
+                      handleMultiFileChange(e, setSourceFiles, 20)
+                    }
                     className="hidden"
                   />
                 </label>
                 {sourceFiles.length > 0 && (
                   <div className="space-y-2 mt-2">
                     {sourceFiles.map((file, index) => (
-                      <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2">
-                        <span className="text-sm text-foreground truncate">{file.name}</span>
+                      <div
+                        key={`${file.name}-${index}`}
+                        className="flex items-center justify-between rounded-md border border-border bg-white px-3 py-2"
+                      >
+                        <span className="text-sm text-foreground truncate">
+                          {file.name}
+                        </span>
                         <button
                           type="button"
-                          onClick={() => removeFileAtIndex(index, setSourceFiles)}
+                          onClick={() =>
+                            removeFileAtIndex(index, setSourceFiles)
+                          }
                           className="ml-2 p-1 hover:bg-muted rounded"
                           aria-label={`Eliminar ${file.name}`}
                         >
@@ -819,7 +939,11 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               </div>
             </fieldset>
 
-            <Button type="submit" disabled={isSubmitting} className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -856,7 +980,8 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               <DialogHeader>
                 <DialogTitle>Nueva categoria</DialogTitle>
                 <DialogDescription>
-                  Escribe el nombre de la categoria para guardarla y seleccionarla automaticamente.
+                  Escribe el nombre de la categoria para guardarla y
+                  seleccionarla automaticamente.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-2">
@@ -869,10 +994,16 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddingCategory(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddingCategory(false)}
+                >
                   Cancelar
                 </Button>
-                <Button type="button" onClick={handleCreateCategory}>Guardar categoria</Button>
+                <Button type="button" onClick={handleCreateCategory}>
+                  Guardar categoria
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -882,7 +1013,8 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
               <DialogHeader>
                 <DialogTitle>Nuevo material</DialogTitle>
                 <DialogDescription>
-                  Escribe el nombre del material para guardarlo y seleccionarlo automaticamente.
+                  Escribe el nombre del material para guardarlo y seleccionarlo
+                  automaticamente.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-2">
@@ -895,10 +1027,16 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddingMaterial(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddingMaterial(false)}
+                >
                   Cancelar
                 </Button>
-                <Button type="button" onClick={handleCreateMaterial}>Guardar material</Button>
+                <Button type="button" onClick={handleCreateMaterial}>
+                  Guardar material
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -907,4 +1045,3 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
     </section>
   );
 }
-

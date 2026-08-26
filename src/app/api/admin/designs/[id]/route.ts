@@ -274,6 +274,7 @@ export async function GET(
       numberMdfTables: true,
       timeMachine: true,
       suggestedPrice: true,
+      mayoreo: true,
       minimumPrice: true,
       relDesignsCategories: {
         where: { status: 1, categoryId: { not: null } },
@@ -315,6 +316,7 @@ export async function GET(
     numberMdfTables: design.numberMdfTables,
     timeMachine: design.timeMachine,
     suggestedPrice: design.suggestedPrice,
+    mayoreo: design.mayoreo,
     minimumPrice: design.minimumPrice,
     categoryIds: design.relDesignsCategories
       .map((relation) => relation.categoryId)
@@ -381,11 +383,13 @@ export async function PUT(
   const numberMdfTablesRaw = parseOptionalInt(formData.get("mdfBoards"));
   const timeMachineRaw = parseOptionalInt(formData.get("workTimeMinutes"));
   const suggestedPriceRaw = parseOptionalNumber(formData.get("suggestedPrice"));
+  const mayoreoRaw = parseOptionalNumber(formData.get("mayoreo"));
   const minimumPriceRaw = parseOptionalNumber(formData.get("minimumPrice"));
 
   const numberMdfTables = Math.max(0, Math.min(99, numberMdfTablesRaw ?? 0));
   const timeMachine = Math.max(0, timeMachineRaw ?? 0);
   const suggestedPrice = suggestedPriceRaw === null ? null : Math.max(0, suggestedPriceRaw);
+  const mayoreo = mayoreoRaw === null ? null : Math.max(0, mayoreoRaw);
   const minimumPrice = minimumPriceRaw === null ? null : Math.max(0, minimumPriceRaw);
 
   if (
@@ -424,6 +428,7 @@ export async function PUT(
         numberMdfTables,
         timeMachine,
         suggestedPrice,
+        mayoreo,
         minimumPrice,
       },
     });
@@ -701,6 +706,3 @@ export async function DELETE(
     deleted: true,
   });
 }
-
-
-
