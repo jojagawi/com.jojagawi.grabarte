@@ -23,6 +23,8 @@ export type HeroDesignItem = {
   name: string
   description: string
   image: string
+  featuredImageDataUrl: string
+  secondaryImageDataUrl: string
   categories: string[]
 }
 
@@ -127,7 +129,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
               {/* Main Product Image */}
               <div className="col-span-2 relative aspect-4/3 rounded-2xl overflow-hidden group shadow-lg">
                 <Image
-                  src={featuredDesign?.image || defaultHeroImage}
+                  src={featuredDesign?.featuredImageDataUrl || featuredDesign?.image || defaultHeroImage}
                   alt={`Diseno destacado: ${featuredDesign?.name || "Producto personalizado"}`}
                   fill
                   loading="lazy"
@@ -155,7 +157,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                 return (
                   <div key={design?.id ?? `fallback-secondary-${index}`} className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
                     <Image
-                      src={design?.image || featuredDesign?.image || defaultHeroImage}
+                      src={design?.secondaryImageDataUrl || design?.image || featuredDesign?.secondaryImageDataUrl || featuredDesign?.image || defaultHeroImage}
                       alt={`Diseno: ${design?.name || "Producto personalizado"}`}
                       fill
                       loading="lazy"

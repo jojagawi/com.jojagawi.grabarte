@@ -5,6 +5,7 @@ import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
 import { getRandomHomeTestimonialsFromAthena } from "@/lib/rates-athena.server";
+import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "InspiraArte | Regalos y productos personalizados en México",
@@ -114,41 +115,52 @@ export default async function Home() {
     .concat("://")
     .concat(process.env.NEXT_PUBLIC_S3 || "/dam/files/");
 
-  const heroDesigns = designs.slice(0, 3).map((design) => {
-    const previewFile = design.relDesignsFiles.find(
-      (relation) =>
-        relation.file?.fileType?.name === "Vista previa" &&
-        relation.file.filePath,
-    );
-    const firstFileWithPath = design.relDesignsFiles.find(
-      (relation) => relation.file?.filePath,
-    );
-    const selectedPath =
-      previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+  const heroDesigns = await Promise.all(
+    designs.slice(0, 3).map(async (design) => {
+      const previewFile = design.relDesignsFiles.find(
+        (relation) =>
+          relation.file?.fileType?.name === "Vista previa" &&
+          relation.file.filePath,
+      );
+      const firstFileWithPath = design.relDesignsFiles.find(
+        (relation) => relation.file?.filePath,
+      );
+      const selectedPath =
+        previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
 
-    const image =
-      selectedPath && mediaBaseUrl
-        ? `${mediaBaseUrl}/${selectedPath.replace(/^\/+/, "")}`
-        : defaultImage;
+      const imageUrl =
+        selectedPath && mediaBaseUrl
+          ? `${mediaBaseUrl}/${selectedPath.replace(/^\/+/, "")}`
+          : defaultImage;
 
-    const designCategories = Array.from(
-      new Set(
-        design.relDesignsCategories
-          .map((relation) => relation.category?.name)
-          .filter((name): name is string => Boolean(name?.trim())),
-      ),
-    );
+      const [featuredBase64, secondaryBase64] = selectedPath
+        ? await Promise.all([
+            toResizedWebpDataUrlFromUrl(imageUrl, 600),
+            toResizedWebpDataUrlFromUrl(imageUrl, 300),
+          ])
+        : [null, null];
 
-    return {
-      id: design.id,
-      name: design.name ?? "Diseno sin nombre",
-      description:
-        design.description?.trim() ||
-        "Diseno personalizado disponible bajo cotizacion.",
-      image,
-      categories: designCategories,
-    };
-  });
+      const designCategories = Array.from(
+        new Set(
+          design.relDesignsCategories
+            .map((relation) => relation.category?.name)
+            .filter((name): name is string => Boolean(name?.trim())),
+        ),
+      );
+
+      return {
+        id: design.id,
+        name: design.name ?? "Diseno sin nombre",
+        description:
+          design.description?.trim() ||
+          "Diseno personalizado disponible bajo cotizacion.",
+        image: imageUrl,
+        featuredImageDataUrl: featuredBase64 ?? imageUrl,
+        secondaryImageDataUrl: secondaryBase64 ?? featuredBase64 ?? imageUrl,
+        categories: designCategories,
+      };
+    }),
+  );
 
   const marqueeCategories = Array.from(
     new Set(

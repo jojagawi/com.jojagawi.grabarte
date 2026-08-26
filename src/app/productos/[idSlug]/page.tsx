@@ -11,6 +11,7 @@ import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
 
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -27,6 +28,7 @@ interface ProductDetailPageProps {
 type FileItem = {
   id: number;
   previewUrl: string;
+  displayUrl: string;
   downloadUrl: string;
   isVideo: boolean;
   isImage: boolean;
@@ -115,6 +117,7 @@ function toFileItem(
   return {
     id: fileId,
     previewUrl,
+    displayUrl: previewUrl,
     downloadUrl,
     isVideo: isVideoMime(mimeType),
     isImage: isImageMime(mimeType) || normalizedExtension === "svg" || normalizedExtension === "lbrn2",
@@ -321,17 +324,50 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   const previewRelation = fileRelations.find((file) => file.fileTypeId === 1);
 
-  const previewItem = toFileItem(
+  const previewItemRaw = toFileItem(
     previewRelation?.id ?? 0,
     previewRelation?.filePath,
     previewRelation?.fileExtension?.mimeType,
     previewRelation?.fileExtension?.extension,
   );
 
-  const galleryItems = fileRelations
-    .filter((file) => file.fileTypeId === 2)
-    .map((file) => toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension))
-    .filter((item): item is FileItem => Boolean(item));
+  const previewItem = previewItemRaw
+    ? {
+        ...previewItemRaw,
+        displayUrl: previewItemRaw.isImage
+          ? (await toResizedWebpDataUrlFromUrl(previewItemRaw.previewUrl, 600)) ?? previewItemRaw.previewUrl
+          : previewItemRaw.previewUrl,
+      }
+    : null;
+
+  const galleryItems = (
+    await Promise.all(
+      fileRelations
+        .filter((file) => file.fileTypeId === 2)
+        .map(async (file) => {
+          const item = toFileItem(
+            file.id,
+            file.filePath,
+            file.fileExtension?.mimeType,
+            file.fileExtension?.extension,
+          );
+
+          if (!item) {
+            return null;
+          }
+
+          if (!item.isImage) {
+            return item;
+          }
+
+          const resizedBase64 = await toResizedWebpDataUrlFromUrl(item.previewUrl, 400);
+          return {
+            ...item,
+            displayUrl: resizedBase64 ?? item.previewUrl,
+          };
+        }),
+    )
+  ).filter((item): item is FileItem => Boolean(item));
 
   const instructionItems = fileRelations
     .filter((file) => file.fileTypeId === 3)
