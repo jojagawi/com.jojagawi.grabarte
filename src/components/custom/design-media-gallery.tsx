@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 type FileItem = {
   id: number;
   previewUrl: string;
+  displayUrl: string;
   downloadUrl: string;
   isVideo: boolean;
   isImage: boolean;
@@ -183,7 +184,7 @@ export function DesignMediaGallery({
                 aria-label="Abrir imagen principal en pantalla completa"
               >
                 <Image
-                  src={previewItem?.previewUrl || defaultImage}
+                  src={previewItem?.displayUrl || previewItem?.previewUrl || defaultImage}
                   alt={`Vista previa de ${designName}`}
                   fill
                   loading="eager"
@@ -240,7 +241,7 @@ export function DesignMediaGallery({
                       aria-label={`Abrir imagen ${index + 1} en pantalla completa`}
                     >
                       <Image
-                        src={item.previewUrl}
+                        src={item.displayUrl || item.previewUrl}
                         alt={`Imagen ${index + 1} del diseño ${designName}`}
                         fill
                         loading="lazy"
