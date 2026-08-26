@@ -53,7 +53,7 @@ export default async function Home() {
     },
   });
 
-  const designs = await prisma.designs.findMany({
+  const designsPool = await prisma.designs.findMany({
     where: {
       status: 1,
       showInSite: 1,
@@ -102,17 +102,19 @@ export default async function Home() {
         },
       },
     },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 3,
   });
+
+  const designs = [...designsPool];
+  for (let i = designs.length - 1; i > 0; i -= 1) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [designs[i], designs[randomIndex]] = [designs[randomIndex], designs[i]];
+  }
 
   const mediaBaseUrl = (process.env.NEXT_PUBLIC_S3_PROTOCOL || "http")
     .concat("://")
     .concat(process.env.NEXT_PUBLIC_S3 || "/dam/files/");
 
-  const heroDesigns = designs.map((design) => {
+  const heroDesigns = designs.slice(0, 3).map((design) => {
     const previewFile = design.relDesignsFiles.find(
       (relation) =>
         relation.file?.fileType?.name === "Vista previa" &&
