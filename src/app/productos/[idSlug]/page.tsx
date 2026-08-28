@@ -17,11 +17,6 @@ import { ProductCodeVisibility } from "@/components/custom/product-code-visibili
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
 
-export const llmstxt = {
-  title: "Detalle de producto",
-  description: "Ficha de un diseño personalizado con galería y especificaciones.",
-};
-
 interface ProductDetailPageProps {
   params: Promise<{ idSlug: string }>;
 }
@@ -31,6 +26,7 @@ type FileItem = {
   previewUrl: string;
   displayUrl: string;
   downloadUrl: string;
+  downloadName: string;
   isVideo: boolean;
   isImage: boolean;
   fileName: string;
@@ -38,8 +34,6 @@ type FileItem = {
   extension: string;
   key: string;
 };
-
-const usePrivateFilesProxy = process.env.NEXT_PUBLIC_S3_IS_PUBLIC !== "true";
 
 function parseIdSlug(value: string): { id: number } | null {
   const match = /^(\d+)-(.+)$/u.exec(value);
@@ -93,6 +87,30 @@ function getFileExtensionLabel(extension: string): string {
   return normalized ? normalized.toUpperCase() : "ARCHIVO";
 }
 
+function normalizeExtension(extension: string | null | undefined): string {
+  const cleaned = String(extension || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+  return cleaned || "bin";
+}
+
+function buildDownloadName(fileId: number, productName: string, extension: string): string {
+  const safeProductSlug = slugify(productName) || "producto";
+  const safeExtension = normalizeExtension(extension);
+  return `${fileId}-${safeProductSlug}.${safeExtension}`;
+}
+
+function buildProxyDownloadUrl(fileId: number, downloadName: string): string {
+  const params = new URLSearchParams({
+    download: "1",
+    filename: downloadName,
+  });
+
+  return `${getPrivateFileProxyUrl(fileId)}?${params.toString()}`;
+}
+
 function toFileItem(
   fileId: number,
   filePath: string | null | undefined,
@@ -120,6 +138,7 @@ function toFileItem(
     previewUrl,
     displayUrl: previewUrl,
     downloadUrl,
+    downloadName: getFileNameFromPath(filePath),
     isVideo: isVideoMime(mimeType),
     isImage: isImageMime(mimeType) || normalizedExtension === "svg" || normalizedExtension === "lbrn2",
     fileName: getFileNameFromPath(filePath),
@@ -302,6 +321,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 
+  const designNameForFiles = design.name ?? "producto";
+
   const canonicalSlug = slugify(design.name);
   const canonicalIdSlug = `${design.id}-${canonicalSlug}`;
 
@@ -372,22 +393,50 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   const instructionItems = fileRelations
     .filter((file) => file.fileTypeId === 3)
-    .map((file) =>
-      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension, usePrivateFilesProxy),
-    )
-    .filter((item): item is FileItem => Boolean(item));
-
-  const sourceFileItems = fileRelations
-    .filter((file) => file.fileTypeId === 4)
-    .map((file) =>
-      toFileItem(
+    .map((file) => {
+      const item = toFileItem(
         file.id,
         file.filePath,
         file.fileExtension?.mimeType,
         file.fileExtension?.extension,
-        usePrivateFilesProxy,
-      ),
-    )
+        true,
+      );
+
+      if (!item) {
+        return null;
+      }
+
+      const downloadName = buildDownloadName(item.id, designNameForFiles, item.extension);
+      return {
+        ...item,
+        downloadName,
+        downloadUrl: buildProxyDownloadUrl(item.id, downloadName),
+      };
+    })
+    .filter((item): item is FileItem => Boolean(item));
+
+  const sourceFileItems = fileRelations
+    .filter((file) => file.fileTypeId === 4)
+    .map((file) => {
+      const item = toFileItem(
+        file.id,
+        file.filePath,
+        file.fileExtension?.mimeType,
+        file.fileExtension?.extension,
+        true,
+      );
+
+      if (!item) {
+        return null;
+      }
+
+      const downloadName = buildDownloadName(item.id, designNameForFiles, item.extension);
+      return {
+        ...item,
+        downloadName,
+        downloadUrl: buildProxyDownloadUrl(item.id, downloadName),
+      };
+    })
     .filter((item): item is FileItem => Boolean(item));
 
   const hasNumericCodeValues =
@@ -547,7 +596,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </Card>
         </DesignMediaGallery>
 
-        {isDevelopment && (
+        {isDevelopment && canEditDesigns && (
           <>
             <div className="space-y-4">
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
@@ -596,7 +645,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         <div className="p-4 border-t border-border">
                           <a
                             href={item.downloadUrl}
-                            download
+                            download={item.downloadName}
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >
                             Descargar archivo ({getFileExtensionLabel(item.extension)})
@@ -656,7 +705,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         <div className="p-4 border-t border-border">
                           <a
                             href={item.downloadUrl}
-                            download
+                            download={item.downloadName}
                             className="text-sm font-medium text-[#4290A3] hover:underline"
                           >
                             Descargar archivo ({getFileExtensionLabel(item.extension)})

@@ -38,6 +38,26 @@ async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
   return Buffer.concat(chunks);
 }
 
+function sanitizeFileName(value: string, fallback: string): string {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .trim();
+
+  return normalized || fallback;
+}
+
+function parseBooleanQuery(value: string | string[] | undefined): boolean {
+  if (!value || Array.isArray(value)) {
+    return false;
+  }
+
+  return value === "1" || value.toLowerCase() === "true";
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ErrorPayload | Buffer | string>) {
   const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
   if (process.env.NODE_ENV !== "development" || !canEditDesigns) {
@@ -117,15 +137,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const requestedFormat = String(req.query.format ?? "").toLowerCase();
   const fileExtension = String(file.fileExtension?.extension ?? "").toLowerCase();
+  const shouldForceDownload = parseBooleanQuery(req.query.download);
+  const requestedFileNameRaw =
+    typeof req.query.filename === "string" ? req.query.filename.trim() : "";
 
   if (requestedFormat === "svg" && fileExtension === "lbrn2") {
     try {
       const project = parseLbrn2(buffer.toString("utf-8"));
       const svg = lbrn2ToSvg(project);
-      const svgFileName = file.filePath.replace(/\.lbrn2$/i, ".svg").split("/").pop() || `archivo-${fileId}.svg`;
+      const svgFallbackName = file.filePath.replace(/\.lbrn2$/i, ".svg").split("/").pop() || `archivo-${fileId}.svg`;
+      const svgFileName = sanitizeFileName(requestedFileNameRaw || svgFallbackName, svgFallbackName);
+      const svgDisposition = shouldForceDownload ? "attachment" : "inline";
 
       res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
-      res.setHeader("Content-Disposition", `inline; filename=\"${svgFileName}\"`);
+      res.setHeader(
+        "Content-Disposition",
+        `${svgDisposition}; filename=\"${svgFileName}\"; filename*=UTF-8''${encodeURIComponent(svgFileName)}`,
+      );
       res.setHeader("Cache-Control", "private, max-age=0, must-revalidate");
 
       return res.status(200).send(svg);
@@ -136,13 +164,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const contentType = file.fileExtension?.mimeType || response.ContentType || "application/octet-stream";
-  const fileName = file.filePath.split("/").pop() || `archivo-${fileId}`;
+  const fallbackFileName = file.filePath.split("/").pop() || `archivo-${fileId}`;
+  const fileName = sanitizeFileName(requestedFileNameRaw || fallbackFileName, fallbackFileName);
+  const disposition = shouldForceDownload ? "attachment" : inferDisposition(contentType);
 
   res.setHeader("Content-Type", contentType);
   res.setHeader("Content-Length", String(buffer.byteLength));
-  res.setHeader("Content-Disposition", `${inferDisposition(contentType)}; filename=\"${fileName}\"`);
+  res.setHeader(
+    "Content-Disposition",
+    `${disposition}; filename=\"${fileName}\"; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+  );
   res.setHeader("Cache-Control", "private, max-age=0, must-revalidate");
 
   res.status(200).send(buffer);
 }
-
