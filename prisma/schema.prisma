@@ -66,6 +66,9 @@ model Designs {
   id                   Int                    @id @default(autoincrement())
   name                 String?
   description          String?
+  keywords             String?
+  seoDescription       String?
+  longDescription      String?
   notes                String?
   author               String?
   status               Int                    @default(1)

@@ -54,6 +54,9 @@ export async function POST(request: Request) {
   }
 
   const description = String(formData.get("description") ?? "").trim() || null;
+  const keywords = String(formData.get("keywords") ?? "").trim() || null;
+  const seoDescription = String(formData.get("seoDescription") ?? "").trim() || null;
+  const longDescription = String(formData.get("longDescription") ?? "").trim() || null;
   const author = String(formData.get("author") ?? "").trim() || null;
   const notes = String(formData.get("notes") ?? "").trim() || null;
   const materialId = parseOptionalInt(formData.get("materialType"));
@@ -141,6 +144,9 @@ export async function POST(request: Request) {
       data: {
         name,
         description,
+        keywords,
+        seoDescription,
+        longDescription,
         author,
         notes,
         material: materialConnect,

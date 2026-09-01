@@ -34,21 +34,84 @@ function extensionFromFileName(fileName: string) {
   return parts.pop()?.toLowerCase() ?? "";
 }
 
+function extensionFromMimeType(mimeType: string) {
+  switch (mimeType) {
+    case "image/jpeg":
+      return "jpg";
+    case "image/png":
+      return "png";
+    case "image/webp":
+      return "webp";
+    case "image/gif":
+      return "gif";
+    case "image/avif":
+      return "avif";
+    case "image/bmp":
+      return "bmp";
+    case "image/tiff":
+      return "tiff";
+    case "image/svg+xml":
+      return "svg";
+    default:
+      return "";
+  }
+}
+
 async function convertImageToWebp(input: Buffer) {
   try {
-    return await sharp(input).rotate().webp({ quality: 90 }).toBuffer();
+    return await sharp(input, { failOn: "none" })
+      .rotate()
+      .webp({ quality: 90 })
+      .toBuffer();
   } catch (error) {
-    // Fallback para archivos con metadatos o interpretación de color no estándar.
+    // Fallback 1: normaliza a PNG para reducir fallos por metadata/perfiles raros.
     try {
       const normalized = await sharp(input, { failOn: "none" })
         .rotate()
-        .toColourspace("srgb")
-        .png()
+        .png({ compressionLevel: 9 })
         .toBuffer();
 
-      return await sharp(normalized).webp({ quality: 90 }).toBuffer();
-    } catch {
+      return await sharp(normalized, { failOn: "none" })
+        .webp({ quality: 90 })
+        .toBuffer();
+    } catch (pngFallbackError) {
+      // Fallback 2: reconstruye desde pixeles RAW para descartar por completo metadata/ICC.
+      try {
+        const { data, info } = await sharp(input, {
+          failOn: "none",
+          pages: 1,
+          animated: false,
+        })
+          .rotate()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+
+        return await sharp(data, {
+          raw: {
+            width: info.width,
+            height: info.height,
+            channels: info.channels,
+          },
+        })
+          .webp({ quality: 90 })
+          .toBuffer();
+      } catch (rawFallbackError) {
+      const primaryMessage = error instanceof Error ? error.message : String(error);
+      const fallbackMessage =
+          pngFallbackError instanceof Error
+            ? pngFallbackError.message
+            : String(pngFallbackError);
+        const rawFallbackMessage =
+          rawFallbackError instanceof Error
+            ? rawFallbackError.message
+            : String(rawFallbackError);
+      console.error("Error al convertir imagen a WebP", {
+        primaryMessage,
+        fallbackMessage,
+        rawFallbackMessage,
+      });
       throw error;
+      }
     }
   }
 }
@@ -263,6 +326,9 @@ export async function GET(
       id: true,
       name: true,
       description: true,
+      keywords: true,
+      seoDescription: true,
+      longDescription: true,
       author: true,
       notes: true,
       materialId: true,
@@ -305,6 +371,9 @@ export async function GET(
     id: design.id,
     name: design.name ?? "",
     description: design.description ?? "",
+    keywords: design.keywords ?? "",
+    seoDescription: design.seoDescription ?? "",
+    longDescription: design.longDescription ?? "",
     author: design.author ?? "",
     notes: design.notes ?? "",
     materialId: design.materialId,
@@ -377,6 +446,9 @@ export async function PUT(
   }
 
   const description = String(formData.get("description") ?? "").trim() || null;
+  const keywords = String(formData.get("keywords") ?? "").trim() || null;
+  const seoDescription = String(formData.get("seoDescription") ?? "").trim() || null;
+  const longDescription = String(formData.get("longDescription") ?? "").trim() || null;
   const author = String(formData.get("author") ?? "").trim() || null;
   const notes = String(formData.get("notes") ?? "").trim() || null;
   const materialId = parseOptionalInt(formData.get("materialType"));
@@ -417,6 +489,9 @@ export async function PUT(
       data: {
         name,
         description,
+        keywords,
+        seoDescription,
+        longDescription,
         author,
         notes,
         materialId: materialId && materialId > 0 ? materialId : null,
@@ -497,18 +572,40 @@ export async function PUT(
     affectedFileIds.push(...removedPreviousPreview.removedFileIds);
 
     const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
-    const webpBuffer = await convertImageToWebp(previewBuffer);
-    const webpExtensionId = await ensureExtensionId("webp", "image/webp");
+    let previewUploadBuffer: Buffer = previewBuffer;
+    let previewExtension = "webp";
+    let previewMimeType = "image/webp";
+
+    try {
+      previewUploadBuffer = await convertImageToWebp(previewBuffer);
+    } catch (error) {
+      const fallbackExtension =
+        extensionFromFileName(previewFile.name) ||
+        extensionFromMimeType(previewFile.type) ||
+        "jpg";
+      const fallbackMimeType = previewFile.type || "image/jpeg";
+      console.warn("No se pudo convertir la vista previa a WebP. Se conserva formato original.", {
+        fileName: previewFile.name,
+        fileType: previewFile.type,
+        fallbackExtension,
+        detail: error instanceof Error ? error.message : String(error),
+      });
+      previewExtension = fallbackExtension;
+      previewMimeType = fallbackMimeType;
+    }
+
+    const previewExtensionId = await ensureExtensionId(previewExtension, previewMimeType);
+    const previewObjectKey = `preview/${id}.${previewExtension}`;
 
     const previewFileId = await createAndAttachFileRecord({
       designId: id,
       fileTypeId: previewTypeId,
-      fileExtensionId: webpExtensionId,
-      objectKey: `preview/${id}.webp`,
-      body: webpBuffer,
-      contentType: "image/webp",
+      fileExtensionId: previewExtensionId,
+      objectKey: previewObjectKey,
+      body: previewUploadBuffer,
+      contentType: previewMimeType,
     });
-    affectedObjectKeys.push(`preview/${id}.webp`);
+    affectedObjectKeys.push(previewObjectKey);
     affectedFileIds.push(previewFileId);
   }
 
@@ -542,10 +639,26 @@ export async function PUT(
 
       if (isImage) {
         const originalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-        finalBuffer = await convertImageToWebp(originalBuffer);
-        finalExtension = "webp";
-        finalMimeType = "image/webp";
-        fileExtensionId = await ensureExtensionId("webp", "image/webp");
+        try {
+          finalBuffer = await convertImageToWebp(originalBuffer);
+          finalExtension = "webp";
+          finalMimeType = "image/webp";
+          fileExtensionId = await ensureExtensionId("webp", "image/webp");
+        } catch (error) {
+          finalBuffer = originalBuffer;
+          finalExtension =
+            extensionFromFileName(uploadedFile.name) ||
+            extensionFromMimeType(uploadedFile.type) ||
+            "jpg";
+          finalMimeType = uploadedFile.type || "image/jpeg";
+          fileExtensionId = await ensureExtensionId(finalExtension, finalMimeType);
+          console.warn("No se pudo convertir imagen de diseno a WebP. Se conserva formato original.", {
+            fileName: uploadedFile.name,
+            fileType: uploadedFile.type,
+            fallbackExtension: finalExtension,
+            detail: error instanceof Error ? error.message : String(error),
+          });
+        }
       } else {
         finalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
         finalExtension = extensionFromFileName(uploadedFile.name);

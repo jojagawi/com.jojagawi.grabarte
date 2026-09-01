@@ -40,6 +40,9 @@ type EditableDesign = {
   id: number;
   name: string;
   description: string;
+  keywords: string;
+  seoDescription: string;
+  longDescription: string;
   author: string;
   notes: string;
   materialId: number | null;
@@ -104,6 +107,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
 
   const [name, setName] = useState(design.name);
   const [description, setDescription] = useState(design.description);
+  const [keywords, setKeywords] = useState(design.keywords);
+  const [seoDescription, setSeoDescription] = useState(design.seoDescription);
+  const [longDescription, setLongDescription] = useState(design.longDescription);
   const [author, setAuthor] = useState(design.author);
   const [notes, setNotes] = useState(design.notes);
   const [selectedMaterialId, setSelectedMaterialId] = useState(
@@ -319,6 +325,9 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
 
     formData.append("name", name.trim());
     formData.append("description", description.trim());
+    formData.append("keywords", keywords.trim());
+    formData.append("seoDescription", seoDescription.trim());
+    formData.append("longDescription", longDescription.trim());
     formData.append("author", author.trim());
     formData.append("notes", notes.trim());
     formData.append("materialType", selectedMaterialId);
@@ -551,6 +560,38 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="min-h-30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="keywords">Keywords SEO</Label>
+                <Input
+                  id="keywords"
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                  placeholder="Ej. regalo personalizado, corte laser"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="seoDescription">Descripcion SEO</Label>
+                <Textarea
+                  id="seoDescription"
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  className="min-h-24"
+                  placeholder="Texto breve para motores de busqueda."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="longDescription">Descripcion larga</Label>
+                <Textarea
+                  id="longDescription"
+                  value={longDescription}
+                  onChange={(e) => setLongDescription(e.target.value)}
+                  className="min-h-36"
+                  placeholder="Descripcion detallada del producto para catalogo y SEO."
                 />
               </div>
 
