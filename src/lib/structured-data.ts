@@ -50,12 +50,19 @@ type ProductStructuredDataInput = {
   };
 };
 
+const DEFAULT_SITE_URL = "https://www.inspiraarte.com";
+const DEFAULT_LOGO_PATH = "/dam/logos/logo.webp";
+const DEFAULT_LOGO_WIDTH = 192;
+const DEFAULT_LOGO_HEIGHT = 64;
+const DEFAULT_PRODUCT_IMAGE_WIDTH = 1200;
+const DEFAULT_PRODUCT_IMAGE_HEIGHT = 1200;
+
 function toAbsoluteLikeUrl(url: string) {
   if (/^https?:\/\//iu.test(url)) {
     return url;
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
   return new URL(url, baseUrl).toString();
 }
 
@@ -84,6 +91,16 @@ function normalizeTelephone(value: string | null | undefined) {
   }
 
   return normalized.startsWith("+") ? normalized : `+${digits}`;
+}
+
+function buildImageObject(url: string, caption: string, width: number, height: number) {
+  return {
+    "@type": "ImageObject",
+    url,
+    caption,
+    width,
+    height,
+  };
 }
 
 function stringifyAdditionalProperty(name: string, value: string | number | null | undefined) {
@@ -204,10 +221,12 @@ function buildOrganizationNode(input: OrganizationStructuredDataInput) {
     name: input.name,
     url: normalizeExternalUrl(input.url) || toAbsoluteLikeUrl("/"),
     logo: logoUrl
-      ? {
-          "@type": "ImageObject",
-          url: logoUrl,
-        }
+      ? buildImageObject(
+          logoUrl,
+          `Logo de ${input.name}`,
+          DEFAULT_LOGO_WIDTH,
+          DEFAULT_LOGO_HEIGHT,
+        )
       : undefined,
     description: normalizeText(input.description) || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
@@ -220,7 +239,7 @@ export function serializeJsonLd(value: unknown) {
 }
 
 export function buildOrganizationJsonLd() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
   const siteName = process.env.NEXT_PUBLIC_SITENAME?.trim() || "InspiraArte";
   const email = process.env.NEXT_PUBLIC_EMAIL || "contacto@inspiraarte.com";
   const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP || "";
@@ -232,30 +251,33 @@ export function buildOrganizationJsonLd() {
     process.env.NEXT_PUBLIC_TIKTOK,
   ];
 
-  return buildOrganizationNode({
-    name: siteName,
-    url: websiteUrl,
-    logo: toAbsoluteLikeUrl("/dam/logos/logo.webp"),
-    description: `Tienda y taller de productos personalizados de ${siteName}.`,
-    sameAs: socialProfiles.filter((profile): profile is string => Boolean(profile)),
-    contactPoints: [
-      {
-        contactType: "customer service",
-        email,
-        ...(whatsappTelephone ? { telephone: whatsappTelephone } : {}),
-        url: toAbsoluteLikeUrl("/contacto"),
-        areaServed: "MX",
-        availableLanguage: ["es-MX"],
-      },
-      {
-        contactType: "sales",
-        email,
-        url: toAbsoluteLikeUrl("/contacto"),
-        areaServed: "MX",
-        availableLanguage: ["es-MX"],
-      },
-    ],
-  });
+  return {
+    "@context": "https://schema.org",
+    ...buildOrganizationNode({
+      name: siteName,
+      url: websiteUrl,
+      logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
+      description: `Tienda y taller de productos personalizados de ${siteName}.`,
+      sameAs: socialProfiles.filter((profile): profile is string => Boolean(profile)),
+      contactPoints: [
+        {
+          contactType: "customer service",
+          email,
+          ...(whatsappTelephone ? { telephone: whatsappTelephone } : {}),
+          url: toAbsoluteLikeUrl("/contacto"),
+          areaServed: "MX",
+          availableLanguage: ["es-MX"],
+        },
+        {
+          contactType: "sales",
+          email,
+          url: toAbsoluteLikeUrl("/contacto"),
+          areaServed: "MX",
+          availableLanguage: ["es-MX"],
+        },
+      ],
+    }),
+  };
 }
 
 export function buildProductJsonLd(input: ProductStructuredDataInput) {
@@ -272,7 +294,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
   const organization = buildOrganizationNode({
     name: input.brandName,
     url: toAbsoluteLikeUrl("/"),
-    logo: toAbsoluteLikeUrl("/dam/logos/logo.webp"),
+    logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
     sameAs: [
       process.env.NEXT_PUBLIC_INSTAGRAM,
       process.env.NEXT_PUBLIC_FACEBOOK,
@@ -306,6 +328,16 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
     stringifyAdditionalProperty("Dimensiones", input.dimensions),
   ].filter(Boolean);
 
+  const imageCaption = normalizeText(input.imageDescription) || `Imagen del producto ${input.name}`;
+  const imageObjects = images.map((imageUrl) =>
+    buildImageObject(
+      toAbsoluteLikeUrl(imageUrl),
+      imageCaption,
+      DEFAULT_PRODUCT_IMAGE_WIDTH,
+      DEFAULT_PRODUCT_IMAGE_HEIGHT,
+    ),
+  );
+
   const productNode: Record<string, unknown> = {
     "@type": "Product",
     "@id": `${productUrl}#product`,
@@ -321,7 +353,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
     manufacturer: organization,
     category: (input.categories ?? []).join(" > ") || undefined,
     material: input.material || undefined,
-    image: images.length > 0 ? images : undefined,
+    image: imageObjects.length > 0 ? imageObjects : undefined,
     additionalProperty: additionalProperty.length > 0 ? additionalProperty : undefined,
     creator: input.author
       ? {
@@ -404,6 +436,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
 
   return {
     "@context": "https://schema.org",
-    "@graph": [buildOrganizationJsonLd(), productNode, breadcrumbNode, ...(faqNode ? [faqNode] : [])],
+    "@graph": [organization, productNode, breadcrumbNode, ...(faqNode ? [faqNode] : [])],
   };
 }
+
