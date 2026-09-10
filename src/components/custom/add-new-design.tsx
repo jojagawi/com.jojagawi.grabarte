@@ -365,6 +365,35 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="keywords">Keywords SEO</Label>
+                <Input
+                  id="keywords"
+                  name="keywords"
+                  placeholder="Ej. regalo personalizado, corte láser"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="seoDescription">Descripción SEO</Label>
+                <Textarea
+                  id="seoDescription"
+                  name="seoDescription"
+                  placeholder="Texto breve para buscadores (meta description)."
+                  className="min-h-24"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="longDescription">Descripción larga</Label>
+                <Textarea
+                  id="longDescription"
+                  name="longDescription"
+                  placeholder="Descripción detallada del producto para catálogo y SEO."
+                  className="min-h-36"
+                />
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="author">Autor</Label>
