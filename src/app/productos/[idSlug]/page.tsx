@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
 import { ProductCodeVisibility } from "@/components/custom/product-code-visibility";
+import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 const defaultImage = "/dam/dafault-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -111,6 +112,13 @@ function buildProxyDownloadUrl(fileId: number, downloadName: string): string {
   return `${getPrivateFileProxyUrl(fileId)}?${params.toString()}`;
 }
 
+function splitKeywords(value: string | null | undefined): string[] {
+  return String(value || "")
+    .split(/[\n,]/u)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function toFileItem(
   fileId: number,
   filePath: string | null | undefined,
@@ -192,6 +200,9 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
       id: true,
       name: true,
       description: true,
+      keywords: true,
+      seoDescription: true,
+      longDescription: true,
       relDesignsFiles: {
         where: {
           status: 1,
@@ -227,15 +238,23 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const firstGalleryPath = design.relDesignsFiles.find((relation) => relation.file?.filePath)?.file?.filePath;
   const selectedImagePath = firstPreviewPath ?? firstGalleryPath ?? defaultImage;
   const socialImagePath = toMediaUrl(selectedImagePath) || defaultImage;
+  const seoDescription =
+    design.seoDescription?.trim() ||
+    design.description?.trim() ||
+    "Conoce este diseño personalizado de InspiraArte y solicita tu cotización.";
 
   return buildPageMetadata({
     title: `${design.name} | InspiraArte`,
-    description:
-      design.description?.trim() ||
-      "Conoce este diseño personalizado de InspiraArte y solicita tu cotización.",
+    description: seoDescription,
     path: canonicalPath,
     imagePath: socialImagePath,
     imageAlt: `Vista previa del producto ${design.name} de InspiraArte`,
+    keywords: splitKeywords(design.keywords),
+    locale: "es_MX",
+    countryName: "MX",
+    imageWidth: 1200,
+    imageHeight: 630,
+    imageType: "image/webp",
   });
 }
 
@@ -258,6 +277,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       id: true,
       name: true,
       description: true,
+      keywords: true,
+      seoDescription: true,
+      longDescription: true,
+      features: true,
+      benefits: true,
+      useCases: true,
+      audience: true,
+      faq: true,
+      imageDescription: true,
+      productionTime: true,
+      shippingTime: true,
+      availability: true,
+      dimensions: true,
+      author: true,
       showInHome: true,
       showInSite: true,
       minimumPrice: true,
@@ -452,6 +485,41 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       ? buildProductCode(design.id, minimumPrice, suggestedPrice, mayoreoPrice)
       : null;
 
+  const productJsonLd = buildProductJsonLd({
+    name: design.name,
+    description:
+      design.seoDescription?.trim() ||
+      design.longDescription?.trim() ||
+      design.description?.trim() ||
+      "Diseño personalizado de InspiraArte.",
+    url: `/productos/${canonicalIdSlug}`,
+    sku: String(design.id),
+    brandName: "InspiraArte",
+    material: design.material?.name?.trim() || null,
+    categories,
+    images: [previewItem?.previewUrl, ...galleryItems.map((item) => item.previewUrl)].filter(
+      (value): value is string => Boolean(value),
+    ),
+    author: design.author,
+    features: design.features,
+    benefits: design.benefits,
+    useCases: design.useCases,
+    audience: design.audience,
+    faq: design.faq,
+    imageDescription: design.imageDescription,
+    productionTime: design.productionTime,
+    shippingTime: design.shippingTime,
+    availability: design.availability,
+    dimensions: design.dimensions,
+    keywords: splitKeywords(design.keywords),
+    prices: {
+      minimumPrice,
+      suggestedPrice,
+      mayoreoPrice,
+      currency: "MXN",
+    },
+  });
+
   const originalProductCode =
     minimumPrice !== null && suggestedPrice !== null
       ? [
@@ -464,6 +532,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <section className="py-24 bg-muted/30">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(productJsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button
@@ -509,7 +581,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   {design.name}
                 </h1>
                 <p className="text-muted-foreground text-base leading-relaxed">
-                  {design.description?.trim() ||
+                  {design.seoDescription?.trim() ||
+                    design.description?.trim() ||
                     "Diseño personalizado disponible bajo cotización."}
                 </p>
               </div>
@@ -559,6 +632,36 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     )}
                   </div>
                 </div>
+
+                {(design.longDescription?.trim() || design.description?.trim()) && (
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-2">
+                      Descripción del producto
+                    </p>
+                    <Card className="border-border/60 bg-white">
+                      <CardContent className="p-4 sm:p-5">
+                        <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+                          {design.longDescription?.trim() || design.description?.trim()}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {splitKeywords(design.keywords).length > 0 && (
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-2">
+                      Keywords SEO
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {splitKeywords(design.keywords).map((keyword) => (
+                        <Badge key={keyword} variant="outline" className="text-sm">
+                          {keyword}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {isDevelopment && (
                   <div>

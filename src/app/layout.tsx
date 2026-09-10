@@ -3,6 +3,7 @@ import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { buildMetadataBase } from "@/lib/metadata";
+import { buildOrganizationJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { Footer } from "@/components/structure/footer";
 import { Header } from "@/components/structure/header";
 import { PwaAnalytics } from "@/components/structure/pwa-analytics";
@@ -71,6 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const shouldRegisterServiceWorker = process.env.NODE_ENV === "production";
+  const organizationJsonLd = buildOrganizationJsonLd();
 
   return (
     <html
@@ -83,6 +85,10 @@ export default function RootLayout({
       >
         <main className="min-h-screen">
           <Header />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationJsonLd) }}
+          />
           {children}
           <Footer />
           <PwaAnalytics />

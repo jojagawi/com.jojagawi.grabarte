@@ -12,6 +12,13 @@ interface BuildPageMetadataInput {
   keywords?: string[];
   imagePath?: string;
   imageAlt?: string;
+  locale?: string;
+  countryName?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageType?: string;
+  twitterSite?: string;
+  twitterCreator?: string;
   type?: "website" | "article";
   noIndex?: boolean;
 }
@@ -53,6 +60,13 @@ export function buildPageMetadata({
   keywords,
   imagePath,
   imageAlt,
+  locale = "es_MX",
+  countryName = "MX",
+  imageWidth = 1200,
+  imageHeight = 630,
+  imageType = "image/webp",
+  twitterSite,
+  twitterCreator,
   type = "website",
   noIndex = false,
 }: BuildPageMetadataInput): Metadata {
@@ -74,12 +88,16 @@ export function buildPageMetadata({
       description,
       url: absoluteCanonicalUrl,
       type,
-      locale: "es_MX",
+      locale,
+      countryName,
       siteName: SITE_NAME,
       images: [
         {
           url: absoluteImageUrl,
           alt: selectedImageAlt,
+          width: imageWidth,
+          height: imageHeight,
+          type: imageType,
         },
       ],
     },
@@ -87,7 +105,14 @@ export function buildPageMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [absoluteImageUrl],
+      ...(twitterSite ? { site: twitterSite } : {}),
+      ...(twitterCreator ? { creator: twitterCreator } : {}),
+      images: [
+        {
+          url: absoluteImageUrl,
+          alt: selectedImageAlt,
+        },
+      ],
     },
     ...(noIndex
       ? {

@@ -97,6 +97,9 @@ export function Header() {
                   <DropdownMenuItem asChild>
                     <Link href="/agregar">Agregar producto</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/agregar/redaccion-seo">Redaccion SEO IA</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>Catalogos</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
@@ -149,6 +152,13 @@ export function Header() {
                       className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
                     >
                       Agregar producto
+                    </Link>
+                    <Link
+                      href="/agregar/redaccion-seo"
+                      onClick={() => setIsOpen(false)}
+                      className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                    >
+                      Redaccion SEO IA
                     </Link>
                     <div className="flex flex-col gap-2 pl-4">
                       <span className="text-base font-medium text-muted-foreground">Catalogos</span>

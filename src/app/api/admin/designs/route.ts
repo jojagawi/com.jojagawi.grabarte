@@ -57,6 +57,16 @@ export async function POST(request: Request) {
   const keywords = String(formData.get("keywords") ?? "").trim() || null;
   const seoDescription = String(formData.get("seoDescription") ?? "").trim() || null;
   const longDescription = String(formData.get("longDescription") ?? "").trim() || null;
+  const features = String(formData.get("features") ?? "").trim() || null;
+  const benefits = String(formData.get("benefits") ?? "").trim() || null;
+  const useCases = String(formData.get("useCases") ?? "").trim() || null;
+  const audience = String(formData.get("audience") ?? "").trim() || null;
+  const faq = String(formData.get("faq") ?? "").trim() || null;
+  const imageDescription = String(formData.get("imageDescription") ?? "").trim() || null;
+  const productionTime = String(formData.get("productionTime") ?? "").trim() || null;
+  const shippingTime = String(formData.get("shippingTime") ?? "").trim() || null;
+  const availability = String(formData.get("availability") ?? "").trim() || null;
+  const dimensions = String(formData.get("dimensions") ?? "").trim() || null;
   const author = String(formData.get("author") ?? "").trim() || null;
   const notes = String(formData.get("notes") ?? "").trim() || null;
   const materialId = parseOptionalInt(formData.get("materialType"));
@@ -147,6 +157,16 @@ export async function POST(request: Request) {
         keywords,
         seoDescription,
         longDescription,
+        features,
+        benefits,
+        useCases,
+        audience,
+        faq,
+        imageDescription,
+        productionTime,
+        shippingTime,
+        availability,
+        dimensions,
         author,
         notes,
         material: materialConnect,

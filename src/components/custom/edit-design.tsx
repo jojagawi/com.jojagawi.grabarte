@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { CheckCircle2, Loader2, Save, Upload, X } from "lucide-react";
+import { CheckCircle2, Loader2, Save, Sparkles, Upload, X } from "lucide-react";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,36 @@ type MaterialOption = {
   slug: string;
 };
 
+type SeoWriterProfileOption = {
+  id: number;
+  name: string;
+  tone: string;
+  audience: string | null;
+  defaultMode: SeoRewriteMode;
+  instructions: string;
+  isDefault: boolean;
+};
+
+type SeoRewriteMode = "complement" | "rewrite-soft" | "rewrite-hard";
+
+type SeoDraftResponse = {
+  title: string;
+  shortDescription: string;
+  keywords: string;
+  seoDescription: string;
+  longDescription: string;
+  features: string;
+  benefits: string;
+  useCases: string;
+  audience: string;
+  faq: string;
+  imageDescription: string;
+  productionTime: string;
+  shippingTime: string;
+  availability: string;
+  dimensions: string;
+};
+
 type ExistingFile = {
   id: number;
   filePath: string | null;
@@ -43,6 +73,16 @@ type EditableDesign = {
   keywords: string;
   seoDescription: string;
   longDescription: string;
+  features: string;
+  benefits: string;
+  useCases: string;
+  audience: string;
+  faq: string;
+  imageDescription: string;
+  productionTime: string;
+  shippingTime: string;
+  availability: string;
+  dimensions: string;
   author: string;
   notes: string;
   materialId: number | null;
@@ -63,6 +103,7 @@ type EditableDesign = {
 type EditDesignProps = {
   categories: CategoryOption[];
   materials: MaterialOption[];
+  seoWriterProfiles: SeoWriterProfileOption[];
   design: EditableDesign;
 };
 
@@ -89,7 +130,12 @@ function getPrivateFileProxyUrl(fileId: number): string {
   return `/api/admin/designs/files/${fileId}`;
 }
 
-export function EditDesign({ categories, materials, design }: EditDesignProps) {
+export function EditDesign({
+  categories,
+  materials,
+  seoWriterProfiles,
+  design,
+}: EditDesignProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -100,6 +146,20 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
 
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>(categories);
   const [materialOptions, setMaterialOptions] = useState<MaterialOption[]>(materials);
+  const [seoProfiles, setSeoProfiles] = useState<SeoWriterProfileOption[]>(seoWriterProfiles);
+  const [selectedSeoProfileId, setSelectedSeoProfileId] = useState(
+    String(seoWriterProfiles.find((item) => item.isDefault)?.id ?? seoWriterProfiles[0]?.id ?? ""),
+  );
+  const [seoMode, setSeoMode] = useState<SeoRewriteMode>("rewrite-soft");
+  const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
+  const [seoGenerationError, setSeoGenerationError] = useState<string | null>(null);
+  const [isAddingSeoProfile, setIsAddingSeoProfile] = useState(false);
+  const [isSavingSeoProfile, setIsSavingSeoProfile] = useState(false);
+  const [newSeoProfileName, setNewSeoProfileName] = useState("");
+  const [newSeoProfileTone, setNewSeoProfileTone] = useState("");
+  const [newSeoProfileAudience, setNewSeoProfileAudience] = useState("");
+  const [newSeoProfileMode, setNewSeoProfileMode] = useState<SeoRewriteMode>("rewrite-soft");
+  const [newSeoProfileInstructions, setNewSeoProfileInstructions] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
     design.categoryIds.map((id) => String(id)),
   );
@@ -110,6 +170,16 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
   const [keywords, setKeywords] = useState(design.keywords);
   const [seoDescription, setSeoDescription] = useState(design.seoDescription);
   const [longDescription, setLongDescription] = useState(design.longDescription);
+  const [features, setFeatures] = useState(design.features);
+  const [benefits, setBenefits] = useState(design.benefits);
+  const [useCases, setUseCases] = useState(design.useCases);
+  const [audience, setAudience] = useState(design.audience);
+  const [faq, setFaq] = useState(design.faq);
+  const [imageDescription, setImageDescription] = useState(design.imageDescription);
+  const [productionTime, setProductionTime] = useState(design.productionTime);
+  const [shippingTime, setShippingTime] = useState(design.shippingTime);
+  const [availability, setAvailability] = useState(design.availability);
+  const [dimensions, setDimensions] = useState(design.dimensions);
   const [author, setAuthor] = useState(design.author);
   const [notes, setNotes] = useState(design.notes);
   const [selectedMaterialId, setSelectedMaterialId] = useState(
@@ -150,6 +220,25 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
       sourceFiles: existingFiles.filter((file) => file.typeName === "Archivos fuente"),
     };
   }, [existingFiles]);
+
+  const selectedCategoryNames = useMemo(
+    () =>
+      categoryOptions
+        .filter((category) => selectedCategoryIds.includes(String(category.id)))
+        .map((category) => category.name)
+        .filter(Boolean),
+    [categoryOptions, selectedCategoryIds],
+  );
+
+  const selectedMaterialName = useMemo(() => {
+    if (!selectedMaterialId) return "";
+    return materialOptions.find((material) => String(material.id) === selectedMaterialId)?.name ?? "";
+  }, [materialOptions, selectedMaterialId]);
+
+  const previewFileId = useMemo(() => {
+    const currentPreview = filesByType.preview.find((file) => !deletedFileIds.includes(file.id));
+    return currentPreview?.id ?? null;
+  }, [deletedFileIds, filesByType.preview]);
 
   const handleCreateCategory = async () => {
     const trimmedName = newCategoryName.trim();
@@ -328,6 +417,16 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
     formData.append("keywords", keywords.trim());
     formData.append("seoDescription", seoDescription.trim());
     formData.append("longDescription", longDescription.trim());
+    formData.append("features", features.trim());
+    formData.append("benefits", benefits.trim());
+    formData.append("useCases", useCases.trim());
+    formData.append("audience", audience.trim());
+    formData.append("faq", faq.trim());
+    formData.append("imageDescription", imageDescription.trim());
+    formData.append("productionTime", productionTime.trim());
+    formData.append("shippingTime", shippingTime.trim());
+    formData.append("availability", availability.trim());
+    formData.append("dimensions", dimensions.trim());
     formData.append("author", author.trim());
     formData.append("notes", notes.trim());
     formData.append("materialType", selectedMaterialId);
@@ -381,6 +480,156 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
       alert(error instanceof Error ? error.message : "No se pudo actualizar el diseno");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleGenerateSeo = async () => {
+    if (!selectedSeoProfileId) {
+      setSeoGenerationError("Selecciona un perfil de redaccion antes de generar.");
+      return;
+    }
+
+    if (!previewFileId) {
+      setSeoGenerationError("Necesitas una vista previa activa para analizar con IA.");
+      return;
+    }
+
+    setSeoGenerationError(null);
+    setIsGeneratingSeo(true);
+
+    try {
+      const response = await fetch(`/api/admin/designs/${design.id}/generate-seo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profileId: Number(selectedSeoProfileId),
+          mode: seoMode,
+          previewFileId,
+          context: {
+            name,
+            shortDescription: description,
+            seoDescription,
+            longDescription,
+            keywords,
+            notes,
+            author,
+            material: selectedMaterialName,
+            categories: selectedCategoryNames,
+            features,
+            benefits,
+            useCases,
+            audience,
+            faq,
+            imageDescription,
+            productionTime,
+            shippingTime,
+            availability,
+            dimensions,
+          },
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as
+        | (SeoDraftResponse & { error?: string })
+        | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "No se pudo generar SEO con IA");
+      }
+
+      setName(payload?.title ?? "");
+      setDescription(payload?.shortDescription ?? "");
+      setKeywords(payload?.keywords ?? "");
+      setSeoDescription(payload?.seoDescription ?? "");
+      setLongDescription(payload?.longDescription ?? "");
+      setFeatures(payload?.features ?? features);
+      setBenefits(payload?.benefits ?? benefits);
+      setUseCases(payload?.useCases ?? useCases);
+      setAudience(payload?.audience ?? audience);
+      setFaq(payload?.faq ?? faq);
+      setImageDescription(payload?.imageDescription ?? imageDescription);
+      setProductionTime(payload?.productionTime ?? productionTime);
+      setShippingTime(payload?.shippingTime ?? shippingTime);
+      setAvailability(payload?.availability ?? availability);
+      setDimensions(payload?.dimensions ?? dimensions);
+    } catch (error) {
+      console.error(error);
+      setSeoGenerationError(
+        error instanceof Error ? error.message : "No se pudo generar contenido SEO",
+      );
+    } finally {
+      setIsGeneratingSeo(false);
+    }
+  };
+
+  const handleCreateSeoProfile = async () => {
+    const profileName = newSeoProfileName.trim();
+    const profileTone = newSeoProfileTone.trim();
+    const profileInstructions = newSeoProfileInstructions.trim();
+    const profileAudience = newSeoProfileAudience.trim();
+
+    if (!profileName || !profileTone || !profileInstructions) {
+      setSeoGenerationError("Completa nombre, tono e instrucciones del perfil.");
+      return;
+    }
+
+    setIsSavingSeoProfile(true);
+    setSeoGenerationError(null);
+
+    try {
+      const response = await fetch("/api/admin/seo-writer-profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: profileName,
+          tone: profileTone,
+          audience: profileAudience,
+          defaultMode: newSeoProfileMode,
+          instructions: profileInstructions,
+          isDefault: seoProfiles.length === 0,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as
+        | (SeoWriterProfileOption & { error?: string })
+        | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "No se pudo guardar el perfil");
+      }
+
+      const createdProfile: SeoWriterProfileOption = {
+        id: payload?.id ?? 0,
+        name: payload?.name ?? profileName,
+        tone: payload?.tone ?? profileTone,
+        audience: payload?.audience ?? (profileAudience || null),
+        defaultMode:
+          payload?.defaultMode === "complement" ||
+          payload?.defaultMode === "rewrite-hard" ||
+          payload?.defaultMode === "rewrite-soft"
+            ? payload.defaultMode
+            : newSeoProfileMode,
+        instructions: payload?.instructions ?? profileInstructions,
+        isDefault: payload?.isDefault ?? false,
+      };
+
+      setSeoProfiles((prev) => {
+        const merged = [...prev, createdProfile];
+        return merged.sort((a, b) => a.name.localeCompare(b.name));
+      });
+      setSelectedSeoProfileId(String(createdProfile.id));
+
+      setNewSeoProfileName("");
+      setNewSeoProfileTone("");
+      setNewSeoProfileAudience("");
+      setNewSeoProfileMode("rewrite-soft");
+      setNewSeoProfileInstructions("");
+      setIsAddingSeoProfile(false);
+    } catch (error) {
+      console.error(error);
+      setSeoGenerationError(error instanceof Error ? error.message : "No se pudo guardar el perfil");
+    } finally {
+      setIsSavingSeoProfile(false);
     }
   };
 
@@ -593,6 +842,192 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                   className="min-h-36"
                   placeholder="Descripcion detallada del producto para catalogo y SEO."
                 />
+              </div>
+
+              <div className="space-y-4 rounded-lg border border-border bg-muted/40 p-4">
+                <p className="text-sm font-medium text-foreground">Contexto SEO y GEO</p>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="features">Características</Label>
+                    <Textarea
+                      id="features"
+                      value={features}
+                      onChange={(e) => setFeatures(e.target.value)}
+                      className="min-h-24"
+                    />
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="benefits">Beneficios</Label>
+                    <Textarea
+                      id="benefits"
+                      value={benefits}
+                      onChange={(e) => setBenefits(e.target.value)}
+                      className="min-h-24"
+                    />
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="useCases">Casos de uso</Label>
+                    <Textarea
+                      id="useCases"
+                      value={useCases}
+                      onChange={(e) => setUseCases(e.target.value)}
+                      className="min-h-24"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="audience">Audiencia</Label>
+                    <Input
+                      id="audience"
+                      value={audience}
+                      onChange={(e) => setAudience(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="productionTime">Tiempo de producción</Label>
+                    <Input
+                      id="productionTime"
+                      value={productionTime}
+                      onChange={(e) => setProductionTime(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="shippingTime">Tiempo de envío</Label>
+                    <Input
+                      id="shippingTime"
+                      value={shippingTime}
+                      onChange={(e) => setShippingTime(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="availability">Disponibilidad</Label>
+                    <Input
+                      id="availability"
+                      value={availability}
+                      onChange={(e) => setAvailability(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="dimensions">Dimensiones</Label>
+                    <Input
+                      id="dimensions"
+                      value={dimensions}
+                      onChange={(e) => setDimensions(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="imageDescription">Descripción de imagen</Label>
+                    <Textarea
+                      id="imageDescription"
+                      value={imageDescription}
+                      onChange={(e) => setImageDescription(e.target.value)}
+                      className="min-h-24"
+                    />
+                  </div>
+
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="faq">FAQ</Label>
+                    <Textarea
+                      id="faq"
+                      value={faq}
+                      onChange={(e) => setFaq(e.target.value)}
+                      className="min-h-28"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-foreground">Asistente SEO con IA</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAddingSeoProfile(true)}
+                  >
+                    Crear perfil
+                  </Button>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="seo-profile">Perfil de redaccion</Label>
+                    <select
+                      id="seo-profile"
+                      value={selectedSeoProfileId}
+                      onChange={(e) => {
+                        const nextProfileId = e.target.value;
+                        setSelectedSeoProfileId(nextProfileId);
+                        const profile = seoProfiles.find(
+                          (item) => String(item.id) === nextProfileId,
+                        );
+                        if (profile) {
+                          setSeoMode(profile.defaultMode);
+                        }
+                      }}
+                      className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                    >
+                      <option value="">Selecciona un perfil</option>
+                      {seoProfiles.map((profile) => (
+                        <option key={profile.id} value={String(profile.id)}>
+                          {profile.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="seo-mode">Modo de redaccion</Label>
+                    <select
+                      id="seo-mode"
+                      value={seoMode}
+                      onChange={(e) => setSeoMode(e.target.value as SeoRewriteMode)}
+                      className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                    >
+                      <option value="complement">Complementar contenido actual</option>
+                      <option value="rewrite-soft">Reescritura suave</option>
+                      <option value="rewrite-hard">Reescritura completa</option>
+                    </select>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  disabled={isGeneratingSeo || isSubmitting}
+                  onClick={handleGenerateSeo}
+                  className="w-full sm:w-auto bg-[#1FA4A7] hover:bg-[#168c8f] text-white"
+                >
+                  {isGeneratingSeo ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Analizando imagen...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Analizar imagen y generar SEO
+                    </>
+                  )}
+                </Button>
+
+                {seoGenerationError && (
+                  <p className="text-sm text-destructive">{seoGenerationError}</p>
+                )}
+
+                {!previewFileId && (
+                  <p className="text-xs text-muted-foreground">
+                    Necesitas una imagen en &quot;Vista previa&quot; para generar contenido con IA.
+                  </p>
+                )}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -1077,6 +1512,99 @@ export function EditDesign({ categories, materials, design }: EditDesignProps) {
                 </Button>
                 <Button type="button" onClick={handleCreateMaterial}>
                   Guardar material
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isAddingSeoProfile} onOpenChange={setIsAddingSeoProfile}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Nuevo perfil de redaccion</DialogTitle>
+                <DialogDescription>
+                  Define el estilo para que la IA redacte titulos y textos SEO con consistencia.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="seo-profile-name">Nombre del perfil</Label>
+                  <Input
+                    id="seo-profile-name"
+                    value={newSeoProfileName}
+                    onChange={(e) => setNewSeoProfileName(e.target.value)}
+                    placeholder="Ej. Catalogo regalos premium"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="seo-profile-tone">Tono</Label>
+                  <Input
+                    id="seo-profile-tone"
+                    value={newSeoProfileTone}
+                    onChange={(e) => setNewSeoProfileTone(e.target.value)}
+                    placeholder="Cercano, claro y orientado a conversion"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="seo-profile-audience">Audiencia (opcional)</Label>
+                  <Input
+                    id="seo-profile-audience"
+                    value={newSeoProfileAudience}
+                    onChange={(e) => setNewSeoProfileAudience(e.target.value)}
+                    placeholder="Personas que compran regalos personalizados"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="seo-profile-default-mode">Modo por defecto</Label>
+                  <select
+                    id="seo-profile-default-mode"
+                    value={newSeoProfileMode}
+                    onChange={(e) => setNewSeoProfileMode(e.target.value as SeoRewriteMode)}
+                    className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                  >
+                    <option value="complement">Complementar contenido actual</option>
+                    <option value="rewrite-soft">Reescritura suave</option>
+                    <option value="rewrite-hard">Reescritura completa</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="seo-profile-instructions">Instrucciones del redactor</Label>
+                  <Textarea
+                    id="seo-profile-instructions"
+                    value={newSeoProfileInstructions}
+                    onChange={(e) => setNewSeoProfileInstructions(e.target.value)}
+                    className="min-h-32"
+                    placeholder="Reglas de estilo, palabras preferidas, limites y enfoque SEO."
+                  />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddingSeoProfile(false)}
+                  disabled={isSavingSeoProfile}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleCreateSeoProfile}
+                  disabled={isSavingSeoProfile}
+                >
+                  {isSavingSeoProfile ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    "Guardar perfil"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>

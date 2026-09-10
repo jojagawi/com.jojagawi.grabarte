@@ -575,7 +575,110 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
 
             <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
               <legend className="px-2 text-sm font-semibold text-foreground">
-                4. Archivos
+                4. SEO y contexto GEO
+              </legend>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="features">Características</Label>
+                  <Textarea
+                    id="features"
+                    name="features"
+                    placeholder="Lista breve de características del producto"
+                    className="min-h-24"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="benefits">Beneficios</Label>
+                  <Textarea
+                    id="benefits"
+                    name="benefits"
+                    placeholder="Beneficios reales para el cliente"
+                    className="min-h-24"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="useCases">Casos de uso</Label>
+                  <Textarea
+                    id="useCases"
+                    name="useCases"
+                    placeholder="En qué ocasiones o escenarios se usa"
+                    className="min-h-24"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="audience">Audiencia</Label>
+                  <Input
+                    id="audience"
+                    name="audience"
+                    placeholder="Público objetivo"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="productionTime">Tiempo de producción</Label>
+                  <Input
+                    id="productionTime"
+                    name="productionTime"
+                    placeholder="Ej. 2-3 días"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="shippingTime">Tiempo de envío</Label>
+                  <Input
+                    id="shippingTime"
+                    name="shippingTime"
+                    placeholder="Ej. 5-7 días"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="availability">Disponibilidad</Label>
+                  <Input
+                    id="availability"
+                    name="availability"
+                    placeholder="Disponible, bajo pedido, agotado"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dimensions">Dimensiones</Label>
+                  <Input
+                    id="dimensions"
+                    name="dimensions"
+                    placeholder="Alto x ancho x profundo"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="imageDescription">Descripción de imagen</Label>
+                  <Textarea
+                    id="imageDescription"
+                    name="imageDescription"
+                    placeholder="Describe qué muestra la imagen principal"
+                    className="min-h-24"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="faq">FAQ</Label>
+                  <Textarea
+                    id="faq"
+                    name="faq"
+                    placeholder="Preguntas y respuestas frecuentes, una por línea o en JSON simple"
+                    className="min-h-28"
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-4 border border-border rounded-xl bg-white p-5">
+              <legend className="px-2 text-sm font-semibold text-foreground">
+                5. Archivos
               </legend>
 
               <div className="space-y-2">

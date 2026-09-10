@@ -14,11 +14,6 @@ export const metadata: Metadata = buildPageMetadata({
   noIndex: true,
 });
 
-export const llmstxt = {
-  title: "Editar producto",
-  description: "Panel interno para modificar datos y archivos de un producto.",
-};
-
 export const dynamicParams = false;
 
 export async function generateStaticParams(): Promise<Array<{ id: string }>> {
@@ -55,7 +50,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     notFound();
   }
 
-  const [categories, materials, design] = await Promise.all([
+  const [categories, materials, seoWriterProfiles, design] = await Promise.all([
     prisma.catCategories.findMany({
       where: {
         status: 1,
@@ -83,6 +78,21 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         name: "asc",
       },
     }),
+    prisma.seoWriterProfiles.findMany({
+      where: {
+        status: 1,
+      },
+      select: {
+        id: true,
+        name: true,
+        tone: true,
+        audience: true,
+        defaultMode: true,
+        instructions: true,
+        isDefault: true,
+      },
+      orderBy: [{ isDefault: "desc" }, { name: "asc" }],
+    }),
     prisma.designs.findFirst({
       where: { id },
       select: {
@@ -92,6 +102,16 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         keywords: true,
         seoDescription: true,
         longDescription: true,
+        features: true,
+        benefits: true,
+        useCases: true,
+        audience: true,
+        faq: true,
+        imageDescription: true,
+        productionTime: true,
+        shippingTime: true,
+        availability: true,
+        dimensions: true,
         author: true,
         notes: true,
         materialId: true,
@@ -153,6 +173,20 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         name: item.name ?? "",
         slug: item.slug ?? "",
       }))}
+      seoWriterProfiles={seoWriterProfiles.map((profile) => ({
+        id: profile.id,
+        name: profile.name,
+        tone: profile.tone,
+        audience: profile.audience,
+        defaultMode:
+          profile.defaultMode === "complement" ||
+          profile.defaultMode === "rewrite-hard" ||
+          profile.defaultMode === "rewrite-soft"
+            ? profile.defaultMode
+            : "rewrite-soft",
+        instructions: profile.instructions,
+        isDefault: profile.isDefault === 1,
+      }))}
       design={{
         id: design.id,
         name: design.name ?? "",
@@ -160,6 +194,16 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         keywords: design.keywords ?? "",
         seoDescription: design.seoDescription ?? "",
         longDescription: design.longDescription ?? "",
+        features: design.features ?? "",
+        benefits: design.benefits ?? "",
+        useCases: design.useCases ?? "",
+        audience: design.audience ?? "",
+        faq: design.faq ?? "",
+        imageDescription: design.imageDescription ?? "",
+        productionTime: design.productionTime ?? "",
+        shippingTime: design.shippingTime ?? "",
+        availability: design.availability ?? "",
+        dimensions: design.dimensions ?? "",
         author: design.author ?? "",
         notes: design.notes ?? "",
         materialId: design.materialId,

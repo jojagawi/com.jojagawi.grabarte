@@ -329,6 +329,16 @@ export async function GET(
       keywords: true,
       seoDescription: true,
       longDescription: true,
+      features: true,
+      benefits: true,
+      useCases: true,
+      audience: true,
+      faq: true,
+      imageDescription: true,
+      productionTime: true,
+      shippingTime: true,
+      availability: true,
+      dimensions: true,
       author: true,
       notes: true,
       materialId: true,
@@ -374,6 +384,16 @@ export async function GET(
     keywords: design.keywords ?? "",
     seoDescription: design.seoDescription ?? "",
     longDescription: design.longDescription ?? "",
+    features: design.features ?? "",
+    benefits: design.benefits ?? "",
+    useCases: design.useCases ?? "",
+    audience: design.audience ?? "",
+    faq: design.faq ?? "",
+    imageDescription: design.imageDescription ?? "",
+    productionTime: design.productionTime ?? "",
+    shippingTime: design.shippingTime ?? "",
+    availability: design.availability ?? "",
+    dimensions: design.dimensions ?? "",
     author: design.author ?? "",
     notes: design.notes ?? "",
     materialId: design.materialId,
@@ -449,6 +469,16 @@ export async function PUT(
   const keywords = String(formData.get("keywords") ?? "").trim() || null;
   const seoDescription = String(formData.get("seoDescription") ?? "").trim() || null;
   const longDescription = String(formData.get("longDescription") ?? "").trim() || null;
+  const features = String(formData.get("features") ?? "").trim() || null;
+  const benefits = String(formData.get("benefits") ?? "").trim() || null;
+  const useCases = String(formData.get("useCases") ?? "").trim() || null;
+  const audience = String(formData.get("audience") ?? "").trim() || null;
+  const faq = String(formData.get("faq") ?? "").trim() || null;
+  const imageDescription = String(formData.get("imageDescription") ?? "").trim() || null;
+  const productionTime = String(formData.get("productionTime") ?? "").trim() || null;
+  const shippingTime = String(formData.get("shippingTime") ?? "").trim() || null;
+  const availability = String(formData.get("availability") ?? "").trim() || null;
+  const dimensions = String(formData.get("dimensions") ?? "").trim() || null;
   const author = String(formData.get("author") ?? "").trim() || null;
   const notes = String(formData.get("notes") ?? "").trim() || null;
   const materialId = parseOptionalInt(formData.get("materialType"));
@@ -492,6 +522,16 @@ export async function PUT(
         keywords,
         seoDescription,
         longDescription,
+        features,
+        benefits,
+        useCases,
+        audience,
+        faq,
+        imageDescription,
+        productionTime,
+        shippingTime,
+        availability,
+        dimensions,
         author,
         notes,
         materialId: materialId && materialId > 0 ? materialId : null,
