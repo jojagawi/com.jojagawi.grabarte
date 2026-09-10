@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
 import { ProductCodeVisibility } from "@/components/custom/product-code-visibility";
+import { FAQ } from "@/components/custom/faq";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 const defaultImage = "/dam/dafault-image-product.webp";
@@ -34,6 +35,12 @@ type FileItem = {
   mimeType: string;
   extension: string;
   key: string;
+};
+
+type ProductFaqItem = {
+  id: number;
+  question: string;
+  answer: string;
 };
 
 function parseIdSlug(value: string): { id: number } | null {
@@ -117,6 +124,96 @@ function splitKeywords(value: string | null | undefined): string[] {
     .split(/[\n,]/u)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function normalizeFaqRawText(value: string | null | undefined): string {
+  return String(value || "")
+    .replace(/----\s*inicio\s*----/giu, "")
+    .replace(/----\s*fin\s*---*/giu, "")
+    .trim();
+}
+
+function parseProductFaqItems(value: string | null | undefined): ProductFaqItem[] {
+  const raw = normalizeFaqRawText(value);
+  if (!raw) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map((item, index) => {
+          if (!item || typeof item !== "object") {
+            return null;
+          }
+
+          const question = String((item as { question?: unknown }).question ?? "").trim();
+          const answer = String((item as { answer?: unknown }).answer ?? "").trim();
+
+          if (!question || !answer) {
+            return null;
+          }
+
+          return {
+            id: index + 1,
+            question,
+            answer,
+          };
+        })
+        .filter((item): item is ProductFaqItem => Boolean(item));
+    }
+  } catch {
+    // Intentamos formato de texto libre.
+  }
+
+  const questionAnswerMatches = Array.from(
+    raw.matchAll(/(¿[^?]+\?)\s*([\s\S]*?)(?=¿[^?]+\?|$)/gu),
+  )
+    .map((match, index) => {
+      const question = String(match[1] || "").trim();
+      const answer = String(match[2] || "").trim();
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return {
+        id: index + 1,
+        question,
+        answer,
+      };
+    })
+    .filter((item): item is ProductFaqItem => Boolean(item));
+
+  if (questionAnswerMatches.length > 0) {
+    return questionAnswerMatches;
+  }
+
+  return raw
+    .split(/\r?\n/u)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => {
+      const match = line.match(/^(.+?)(?:\s*\|\|\s*|\s*\|\s*|\s*=>\s*|\s*:\s+)(.+)$/u);
+      if (!match) {
+        return null;
+      }
+
+      const question = String(match[1] || "").trim();
+      const answer = String(match[2] || "").trim();
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return {
+        id: index + 1,
+        question,
+        answer,
+      };
+    })
+    .filter((item): item is ProductFaqItem => Boolean(item));
 }
 
 function toFileItem(
@@ -529,6 +626,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           toFourDigits(mayoreoPrice),
         ].join("-")
       : null;
+  const productFaqs = parseProductFaqItems(design.faq);
 
   return (
     <section className="py-24 bg-muted/30">
@@ -698,6 +796,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </CardContent>
           </Card>
         </DesignMediaGallery>
+
+        {productFaqs.length > 0 && <FAQ faqs={productFaqs} />}
 
         {isDevelopment && canEditDesigns && (
           <>

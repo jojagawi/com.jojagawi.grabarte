@@ -116,8 +116,15 @@ function stringifyAdditionalProperty(name: string, value: string | number | null
   };
 }
 
+function normalizeFaqRawText(value: string | null | undefined) {
+  return normalizeText(value)
+    .replace(/----\s*inicio\s*----/giu, "")
+    .replace(/----\s*fin\s*---*/giu, "")
+    .trim();
+}
+
 function parseFaqItems(rawFaq: string | null | undefined): FaqItem[] {
-  const raw = normalizeText(rawFaq);
+  const raw = normalizeFaqRawText(rawFaq);
   if (!raw) {
     return [];
   }
@@ -137,6 +144,24 @@ function parseFaqItems(rawFaq: string | null | undefined): FaqItem[] {
     }
   } catch {
     // Intentamos el formato de texto libre a continuación.
+  }
+
+  const questionAnswerMatches = Array.from(
+    raw.matchAll(/(¿[^?]+\?)\s*([\s\S]*?)(?=¿[^?]+\?|$)/gu),
+  )
+    .map((match) => {
+      const question = normalizeText(match[1]);
+      const answer = normalizeText(match[2]);
+      if (!question || !answer) {
+        return null;
+      }
+
+      return { question, answer };
+    })
+    .filter((item): item is FaqItem => Boolean(item));
+
+  if (questionAnswerMatches.length > 0) {
+    return questionAnswerMatches;
   }
 
   return raw
