@@ -1,25 +1,112 @@
 [
   {
+    "id": 132,
+    "idSlug": "132-rompecabezas-didactico-de-abecedario-y-animales-en-mdf",
+    "name": "Rompecabezas Didáctico de Abecedario y Animales en MDF",
+    "description": "Rompecabezas didáctico de MDF de 3 piezas por letra. Ayuda a los niños a aprender el abecedario asociando letras, nombres e ilustraciones de animales. Ideal para educación Montessori.",
+    "categories": [
+      "Rompecabezas",
+      "Montesori",
+      "Escuela"
+    ],
+    "material": "MDF",
+    "minimumPrice": 150,
+    "suggestedPrice": 200,
+    "image": "https://dam.inspiraarte.com/preview/132.webp",
+    "gallery": [],
+    "url": "/productos/132-rompecabezas-didactico-de-abecedario-y-animales-en-mdf"
+  },
+  {
+    "id": 131,
+    "idSlug": "131-mini-altar-de-muertos-en-mdf-con-marco-para-foto",
+    "name": "Mini Altar de Muertos en MDF con Marco para Foto",
+    "description": "Honra a tus seres queridos este Día de Muertos con este mini altar de MDF calado en láser. Incluye marco para fotografía y detalles tradicionales. Ideal para espacios pequeños.",
+    "categories": [
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 120,
+    "image": "https://dam.inspiraarte.com/preview/131.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/131/510.webp"
+    ],
+    "url": "/productos/131-mini-altar-de-muertos-en-mdf-con-marco-para-foto"
+  },
+  {
+    "id": 130,
+    "idSlug": "130-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos",
+    "name": "Portavelas Calavera de MDF para Altar de Día de Muertos",
+    "description": "Ilumina tu ofrenda con este portavelas de MDF con diseño de calavera. Ideal para velas de té, listo para usar al natural o personalizar pintándolo a tu gusto.",
+    "categories": [
+      "Vela",
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 40,
+    "suggestedPrice": 60,
+    "image": "https://dam.inspiraarte.com/preview/130.webp",
+    "gallery": [],
+    "url": "/productos/130-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos"
+  },
+  {
+    "id": 129,
+    "idSlug": "129-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela",
+    "name": "Mini Altar de Muertos para Mascotas en MDF con Porta Vela",
+    "description": "Honra la memoria de tus perros y gatos este Día de Muertos con este encantador mini altar de MDF con porta vela. Un detalle especial, resistente y compacto para tu ofrenda.",
+    "categories": [
+      "Día de muertos",
+      "Mascotas"
+    ],
+    "material": "MDF",
+    "minimumPrice": 40,
+    "suggestedPrice": 60,
+    "image": "https://dam.inspiraarte.com/preview/129.webp",
+    "gallery": [],
+    "url": "/productos/129-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela"
+  },
+  {
+    "id": 127,
+    "idSlug": "127-servilleteros-de-mdf-fiestas-patrias-decoracion-mexicana",
+    "name": "Servilleteros de MDF Fiestas Patrias | Decoración Mexicana",
+    "description": "Viste tu mesa con un toque tradicional en esta Noche Mexicana. Servilleteros de MDF con grabados de figuras folclóricas, ideales para eventos, taquizas y fiestas patrias.",
+    "categories": [
+      "Cocina",
+      "Adornos",
+      "México"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/127.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/127/491.webp",
+      "https://dam.inspiraarte.com/preview/127/492.webp",
+      "https://dam.inspiraarte.com/preview/127/493.webp"
+    ],
+    "url": "/productos/127-servilleteros-de-mdf-fiestas-patrias-decoracion-mexicana"
+  },
+  {
     "id": 109,
-    "idSlug": "109-esferas-navidenas-personalizables",
-    "name": "Esferas navideñas personalizables",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "109-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre",
+    "name": "Esferas Navideñas Personalizadas de Madera MDF con Nombre",
+    "description": "Dale un toque cálido a tu árbol de Navidad con esferas personalizadas de MDF cortadas a láser con el nombre de tu familia. El detalle perfecto para regalar y decorar en estas fiestas.",
     "categories": [
       "Navidad",
       "Esferas"
     ],
     "material": "MDF",
-    "minimumPrice": 50,
-    "suggestedPrice": 80,
+    "minimumPrice": 40,
+    "suggestedPrice": 60,
     "image": "https://dam.inspiraarte.com/preview/109.webp",
     "gallery": [],
-    "url": "/productos/109-esferas-navidenas-personalizables"
+    "url": "/productos/109-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre"
   },
   {
     "id": 108,
-    "idSlug": "108-porta-servilletas",
-    "name": "Porta servilletas",
-    "description": "Perfecto para adornar tu mesa con un estilo unico",
+    "idSlug": "108-servilletero-de-madera-mdf-osito-decorativo-para-mesa-y-eventos",
+    "name": "Servilletero de Madera MDF Osito Decorativo para Mesa y Eventos",
+    "description": "Añade un toque tierno a tu mesa con este servilletero individual de osito en madera MDF. Ideal para baby showers, bautizos y eventos especiales. Listo para personalizar o usar al natural.",
     "categories": [
       "Cocina",
       "Adornos"
@@ -31,13 +118,13 @@
     "gallery": [
       "https://dam.inspiraarte.com/preview/108/437.webp"
     ],
-    "url": "/productos/108-porta-servilletas"
+    "url": "/productos/108-servilletero-de-madera-mdf-osito-decorativo-para-mesa-y-eventos"
   },
   {
     "id": 107,
-    "idSlug": "107-ataud-porta-velas-para-dia-de-muertos-halloween",
-    "name": "Ataud porta velas para dia de muertos / halloween",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "107-portavelas-ataud-de-madera-mdf-para-dia-de-muertos-y-halloween",
+    "name": "Portavelas Ataúd de Madera MDF para Día de Muertos y Halloween",
+    "description": "Añade un toque místico a tu ofrenda o fiesta con este portavelas de MDF en forma de ataúd. Diseño en capas con detalles calados de telarañas y cruces. ¡Ideal para iluminar tu espacio!",
     "categories": [
       "Halloween",
       "Adornos",
@@ -49,9 +136,46 @@
     "suggestedPrice": 120,
     "image": "https://dam.inspiraarte.com/preview/107.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/107/433.webp"
+      "https://dam.inspiraarte.com/preview/107/433.webp",
+      "https://dam.inspiraarte.com/preview/107/1787185003586-psigs7q0.webp",
+      "https://dam.inspiraarte.com/preview/107/1787185004344-1koj6na0.webp",
+      "https://dam.inspiraarte.com/preview/107/1787185004992-uu6r2mv1.webp"
     ],
-    "url": "/productos/107-ataud-porta-velas-para-dia-de-muertos-halloween"
+    "url": "/productos/107-portavelas-ataud-de-madera-mdf-para-dia-de-muertos-y-halloween"
+  },
+  {
+    "id": 105,
+    "idSlug": "105-calendario-perpetuo-con-base",
+    "name": "Calendario perpetuo con base",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Calendario"
+    ],
+    "material": "MDF",
+    "minimumPrice": 130,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/105.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/105/1787772505749-jrccwdk7.webp"
+    ],
+    "url": "/productos/105-calendario-perpetuo-con-base"
+  },
+  {
+    "id": 98,
+    "idSlug": "98-gato-tres-en-raya-version-halloween",
+    "name": "Gato / Tres en raya versión Halloween",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Juegos de Mesa",
+      "Halloween",
+      "Adornos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 50,
+    "suggestedPrice": 80,
+    "image": "https://dam.inspiraarte.com/preview/98.webp",
+    "gallery": [],
+    "url": "/productos/98-gato-tres-en-raya-version-halloween"
   },
   {
     "id": 92,
@@ -85,14 +209,66 @@
       "Adornos"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
-    "image": "https://dam.inspiraarte.com/preview/91.webp",
+    "minimumPrice": 150,
+    "suggestedPrice": 200,
+    "image": "https://dam.inspiraarte.com/preview/91.jpeg",
     "gallery": [
       "https://dam.inspiraarte.com/preview/91/1787087257715-x73ydc5g.webp",
       "https://dam.inspiraarte.com/preview/91/1787087274308-z3dep9fx.webp"
     ],
     "url": "/productos/91-mini-altar-de-muertos-en-caja"
+  },
+  {
+    "id": 90,
+    "idSlug": "90-mini-pesebre-de-regalo",
+    "name": "Mini pesebre de regalo",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Navidad",
+      "Regalos",
+      "Nacimiento"
+    ],
+    "material": "MDF",
+    "minimumPrice": 140,
+    "suggestedPrice": 180,
+    "image": "https://dam.inspiraarte.com/preview/90.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/90/1787777996781-m9ok3hia.webp"
+    ],
+    "url": "/productos/90-mini-pesebre-de-regalo"
+  },
+  {
+    "id": 80,
+    "idSlug": "80-calavera-en-mecedora",
+    "name": "Calavera en mecedora",
+    "description": "Producto personalizado disponible bajo cotización.",
+    "categories": [
+      "Adornos",
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 120,
+    "image": "https://dam.inspiraarte.com/preview/80.webp",
+    "gallery": [],
+    "url": "/productos/80-calavera-en-mecedora"
+  },
+  {
+    "id": 71,
+    "idSlug": "71-ajedrez",
+    "name": "Ajedrez",
+    "description": "Este juego de mesa clásico a la alcance de tu mano, y de un tamaño óptimo para ser jugable y poder llevártelo de viaje",
+    "categories": [
+      "Juegos de Mesa"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
+    "image": "https://dam.inspiraarte.com/preview/71.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/71/1787268877619-cmm4gg1i.webp"
+    ],
+    "url": "/productos/71-ajedrez"
   },
   {
     "id": 70,
@@ -169,8 +345,8 @@
       "Adornos"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": 199.98,
+    "minimumPrice": 120,
+    "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/60.webp",
     "gallery": [],
     "url": "/productos/60-adorno-halloween-calavera"
@@ -327,7 +503,10 @@
     "minimumPrice": 150,
     "suggestedPrice": 300,
     "image": "https://dam.inspiraarte.com/preview/41.webp",
-    "gallery": [],
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/41/1787185022329-cscy890r.webp",
+      "https://dam.inspiraarte.com/preview/41/1787185023516-06orvkno.webp"
+    ],
     "url": "/productos/41-adorno-navidad-luna-con-pesebre-navideno"
   },
   {
@@ -362,8 +541,8 @@
       "México"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 100,
+    "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/29.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/29/129.webp"
@@ -416,8 +595,8 @@
       "Vela"
     ],
     "material": "MDF",
-    "minimumPrice": 100,
-    "suggestedPrice": 150,
+    "minimumPrice": 80,
+    "suggestedPrice": 120,
     "image": "https://dam.inspiraarte.com/preview/16.webp",
     "gallery": [],
     "url": "/productos/16-nacimiento-mini-con-vela"
@@ -455,8 +634,7 @@
     "suggestedPrice": 80,
     "image": "https://dam.inspiraarte.com/preview/4.webp",
     "gallery": [
-      "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp",
-      "https://dam.inspiraarte.com/preview/4/1786607440535-d1dqdezs.webp"
+      "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp"
     ],
     "url": "/productos/4-regalo-armable-navidad"
   },

@@ -5,6 +5,14 @@ import { generateSeoDraftFromImage, type SeoRewriteMode } from "@/lib/seo-ai.ser
 export const dynamic = "force-static";
 export const revalidate = false;
 
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  if (process.env.STATIC_EXPORT === "true") {
+    return [{ id: "0" }];
+  }
+
+  return [];
+}
+
 function parseId(rawId: string): number | null {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) {
