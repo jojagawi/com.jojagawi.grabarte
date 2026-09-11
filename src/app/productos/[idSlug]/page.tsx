@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
@@ -42,6 +43,21 @@ type ProductFaqItem = {
   question: string;
   answer: string;
 };
+
+type RelatedProductItem = {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  categories: string[];
+};
+
+const relatedCardGradients = [
+  "from-[#00B003]/15 to-[#00B003]/5",
+  "from-[#4290A3]/15 to-[#4290A3]/5",
+  "from-[#1FA4A7]/15 to-[#1FA4A7]/5",
+  "from-[#585106]/15 to-[#585106]/5",
+];
 
 function parseIdSlug(value: string): { id: number } | null {
   const match = /^(\d+)-(.+)$/u.exec(value);
@@ -117,6 +133,17 @@ function buildProxyDownloadUrl(fileId: number, downloadName: string): string {
   });
 
   return `${getPrivateFileProxyUrl(fileId)}?${params.toString()}`;
+}
+
+function shuffleArray<T>(items: T[]): T[] {
+  const result = [...items];
+
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+  }
+
+  return result;
 }
 
 function splitKeywords(value: string | null | undefined): string[] {
@@ -617,6 +644,101 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     },
   });
 
+  const relatedDesigns =
+    categories.length > 0
+      ? await prisma.designs.findMany({
+          where: {
+            id: { not: design.id },
+            name: { not: null },
+            ...(isDevelopment ? {} : { status: 1, showInSite: 1 }),
+            relDesignsCategories: {
+              some: {
+                status: 1,
+                category: {
+                  status: 1,
+                  name: {
+                    in: categories,
+                  },
+                },
+              },
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            seoDescription: true,
+            relDesignsCategories: {
+              where: {
+                status: 1,
+                category: {
+                  status: 1,
+                  name: { not: null },
+                },
+              },
+              select: {
+                category: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            relDesignsFiles: {
+              where: {
+                status: 1,
+                file: {
+                  status: 1,
+                  filePath: { not: null },
+                  fileTypeId: { in: [1, 2] },
+                },
+              },
+              select: {
+                file: {
+                  select: {
+                    filePath: true,
+                    fileType: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+      : [];
+
+  const relatedProducts: RelatedProductItem[] = shuffleArray(relatedDesigns)
+    .slice(0, 4)
+    .map((relatedDesign) => {
+      const previewFile = relatedDesign.relDesignsFiles.find(
+        (relation) => relation.file?.fileType?.name === "Vista previa" && relation.file.filePath,
+      );
+      const firstFileWithPath = relatedDesign.relDesignsFiles.find((relation) => relation.file?.filePath);
+      const selectedPath = previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+      const image = toMediaUrl(selectedPath) || defaultImage;
+      const relatedCategories = Array.from(
+        new Set(
+          relatedDesign.relDesignsCategories
+            .map((relation) => relation.category?.name)
+            .filter((name): name is string => Boolean(name?.trim())),
+        ),
+      );
+
+      return {
+        id: relatedDesign.id,
+        name: relatedDesign.name?.trim() || "Diseño sin nombre",
+        description:
+          relatedDesign.seoDescription?.trim() ||
+          relatedDesign.description?.trim() ||
+          "Diseño personalizado disponible bajo cotización.",
+        image,
+        categories: relatedCategories,
+      };
+    });
+
   const originalProductCode =
     minimumPrice !== null && suggestedPrice !== null
       ? [
@@ -798,6 +920,71 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </DesignMediaGallery>
 
         {productFaqs.length > 0 && <FAQ faqs={productFaqs} />}
+
+        {relatedProducts.length > 0 && (
+          <section className="bg-muted/30 py-24">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="mb-12 text-center">
+                <span className="mb-4 inline-block rounded-full bg-[#4290A3]/10 px-4 py-1 text-sm font-medium text-[#4290A3]">
+                  Productos relacionados
+                </span>
+                <h2 className="font-serif text-3xl font-bold text-foreground sm:text-4xl text-balance">
+                  Más diseños que podrían <span className="text-[#4290A3]">interesarte</span>
+                </h2>
+                <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+                  Seleccionamos productos con categorías en común para que descubras opciones similares.
+                </p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+                {relatedProducts.map((product, index) => (
+                  <Link
+                    key={product.id}
+                    href={`/productos/${product.id}-${slugify(product.name)}`}
+                    className="group block overflow-hidden rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#4290A3]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4290A3]/40"
+                  >
+                    <div
+                      className={`relative aspect-square overflow-hidden bg-linear-to-br ${relatedCardGradients[index % relatedCardGradients.length]}`}
+                    >
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="space-y-4 p-6">
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-foreground">{product.name}</h3>
+                        <p className="line-clamp-3 text-sm text-muted-foreground">{product.description}</p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {product.categories.length > 0 ? (
+                          product.categories.map((categoryName) => (
+                            <span
+                              key={`${product.id}-${categoryName}`}
+                              className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
+                            >
+                              {categoryName}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+                            Sin categoría
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {isDevelopment && canEditDesigns && (
           <>
