@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateSeoDraftFromImage, type SeoRewriteMode } from "@/lib/seo-ai.server";
+import {
+  generateSeoDraftFromImage,
+  type SeoAiProvider,
+  type SeoRewriteMode,
+} from "@/lib/seo-ai.server";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -40,6 +44,10 @@ function isValidMode(mode: string): mode is SeoRewriteMode {
   return mode === "complement" || mode === "rewrite-soft" || mode === "rewrite-hard";
 }
 
+function isValidProvider(provider: string): provider is SeoAiProvider {
+  return provider === "gemini" || provider === "openrouter";
+}
+
 export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> },
@@ -57,6 +65,8 @@ export async function POST(
 
   const payload = (await request.json().catch(() => null)) as
     | {
+        provider?: string;
+        model?: string;
         profileId?: number;
         mode?: string;
         previewFileId?: number;
@@ -85,6 +95,9 @@ export async function POST(
     | null;
 
   const profileId = Number(payload?.profileId ?? 0);
+  const providerCandidate = String(payload?.provider ?? "").trim().toLowerCase();
+  const provider = providerCandidate && isValidProvider(providerCandidate) ? providerCandidate : undefined;
+  const model = String(payload?.model ?? "").trim();
   const mode = String(payload?.mode ?? "").trim();
   const previewFileId = Number(payload?.previewFileId ?? 0);
 
@@ -94,6 +107,10 @@ export async function POST(
 
   if (!isValidMode(mode)) {
     return NextResponse.json({ error: "Modo de redaccion invalido" }, { status: 400 });
+  }
+
+  if (providerCandidate && !provider) {
+    return NextResponse.json({ error: "Proveedor de IA invalido" }, { status: 400 });
   }
 
   const design = await prisma.designs.findFirst({
@@ -169,6 +186,8 @@ export async function POST(
 
   try {
     const draft = await generateSeoDraftFromImage({
+      ...(provider ? { provider } : {}),
+      ...(model ? { model } : {}),
       mode,
       profile: writerProfile,
       imageBase64: imageBuffer.toString("base64"),

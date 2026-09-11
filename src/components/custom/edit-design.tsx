@@ -40,6 +40,8 @@ type SeoWriterProfileOption = {
 };
 
 type SeoRewriteMode = "complement" | "rewrite-soft" | "rewrite-hard";
+type SeoAiProvider = "gemini" | "openrouter";
+type SeoModelOptionsByProvider = Record<SeoAiProvider, string[]>;
 
 type SeoDraftResponse = {
   title: string;
@@ -101,6 +103,8 @@ type EditableDesign = {
 };
 
 type EditDesignProps = {
+  defaultSeoAiProvider: SeoAiProvider;
+  defaultSeoAiModels: SeoModelOptionsByProvider;
   categories: CategoryOption[];
   materials: MaterialOption[];
   seoWriterProfiles: SeoWriterProfileOption[];
@@ -131,6 +135,8 @@ function getPrivateFileProxyUrl(fileId: number): string {
 }
 
 export function EditDesign({
+  defaultSeoAiProvider,
+  defaultSeoAiModels,
   categories,
   materials,
   seoWriterProfiles,
@@ -150,6 +156,16 @@ export function EditDesign({
   const [selectedSeoProfileId, setSelectedSeoProfileId] = useState(
     String(seoWriterProfiles.find((item) => item.isDefault)?.id ?? seoWriterProfiles[0]?.id ?? ""),
   );
+  const [selectedSeoProvider, setSelectedSeoProvider] = useState<SeoAiProvider>(
+    defaultSeoAiProvider,
+  );
+  const [selectedSeoModelByProvider, setSelectedSeoModelByProvider] = useState<
+    Record<SeoAiProvider, string>
+  >(() => ({
+    gemini: defaultSeoAiModels.gemini[0],
+    openrouter: defaultSeoAiModels.openrouter[0],
+  }));
+  const selectedSeoModel = selectedSeoModelByProvider[selectedSeoProvider];
   const [seoMode, setSeoMode] = useState<SeoRewriteMode>("rewrite-soft");
   const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
   const [seoGenerationError, setSeoGenerationError] = useState<string | null>(null);
@@ -502,6 +518,8 @@ export function EditDesign({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          provider: selectedSeoProvider,
+          model: selectedSeoModel,
           profileId: Number(selectedSeoProfileId),
           mode: seoMode,
           previewFileId,
@@ -958,7 +976,41 @@ export function EditDesign({
                   </Button>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-3">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="seo-provider">IA para generar</Label>
+                    <select
+                      id="seo-provider"
+                      value={selectedSeoProvider}
+                      onChange={(e) => setSelectedSeoProvider(e.target.value as SeoAiProvider)}
+                      className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                    >
+                      <option value="gemini">Gemini</option>
+                      <option value="openrouter">OpenRouter</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="seo-model">Modelo</Label>
+                    <select
+                      id="seo-model"
+                      value={selectedSeoModel}
+                      onChange={(e) =>
+                        setSelectedSeoModelByProvider((prev) => ({
+                          ...prev,
+                          [selectedSeoProvider]: e.target.value,
+                        }))
+                      }
+                      className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
+                    >
+                      {defaultSeoAiModels[selectedSeoProvider].map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="seo-profile">Perfil de redaccion</Label>
                     <select
@@ -1022,6 +1074,10 @@ export function EditDesign({
                 {seoGenerationError && (
                   <p className="text-sm text-destructive">{seoGenerationError}</p>
                 )}
+
+                <p className="text-xs text-muted-foreground">
+                  Los modelos disponibles se leen del environment configurado para cada IA.
+                </p>
 
                 {!previewFileId && (
                   <p className="text-xs text-muted-foreground">

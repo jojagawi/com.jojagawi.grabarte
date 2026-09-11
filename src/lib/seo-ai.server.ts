@@ -1,5 +1,7 @@
 type SeoRewriteMode = "complement" | "rewrite-soft" | "rewrite-hard";
 
+type SeoAiProvider = "gemini" | "openrouter";
+
 type SeoDraftContext = {
   name: string;
   shortDescription: string;
@@ -31,6 +33,8 @@ type SeoWriterProfile = {
 };
 
 type GenerateSeoDraftInput = {
+  provider?: SeoAiProvider;
+  model?: string;
   mode: SeoRewriteMode;
   profile: SeoWriterProfile;
   context: SeoDraftContext;
@@ -73,7 +77,8 @@ function buildModeInstruction(mode: SeoRewriteMode) {
 }
 
 function buildPrompt(input: GenerateSeoDraftInput) {
-  const categoryText = input.context.categories.length > 0 ? input.context.categories.join(", ") : "sin categoria";
+  const categoryText =
+    input.context.categories.length > 0 ? input.context.categories.join(", ") : "sin categoria";
 
   return [
     "Eres redactor SEO de catalogo ecommerce.",
@@ -188,6 +193,10 @@ function sanitizeGeneratedDraft(value: unknown): GeneratedSeoDraft {
   };
 }
 
+function normalizeProvider(value: string | null | undefined): SeoAiProvider {
+  return value?.toLowerCase() === "openrouter" ? "openrouter" : "gemini";
+}
+
 class GeminiSeoProvider implements SeoGenerationProvider {
   async generateDraft(input: GenerateSeoDraftInput): Promise<GeneratedSeoDraft> {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -195,7 +204,8 @@ class GeminiSeoProvider implements SeoGenerationProvider {
       throw new Error("Falta GEMINI_API_KEY para generar contenido SEO");
     }
 
-    const model = process.env.SEO_AI_GEMINI_MODEL || "gemini-2.5-flash";
+    const model =
+      input.model?.trim() || process.env.SEO_AI_GEMINI_MODEL || "gemini-2.5-flash";
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
@@ -247,21 +257,97 @@ class GeminiSeoProvider implements SeoGenerationProvider {
   }
 }
 
-function getProvider(): SeoGenerationProvider {
-  const provider = (process.env.SEO_AI_PROVIDER || "gemini").toLowerCase();
+class OpenRouterSeoProvider implements SeoGenerationProvider {
+  async generateDraft(input: GenerateSeoDraftInput): Promise<GeneratedSeoDraft> {
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      throw new Error("Falta OPENROUTER_API_KEY para generar contenido SEO");
+    }
+
+    const model =
+      input.model?.trim() || process.env.SEO_AI_OPENROUTER_MODEL || "qwen/qwen2.5-vl-72b-instruct:free";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com";
+    const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "InspiraArte SEO Writer";
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.OPENROUTER_HTTP_REFERER?.trim() || siteUrl,
+        "X-Title": appTitle,
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.4,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: buildPrompt(input),
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:${input.imageMimeType};base64,${input.imageBase64}`,
+                },
+              },
+            ],
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      throw new Error(`Error de OpenRouter (${response.status}): ${body || "sin detalle"}`);
+    }
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | Array<{ type?: string; text?: string }> } }>;
+    };
+
+    const content = payload.choices?.[0]?.message?.content;
+    const text =
+      typeof content === "string"
+        ? content
+        : Array.isArray(content)
+          ? content.find((part) => typeof part.text === "string")?.text
+          : undefined;
+
+    if (!text) {
+      throw new Error("OpenRouter no devolvio texto utilizable");
+    }
+
+    const parsed = parseJsonCandidate(text);
+    return sanitizeGeneratedDraft(parsed);
+  }
+}
+
+function getProvider(providerOverride?: SeoAiProvider): SeoGenerationProvider {
+  const provider = providerOverride || normalizeProvider(process.env.SEO_AI_PROVIDER);
 
   switch (provider) {
     case "gemini":
       return new GeminiSeoProvider();
+    case "openrouter":
+      return new OpenRouterSeoProvider();
     default:
       throw new Error(`Proveedor SEO no soportado: ${provider}`);
   }
 }
 
-export type { GeneratedSeoDraft, SeoDraftContext, SeoRewriteMode, SeoWriterProfile };
+export type {
+  GeneratedSeoDraft,
+  SeoAiProvider,
+  SeoDraftContext,
+  SeoRewriteMode,
+  SeoWriterProfile,
+};
 
 export async function generateSeoDraftFromImage(input: GenerateSeoDraftInput) {
-  const provider = getProvider();
+  const provider = getProvider(input.provider);
   return provider.generateDraft(input);
 }
-

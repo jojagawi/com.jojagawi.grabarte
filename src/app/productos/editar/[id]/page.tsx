@@ -28,6 +28,19 @@ interface EditProductPageProps {
   params: Promise<{ id: string }>;
 }
 
+function parseModelOptions(rawValue: string | undefined, fallbackModel: string): string[] {
+  const options = String(rawValue || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (options.length > 0) {
+    return Array.from(new Set(options));
+  }
+
+  return [fallbackModel];
+}
+
 function parseId(rawId: string): number | null {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) {
@@ -39,6 +52,18 @@ function parseId(rawId: string): number | null {
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const { id: rawId } = await params;
+  const defaultSeoAiProvider =
+    process.env.SEO_AI_PROVIDER?.trim().toLowerCase() === "openrouter" ? "openrouter" : "gemini";
+  const defaultSeoAiModels = {
+    gemini: parseModelOptions(
+      process.env.SEO_AI_GEMINI_MODELS,
+      process.env.SEO_AI_GEMINI_MODEL?.trim() || "gemini-2.5-flash",
+    ),
+    openrouter: parseModelOptions(
+      process.env.SEO_AI_OPENROUTER_MODELS,
+      process.env.SEO_AI_OPENROUTER_MODEL?.trim() || "qwen/qwen2.5-vl-72b-instruct:free",
+    ),
+  };
 
   const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
   if (!canEditDesigns || process.env.NODE_ENV !== "development") {
@@ -167,6 +192,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   return (
     <EditDesign
+      defaultSeoAiProvider={defaultSeoAiProvider}
+      defaultSeoAiModels={defaultSeoAiModels}
       categories={categories.map((item) => ({ id: item.id, name: item.name ?? "" }))}
       materials={materials.map((item) => ({
         id: item.id,
