@@ -76,9 +76,9 @@ export function Products({ products, categories, materialOptions, enableDevFilte
           <span className="inline-block px-4 py-1 rounded-full bg-[#4290A3]/10 text-[#4290A3] text-sm font-medium mb-4">
             Nuestros Productos
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
             Cada ocasión merece algo <span className="text-[#4290A3]">especial</span>
-          </h2>
+          </h1>
           <p className="text-muted-foreground text-lg">
             Desde un detalle único hasta pedidos corporativos, creamos lo que imaginas.
             Explora nuestras categorías y encuentra el regalo perfecto.
