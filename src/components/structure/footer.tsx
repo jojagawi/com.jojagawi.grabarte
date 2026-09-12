@@ -165,7 +165,7 @@ export function Footer() {
         <div className="border-t  mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm">
-              © {new Date().getFullYear()} LaserCraft MX. Todos los derechos
+              © {new Date().getFullYear()} InspiraArte. Todos los derechos
               reservados.
             </p>
             <div className="flex gap-6">
