@@ -868,7 +868,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   </div>
                 )}
 
-                {splitKeywords(design.keywords).length > 0 && (
+                { isDevelopment && ( splitKeywords(design.keywords).length > 0 && (
                   <div>
                     <p className="text-sm font-semibold text-foreground mb-2">
                       Keywords SEO
@@ -881,7 +881,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       ))}
                     </div>
                   </div>
-                )}
+                ))}
 
                 {isDevelopment && (
                   <div>
