@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm run test:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm run prisma:generate)",
+      "Bash(pnpm run prisma:validate)",
+      "Bash(pnpm install)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "PowerShell(pnpm run test:*)",
+      "PowerShell(pnpm run build)",
+      "PowerShell(pnpm run build:*)",
+      "PowerShell(pnpm run prisma:generate)",
+      "PowerShell(pnpm run prisma:validate)",
+      "PowerShell(git status*)",
+      "PowerShell(git diff*)",
+      "PowerShell(git log*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./certs/**)",
+      "Read(./data/mydb.sqlite)",
+      "Edit(./data/mydb.sqlite)",
+      "Edit(./certs/**)",
+      "Edit(./pnpm-lock.yaml)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/enforce-pnpm.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-edited.mjs\"",
+            "timeout": 60,
+            "statusMessage": "Lint / prisma generate…"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/typecheck.mjs\"",
+            "timeout": 120,
+            "statusMessage": "Typecheck…"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ type ToolResponse<TData> = {
 
 type MpcToolResult = {
   content: Array<{ type: "text"; text: string }>;
+  structuredContent?: unknown;
 };
 
 type CategoryItem = {
@@ -124,7 +125,7 @@ async function loadFallbackData<TData>(fileName: string): Promise<TData | null> 
   }
 }
 
-function buildTextResult(text: string): MpcToolResult {
+function buildTextResult(text: string, structuredContent?: unknown): MpcToolResult {
   return {
     content: [
       {
@@ -132,6 +133,7 @@ function buildTextResult(text: string): MpcToolResult {
         text,
       },
     ],
+    ...(structuredContent === undefined ? {} : { structuredContent }),
   };
 }
 
@@ -180,6 +182,49 @@ export function setupAiTools() {
       parameters: {
         type: "object",
         properties: {},
+        required: [],
+        additionalProperties: false,
+      },
+      annotations: {
+        readOnlyHint: true,
+      },
+      outputSchema: {
+        type: "object",
+        properties: {
+          success: {
+            type: "boolean",
+            description: "Indica si la consulta pudo resolverse con API o fallback.",
+          },
+          count: {
+            type: "number",
+            description: "Cantidad total de categorías devueltas.",
+          },
+          categories: {
+            type: "array",
+            description: "Listado de categorías públicas disponibles en el catálogo.",
+            items: {
+              type: "object",
+              properties: {
+                id: {
+                  type: "number",
+                  description: "Identificador numérico de la categoría.",
+                },
+                name: {
+                  type: "string",
+                  description: "Nombre visible de la categoría.",
+                },
+              },
+              required: ["id", "name"],
+              additionalProperties: false,
+            },
+          },
+          message: {
+            type: "string",
+            description: "Resumen textual del resultado para agentes o UI.",
+          },
+        },
+        required: ["success", "count", "categories", "message"],
+        additionalProperties: false,
       },
       execute: async () => {
         const result = await fetchToolData<Array<{ id: number; name: string | null }>>(
@@ -191,14 +236,31 @@ export function setupAiTools() {
           : await loadFallbackData<CategoryItem[]>("categories.json");
 
         if (!categories) {
-          return buildTextResult(result.message || "No se pudieron obtener categorías.");
+          return buildTextResult(result.message || "No se pudieron obtener categorías.", {
+            success: false,
+            count: 0,
+            categories: [],
+            message: result.message || "No se pudieron obtener categorías.",
+          });
         }
 
-        const categoryList = categories
+        const normalizedCategories = categories.map((category) => ({
+          id: category.id,
+          name: category.name || "Sin nombre",
+        }));
+
+        const categoryList = normalizedCategories
           .map((category) => `- ${category.name || "Sin nombre"} (id: ${category.id})`)
           .join("\n");
 
-        return buildTextResult(`Categorías disponibles:\n${categoryList || "Sin categorías publicadas."}`);
+        const message = `Categorías disponibles:\n${categoryList || "Sin categorías publicadas."}`;
+
+        return buildTextResult(message, {
+          success: true,
+          count: normalizedCategories.length,
+          categories: normalizedCategories,
+          message,
+        });
       },
     }),
   );

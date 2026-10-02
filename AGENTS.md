@@ -6,7 +6,7 @@ Este repositorio es **InspiraArte**, un catálogo de productos personalizados co
 
 **InspiraArte** tiene dos vertientes principales:
 
-1. **Sitio Público** (`localhost:8000`):
+1. **Sitio Público** (`localhost:3000`):
    - Catálogo de productos personalizados
    - Páginas de descripción de productos
    - Sistema de solicitud de cotizaciones
@@ -66,24 +66,31 @@ pnpm install
 
 # Iniciar servidor de desarrollo (hot reload)
 pnpm run dev
-# o
-pnpm run start
 # Accede a: http://localhost:3000
 
-# Compilar para producción
+# Compilar para producción (prebuild: service worker, prisma generate, MCP, imágenes)
 pnpm run build
 
-# Servir la build local (requiere build previo)
-pnpm run serve
+# Export estático
+pnpm run build:static
 
-# Verificar tipos TypeScript
-pnpm run typecheck
+# Servir la build local (requiere build previo)
+pnpm run start
+
+# Verificar tipos TypeScript (corre prisma generate antes)
+pnpm run test:typecheck
+
+# Lint / estilos / formato / todo junto
+pnpm run test:lint
+pnpm run test:style:check
+pnpm run test:format:check
+pnpm run test:all
 
 # Limpiar caché de Next
-pnpm store prune
+Remove-Item -Recurse -Force .next
 
 # Limpia + reinstala dependencias (para troubleshooting)
-pnpm store prune && pnpm install
+pnpm store prune; pnpm install
 ```
 
 ---
@@ -147,7 +154,7 @@ pnpm store prune && pnpm install
 4. Verifica que no hay errores de TypeScript:
 
    ```powershell
-   pnpm run typecheck
+   pnpm run test:typecheck
    ```
 
 5. Lee `.agents/instructions.md` para entender los estándares de código
@@ -260,7 +267,7 @@ pnpm run test:typecheck
 ### Next caché corrupto
 
 ```powershell
-pnpm run clean
+Remove-Item -Recurse -Force .next
 pnpm install
 pnpm run dev
 ```
@@ -269,7 +276,7 @@ pnpm run dev
 
 ```powershell
 # Limpia y recompila
-pnpm run clean
+Remove-Item -Recurse -Force .next
 pnpm run build
 
 # Si persiste, revisa que no haya errores de TypeScript
