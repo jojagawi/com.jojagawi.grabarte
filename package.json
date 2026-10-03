@@ -9,6 +9,7 @@
     "dev:https": "next dev --hostname dev.inspiraarte.com --port 3000 --experimental-https --experimental-https-key ./certs/cer.key --experimental-https-cert ./certs/cer.pem",
     "build:sw": "tsc --project tsconfig.sw.json",
     "build:mcp": "tsx scripts/build-mcp-fallback.ts",
+    "hubspot:properties": "tsx scripts/hubspot-product-properties.ts",
     "images:optimize": "node scripts/optimize-images.mjs",
     "prebuild": "run-s build:sw prisma:generate build:mcp images:optimize",
     "postbuild": "run-s build:sitemap",

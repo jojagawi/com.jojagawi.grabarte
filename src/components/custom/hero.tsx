@@ -45,7 +45,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
       className="relative min-h-screen flex items-center pt-16 overflow-hidden"
     >
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-linear-to-br from-background via-background to-[#4290A3]/5" />
+      <div className="absolute inset-0 bg-linear-to-br from-background via-background to-primary/5" />
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -57,7 +57,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4290A3]/10 text-[#4290A3]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">
                 Productos 100% personalizados
@@ -66,7 +66,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
 
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
               Transforma tus ideas en{" "}
-              <span className="text-[#4290A3]">regalos únicos</span>
+              <span className="text-primary">regalos únicos</span>
             </h1>
 
             <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
@@ -80,7 +80,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
               <Button
                 asChild
                 size="lg"
-                className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white group"
+                className="bg-primary hover:bg-inspirarte-petroleum-deep text-white group"
               >
                 <Link href="/contacto">
                   Solicitar cotización
@@ -91,7 +91,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
+                className="border-primary text-primary hover:bg-primary/10"
               >
                 <Link href="/productos">Ver productos</Link>
               </Button>
@@ -102,7 +102,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
             //TODO Agregar cuando se tengan estadísticas
             <div className="flex gap-8 pt-4">
               <div>
-                <div className="text-3xl font-bold text-[#1FA4A7]">500+</div>
+                <div className="text-3xl font-bold text-inspirarte-teal">500+</div>
                 <div className="text-sm text-muted-foreground">
                   Clientes felices
                 </div>
@@ -114,7 +114,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                 </div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#4290A3]">5★</div>
+                <div className="text-3xl font-bold text-primary">5★</div>
                 <div className="text-sm text-muted-foreground">
                   Calificación
                 </div>
@@ -138,7 +138,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-[#4290A3] mb-2">
+                  <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-primary mb-2">
                     Destacado
                   </span>
                   <p className="text-white font-medium">
@@ -208,7 +208,7 @@ export function Hero({ designs, marqueeCategories }: HeroProps) {
       </div>
 
       {/* Scrolling Marquee */}
-      <div className="absolute bottom-0 left-0 right-0 bg-[#4290A3] py-3 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 bg-primary py-3 overflow-hidden">
         <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite]">
           {Array.from({ length: 10 }).map((_, i) => (
             <span key={i} className="mx-8 text-white/90 text-sm font-medium">

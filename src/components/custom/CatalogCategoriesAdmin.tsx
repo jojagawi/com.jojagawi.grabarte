@@ -219,7 +219,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
               <TableRow key={category.id}>
                 <TableCell>{category.id}</TableCell>
                 <TableCell>
-                  <CategoryIcon iconKey={category.icon} categoryName={category.name} className="size-4 text-[#4290A3]" />
+                  <CategoryIcon iconKey={category.icon} categoryName={category.name} className="size-4 text-primary" />
                 </TableCell>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.status === 1 ? "Activo" : "Inactivo"}</TableCell>
@@ -264,7 +264,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
               </select>
             </label>
             <div className="flex items-center gap-2 rounded-md border border-border p-2 text-sm text-muted-foreground">
-              Preview: <CategoryIcon iconKey={createIcon} categoryName={createName} className="size-4 text-[#4290A3]" /> <span>{createIcon}</span>
+              Preview: <CategoryIcon iconKey={createIcon} categoryName={createName} className="size-4 text-primary" /> <span>{createIcon}</span>
             </div>
             <label className="flex flex-col gap-1 text-sm text-foreground">
               Status
@@ -303,7 +303,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
               </select>
             </label>
             <div className="flex items-center gap-2 rounded-md border border-border p-2 text-sm text-muted-foreground">
-              Preview: <CategoryIcon iconKey={editIcon} categoryName={editName} className="size-4 text-[#4290A3]" /> <span>{editIcon}</span>
+              Preview: <CategoryIcon iconKey={editIcon} categoryName={editName} className="size-4 text-primary" /> <span>{editIcon}</span>
             </div>
             <label className="flex flex-col gap-1 text-sm text-foreground">
               Status

@@ -19,10 +19,8 @@
 
   /* --- COLORES DE MARCA --- */
 
-  /* Primary (Teal): El color dominante y "tecnológico" de la chispa. Para botones principales, enlaces activos. */
-
-  /* Corresponde aproximadamente a #1FA4A7 de tu CSS actual */
-  --primary: oklch(65% 0.12 195deg);
+  /* Primary: azul petróleo de acción (DESIGN.md). 4.88:1 con blanco, AA para texto de botones. */
+  --primary: var(--inspirarte-petroleum);
   --primary-foreground: oklch(99% 0 0deg);
 
   /* Secondary (Purple): El color "creativo" y profundo del cubo. Para elementos destacados secundarios. */
@@ -39,7 +37,9 @@
 
   /* Muted: Fondos secundarios suaves, como áreas de contenido secundario */
   --muted: oklch(95% 0.01 240deg);
-  --muted-foreground: oklch(55% 0.02 240deg);
+
+  /* 50% (antes 55%): AA (≥4.5:1) incluso en texto de 12px sobre --muted. */
+  --muted-foreground: oklch(50% 0.02 240deg);
 
   /* Bordes y Entradas: Gris sutil, neutral, limpio */
   --border: oklch(90% 0.01 240deg);
@@ -71,6 +71,9 @@
   /* --- COLORES DE MARCA PERSONALIZADOS (HEX exactos para referencia) --- */
 
   /* Actualizados para coincidir exactamente con el degradado y texto del logo */
+  --inspirarte-petroleum: #367a8a; /* Color de acción oficial (ver DESIGN.md) */
+  --inspirarte-petroleum-deep: #2f6e7d; /* Hover/active del color de acción */
+  --inspirarte-green: #00b003; /* Acento de contacto y éxito */
   --inspirarte-teal-primary: #1fa4a7; /* El color principal de la marca */
   --inspirarte-cyan-bright: #3acbfe; /* El cian vibrante */
   --inspirarte-purple-deep: #7e3af2; /* El púrpura creativo */
@@ -162,6 +165,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* Mapeo de colores personalizados exactos para referencia rápida en la UI */
+  --color-inspirarte-petroleum: var(--inspirarte-petroleum);
+  --color-inspirarte-petroleum-deep: var(--inspirarte-petroleum-deep);
+  --color-inspirarte-green: var(--inspirarte-green);
   --color-inspirarte-teal: var(--inspirarte-teal-primary);
   --color-inspirarte-cyan: var(--inspirarte-cyan-bright);
   --color-inspirarte-purple: var(--inspirarte-purple-deep);

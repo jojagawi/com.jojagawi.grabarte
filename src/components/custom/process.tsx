@@ -42,12 +42,12 @@ export function Process() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-[#1FA4A7]/10 text-[#1FA4A7] text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-teal/10 text-inspirarte-teal text-sm font-medium mb-4">
             Proceso de Pedido
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
             Tan fácil como{" "}
-            <span className="text-[#1FA4A7]">1, 2, 3... ¡y 4!</span>
+            <span className="text-inspirarte-teal">1, 2, 3... ¡y 4!</span>
           </h2>
           <p className="text-muted-foreground text-lg">
             Pedir tu producto personalizado es súper sencillo. Te acompañamos en
@@ -92,7 +92,7 @@ export function Process() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 bg-gradient-to-r from-[#4290A3] to-[#1FA4A7] rounded-2xl p-8 md:p-12">
+        <div className="mt-16 bg-gradient-to-r from-primary to-inspirarte-teal rounded-2xl p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <h3 className="text-2xl font-bold text-white mb-2">
@@ -106,7 +106,7 @@ export function Process() {
             <div className="flex flex-col sm:flex-row gap-4">
               <a
                 href="/contacto"
-                className="px-6 py-3 bg-white text-[#4290A3] font-semibold rounded-lg hover:bg-white/90 transition-colors text-center"
+                className="px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors text-center"
               >
                 Iniciar pedido
               </a>

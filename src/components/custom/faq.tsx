@@ -12,21 +12,29 @@ type FaqItem = {
 
 type FAQProps = {
   faqs: FaqItem[]
+  /** Dentro de otra página: sin padding de sección ni contenedor propio. */
+  embedded?: boolean
 }
 
-export function FAQ({ faqs }: FAQProps) {
+export function FAQ({ faqs, embedded = false }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section id="faq" className="py-24 bg-muted/30">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <section id="faq" className={cn(!embedded && "py-24 bg-muted/30")}>
+      <div className={cn("mx-auto max-w-4xl", !embedded && "px-4 sm:px-6 lg:px-8")}>
         {/* Header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-[#3ACBFE]/10 text-[#4290A3] text-sm font-medium mb-4">
+        <div className={cn("text-center", embedded ? "mb-10" : "mb-16")}>
+          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             Preguntas Frecuentes
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-            ¿Tienes dudas? <span className="text-[#4290A3]">Te las resolvemos</span>
+          <h2
+            className={cn(
+              "font-serif font-bold text-foreground mb-6 text-balance",
+              // Dentro de una ficha no puede competir con el h1 del producto.
+              embedded ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl lg:text-5xl"
+            )}
+          >
+            ¿Tienes dudas? <span className="text-primary">Te las resolvemos</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Aquí encontrarás las respuestas a las preguntas más comunes.
@@ -36,47 +44,59 @@ export function FAQ({ faqs }: FAQProps) {
 
         {/* FAQ Accordion */}
         <div className="space-y-4">
-          {faqs.map((faq, index) => (
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index
+            const panelId = `faq-panel-${faq.id}`
+            return (
             <div
               key={faq.id}
               className={cn(
                 "bg-white rounded-xl border border-border overflow-hidden transition-all",
-                openIndex === index && "shadow-lg shadow-[#4290A3]/5"
+                isOpen && "shadow-lg shadow-primary/5"
               )}
             >
               <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left"
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? null : index)}
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                className="w-full px-6 py-5 flex items-center justify-between text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <span className="font-medium text-foreground pr-4">
                   {faq.question}
                 </span>
                 <ChevronDown
                   className={cn(
-                    "w-5 h-5 text-[#4290A3] transition-transform shrink-0",
-                    openIndex === index && "rotate-180"
+                    "w-5 h-5 text-primary transition-transform shrink-0",
+                    isOpen && "rotate-180"
                   )}
                 />
               </button>
+              {/* grid-rows 0fr→1fr anima la altura real: las respuestas largas no se recortan. */}
               <div
+                id={panelId}
+                inert={!isOpen}
                 className={cn(
-                  "overflow-hidden transition-all duration-300",
-                  openIndex === index ? "max-h-96" : "max-h-0"
+                  "grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none",
+                  isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                 )}
               >
-                <div className="px-6 pb-5 text-muted-foreground leading-relaxed">
-                  {faq.answer}
+                <div className="overflow-hidden">
+                  <div className="px-6 pb-5 text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {faq.answer}
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Bottom Help */}
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
             ¿Aún tienes preguntas?{" "}
-            <a href="/contacto" className="text-[#4290A3] font-medium hover:underline">
+            <a href="/contacto" className="text-primary font-medium hover:underline">
               Escríbenos
             </a>
             {" "}y te respondemos en menos de 24 horas.

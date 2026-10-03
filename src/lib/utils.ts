@@ -19,6 +19,30 @@ function encodeDigits(value: string, wordCode: string): string {
     .join('')
 }
 
+// Inverso de encodeDigits: solo se usa en el navegador para sesiones con privilegios,
+// así el código en claro (precio mínimo y mayoreo) nunca viaja en el HTML público.
+export function decodeProductCode(encodedCode: string): string | null {
+  const wordCode = process.env.NEXT_PUBLIC_WORD_CODE ?? ''
+  if (!wordCode) {
+    return encodedCode
+  }
+  // Con letras repetidas la sustitución no es reversible; mejor no mostrar nada que mostrar cifras falsas.
+  if (new Set(wordCode).size !== wordCode.length) {
+    return null
+  }
+
+  return encodedCode
+    .split('')
+    .map((char) => {
+      if (char === '-') {
+        return char
+      }
+      const index = wordCode.indexOf(char)
+      return index >= 0 && index <= 9 ? String(index) : char
+    })
+    .join('')
+}
+
 export function buildProductCode(
   productId: number,
   minimumPrice: number,

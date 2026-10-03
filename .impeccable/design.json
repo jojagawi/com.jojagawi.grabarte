@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T20:54:13.763Z",
+  "title": "Design System: InspiraArte",
+  "extensions": {
+    "colorMeta": {
+      "petroleum-blue": {
+        "role": "primary",
+        "displayName": "Azul Petróleo",
+        "canonical": "#367A8A",
+        "tonalRamp": [
+          "oklch(20% 0.06 215)",
+          "oklch(30% 0.07 215)",
+          "oklch(40% 0.08 215)",
+          "oklch(50% 0.085 215)",
+          "oklch(60% 0.085 215)",
+          "oklch(72% 0.07 215)",
+          "oklch(84% 0.045 215)",
+          "oklch(95% 0.015 215)"
+        ]
+      },
+      "petroleum-deep": {
+        "role": "primary",
+        "displayName": "Petróleo Profundo",
+        "canonical": "#2F6E7D",
+        "tonalRamp": [
+          "oklch(18% 0.05 215)",
+          "oklch(28% 0.06 215)",
+          "oklch(38% 0.07 215)",
+          "oklch(48% 0.075 215)",
+          "oklch(58% 0.075 215)",
+          "oklch(70% 0.06 215)",
+          "oklch(83% 0.04 215)",
+          "oklch(95% 0.012 215)"
+        ]
+      },
+      "spark-teal": {
+        "role": "primary",
+        "displayName": "Teal Chispa",
+        "canonical": "#1FA4A7",
+        "tonalRamp": [
+          "oklch(20% 0.05 195)",
+          "oklch(30% 0.07 195)",
+          "oklch(42% 0.09 195)",
+          "oklch(54% 0.1 195)",
+          "oklch(65% 0.11 195)",
+          "oklch(75% 0.09 195)",
+          "oklch(86% 0.055 195)",
+          "oklch(95% 0.02 195)"
+        ]
+      },
+      "workshop-green": {
+        "role": "secondary",
+        "displayName": "Verde Taller",
+        "canonical": "#00B003",
+        "tonalRamp": [
+          "oklch(20% 0.07 143)",
+          "oklch(30% 0.11 143)",
+          "oklch(42% 0.15 143)",
+          "oklch(54% 0.18 143)",
+          "oklch(65% 0.2 143)",
+          "oklch(76% 0.16 143)",
+          "oklch(87% 0.09 143)",
+          "oklch(96% 0.03 143)"
+        ]
+      },
+      "creative-purple": {
+        "role": "secondary",
+        "displayName": "Púrpura Creativo",
+        "canonical": "oklch(50% 0.18 280deg)",
+        "tonalRamp": [
+          "oklch(18% 0.08 280)",
+          "oklch(28% 0.12 280)",
+          "oklch(39% 0.16 280)",
+          "oklch(50% 0.18 280)",
+          "oklch(61% 0.16 280)",
+          "oklch(72% 0.12 280)",
+          "oklch(84% 0.07 280)",
+          "oklch(95% 0.02 280)"
+        ]
+      },
+      "bright-cyan": {
+        "role": "tertiary",
+        "displayName": "Cian Brillante",
+        "canonical": "oklch(80% 0.15 210deg)",
+        "tonalRamp": [
+          "oklch(22% 0.05 210)",
+          "oklch(33% 0.08 210)",
+          "oklch(45% 0.11 210)",
+          "oklch(57% 0.13 210)",
+          "oklch(68% 0.14 210)",
+          "oklch(80% 0.15 210)",
+          "oklch(89% 0.08 210)",
+          "oklch(96% 0.03 210)"
+        ]
+      },
+      "olive-wood": {
+        "role": "tertiary",
+        "displayName": "Olivo Madera",
+        "canonical": "#585106",
+        "tonalRamp": [
+          "oklch(20% 0.05 105)",
+          "oklch(30% 0.07 105)",
+          "oklch(43% 0.09 105)",
+          "oklch(55% 0.1 105)",
+          "oklch(66% 0.1 105)",
+          "oklch(77% 0.08 105)",
+          "oklch(88% 0.05 105)",
+          "oklch(96% 0.02 105)"
+        ]
+      },
+      "warm-paper": {
+        "role": "neutral",
+        "displayName": "Papel Cálido",
+        "canonical": "oklch(99% 0.005 90deg)",
+        "tonalRamp": [
+          "oklch(20% 0.005 90)",
+          "oklch(32% 0.005 90)",
+          "oklch(45% 0.005 90)",
+          "oklch(58% 0.005 90)",
+          "oklch(70% 0.005 90)",
+          "oklch(82% 0.005 90)",
+          "oklch(92% 0.005 90)",
+          "oklch(99% 0.005 90)"
+        ]
+      },
+      "pure-white": {
+        "role": "neutral",
+        "displayName": "Blanco Puro",
+        "canonical": "oklch(100% 0 0deg)"
+      },
+      "charcoal-ink": {
+        "role": "neutral",
+        "displayName": "Tinta Carbón",
+        "canonical": "oklch(20% 0.01 240deg)",
+        "tonalRamp": [
+          "oklch(15% 0.01 240)",
+          "oklch(20% 0.01 240)",
+          "oklch(30% 0.015 240)",
+          "oklch(42% 0.02 240)",
+          "oklch(55% 0.02 240)",
+          "oklch(70% 0.015 240)",
+          "oklch(85% 0.01 240)",
+          "oklch(95% 0.01 240)"
+        ]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Niebla",
+        "canonical": "oklch(95% 0.01 240deg)"
+      },
+      "slate-muted": {
+        "role": "neutral",
+        "displayName": "Pizarra",
+        "canonical": "oklch(50% 0.02 240deg)"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Línea Fina",
+        "canonical": "oklch(90% 0.01 240deg)"
+      },
+      "alert-red": {
+        "role": "neutral",
+        "displayName": "Rojo Alerta",
+        "canonical": "oklch(57.7% 0.245 27.325deg)"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Titular del hero; uno por página."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de sección."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Bloques internos y nombre de producto en la ficha."
+      },
+      "body-lead": {
+        "displayName": "Body Lead",
+        "purpose": "Párrafo introductorio bajo un título."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido y descripciones."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Navegación, botones, píldoras y etiquetas."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-rest",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Tarjetas genéricas en reposo."
+      },
+      {
+        "name": "showcase-lift",
+        "value": "0 20px 25px -5px rgb(54 122 138 / 0.10), 0 8px 10px -6px rgb(54 122 138 / 0.10)",
+        "purpose": "Tarjeta de producto en hover/enfoque, junto con translateY(-4px)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "card-lift",
+        "value": "all 300ms ease",
+        "purpose": "Elevación de tarjeta clicable en hover."
+      },
+      {
+        "name": "image-zoom",
+        "value": "transform 500ms ease",
+        "purpose": "La imagen de producto crece a scale(1.05) en hover."
+      },
+      {
+        "name": "color-shift",
+        "value": "color 150ms ease, background-color 150ms ease",
+        "purpose": "Cambios de color en enlaces y botones."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal: cotizar, ver catálogo, enviar.",
+      "html": "<button class=\"ds-btn-primary\">Ver catálogo <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border: none; border-radius: 10px; background: #367A8A; color: #fff; font: 500 0.875rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-primary svg { transition: transform 150ms ease; } .ds-btn-primary:hover { background: #2F6E7D; } .ds-btn-primary:hover svg { transform: translateX(4px); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(80% 0.15 210 / 0.5); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Acción secundaria junto al botón primario.",
+      "html": "<button class=\"ds-btn-outline\">Cómo trabajamos</button>",
+      "css": ".ds-btn-outline { height: 36px; padding: 0 16px; border: 1px solid #367A8A; border-radius: 10px; background: oklch(99% 0.005 90); color: #367A8A; font: 500 0.875rem/1 'DM Sans', system-ui, sans-serif; cursor: pointer; transition: background-color 150ms ease; } .ds-btn-outline:hover { background: rgb(54 122 138 / 0.1); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(80% 0.15 210 / 0.5); }"
+    },
+    {
+      "name": "Eyebrow Pill",
+      "kind": "custom",
+      "refersTo": "eyebrow-pill",
+      "description": "Presenta cada sección pública sobre su título.",
+      "html": "<span class=\"ds-eyebrow\">Nuestro catálogo</span>",
+      "css": ".ds-eyebrow { display: inline-block; padding: 4px 16px; border-radius: 9999px; background: rgb(54 122 138 / 0.1); color: #367A8A; font: 500 0.875rem/1.25 'DM Sans', system-ui, sans-serif; }"
+    },
+    {
+      "name": "Personalizable Tag",
+      "kind": "chip",
+      "refersTo": "personalizable-tag",
+      "description": "Marca lo que el cliente puede personalizar.",
+      "html": "<span class=\"ds-tag-custom\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 20h9\"/><path d=\"M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z\"/></svg>Personalizable</span>",
+      "css": ".ds-tag-custom { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 8px; background: oklch(50% 0.18 280); color: #fff; font: 500 0.75rem/1.4 'DM Sans', system-ui, sans-serif; }"
+    },
+    {
+      "name": "Meta Chip",
+      "kind": "chip",
+      "refersTo": "meta-chip",
+      "description": "Material o categoría en la tarjeta de producto.",
+      "html": "<span class=\"ds-chip\">MDF</span>",
+      "css": ".ds-chip { display: inline-block; padding: 4px 8px; border-radius: 8px; background: oklch(95% 0.01 240); color: oklch(55% 0.02 240); font: 400 0.75rem/1 'DM Sans', system-ui, sans-serif; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "product-card",
+      "description": "Tarjeta de catálogo: plana en reposo, se eleva en hover.",
+      "html": "<a class=\"ds-card\" href=\"#\"><div class=\"ds-card-media\"><div class=\"ds-card-img\"></div></div><div class=\"ds-card-body\"><h3 class=\"ds-card-title\">Esfera navideña con nombre</h3><div class=\"ds-card-chips\"><span class=\"ds-chip\">MDF</span><span class=\"ds-chip\">Navidad</span></div><p class=\"ds-card-price\">Desde $85</p></div></a>",
+      "css": ".ds-card { display: block; width: 260px; overflow: hidden; border: 1px solid oklch(90% 0.01 240); border-radius: 16px; background: #fff; color: oklch(20% 0.01 240); text-decoration: none; transition: all 300ms ease; } .ds-card:hover, .ds-card:focus-visible { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(54 122 138 / 0.10), 0 8px 10px -6px rgb(54 122 138 / 0.10); outline: none; } .ds-card:focus-visible { box-shadow: 0 0 0 2px rgb(54 122 138 / 0.4); } .ds-card-media { aspect-ratio: 1; overflow: hidden; background: oklch(95% 0.01 240); } .ds-card-img { width: 100%; height: 100%; background: linear-gradient(135deg, rgb(54 122 138 / 0.15), rgb(31 164 167 / 0.05)); transition: transform 500ms ease; } .ds-card:hover .ds-card-img { transform: scale(1.05); } .ds-card-body { padding: 16px; } .ds-card-title { margin: 0 0 8px; font: 700 1.125rem/1.3 'Playfair Display', Georgia, serif; } .ds-card-chips { display: flex; gap: 6px; margin-bottom: 8px; } .ds-chip { padding: 4px 8px; border-radius: 8px; background: oklch(95% 0.01 240); color: oklch(55% 0.02 240); font: 400 0.75rem/1 'DM Sans', system-ui, sans-serif; } .ds-card-price { margin: 0; color: #367A8A; font: 600 0.875rem/1 'DM Sans', system-ui, sans-serif; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campos de formulario y filtros.",
+      "html": "<input class=\"ds-input\" placeholder=\"Buscar diseño…\" />",
+      "css": ".ds-input { height: 40px; padding: 0 12px; border: 1px solid oklch(90% 0.01 240); border-radius: 10px; background: oklch(99% 0.005 90); color: oklch(20% 0.01 240); font: 400 0.875rem/1 'DM Sans', system-ui, sans-serif; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: oklch(55% 0.02 240); } .ds-input:focus-visible { outline: none; border-color: oklch(80% 0.15 210); box-shadow: 0 0 0 3px oklch(80% 0.15 210 / 0.5); }"
+    },
+    {
+      "name": "Header Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Encabezado fijo con enlaces y botón de cotizar.",
+      "html": "<nav class=\"ds-nav\"><strong class=\"ds-nav-logo\">InspiraArte</strong><div class=\"ds-nav-links\"><a href=\"#\">Catálogo</a><a href=\"#\">Proceso</a><a href=\"#\">FAQ</a><button class=\"ds-nav-cta\">Cotizar</button></div></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 24px; border-bottom: 1px solid oklch(90% 0.01 240); background: oklch(99% 0.005 90); } .ds-nav-logo { font: 700 1.25rem 'Playfair Display', Georgia, serif; color: oklch(20% 0.01 240); } .ds-nav-links { display: flex; align-items: center; gap: 32px; } .ds-nav-links a { color: oklch(55% 0.02 240); font: 500 0.875rem 'DM Sans', system-ui, sans-serif; text-decoration: none; transition: color 150ms ease; } .ds-nav-links a:hover { color: #367A8A; } .ds-nav-cta { height: 36px; padding: 0 16px; border: none; border-radius: 10px; background: #367A8A; color: #fff; font: 500 0.875rem 'DM Sans', system-ui, sans-serif; cursor: pointer; } .ds-nav-cta:hover { background: #2F6E7D; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La vitrina de regalos",
+    "overview": "InspiraArte se ve como una tienda de regalos bien cuidada: fondo blanco cálido como madera clara, mucho aire alrededor de cada pieza y el producto real siempre al frente. La vitrina es festiva sin ser ruidosa: el color aparece para señalar dónde actuar o qué es especial, nunca para decorar. Los títulos en Playfair Display dan el tono de regalo y ocasión; el texto en DM Sans mantiene la información clara y práctica.\n\nLa densidad es generosa en las páginas públicas (secciones de 96px de alto, rejillas con 24px entre tarjetas) y más compacta en filtros y herramientas internas. Las superficies descansan planas y responden al tacto: una tarjeta de producto se levanta cuando el visitante muestra interés.",
+    "keyCharacteristics": [
+      "Blanco cálido de fondo, tarjetas blanco puro; el contraste lo da la pieza, no el marco.",
+      "Un solo color de acción (azul petróleo) que se profundiza como respuesta al hover.",
+      "Títulos serif con peso, texto sans tranquilo.",
+      "Etiquetas en forma de píldora para presentar cada sección.",
+      "Planas en reposo, elevadas al interactuar."
+    ],
+    "rules": [
+      {
+        "name": "The One Action Rule",
+        "body": "Todo lo que se puede pulsar para avanzar es Azul Petróleo; ningún otro color compite con él por la atención del clic.",
+        "section": "colors"
+      },
+      {
+        "name": "The Purple Means Personal Rule",
+        "body": "El Púrpura Creativo solo aparece donde el cliente puede personalizar algo. Si no se puede personalizar, no es púrpura.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token Debt Rule",
+        "body": "Los hex escritos en componentes (`#00B003`, `#585106`, `#3ACBFE`) son deuda: el trabajo nuevo usa los tokens y, al tocar un archivo, se migra.",
+        "section": "colors"
+      },
+      {
+        "name": "The Serif Is For Headings Rule",
+        "body": "Playfair Display solo en títulos (display, headline, title). Precios, botones, etiquetas y texto corrido siempre en DM Sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lift On Interest Rule",
+        "body": "Toda tarjeta clicable descansa plana con borde y se eleva (sombra teñida + 4px hacia arriba, 300ms) en hover y enfoque. Las superficies no clicables nunca se elevan.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do usar Azul Petróleo para toda acción principal y Petróleo Profundo para su hover.",
+      "Do presentar cada sección pública con una píldora de presentación sobre un título en Playfair Display.",
+      "Do mantener las tarjetas planas con borde fino y elevarlas solo en hover y enfoque (sombra teñida, −4px, 300ms).",
+      "Do reservar el Púrpura Creativo para señalar lo que el cliente puede personalizar.",
+      "Do usar los tokens (`bg-primary`, `text-muted-foreground`, `rounded-xl`…) en código nuevo en lugar de hex escritos a mano.",
+      "Do mostrar la foto real del producto como el elemento más grande de cada tarjeta."
+    ],
+    "donts": [
+      "Don't usar Playfair Display en botones, precios, etiquetas o texto corrido.",
+      "Don't introducir un segundo color de acción que compita con el Azul Petróleo.",
+      "Don't usar el Púrpura Creativo como decoración o para algo que no se pueda personalizar.",
+      "Don't elevar ni animar superficies que no son clicables.",
+      "Don't usar esquinas rectas en la interfaz pública.",
+      "Don't agregar hex nuevos escritos a mano en los componentes."
+    ]
+  }
+}

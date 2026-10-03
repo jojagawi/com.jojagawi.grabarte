@@ -281,7 +281,7 @@ export function RateSiteForm() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#4290A3] text-white hover:bg-[#1FA4A7] sm:w-auto"
+              className="w-full bg-primary text-white hover:bg-inspirarte-petroleum-deep sm:w-auto"
             >
               {isSubmitting ? "Enviando..." : "Enviar calificacion"}
             </Button>

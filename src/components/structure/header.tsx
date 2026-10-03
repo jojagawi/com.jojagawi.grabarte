@@ -66,7 +66,8 @@ export function Header() {
                 alt="Logo InspiraArte"
                 width={192}
                 height={64}
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 className="w-48 h-16"
               />
             </div>
@@ -78,7 +79,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
               >
                 {item.name}
               </Link>
@@ -88,7 +89,7 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-[#4290A3]"
+                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Administrar
                   </Button>
@@ -117,7 +118,7 @@ export function Header() {
             <GoogleVisualLogin />
             <Button
               asChild
-              className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
+              className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
               <Link href="/contacto">¡Cotiza ahora!</Link>
             </Button>
@@ -126,7 +127,7 @@ export function Header() {
           {/* Mobile Navigation */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="size-11">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Abrir menú</span>
               </Button>
@@ -138,7 +139,7 @@ export function Header() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-[#4290A3] transition-colors"
+                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -149,14 +150,14 @@ export function Header() {
                     <Link
                       href="/agregar"
                       onClick={() => setIsOpen(false)}
-                      className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                      className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                     >
                       Agregar producto
                     </Link>
                     <Link
                       href="/agregar/redaccion-seo"
                       onClick={() => setIsOpen(false)}
-                      className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                      className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                     >
                       Redaccion SEO IA
                     </Link>
@@ -165,14 +166,14 @@ export function Header() {
                       <Link
                         href="/catalogos/categorias"
                         onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                       >
                         Categorias
                       </Link>
                       <Link
                         href="/catalogos/calificaciones"
                         onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-[#4290A3] transition-colors"
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                       >
                         Calificaciones
                       </Link>
@@ -182,7 +183,7 @@ export function Header() {
                 <GoogleVisualLogin fullWidth onAction={() => setIsOpen(false)} />
                 <Button
                   asChild
-                  className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white mt-4"
+                  className="bg-primary hover:bg-inspirarte-petroleum-deep text-white mt-4"
                 >
                   <Link href="/contacto" onClick={() => setIsOpen(false)}>
                     ¡Cotiza ahora!

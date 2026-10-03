@@ -28,10 +28,10 @@ export const llmstxt = {
 const defaultImage = "/dam/dafault-image-product.webp";
 
 const cardGradients = [
-  "from-[#4290A3]/10 to-[#1FA4A7]/10",
-  "from-[#1FA4A7]/10 to-[#3ACBFE]/10",
-  "from-[#585106]/10 to-[#4290A3]/10",
-  "from-[#00B003]/10 to-[#1FA4A7]/10",
+  "from-primary/10 to-inspirarte-teal/10",
+  "from-inspirarte-teal/10 to-[#3ACBFE]/10",
+  "from-[#585106]/10 to-primary/10",
+  "from-[#00B003]/10 to-inspirarte-teal/10",
 ];
 
 export default async function Productos() {

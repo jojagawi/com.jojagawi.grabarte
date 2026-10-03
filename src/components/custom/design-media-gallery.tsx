@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { FilePreview } from "@/components/custom/file-preview";
@@ -90,6 +90,7 @@ export function DesignMediaGallery({
 
   const isOpen = activeIndex !== null;
   const currentImage = activeIndex !== null ? modalImages[activeIndex] : null;
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const openBySrc = (src: string) => {
     const index = indexBySrc.get(src);
@@ -127,6 +128,9 @@ export function DesignMediaGallery({
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // El foco entra al visor al abrir y regresa a la imagen que lo abrió al cerrar.
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -152,13 +156,14 @@ export function DesignMediaGallery({
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      previouslyFocused?.focus();
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, modalImages.length]);
 
   return (
     <>
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid items-start gap-8 lg:grid-cols-2">
         <Card className="overflow-hidden py-0">
           <CardContent className="p-0">
             {previewItem?.isVideo ? (
@@ -171,16 +176,16 @@ export function DesignMediaGallery({
                 <track
                   kind="captions"
                   srcLang="es"
-                  label="Subtitulos"
+                  label="Subtítulos"
                   src="data:text/vtt,WEBVTT%0A%0A"
                 />
-                Tu navegador no soporta la reproduccion de video.
+                Tu navegador no soporta la reproducción de video.
               </video>
             ) : (
               <button
                 type="button"
                 onClick={() => openBySrc(previewItem?.previewUrl || defaultImage)}
-                className="relative block w-full aspect-square bg-linear-to-br from-[#4290A3]/10 to-[#1FA4A7]/10 cursor-zoom-in"
+                className="relative block w-full aspect-square bg-linear-to-br from-primary/10 to-inspirarte-teal/10 cursor-zoom-in"
                 aria-label="Abrir imagen principal en pantalla completa"
               >
                 <Image
@@ -199,18 +204,16 @@ export function DesignMediaGallery({
         {children}
       </div>
 
-      <div className="space-y-4">
-        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
-          Imagenes del diseno
-        </h2>
+      {/* Sin imágenes adicionales no se muestra la sección: la vista previa ya está arriba. */}
+      {galleryItems.length > 0 && (
+        <section aria-labelledby="imagenes-del-diseno" className="space-y-6">
+          <h2
+            id="imagenes-del-diseno"
+            className="font-serif text-2xl sm:text-3xl font-bold text-foreground"
+          >
+            Imágenes del diseño
+          </h2>
 
-        {galleryItems.length === 0 ? (
-          <Card>
-            <CardContent className="text-sm text-muted-foreground">
-              Este producto aun no tiene imagenes adicionales disponibles.
-            </CardContent>
-          </Card>
-        ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {galleryItems.map((item, index) => (
               <Card
@@ -228,10 +231,10 @@ export function DesignMediaGallery({
                       <track
                         kind="captions"
                         srcLang="es"
-                        label="Subtitulos"
+                        label="Subtítulos"
                         src="data:text/vtt,WEBVTT%0A%0A"
                       />
-                      Tu navegador no soporta la reproduccion de video.
+                      Tu navegador no soporta la reproducción de video.
                     </video>
                   ) : item.isImage ? (
                     <button
@@ -255,7 +258,7 @@ export function DesignMediaGallery({
                       fileName={item.fileName}
                       mimeType={item.mimeType}
                       extension={item.extension}
-                      alt={`Archivo ${index + 1} del diseno ${designName}`}
+                      alt={`Archivo ${index + 1} del diseño ${designName}`}
                       className="w-full aspect-4/3 object-cover bg-muted"
                     />
                   )}
@@ -263,8 +266,8 @@ export function DesignMediaGallery({
               </Card>
             ))}
           </div>
-        )}
-      </div>
+        </section>
+      )}
 
       {isOpen && currentImage && (
         <div
@@ -273,10 +276,12 @@ export function DesignMediaGallery({
           aria-modal="true"
           aria-label="Visor de imagen a pantalla completa"
         >
+          {/* Clic en el fondo cierra; no se anuncia como control (el botón X ya lo es). */}
           <button
             type="button"
-            aria-label="Cerrar visor"
-            className="absolute inset-0 z-0"
+            aria-hidden="true"
+            tabIndex={-1}
+            className="absolute inset-0 z-0 cursor-default"
             onClick={closeModal}
           />
 
@@ -285,9 +290,10 @@ export function DesignMediaGallery({
               {currentImage.label} - {activeIndex + 1}/{modalImages.length}
             </p>
             <button
+              ref={closeButtonRef}
               type="button"
               onClick={closeModal}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors"
+              className="inline-flex size-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               aria-label="Cerrar visor"
             >
               <X className="h-5 w-5" />

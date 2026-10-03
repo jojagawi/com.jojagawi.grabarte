@@ -228,8 +228,8 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
   const dropzoneClassName = (zone: string) =>
     `border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer block ${
       activeDropzone === zone
-        ? "border-[#1FA4A7] bg-[#4290A3]/5"
-        : "border-border bg-white hover:border-[#4290A3]"
+        ? "border-inspirarte-teal bg-primary/5"
+        : "border-border bg-white hover:border-primary"
     }`
 
   const resetFormState = () => {
@@ -313,7 +313,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
             <Button
               onClick={handleSendMoreMaterials}
               variant="outline"
-              className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
+              className="border-primary text-primary hover:bg-primary/10"
             >
               Enviar mas materiales
             </Button>
@@ -330,7 +330,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
           Contacto
         </span>
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-          Comparte tu <span className="text-[#4290A3]">nuevo diseño</span>
+          Comparte tu <span className="text-primary">nuevo diseño</span>
         </h2>
         <p className="text-muted-foreground text-lg mb-8">
           Aqui puedes subir tus diseños para poder mostrarlos en el sitio web o
@@ -693,7 +693,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     Arrastra una imagen o{" "}
-                    <span className="text-[#4290A3] font-medium">
+                    <span className="text-primary font-medium">
                       haz clic para subir
                     </span>
                   </p>
@@ -728,7 +728,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     Arrastra imágenes o{" "}
-                    <span className="text-[#4290A3] font-medium">
+                    <span className="text-primary font-medium">
                       haz clic para subir
                     </span>
                   </p>
@@ -785,7 +785,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     Arrastra el archivo o{" "}
-                    <span className="text-[#4290A3] font-medium">
+                    <span className="text-primary font-medium">
                       haz clic para subir
                     </span>
                   </p>
@@ -822,7 +822,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
                   <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
                     Arrastra archivos fuente o{" "}
-                    <span className="text-[#4290A3] font-medium">
+                    <span className="text-primary font-medium">
                       haz clic para subir
                     </span>
                   </p>
@@ -871,7 +871,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+              className="w-full bg-primary hover:bg-inspirarte-petroleum-deep text-white h-12"
             >
               {isSubmitting ? (
                 <>
@@ -890,7 +890,7 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
               Al enviar, aceptas nuestro{" "}
               <a
                 href="/aviso-de-privacidad"
-                className="text-[#4290A3] hover:underline"
+                className="text-primary hover:underline"
               >
                 aviso de privacidad
               </a>

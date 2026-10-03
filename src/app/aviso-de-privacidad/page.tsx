@@ -29,7 +29,7 @@ export default function AvisoDePrivacidad() {
     <section className="py-24 bg-white">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="space-y-4">
-          <span className="inline-block px-4 py-1 rounded-full bg-[#4290A3]/10 text-[#4290A3] text-sm font-medium">
+          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
             Documento legal
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">

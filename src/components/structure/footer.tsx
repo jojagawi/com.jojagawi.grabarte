@@ -44,7 +44,7 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_INSTAGRAM}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
                   aria-label="Instagram"
                 >
                   <FaInstagram className="w-5 h-5" />
@@ -55,7 +55,7 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_FACEBOOK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
                   aria-label="Facebook"
                 >
                   <FaFacebookF className="w-5 h-5" />
@@ -66,7 +66,7 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_TIKTOK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4290A3] transition-colors"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
                   aria-label="Tiktok"
                 >
                   <SiTiktok className="w-5 h-5" />

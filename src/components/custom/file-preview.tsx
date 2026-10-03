@@ -114,8 +114,8 @@ export function FilePreview({
     return (
       <video controls className={className} preload="metadata">
         <source src={previewUrl} />
-        <track kind="captions" srcLang="es" label="Subtitulos" src="data:text/vtt,WEBVTT%0A%0A" />
-        Tu navegador no soporta la reproduccion de video.
+        <track kind="captions" srcLang="es" label="Subtítulos" src="data:text/vtt,WEBVTT%0A%0A" />
+        Tu navegador no soporta la reproducción de video.
       </video>
     );
   }

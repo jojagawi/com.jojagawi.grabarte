@@ -17,7 +17,7 @@ type TestimonialsProps = {
 
 export function Testimonials({ testimonials }: TestimonialsProps) {
   return (
-    <section className="py-24 bg-linear-to-br from-[#4290A3]/5 to-[#1FA4A7]/5">
+    <section className="py-24 bg-linear-to-br from-primary/5 to-inspirarte-teal/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -26,7 +26,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
             Lo que dicen{" "}
-            <span className="text-[#4290A3]">nuestros clientes</span>
+            <span className="text-primary">nuestros clientes</span>
           </h2>
           <p className="text-muted-foreground text-lg">
             Cada proyecto es una historia de éxito. Conoce las experiencias de
@@ -58,7 +58,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-[#4290A3] to-[#1FA4A7] flex items-center justify-center text-white font-semibold text-sm">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-inspirarte-teal flex items-center justify-center text-white font-semibold text-sm">
                   {testimonial.name
                     .split(" ")
                     .map((n) => n[0])
@@ -76,7 +76,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
 
               {/* Product Badge */}
               <div className="mt-4 pt-4 border-t border-border">
-                <span className="text-xs text-[#4290A3] font-medium">
+                <span className="text-xs text-primary font-medium">
                   {testimonial.product}
                 </span>
               </div>
@@ -85,7 +85,7 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         </div>
 
         <div className="mt-10 flex justify-center">
-          <Button asChild className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white">
+          <Button asChild className="bg-primary hover:bg-inspirarte-petroleum-deep text-white">
             <Link href="/agregar-calificacion">Agregar mi calificacion</Link>
           </Button>
         </div>
@@ -95,11 +95,11 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         //TODO Agregar cuando se tengan estadísticas
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 p-8 bg-white rounded-2xl border border-border">
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-[#4290A3]">500+</div>
+            <div className="text-3xl md:text-4xl font-bold text-primary">500+</div>
             <div className="text-sm text-muted-foreground mt-1">Clientes satisfechos</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-[#1FA4A7]">1000+</div>
+            <div className="text-3xl md:text-4xl font-bold text-inspirarte-teal">1000+</div>
             <div className="text-sm text-muted-foreground mt-1">Productos entregados</div>
           </div>
           <div className="text-center">

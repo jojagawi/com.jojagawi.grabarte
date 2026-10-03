@@ -240,7 +240,7 @@ export function GoogleVisualLogin({ fullWidth = false, onAction }: GoogleVisualL
       size="sm"
       onClick={handleLogin}
       disabled={!clientId || !isReady || isLoading}
-      className={`border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10 ${buttonClassName}`.trim()}
+      className={`border-primary text-primary hover:bg-primary/10 ${buttonClassName}`.trim()}
     >
       <LogIn className="h-4 w-4" />
       {isLoading ? "Conectando..." : "Iniciar con Google"}

@@ -147,7 +147,7 @@ export function SeoWriterProfilesManager({ initialProfiles }: SeoWriterProfilesM
           Administracion
         </span>
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-          Perfiles de <span className="text-[#4290A3]">redaccion SEO</span>
+          Perfiles de <span className="text-primary">redaccion SEO</span>
         </h1>
         <p className="text-muted-foreground text-lg mb-8">
           Visualiza y edita el perfil y modo de redaccion que usa la IA para productos.
@@ -243,7 +243,7 @@ export function SeoWriterProfilesManager({ initialProfiles }: SeoWriterProfilesM
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+            className="w-full bg-primary hover:bg-inspirarte-petroleum-deep text-white h-12"
           >
             {isSaving ? (
               <>

@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
-import { buildPageMetadata } from "@/lib/metadata";
+import { buildPageMetadata, toAbsoluteUrl } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
 import { buildProductCode } from "@/lib/utils";
@@ -12,9 +12,15 @@ import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
 import { ProductCodeVisibility } from "@/components/custom/product-code-visibility";
 import { FAQ } from "@/components/custom/faq";
+import { formatPrice, ProductQuoteActions } from "@/components/custom/product-quote-actions";
+import { ProductOrderPath } from "@/components/custom/product-order-path";
+import {
+  PersonalizableTag,
+  ProductFeatureLists,
+  splitFeatures,
+} from "@/components/custom/product-personalization";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 const defaultImage = "/dam/dafault-image-product.webp";
@@ -50,14 +56,9 @@ type RelatedProductItem = {
   description: string;
   image: string;
   categories: string[];
+  material: string | null;
+  price: string | null;
 };
-
-const relatedCardGradients = [
-  "from-[#00B003]/15 to-[#00B003]/5",
-  "from-[#4290A3]/15 to-[#4290A3]/5",
-  "from-[#1FA4A7]/15 to-[#1FA4A7]/5",
-  "from-[#585106]/15 to-[#585106]/5",
-];
 
 function parseIdSlug(value: string): { id: number } | null {
   const match = /^(\d+)-(.+)$/u.exec(value);
@@ -417,6 +418,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       author: true,
       showInHome: true,
       showInSite: true,
+      isCustomizable: true,
       minimumPrice: true,
       suggestedPrice: true,
       mayoreo: true,
@@ -510,43 +512,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     previewRelation?.fileExtension?.extension,
   );
 
-  const previewItem = previewItemRaw
-    ? {
-        ...previewItemRaw,
-        displayUrl: previewItemRaw.isImage
-          ? (await toResizedWebpDataUrlFromUrl(previewItemRaw.previewUrl, 600)) ?? previewItemRaw.previewUrl
-          : previewItemRaw.previewUrl,
-      }
-    : null;
+  // Las imágenes se sirven desde el CDN (cacheables y a resolución original) en lugar de
+  // incrustarlas en base64: el HTML pesa menos y la pieza se ve nítida.
+  const previewItem = previewItemRaw;
 
-  const galleryItems = (
-    await Promise.all(
-      fileRelations
-        .filter((file) => file.fileTypeId === 2)
-        .map(async (file) => {
-          const item = toFileItem(
-            file.id,
-            file.filePath,
-            file.fileExtension?.mimeType,
-            file.fileExtension?.extension,
-          );
-
-          if (!item) {
-            return null;
-          }
-
-          if (!item.isImage) {
-            return item;
-          }
-
-          const resizedBase64 = await toResizedWebpDataUrlFromUrl(item.previewUrl, 400);
-          return {
-            ...item,
-            displayUrl: resizedBase64 ?? item.previewUrl,
-          };
-        }),
+  const galleryItems = fileRelations
+    .filter((file) => file.fileTypeId === 2)
+    .map((file) =>
+      toFileItem(file.id, file.filePath, file.fileExtension?.mimeType, file.fileExtension?.extension),
     )
-  ).filter((item): item is FileItem => Boolean(item));
+    .filter((item): item is FileItem => Boolean(item));
 
   const instructionItems = fileRelations
     .filter((file) => file.fileTypeId === 3)
@@ -636,10 +611,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     availability: design.availability,
     dimensions: design.dimensions,
     keywords: splitKeywords(design.keywords),
+    // Solo el precio sugerido es público: coincide con el "Desde $X" de la página.
+    // Mínimo y mayoreo se quedan en el código de cotización para el equipo.
     prices: {
-      minimumPrice,
-      suggestedPrice,
-      mayoreoPrice,
+      suggestedPrice:
+        Number.isFinite(design.suggestedPrice) && (design.suggestedPrice as number) > 0
+          ? Math.trunc(design.suggestedPrice as number)
+          : undefined,
       currency: "MXN",
     },
   });
@@ -668,6 +646,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             name: true,
             description: true,
             seoDescription: true,
+            suggestedPrice: true,
+            material: { select: { name: true } },
             relDesignsCategories: {
               where: {
                 status: 1,
@@ -736,32 +716,43 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           "Diseño personalizado disponible bajo cotización.",
         image,
         categories: relatedCategories,
+        material: relatedDesign.material?.name?.trim() || null,
+        price: formatPrice(relatedDesign.suggestedPrice),
       };
     });
 
-  const originalProductCode =
-    minimumPrice !== null && suggestedPrice !== null
-      ? [
-          toFourDigits(design.id),
-          toFourDigits(minimumPrice),
-          toFourDigits(suggestedPrice),
-          toFourDigits(mayoreoPrice),
-        ].join("-")
-      : null;
   const productFaqs = parseProductFaqItems(design.faq);
+  const productReference = `IA-${toFourDigits(design.id)}`;
+  // Datos que deciden la compra (material, fechas y tamaño); solo los que tienen valor
+  // real: la BD guarda rellenos como "No especificado" que no informan nada.
+  const productFacts: Array<{ label: string; value: string }> = [
+    { label: "Material", value: design.material?.name },
+    { label: "Producción", value: design.productionTime },
+    { label: "Envío", value: design.shippingTime },
+    { label: "Medidas", value: design.dimensions },
+    { label: "Disponibilidad", value: design.availability },
+  ].flatMap(({ label, value }) => {
+    const text = value?.trim();
+    return text && !/^no especificad[oa]s?\.?$/iu.test(text) ? [{ label, value: text }] : [];
+  });
+  const productDescription = design.longDescription?.trim() || design.description?.trim();
+  const isCustomizable = design.isCustomizable === 1;
+  const hasFeatures = splitFeatures(design.features).length > 0;
+  const productUrl = toAbsoluteUrl(`/productos/${design.id}-${slugify(design.name)}`);
 
   return (
-    <section className="py-24 bg-muted/30">
+    <section className="pt-24 pb-32 md:pb-24 bg-muted/30">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(productJsonLd) }}
       />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-24">
+        {/* Navegación pegada al contenido (space-y de Tailwind 4 usa margin-bottom; este lo reemplaza). */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-8">
           <Button
             asChild
             variant="ghost"
-            className="text-[#4290A3] hover:text-[#1FA4A7]"
+            className="text-primary hover:text-inspirarte-petroleum-deep"
           >
             <Link href="/productos" className="inline-flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
@@ -772,7 +763,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           {canEditDesigns && (
             <Button
               asChild
-              className="bg-[#4290A3] hover:bg-[#1FA4A7] text-white"
+              className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
               <Link
                 href={`/productos/editar/${design.id}`}
@@ -792,14 +783,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           galleryItems={galleryItems}
         >
           <Card className="py-0">
-            <CardContent className="p-6 lg:p-8 space-y-6">
+            <CardContent className="p-6 lg:p-8 space-y-8">
               <div className="space-y-3">
-                <span className="inline-block px-4 py-1 rounded-full bg-[#4290A3]/10 text-[#4290A3] text-sm font-medium">
-                  Producto personalizado
-                </span>
-                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground text-balance">
+                <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground text-balance wrap-break-word">
                   {design.name}
                 </h1>
+                {isCustomizable && <PersonalizableTag />}
                 <p className="text-muted-foreground text-base leading-relaxed">
                   {design.seoDescription?.trim() ||
                     design.description?.trim() ||
@@ -807,66 +796,64 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">
-                    Material
-                  </p>
-                  <Badge variant="outline" className="text-sm">
-                    {design.material?.name?.trim() || "No especificado"}
-                  </Badge>
-                </div>
+              {productFacts.length > 0 && (
+                <dl className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4">
+                  {productFacts.map((fact) => (
+                    <div key={fact.label} className="min-w-0">
+                      <dt className="text-sm text-muted-foreground">{fact.label}</dt>
+                      <dd className="mt-0.5 font-medium text-foreground wrap-break-word">
+                        {fact.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
 
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">
-                    Codigo
-                  </p>
-                  <Badge variant="outline" className="text-sm">
-                    <ProductCodeVisibility
-                      encodedCode={productCode}
-                      originalCode={originalProductCode}
-                      fallback="No disponible"
-                    />
-                  </Badge>
-                </div>
+              <ProductQuoteActions
+                productName={design.name ?? ""}
+                productReference={productReference}
+                productUrl={productUrl}
+                suggestedPrice={
+                  Number.isFinite(design.suggestedPrice) ? (design.suggestedPrice as number) : null
+                }
+              />
 
-                <div>
-                  <p className="text-sm font-semibold text-foreground mb-2">
-                    Categoria
-                  </p>
+              <ProductOrderPath />
+
+              <div className="space-y-4 border-t border-border pt-6">
+                {categories.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {categories.length > 0 ? (
-                      categories.map((categoryName) => (
-                        <Badge
-                          key={categoryName}
-                          variant="secondary"
-                          className="text-sm"
-                        >
-                          {categoryName}
-                        </Badge>
-                      ))
-                    ) : (
-                      <Badge variant="outline" className="text-sm">
-                        Sin categoria
+                    {categories.map((categoryName) => (
+                      <Badge
+                        key={categoryName}
+                        variant="outline"
+                        className="border-transparent bg-muted text-sm font-normal text-muted-foreground"
+                      >
+                        {categoryName}
                       </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {(design.longDescription?.trim() || design.description?.trim()) && (
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-2">
-                      Descripción del producto
-                    </p>
-                    <Card className="border-border/60 bg-white">
-                      <CardContent className="p-4 sm:p-5">
-                        <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
-                          {design.longDescription?.trim() || design.description?.trim()}
-                        </div>
-                      </CardContent>
-                    </Card>
+                    ))}
                   </div>
                 )}
+
+                <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <dt className="text-muted-foreground">Referencia</dt>
+                    <dd className="font-medium text-foreground tabular-nums">{productReference}</dd>
+                  </div>
+                  {productCode && (
+                    <div className="flex items-center gap-2">
+                      <dt className="text-muted-foreground">Código de cotización</dt>
+                      <dd>
+                        <Badge variant="outline" className="text-sm tabular-nums">
+                          <ProductCodeVisibility
+                            encodedCode={productCode}
+                            fallback="No disponible"
+                          />
+                        </Badge>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
 
                 { isDevelopment && ( splitKeywords(design.keywords).length > 0 && (
                   <div>
@@ -891,7 +878,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <div className="flex flex-wrap gap-2">
                       <Badge
                         variant={
-                          design.showInHome === 1 ? "secondary" : "outline"
+                          design.showInHome === 1 ? "default" : "outline"
                         }
                         className="text-sm"
                       >
@@ -902,7 +889,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       </Badge>
                       <Badge
                         variant={
-                          design.showInSite === 1 ? "secondary" : "outline"
+                          design.showInSite === 1 ? "default" : "outline"
                         }
                         className="text-sm"
                       >
@@ -919,17 +906,40 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </Card>
         </DesignMediaGallery>
 
-        {productFaqs.length > 0 && <FAQ faqs={productFaqs} />}
+        {(productDescription || hasFeatures) && (
+          <section
+            aria-labelledby="sobre-el-diseno"
+            className="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16"
+          >
+            <div className="max-w-3xl">
+            <h2
+              id="sobre-el-diseno"
+              className="mb-4 font-serif text-2xl sm:text-3xl font-bold text-foreground"
+            >
+              Sobre este diseño
+            </h2>
+              {productDescription && (
+                <div className="whitespace-pre-line text-base leading-7 text-foreground/80 wrap-break-word">
+                  {productDescription}
+                </div>
+              )}
+            </div>
+
+            <ProductFeatureLists features={design.features} isCustomizable={isCustomizable} />
+          </section>
+        )}
+
+        {productFaqs.length > 0 && <FAQ faqs={productFaqs} embedded />}
 
         {relatedProducts.length > 0 && (
-          <section className="bg-muted/30 py-24">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <section aria-labelledby="relacionados">
+            <div>
               <div className="mb-12 text-center">
-                <span className="mb-4 inline-block rounded-full bg-[#4290A3]/10 px-4 py-1 text-sm font-medium text-[#4290A3]">
+                <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
                   Productos relacionados
                 </span>
-                <h2 className="font-serif text-3xl font-bold text-foreground sm:text-4xl text-balance">
-                  Más diseños que podrían <span className="text-[#4290A3]">interesarte</span>
+                <h2 id="relacionados" className="font-serif text-3xl font-bold text-foreground sm:text-4xl text-balance">
+                  Más diseños que podrían <span className="text-primary">interesarte</span>
                 </h2>
                 <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
                   Seleccionamos productos con categorías en común para que descubras opciones similares.
@@ -937,14 +947,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-                {relatedProducts.map((product, index) => (
+                {relatedProducts.map((product) => (
                   <Link
                     key={product.id}
                     href={`/productos/${product.id}-${slugify(product.name)}`}
-                    className="group block overflow-hidden rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#4290A3]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4290A3]/40"
+                    className="group block overflow-hidden rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <div
-                      className={`relative aspect-square overflow-hidden bg-linear-to-br ${relatedCardGradients[index % relatedCardGradients.length]}`}
+                      className="relative aspect-square overflow-hidden bg-muted"
                     >
                       <Image
                         src={product.image}
@@ -958,26 +968,36 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
                     <div className="space-y-4 p-6">
                       <div className="space-y-2">
-                        <h3 className="text-lg font-semibold text-foreground">{product.name}</h3>
+                        <h3 className="line-clamp-2 text-lg font-semibold text-foreground wrap-break-word">{product.name}</h3>
                         <p className="line-clamp-3 text-sm text-muted-foreground">{product.description}</p>
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {product.categories.length > 0 ? (
-                          product.categories.map((categoryName) => (
-                            <span
-                              key={`${product.id}-${categoryName}`}
-                              className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
-                            >
-                              {categoryName}
-                            </span>
-                          ))
+                      {/* Material primero y máximo dos categorías: la tarjeta compara, no cataloga. */}
+                      {(product.material || product.categories.length > 0) && (
+                        <div className="flex flex-wrap gap-2">
+                          {[product.material, ...product.categories.slice(0, 2)]
+                            .filter((chip): chip is string => Boolean(chip))
+                            .map((chip) => (
+                              <span
+                                key={`${product.id}-${chip}`}
+                                className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground"
+                              >
+                                {chip}
+                              </span>
+                            ))}
+                        </div>
+                      )}
+
+                      <p className="text-sm text-foreground">
+                        {product.price ? (
+                          <>
+                            <span className="text-muted-foreground">Desde </span>
+                            <span className="font-semibold tabular-nums">{product.price}</span>
+                          </>
                         ) : (
-                          <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
-                            Sin categoría
-                          </span>
+                          <span className="text-muted-foreground">Precio bajo cotización</span>
                         )}
-                      </div>
+                      </p>
                     </div>
                   </Link>
                 ))}
@@ -996,7 +1016,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               {instructionItems.length === 0 ? (
                 <Card>
                   <CardContent className="text-sm text-muted-foreground">
-                    Este producto aun no tiene archivos de instrucciones.
+                    Este producto aún no tiene archivos de instrucciones.
                   </CardContent>
                 </Card>
               ) : (
@@ -1017,7 +1037,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             <track
                               kind="captions"
                               srcLang="es"
-                              label="Subtitulos"
+                              label="Subtítulos"
                               src="data:text/vtt,WEBVTT%0A%0A"
                             />
                             Tu navegador no soporta la reproducción de video.
@@ -1036,7 +1056,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                           <a
                             href={item.downloadUrl}
                             download={item.downloadName}
-                            className="text-sm font-medium text-[#4290A3] hover:underline"
+                            className="text-sm font-medium text-primary hover:underline"
                           >
                             Descargar archivo ({getFileExtensionLabel(item.extension)})
                           </a>
@@ -1056,7 +1076,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               {sourceFileItems.length === 0 ? (
                 <Card>
                   <CardContent className="text-sm text-muted-foreground">
-                    Este producto aun no tiene archivos fuente.
+                    Este producto aún no tiene archivos fuente.
                   </CardContent>
                 </Card>
               ) : (
@@ -1077,7 +1097,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                             <track
                               kind="captions"
                               srcLang="es"
-                              label="Subtitulos"
+                              label="Subtítulos"
                               src="data:text/vtt,WEBVTT%0A%0A"
                             />
                             Tu navegador no soporta la reproducción de video.
@@ -1096,7 +1116,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                           <a
                             href={item.downloadUrl}
                             download={item.downloadName}
-                            className="text-sm font-medium text-[#4290A3] hover:underline"
+                            className="text-sm font-medium text-primary hover:underline"
                           >
                             Descargar archivo ({getFileExtensionLabel(item.extension)})
                           </a>

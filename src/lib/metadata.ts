@@ -32,7 +32,7 @@ function getSiteUrl(): string {
   return DEFAULT_SITE_URL;
 }
 
-function toAbsoluteUrl(value: string): string {
+export function toAbsoluteUrl(value: string): string {
   if (/^https?:\/\//u.test(value)) {
     return value;
   }

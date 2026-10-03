@@ -73,11 +73,11 @@ export function Products({ products, categories, materialOptions, enableDevFilte
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-[#4290A3]/10 text-[#4290A3] text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             Nuestros Productos
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-            Cada ocasión merece algo <span className="text-[#4290A3]">especial</span>
+            Cada ocasión merece algo <span className="text-primary">especial</span>
           </h1>
           <p className="text-muted-foreground text-lg">
             Desde un detalle único hasta pedidos corporativos, creamos lo que imaginas.
@@ -166,8 +166,8 @@ export function Products({ products, categories, materialOptions, enableDevFilte
             className={cn(
               "px-4 py-2 rounded-full text-sm font-medium transition-all",
               !selectedCategory
-                ? "bg-[#4290A3] text-white shadow-lg shadow-[#4290A3]/25"
-                : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
+                ? "bg-primary text-white shadow-lg shadow-primary/25"
+                : "bg-white text-foreground hover:bg-primary/10 border border-border"
             )}
           >
             <CategoryIcon iconKey="fa/FaHome" categoryName="Todos" className="w-4 h-4 inline mr-2" />
@@ -181,8 +181,8 @@ export function Products({ products, categories, materialOptions, enableDevFilte
                 className={cn(
                   "px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
                   selectedCategory === category.name
-                    ? "bg-[#4290A3] text-white shadow-lg shadow-[#4290A3]/25"
-                    : "bg-white text-foreground hover:bg-[#4290A3]/10 border border-border"
+                    ? "bg-primary text-white shadow-lg shadow-primary/25"
+                    : "bg-white text-foreground hover:bg-primary/10 border border-border"
                 )}
                 style={{
                   borderColor: selectedCategory === category.name ? "transparent" : categoryColors[index % categoryColors.length],
@@ -201,7 +201,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
             <Link
               key={product.id}
               href={`/productos/${product.id}-${slugify(product.name)}`}
-              className="group block bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-[#4290A3]/10 transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4290A3]/40"
+              className="group block bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               {/* Product Image */}
               <div className={cn(
@@ -258,11 +258,11 @@ export function Products({ products, categories, materialOptions, enableDevFilte
         {/* CTA */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">
-            ¿No encuentras lo que buscas? <span className="text-[#4290A3] font-medium">¡Lo creamos para ti!</span>
+            ¿No encuentras lo que buscas? <span className="text-primary font-medium">¡Lo creamos para ti!</span>
           </p>
           <a
             href="/contacto"
-            className="inline-flex items-center gap-2 text-[#4290A3] font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
           >
             Solicitar producto personalizado →
           </a>

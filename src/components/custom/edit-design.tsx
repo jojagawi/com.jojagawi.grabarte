@@ -411,8 +411,8 @@ export function EditDesign({
   const dropzoneClassName = (zone: string) =>
     `border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer block ${
       activeDropzone === zone
-        ? "border-[#1FA4A7] bg-[#4290A3]/5"
-        : "border-border bg-white hover:border-[#4290A3]"
+        ? "border-inspirarte-teal bg-primary/5"
+        : "border-border bg-white hover:border-primary"
     }`;
 
   const submitEdit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -698,7 +698,7 @@ export function EditDesign({
             <Button
               onClick={() => setIsSaved(false)}
               variant="outline"
-              className="border-[#4290A3] text-[#4290A3] hover:bg-[#4290A3]/10"
+              className="border-primary text-primary hover:bg-primary/10"
             >
               Seguir editando
             </Button>
@@ -775,7 +775,7 @@ export function EditDesign({
                       href={mediaUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm font-medium text-[#4290A3] hover:underline"
+                      className="text-sm font-medium text-primary hover:underline"
                     >
                       Abrir archivo en nueva pestana
                     </a>
@@ -796,7 +796,7 @@ export function EditDesign({
           Administracion
         </span>
         <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-          Editar <span className="text-[#4290A3]">producto</span>
+          Editar <span className="text-primary">producto</span>
         </h1>
         <p className="text-muted-foreground text-lg mb-8">
           Ajusta los datos de este producto, actualiza su visibilidad y
@@ -1056,7 +1056,7 @@ export function EditDesign({
                   type="button"
                   disabled={isGeneratingSeo || isSubmitting}
                   onClick={handleGenerateSeo}
-                  className="w-full sm:w-auto bg-[#1FA4A7] hover:bg-[#168c8f] text-white"
+                  className="w-full sm:w-auto bg-inspirarte-teal hover:bg-[#168c8f] text-white"
                 >
                   {isGeneratingSeo ? (
                     <>
@@ -1474,7 +1474,7 @@ export function EditDesign({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#4290A3] hover:bg-[#1FA4A7] text-white h-12"
+              className="w-full bg-primary hover:bg-inspirarte-petroleum-deep text-white h-12"
             >
               {isSubmitting ? (
                 <>

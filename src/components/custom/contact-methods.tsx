@@ -12,8 +12,8 @@ export function ContactMethods() {
     <div className="space-y-6 mb-8">
       {email && (
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#4290A3]/10 flex items-center justify-center shrink-0">
-            <FaEnvelope className="w-5 h-5 text-[#4290A3]" />
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <FaEnvelope className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h3 className="font-medium text-foreground">Email</h3>
@@ -45,8 +45,8 @@ export function ContactMethods() {
       )}
       {schedules && (
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#1FA4A7]/10 flex items-center justify-center shrink-0">
-            <FaClock className="w-5 h-5 text-[#1FA4A7]" />
+          <div className="w-12 h-12 rounded-xl bg-inspirarte-teal/10 flex items-center justify-center shrink-0">
+            <FaClock className="w-5 h-5 text-inspirarte-teal" />
           </div>
           <div>
             <h3 className="font-medium text-foreground">Horario</h3>
