@@ -44,6 +44,7 @@ export type SeasonLink = {
 
 interface HeaderProps {
   // Solo llega con datos en desarrollo (ver layout.tsx); en producción va vacío.
+  // Se muestra dentro de "Administrar", así que además requiere el permiso de administración.
   seasonLinks?: SeasonLink[];
 }
 
@@ -94,25 +95,6 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                 {item.name}
               </Link>
             ))}
-            {seasonLinks.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
-                  >
-                    Productos por temporada
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="max-h-[70vh] overflow-y-auto">
-                  {seasonLinks.map((season) => (
-                    <DropdownMenuItem key={season.slug} asChild>
-                      <Link href={`/temporada/${season.slug}`}>{season.name}</Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
             {canShowAdmin && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -146,6 +128,18 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
+                  {seasonLinks.length > 0 && (
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>Productos por temporada</DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="max-h-[70vh] overflow-y-auto">
+                        {seasonLinks.map((season) => (
+                          <DropdownMenuItem key={season.slug} asChild>
+                            <Link href={`/temporada/${season.slug}`}>{season.name}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -185,23 +179,6 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                       {item.name}
                     </Link>
                   ))}
-                  {seasonLinks.length > 0 && (
-                    <div className="flex flex-col gap-2">
-                      <span className="text-lg font-medium text-foreground">
-                        Productos por temporada
-                      </span>
-                      {seasonLinks.map((season) => (
-                        <Link
-                          key={season.slug}
-                          href={`/temporada/${season.slug}`}
-                          onClick={() => setIsOpen(false)}
-                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          {season.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
                   {canShowAdmin && (
                     <div className="flex flex-col gap-4">
                       <span className="text-lg font-medium text-foreground">
@@ -247,6 +224,23 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                           Temporadas
                         </Link>
                       </div>
+                      {seasonLinks.length > 0 && (
+                        <div className="flex flex-col gap-2 pl-4">
+                          <span className="text-base font-medium text-muted-foreground">
+                            Productos por temporada
+                          </span>
+                          {seasonLinks.map((season) => (
+                            <Link
+                              key={season.slug}
+                              href={`/temporada/${season.slug}`}
+                              onClick={() => setIsOpen(false)}
+                              className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              {season.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                   <GoogleVisualLogin

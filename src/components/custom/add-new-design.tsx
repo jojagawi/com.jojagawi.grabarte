@@ -283,14 +283,17 @@ export function AddNewDesign({ categories, materials }: AddNewDesignProps) {
       })
 
       if (!response.ok) {
-        throw new Error("No se pudo guardar el diseño")
+        // La API explica el motivo (imagen inválida, categoría faltante, etc.); mostrarlo tal cual.
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null
+        throw new Error(payload?.error || "No se pudo guardar el diseño")
       }
 
       sendGTMEvent({ event: "formContactSend", value: name })
       setIsSubmitted(true)
     } catch (error) {
       console.error(error)
-      alert("No se pudo guardar el diseño. Verifica los datos e inténtalo de nuevo.")
+      const reason = error instanceof Error ? error.message : "No se pudo guardar el diseño"
+      alert(`${reason}\n\nVerifica los datos e inténtalo de nuevo.`)
     } finally {
       setIsSubmitting(false)
     }

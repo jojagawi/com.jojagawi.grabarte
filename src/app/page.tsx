@@ -27,7 +27,7 @@ import {
 } from "@/lib/site-designs.server";
 import { buildQuoteSubject } from "@/components/custom/product-quote-actions";
 import { QuoteDoors } from "@/components/custom/quote-doors";
-import { TopRequested } from "@/components/custom/top-requested";
+import { DesignGridSection } from "@/components/custom/design-grid-section";
 import {
   SeasonShowcase,
   type SeasonShowcaseItem,
@@ -69,8 +69,8 @@ function shuffle<T>(items: T[]): T[] {
 
 const MAX_SHOWCASE_DESIGNS = 20;
 
-// "Los más pedidos": hasta 8 diseños publicados con pedidos ganados (Designs.requests).
-// Con menos de 4 la sección no se muestra: no es una lista de lo más pedido.
+// "Los más pedidos": diseños publicados con pedidos ganados (Designs.requests), hasta
+// MAX_TOP_REQUESTED. Con menos de MIN_TOP_REQUESTED la sección no se muestra.
 const MAX_TOP_REQUESTED = 4;
 const MIN_TOP_REQUESTED = 2;
 
@@ -82,6 +82,18 @@ function getTopRequested(designs: SiteDesign[]): SeasonShowcaseItem[] {
         b.requests - a.requests || byShowcasePriority(a, b) || a.id - b.id,
     )
     .slice(0, MAX_TOP_REQUESTED)
+    .map((design) =>
+      toShowcaseItem(design, getDesignCategoryNames(design)[0] ?? null),
+    );
+}
+
+// "Lo más nuevo": los últimos diseños publicados según la fecha en que se agregaron.
+const MAX_NEWEST = 4;
+
+function getNewest(designs: SiteDesign[]): SeasonShowcaseItem[] {
+  return [...designs]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || b.id - a.id)
+    .slice(0, MAX_NEWEST)
     .map((design) =>
       toShowcaseItem(design, getDesignCategoryNames(design)[0] ?? null),
     );
@@ -240,6 +252,7 @@ export default async function Home() {
   const showcaseItems = showcase.items.filter((item) => !heroIds.has(item.id));
 
   const topRequested = getTopRequested(siteDesigns);
+  const newest = getNewest(siteDesigns);
 
   const testimonials = await getRandomHomeTestimonialsFromAthena(4).catch(
     (error: unknown) => {
@@ -262,7 +275,22 @@ export default async function Home() {
         />
       )}
       {topRequested.length >= MIN_TOP_REQUESTED && (
-        <TopRequested items={topRequested} />
+        <DesignGridSection
+          id="mas-pedidos"
+          eyebrow="Los más pedidos"
+          title="Lo que más nos piden"
+          description="Los diseños con más pedidos de nuestros clientes. Ábrelos para ver qué puedes personalizar."
+          items={topRequested}
+        />
+      )}
+      {newest.length === MAX_NEWEST && (
+        <DesignGridSection
+          id="lo-mas-nuevo"
+          eyebrow="Lo más nuevo"
+          title="Recién agregados al catálogo"
+          description="Los últimos diseños que sumamos al catálogo."
+          items={newest}
+        />
       )}
       <QuoteDoors />
       <Process />

@@ -148,6 +148,124 @@ export async function POST(request: Request) {
     return created.id;
   };
 
+  // Validación y conversión ANTES de crear el diseño: si una imagen falla, no debe
+  // quedar un diseño guardado sin archivos (y otro más en cada reintento).
+  const hasPreviewFile = previewFile instanceof File && previewFile.size > 0;
+  const uploadedDesignImages = designImages.filter(
+    (value): value is File => value instanceof File && value.size > 0,
+  );
+  const hasAnyUpload =
+    hasPreviewFile ||
+    uploadedDesignImages.length > 0 ||
+    fileCounts.instructionFile > 0 ||
+    fileCounts.sourceFiles > 0;
+
+  if (hasAnyUpload && (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey)) {
+    return NextResponse.json(
+      { error: "Faltan variables de entorno para subir archivos a S3" },
+      { status: 500 },
+    );
+  }
+
+  let previewWebpBuffer: Buffer | null = null;
+  if (hasPreviewFile) {
+    if (!previewFile.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "El archivo de vista previa debe ser una imagen" },
+        { status: 400 },
+      );
+    }
+
+    try {
+      previewWebpBuffer = await sharp(Buffer.from(await previewFile.arrayBuffer()), { failOn: "none" })
+        .rotate()
+        .webp({ quality: 90 })
+        .toBuffer();
+    } catch (error) {
+      const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
+      return NextResponse.json(
+        {
+          error:
+            `No se pudo convertir la imagen de vista previa \"${previewFile.name}\" a WebP. ` +
+            "Verifica que el archivo sea una imagen válida y vuelve a exportarlo sin perfil de color especial." +
+            detail,
+        },
+        { status: 400 },
+      );
+    }
+  }
+
+  type PreparedDesignImage = {
+    buffer: Buffer;
+    extension: string;
+    mimeType: string;
+    isImage: boolean;
+  };
+  const preparedDesignImages: PreparedDesignImage[] = [];
+
+  for (const uploadedFile of uploadedDesignImages) {
+    const isImage = uploadedFile.type.startsWith("image/");
+    const isVideo = uploadedFile.type.startsWith("video/");
+
+    if (!isImage && !isVideo) {
+      return NextResponse.json(
+        { error: `Tipo de archivo no soportado en imágenes del diseño: ${uploadedFile.name}` },
+        { status: 400 },
+      );
+    }
+
+    if (isImage) {
+      try {
+        preparedDesignImages.push({
+          buffer: await sharp(Buffer.from(await uploadedFile.arrayBuffer()), { failOn: "none" })
+            .rotate()
+            .webp({ quality: 90 })
+            .toBuffer(),
+          extension: "webp",
+          mimeType: "image/webp",
+          isImage: true,
+        });
+      } catch (error) {
+        const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
+        return NextResponse.json(
+          {
+            error:
+              `No se pudo convertir la imagen \"${uploadedFile.name}\" a WebP. ` +
+              "Prueba con JPG/PNG estándar o vuelve a exportarla sin perfil de color especial." +
+              detail,
+          },
+          { status: 400 },
+        );
+      }
+      continue;
+    }
+
+    const videoExtension = extensionFromFileName(uploadedFile.name);
+    if (!videoExtension) {
+      return NextResponse.json(
+        { error: `No fue posible identificar la extensión del video: ${uploadedFile.name}` },
+        { status: 400 },
+      );
+    }
+
+    const knownVideoExtension = await prisma.catFileExtension.findFirst({
+      where: { extension: videoExtension, status: 1 },
+      select: { id: true },
+    });
+    if (!knownVideoExtension) {
+      return NextResponse.json(
+        { error: `No existe configuración para la extensión .${videoExtension}` },
+        { status: 400 },
+      );
+    }
+
+    preparedDesignImages.push({
+      buffer: Buffer.from(await uploadedFile.arrayBuffer()),
+      extension: videoExtension,
+      mimeType: uploadedFile.type || "video/mp4",
+      isImage: false,
+    });
+  }
 
   const design = await prisma.$transaction(async (tx) => {
     const created = await tx.designs.create({
@@ -194,41 +312,8 @@ export async function POST(request: Request) {
     return created;
   });
 
-  if (previewFile instanceof File && previewFile.size > 0) {
-    if (!previewFile.type.startsWith("image/")) {
-      return NextResponse.json(
-        { error: "El archivo de vista previa debe ser una imagen" },
-        { status: 400 },
-      );
-    }
-
-    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
-      return NextResponse.json(
-        { error: "Faltan variables de entorno para subir archivos a S3" },
-        { status: 500 },
-      );
-    }
-
-    const previewBuffer = Buffer.from(await previewFile.arrayBuffer());
-    let webpBuffer: Buffer;
-
-    try {
-      webpBuffer = await sharp(previewBuffer, { failOn: "none" })
-        .rotate()
-        .webp({ quality: 90 })
-        .toBuffer();
-    } catch (error) {
-      const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
-      return NextResponse.json(
-        {
-          error:
-            `No se pudo convertir la imagen de vista previa \"${previewFile.name}\" a WebP. ` +
-            "Verifica que el archivo sea una imagen válida y vuelve a exportarlo sin perfil de color especial." +
-            detail,
-        },
-        { status: 400 },
-      );
-    }
+  if (previewWebpBuffer && s3Bucket && s3Region && s3AccessKeyId && s3SecretAccessKey) {
+    const webpBuffer = previewWebpBuffer;
 
     const webpExtension = await prisma.catFileExtension.findFirst({
       where: { extension: "webp", status: 1 },
@@ -290,18 +375,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const uploadedDesignImages = designImages.filter(
-    (value): value is File => value instanceof File && value.size > 0,
-  );
-
-  if (uploadedDesignImages.length > 0) {
-    if (!s3Bucket || !s3Region || !s3AccessKeyId || !s3SecretAccessKey) {
-      return NextResponse.json(
-        { error: "Faltan variables de entorno para subir archivos a S3" },
-        { status: 500 },
-      );
-    }
-
+  if (preparedDesignImages.length > 0 && s3Bucket && s3Region && s3AccessKeyId && s3SecretAccessKey) {
     const webpExtension = await prisma.catFileExtension.findFirst({
       where: { extension: "webp", status: 1 },
       select: { id: true },
@@ -327,72 +401,25 @@ export async function POST(request: Request) {
       },
     });
 
-    for (const uploadedFile of uploadedDesignImages) {
-      const isImage = uploadedFile.type.startsWith("image/");
-      const isVideo = uploadedFile.type.startsWith("video/");
+    for (const prepared of preparedDesignImages) {
+      // Ya validado y convertido antes de crear el diseño.
+      const finalBuffer = prepared.buffer;
+      const finalExtension = prepared.extension;
+      const finalMimeType = prepared.mimeType;
+      let fileExtensionId = webpExtension.id;
 
-      if (!isImage && !isVideo) {
-        return NextResponse.json(
-          { error: `Tipo de archivo no soportado en imágenes del diseño: ${uploadedFile.name}` },
-          { status: 400 },
-        );
-      }
-
-      let finalBuffer: Buffer;
-      let finalExtension: string;
-      let finalMimeType: string;
-      let fileExtensionId: number;
-
-      if (isImage) {
-        const originalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-        try {
-          finalBuffer = await sharp(originalBuffer, { failOn: "none" })
-            .rotate()
-            .webp({ quality: 90 })
-            .toBuffer();
-        } catch (error) {
-          const detail = error instanceof Error ? ` Detalle: ${error.message}` : "";
-          return NextResponse.json(
-            {
-              error:
-                `No se pudo convertir la imagen \"${uploadedFile.name}\" a WebP. ` +
-                "Prueba con JPG/PNG estándar o vuelve a exportarla sin perfil de color especial." +
-                detail,
-            },
-            { status: 400 },
-          );
-        }
-        finalExtension = "webp";
-        finalMimeType = "image/webp";
-        fileExtensionId = webpExtension.id;
-      } else {
-        finalBuffer = Buffer.from(await uploadedFile.arrayBuffer());
-        finalExtension = extensionFromFileName(uploadedFile.name);
-        finalMimeType = uploadedFile.type || "video/mp4";
-
-        if (!finalExtension) {
-          return NextResponse.json(
-            { error: `No fue posible identificar la extensión del video: ${uploadedFile.name}` },
-            { status: 400 },
-          );
-        }
-
-        const sourceVideoExtension = await prisma.catFileExtension.findFirst({
-          where: {
-            extension: finalExtension,
-            status: 1,
-          },
+      if (!prepared.isImage) {
+        const videoExtension = await prisma.catFileExtension.findFirst({
+          where: { extension: finalExtension, status: 1 },
           select: { id: true },
         });
-
-        if (!sourceVideoExtension) {
+        if (!videoExtension) {
           return NextResponse.json(
             { error: `No existe configuración para la extensión .${finalExtension}` },
             { status: 400 },
           );
         }
-
-        fileExtensionId = sourceVideoExtension.id;
+        fileExtensionId = videoExtension.id;
       }
 
       const fileRecord = await prisma.files.create({
