@@ -20,8 +20,9 @@ jobs:
     name: Setup infrastructure in AWS
     runs-on: ubuntu-latest
     env:
-      RATES_LAMBDA_BUCKET: dam.inspiraarte.com
+      S3_LAMBDA_BUCKET: dam.inspiraarte.com
       RATES_LAMBDA_KEY_PREFIX: lambda/rates
+      CONTACT_LAMBDA_KEY_PREFIX: lambda/contact
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -59,12 +60,31 @@ jobs:
 
       - name: Upload rates lambda zip to S3
         run: |
-          if aws s3api head-object --bucket "${RATES_LAMBDA_BUCKET}" --key "${{ steps.rates-zip.outputs.artifact_key }}" > /dev/null 2>&1; then
+          if aws s3api head-object --bucket "${S3_LAMBDA_BUCKET}" --key "${{ steps.rates-zip.outputs.artifact_key }}" > /dev/null 2>&1; then
             echo "Artifact already exists. Skipping upload."
           else
             aws s3 cp \
               .aws/dist/rates-lambda.zip \
-              s3://${RATES_LAMBDA_BUCKET}/${{ steps.rates-zip.outputs.artifact_key }}
+              s3://${S3_LAMBDA_BUCKET}/${{ steps.rates-zip.outputs.artifact_key }}
+          fi
+
+      - name: Build contact lambda zip
+        id: contact-zip
+        run: |
+          mkdir -p .aws/dist
+          cd .aws/lambda/contact
+          zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
+          CONTENT_HASH=$(sha256sum lambda-contact-handler.mjs | awk '{print $1}' | cut -c1-16)
+          echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
+
+      - name: Upload contact lambda zip to S3
+        run: |
+          if aws s3api head-object --bucket "${S3_LAMBDA_BUCKET}" --key "${{ steps.contact-zip.outputs.artifact_key }}" > /dev/null 2>&1; then
+            echo "Artifact already exists. Skipping upload."
+          else
+            aws s3 cp \
+              .aws/dist/contact-lambda.zip \
+              s3://${S3_LAMBDA_BUCKET}/${{ steps.contact-zip.outputs.artifact_key }}
           fi
 
       - name: Deploy to AWS CloudFormation
