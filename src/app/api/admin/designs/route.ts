@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
 import { invalidateAssetCaches } from "@/lib/cacheInvalidation";
+import { buildPreviewObjectKey } from "@/lib/preview-paths";
 import sharp from "sharp";
 
 export const dynamic = "force-static";
@@ -340,7 +341,18 @@ export async function POST(request: Request) {
       },
     });
 
-    const objectKey = `preview/${design.id}.webp`;
+    // El nombre lleva el id del archivo: primero el registro, luego la subida.
+    const fileRecord = await prisma.files.create({
+      data: {
+        fileTypeId: previewType.id,
+        fileExtensionId: webpExtension.id,
+        filePath: "",
+        status: 1,
+      },
+      select: { id: true },
+    });
+
+    const objectKey = buildPreviewObjectKey(design.id, fileRecord.id, design.name, "webp");
 
     await s3Client.send(
       new PutObjectCommand({
@@ -354,14 +366,9 @@ export async function POST(request: Request) {
 
     uploadedObjectKeys.push(objectKey);
 
-    const fileRecord = await prisma.files.create({
-      data: {
-        fileTypeId: previewType.id,
-        fileExtensionId: webpExtension.id,
-        filePath: objectKey,
-        status: 1,
-      },
-      select: { id: true },
+    await prisma.files.update({
+      where: { id: fileRecord.id },
+      data: { filePath: objectKey },
     });
 
     registeredFileIds.push(fileRecord.id);

@@ -152,6 +152,8 @@ model Files {
   fileExtensionId Int?
   filePath        String?
   status          Int               @default(1)
+  // Si ya se generó la miniatura de este archivo (vistas previas). Columna thumb_generated.
+  thumbGenerated  Boolean           @default(false) @map("thumb_generated")
   createdAt       DateTime          @default(now())
   fileType        CatFileType?      @relation(fields: [fileTypeId], references: [id])
   fileExtension   CatFileExtension? @relation(fields: [fileExtensionId], references: [id])

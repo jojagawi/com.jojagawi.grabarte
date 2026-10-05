@@ -135,6 +135,7 @@ Table Files {
   fileExtensionId Int
   filePath String
   status Int [not null, default: 1]
+  thumbGenerated Boolean [not null, default: false]
   createdAt DateTime [default: `now()`, not null]
   fileType CatFileType
   fileExtension CatFileExtension

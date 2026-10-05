@@ -3,6 +3,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client
 import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
 import { invalidateAssetCaches } from "@/lib/cacheInvalidation";
+import { buildPreviewObjectKey } from "@/lib/preview-paths";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -261,11 +262,13 @@ async function removeFilesFromDesign(designId: number, fileIds: number[]) {
   };
 }
 
+// objectKey puede depender del id del archivo (vistas previas): en ese caso se crea
+// primero el registro y la ruta se guarda después de subir.
 async function createAndAttachFileRecord(input: {
   designId: number;
   fileTypeId: number;
   fileExtensionId: number;
-  objectKey: string;
+  objectKey: string | ((fileId: number) => string);
   body: Buffer;
   contentType: string;
 }) {
@@ -274,24 +277,31 @@ async function createAndAttachFileRecord(input: {
     throw new Error("Faltan variables de entorno para subir archivos a S3");
   }
 
+  const fileRecord = await prisma.files.create({
+    data: {
+      fileTypeId: input.fileTypeId,
+      fileExtensionId: input.fileExtensionId,
+      filePath: "",
+      status: 1,
+    },
+    select: { id: true },
+  });
+
+  const objectKey = typeof input.objectKey === "function" ? input.objectKey(fileRecord.id) : input.objectKey;
+
   await s3Context.client.send(
     new PutObjectCommand({
       Bucket: s3Context.bucket,
-      Key: input.objectKey,
+      Key: objectKey,
       Body: input.body,
       ContentType: input.contentType,
       CacheControl: "public, max-age=31536000, immutable",
     }),
   );
 
-  const fileRecord = await prisma.files.create({
-    data: {
-      fileTypeId: input.fileTypeId,
-      fileExtensionId: input.fileExtensionId,
-      filePath: input.objectKey,
-      status: 1,
-    },
-    select: { id: true },
+  await prisma.files.update({
+    where: { id: fileRecord.id },
+    data: { filePath: objectKey },
   });
 
   await prisma.relDesignsFiles.create({
@@ -635,17 +645,15 @@ export async function PUT(
     }
 
     const previewExtensionId = await ensureExtensionId(previewExtension, previewMimeType);
-    const previewObjectKey = `preview/${id}.${previewExtension}`;
-
     const previewFileId = await createAndAttachFileRecord({
       designId: id,
       fileTypeId: previewTypeId,
       fileExtensionId: previewExtensionId,
-      objectKey: previewObjectKey,
+      objectKey: (fileId) => buildPreviewObjectKey(id, fileId, name, previewExtension),
       body: previewUploadBuffer,
       contentType: previewMimeType,
     });
-    affectedObjectKeys.push(previewObjectKey);
+    affectedObjectKeys.push(buildPreviewObjectKey(id, previewFileId, name, previewExtension));
     affectedFileIds.push(previewFileId);
   }
 
