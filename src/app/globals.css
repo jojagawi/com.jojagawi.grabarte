@@ -74,6 +74,7 @@
   --inspirarte-petroleum: #367a8a; /* Color de acción oficial (ver DESIGN.md) */
   --inspirarte-petroleum-deep: #2f6e7d; /* Hover/active del color de acción */
   --inspirarte-green: #00b003; /* Acento de contacto y éxito */
+  --inspirarte-olive: #585106; /* Olivo Madera: píldoras de secciones informativas */
   --inspirarte-teal-primary: #1fa4a7; /* El color principal de la marca */
   --inspirarte-cyan-bright: #3acbfe; /* El cian vibrante */
   --inspirarte-purple-deep: #7e3af2; /* El púrpura creativo */
@@ -168,6 +169,7 @@
   --color-inspirarte-petroleum: var(--inspirarte-petroleum);
   --color-inspirarte-petroleum-deep: var(--inspirarte-petroleum-deep);
   --color-inspirarte-green: var(--inspirarte-green);
+  --color-inspirarte-olive: var(--inspirarte-olive);
   --color-inspirarte-teal: var(--inspirarte-teal-primary);
   --color-inspirarte-cyan: var(--inspirarte-cyan-bright);
   --color-inspirarte-purple: var(--inspirarte-purple-deep);
@@ -189,13 +191,3 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Marquee animation */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}

@@ -78,7 +78,7 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
-      className={`bg-background` + dmSans.className + " " + playfair.className}
+      className={`bg-background ${dmSans.className} ${playfair.className}`}
     >
       <body
         className={`${dmSans.variable} ${playfair.variable} font-sans antialiased`}

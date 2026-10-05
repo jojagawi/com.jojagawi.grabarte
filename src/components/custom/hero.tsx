@@ -2,21 +2,11 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight, Clock, Palette, Sparkles, Truck } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PersonalizableTag } from "@/components/custom/product-personalization"
 
 const defaultHeroImage = "/dam/dafault-image-product.webp"
-
-const fallbackMarqueeCategories = [
-  "Navidad",
-  "Dia del Padre",
-  "Dia de la Madre",
-  "Bodas",
-  "XV Anos",
-  "Cumpleanos",
-  "Graduaciones",
-  "Dia del Nino",
-]
 
 export type HeroDesignItem = {
   id: number
@@ -26,197 +16,234 @@ export type HeroDesignItem = {
   featuredImageDataUrl: string
   secondaryImageDataUrl: string
   categories: string[]
+  href: string
+  quoteHref: string
+  isCustomizable: boolean
+  productionTime: string | null
 }
+
+// Hechos que ya promete el sitio (FAQ, /contacto y ficha de producto); no agregar cifras nuevas aquí.
+const quoteFacts = [
+  { icon: Clock, text: "Respuesta en menos de 24 horas" },
+  { icon: Palette, text: "Propuesta de diseño antes de producir" },
+  { icon: Truck, text: "Envío a todo México" },
+]
 
 type HeroProps = {
   designs: HeroDesignItem[]
-  marqueeCategories: string[]
 }
 
-export function Hero({ designs, marqueeCategories }: HeroProps) {
+type HeroTileProps = {
+  design: HeroDesignItem
+  featured?: boolean
+  wide?: boolean
+}
+
+// DESIGN.md "The Lift On Interest Rule": plana con borde en reposo; se eleva en hover
+// y cuando el enlace del nombre recibe foco de teclado.
+const tileClassName =
+  "group relative h-full overflow-hidden rounded-2xl border border-border bg-card transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 has-[h3_a:focus-visible]:-translate-y-1 has-[h3_a:focus-visible]:shadow-xl has-[h3_a:focus-visible]:shadow-primary/10 has-[h3_a:focus-visible]:ring-3 has-[h3_a:focus-visible]:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+
+// Toda la tarjeta abre la ficha (enlace estirado sobre el nombre); el botón de
+// cotizar queda por encima para llevar el producto a /contacto.
+function HeroTile({ design, featured = false, wide = false }: HeroTileProps) {
+  const aspectClassName = featured ? "aspect-4/3" : wide ? "aspect-2/1" : "aspect-square"
+
+  return (
+    <article className={tileClassName}>
+      <div className={`relative isolate flex flex-col justify-end ${aspectClassName}`}>
+        <Image
+          src={(featured ? design.featuredImageDataUrl : design.secondaryImageDataUrl) || design.image}
+          alt={`Foto de ${design.name}`}
+          fill
+          loading={featured ? "eager" : "lazy"}
+          fetchPriority={featured ? "high" : "auto"}
+          sizes={featured || wide ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 1024px) 50vw, 25vw"}
+          className="-z-10 object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        />
+        <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/75 via-black/20 to-transparent" />
+
+        {design.isCustomizable && (
+          <PersonalizableTag className="absolute left-3 top-3" />
+        )}
+
+        {/* Sin position: el ::after del enlace se estira sobre toda la tarjeta. */}
+        <div className={featured ? "p-5" : "p-3"}>
+          <h3 className={`font-medium text-white ${featured ? "text-lg" : "text-sm line-clamp-2"}`}>
+            <Link
+              href={design.href}
+              className="after:absolute after:inset-0 focus-visible:outline-none"
+            >
+              {design.name}
+            </Link>
+          </h3>
+
+          {featured && (
+            <>
+              <p className="mt-1 max-w-prose text-sm text-white/85 line-clamp-2">
+                {design.description}
+              </p>
+              {design.productionTime && (
+                <p className="mt-1 text-sm text-white/85">
+                  Producción: {design.productionTime}
+                </p>
+              )}
+              <Button
+                asChild
+                size="sm"
+                className="relative z-10 mt-4 bg-primary text-primary-foreground hover:bg-inspirarte-petroleum-deep group/quote"
+              >
+                <Link href={design.quoteHref}>
+                  Cotizar este diseño
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="ml-1 size-4 transition-transform group-hover/quote:translate-x-1 motion-reduce:transition-none"
+                  />
+                </Link>
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </article>
+  )
+}
+
+// Sin diseños disponibles: imagen genérica, sin enlace ni promesas sobre un producto.
+function HeroFallbackTile() {
+  return (
+    <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-border bg-card">
+      <Image
+        src={defaultHeroImage}
+        alt="Pieza personalizada de InspiraArte"
+        fill
+        loading="eager"
+        sizes="(max-width: 1024px) 100vw, 50vw"
+        className="object-cover"
+      />
+    </div>
+  )
+}
+
+export function Hero({ designs }: HeroProps) {
   const featuredDesign = designs[0]
   const secondaryDesigns = designs.slice(1, 3)
-  const marqueeItems = marqueeCategories.length > 0 ? marqueeCategories : fallbackMarqueeCategories
-  const marqueeText = `✦ ${marqueeItems.join(" ✦ ")}`
 
   return (
     <section
       id="inicio"
-      className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+      className="relative flex min-h-svh flex-col pt-16 overflow-hidden"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-linear-to-br from-background via-background to-primary/5" />
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234290A3' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23367A8A' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">
-                Productos 100% personalizados
-              </span>
-            </div>
-
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
-              Transforma tus ideas en{" "}
-              <span className="text-primary">regalos únicos</span>
-            </h1>
-
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Creamos productos personalizados con impresión láser y corte en
-              MDF. Desde termos y llaveros hasta figuras decorativas para cada
-              ocasión especial.
-              <strong className="text-foreground"> ¡Hazlo tuyo!</strong>
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                asChild
-                size="lg"
-                className="bg-primary hover:bg-inspirarte-petroleum-deep text-white group"
-              >
-                <Link href="/contacto">
-                  Solicitar cotización
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary/10"
-              >
-                <Link href="/productos">Ver productos</Link>
-              </Button>
-            </div>
-
-            {/* Stats */}
-            {/*
-            //TODO Agregar cuando se tengan estadísticas
-            <div className="flex gap-8 pt-4">
-              <div>
-                <div className="text-3xl font-bold text-inspirarte-teal">500+</div>
-                <div className="text-sm text-muted-foreground">
-                  Clientes felices
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-[#00B003]">1000+</div>
-                <div className="text-sm text-muted-foreground">
-                  Productos creados
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary">5★</div>
-                <div className="text-sm text-muted-foreground">
-                  Calificación
-                </div>
-              </div>
-            </div>
-            */}
-          </div>
-
-          {/* Hero Image Grid */}
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Main Product Image */}
-              <div className="col-span-2 relative aspect-4/3 rounded-2xl overflow-hidden group shadow-lg">
-                <Image
-                  src={featuredDesign?.featuredImageDataUrl || featuredDesign?.image || defaultHeroImage}
-                  alt={`Diseno destacado: ${featuredDesign?.name || "Producto personalizado"}`}
-                  fill
-                  loading="lazy"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="inline-block bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-primary mb-2">
-                    Destacado
-                  </span>
-                  <p className="text-white font-medium">
-                    {featuredDesign?.name || "Producto personalizado"}
-                  </p>
-                  <p className="text-white/80 text-sm">
-                    {featuredDesign?.description || "Con grabado laser de precision"}
-                  </p>
-                </div>
+      <div className="relative flex flex-1 items-center">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Content */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  Productos 100% personalizados
+                </span>
               </div>
 
-              {/* Secondary Images */}
-              {Array.from({ length: 2 }).map((_, index) => {
-                const design = secondaryDesigns[index]
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
+                Transforma tus ideas en{" "}
+                <span className="text-primary">regalos únicos</span>
+              </h1>
 
-                return (
-                  <div key={design?.id ?? `fallback-secondary-${index}`} className="relative aspect-square rounded-xl overflow-hidden shadow-md group">
-                    <Image
-                      src={design?.secondaryImageDataUrl || design?.image || featuredDesign?.secondaryImageDataUrl || featuredDesign?.image || defaultHeroImage}
-                      alt={`Diseno: ${design?.name || "Producto personalizado"}`}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 1024px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-3 left-3">
-                      <p className="text-white text-sm font-medium">
-                        {design?.categories[0] || design?.name || "Personalizado"}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+                Creamos productos personalizados con impresión láser y corte en
+                MDF. Desde termos y llaveros hasta figuras decorativas para cada
+                ocasión especial.
+                <strong className="text-foreground"> ¡Hazlo tuyo!</strong>
+              </p>
 
-            {/* Floating Badge */}
-            <div className="absolute -bottom-4 -left-4 bg-white shadow-xl rounded-xl p-4 border border-border">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[#00B003]/10 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-[#00B003]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-primary hover:bg-inspirarte-petroleum-deep text-white group"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                    <Link href="/contacto">
+                      Cotizar mi idea
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary/10"
+                  >
+                    <Link href="/productos">Ver productos</Link>
+                  </Button>
+                </div>
+
+                <ul className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:flex-wrap sm:gap-x-6">
+                  {quoteFacts.map(({ icon: Icon, text }) => (
+                    <li key={text} className="flex items-center gap-2">
+                      <Icon aria-hidden="true" className="size-4 shrink-0" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Stats */}
+              {/*
+              //TODO Agregar cuando se tengan estadísticas
+              <div className="flex gap-8 pt-4">
+                <div>
+                  <div className="text-3xl font-bold text-inspirarte-teal">500+</div>
+                  <div className="text-sm text-muted-foreground">
+                    Clientes felices
+                  </div>
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground text-sm">
-                    Envío a todo México
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Entrega segura
-                  </p>
+                  <div className="text-3xl font-bold text-[#00B003]">1000+</div>
+                  <div className="text-sm text-muted-foreground">
+                    Productos creados
+                  </div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-primary">5★</div>
+                  <div className="text-sm text-muted-foreground">
+                    Calificación
+                  </div>
                 </div>
               </div>
+              */}
+            </div>
+
+            {/* Hero Image Grid */}
+            <div>
+              <h2 className="sr-only">Diseños del catálogo</h2>
+              <ul className="grid grid-cols-2 gap-4">
+                <li className="col-span-2">
+                  {featuredDesign ? <HeroTile design={featuredDesign} featured /> : <HeroFallbackTile />}
+                </li>
+
+                {secondaryDesigns.map((design) => (
+                  <li key={design.id} className={secondaryDesigns.length === 1 ? "col-span-2" : undefined}>
+                    <HeroTile design={design} wide={secondaryDesigns.length === 1} />
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scrolling Marquee */}
-      <div className="absolute bottom-0 left-0 right-0 bg-primary py-3 overflow-hidden">
-        <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite]">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <span key={i} className="mx-8 text-white/90 text-sm font-medium">
-              {marqueeText}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

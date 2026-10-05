@@ -108,7 +108,9 @@ export function Header() {
                         <Link href="/catalogos/categorias">Categorias</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/catalogos/calificaciones">Calificaciones</Link>
+                        <Link href="/catalogos/calificaciones">
+                          Calificaciones
+                        </Link>
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
@@ -120,78 +122,94 @@ export function Header() {
               asChild
               className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
-              <Link href="/contacto">¡Cotiza ahora!</Link>
+              <Link href="/contacto">Cotizar</Link>
             </Button>
           </div>
 
           {/* Mobile Navigation */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="size-11">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Abrir menú</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-75 sm:w-100">
-              <div className="flex flex-col gap-6 mt-8">
-                {visibleNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-lg font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                {canShowAdmin && (
-                  <div className="flex flex-col gap-4">
-                    <span className="text-lg font-medium text-foreground">Administrar</span>
-                    <Link
-                      href="/agregar"
-                      onClick={() => setIsOpen(false)}
-                      className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      Agregar producto
-                    </Link>
-                    <Link
-                      href="/agregar/redaccion-seo"
-                      onClick={() => setIsOpen(false)}
-                      className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      Redaccion SEO IA
-                    </Link>
-                    <div className="flex flex-col gap-2 pl-4">
-                      <span className="text-base font-medium text-muted-foreground">Catalogos</span>
-                      <Link
-                        href="/catalogos/categorias"
-                        onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Categorias
-                      </Link>
-                      <Link
-                        href="/catalogos/calificaciones"
-                        onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Calificaciones
-                      </Link>
-                    </div>
-                  </div>
-                )}
-                <GoogleVisualLogin fullWidth onAction={() => setIsOpen(false)} />
-                <Button
-                  asChild
-                  className="bg-primary hover:bg-inspirarte-petroleum-deep text-white mt-4"
-                >
-                  <Link href="/contacto" onClick={() => setIsOpen(false)}>
-                    ¡Cotiza ahora!
-                  </Link>
+          <div className="flex items-center gap-1 md:hidden">
+            <Button
+              asChild
+              size="sm"
+              className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
+            >
+              <Link href="/contacto">Cotizar</Link>
+            </Button>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button variant="ghost" size="icon" className="size-11">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Abrir menú</span>
                 </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-75 sm:w-100">
+                <div className="flex flex-col gap-6 mt-8">
+                  {visibleNavigation.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                  {canShowAdmin && (
+                    <div className="flex flex-col gap-4">
+                      <span className="text-lg font-medium text-foreground">
+                        Administrar
+                      </span>
+                      <Link
+                        href="/agregar"
+                        onClick={() => setIsOpen(false)}
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        Agregar producto
+                      </Link>
+                      <Link
+                        href="/agregar/redaccion-seo"
+                        onClick={() => setIsOpen(false)}
+                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        Redaccion SEO IA
+                      </Link>
+                      <div className="flex flex-col gap-2 pl-4">
+                        <span className="text-base font-medium text-muted-foreground">
+                          Catalogos
+                        </span>
+                        <Link
+                          href="/catalogos/categorias"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Categorias
+                        </Link>
+                        <Link
+                          href="/catalogos/calificaciones"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Calificaciones
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                  <GoogleVisualLogin
+                    fullWidth
+                    onAction={() => setIsOpen(false)}
+                  />
+                  <Button
+                    asChild
+                    className="bg-primary hover:bg-inspirarte-petroleum-deep text-white mt-4"
+                  >
+                    <Link href="/contacto" onClick={() => setIsOpen(false)}>
+                      Cotizar
+                    </Link>
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </nav>
     </header>

@@ -15,13 +15,37 @@ type TestimonialsProps = {
   testimonials: TestimonialItem[]
 }
 
+// Columnas según cuántos testimonios hay, para no dejar huecos en la rejilla.
+const gridColumnsByCount: Record<number, string> = {
+  1: "max-w-xl mx-auto",
+  2: "md:grid-cols-2 max-w-4xl mx-auto",
+  3: "md:grid-cols-2 lg:grid-cols-3",
+}
+
+// Iniciales del primer y último nombre: "María de los Ángeles" → "MÁ".
+function getInitials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length === 0) {
+    return "?"
+  }
+  const first = words[0][0]
+  const last = words.length > 1 ? words[words.length - 1][0] : ""
+  return `${first}${last}`.toUpperCase()
+}
+
 export function Testimonials({ testimonials }: TestimonialsProps) {
+  if (testimonials.length === 0) {
+    return null
+  }
+
+  const gridColumns = gridColumnsByCount[testimonials.length] ?? "md:grid-cols-2 lg:grid-cols-4"
+
   return (
     <section className="py-24 bg-linear-to-br from-primary/5 to-inspirarte-teal/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-[#585106]/10 text-[#585106] text-sm font-medium mb-4">
+          <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-olive/10 text-inspirarte-olive text-sm font-medium mb-4">
             Testimonios
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
@@ -35,18 +59,24 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={`grid gap-6 ${gridColumns}`}>
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-white rounded-2xl p-6 border border-border hover:shadow-lg transition-shadow"
+              className="bg-white rounded-2xl p-6 border border-border"
             >
               {/* Stars */}
               <div className="flex gap-1 mb-4">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                <span className="sr-only">Calificación: {testimonial.rating} de 5</span>
+                {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 fill-[#00B003] text-[#00B003]"
+                    aria-hidden="true"
+                    className={
+                      i < testimonial.rating
+                        ? "w-4 h-4 fill-inspirarte-green text-inspirarte-green"
+                        : "w-4 h-4 text-border"
+                    }
                   />
                 ))}
               </div>
@@ -58,11 +88,11 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
 
               {/* Author */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-inspirarte-teal flex items-center justify-center text-white font-semibold text-sm">
-                  {testimonial.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
+                <div
+                  aria-hidden="true"
+                  className="w-10 h-10 shrink-0 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm"
+                >
+                  {getInitials(testimonial.name)}
                 </div>
                 <div>
                   <p className="font-medium text-foreground text-sm">
@@ -85,8 +115,12 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
         </div>
 
         <div className="mt-10 flex justify-center">
-          <Button asChild className="bg-primary hover:bg-inspirarte-petroleum-deep text-white">
-            <Link href="/agregar-calificacion">Agregar mi calificacion</Link>
+          <Button
+            asChild
+            variant="outline"
+            className="border-primary text-primary hover:bg-primary/10"
+          >
+            <Link href="/agregar-calificacion">Agregar mi calificación</Link>
           </Button>
         </div>
 

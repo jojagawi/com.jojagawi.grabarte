@@ -18,7 +18,7 @@ const priceFormatter = new Intl.NumberFormat("es-MX", {
 
 // Nombre + referencia que viaja a /contacto y a WhatsApp; se recorta para no
 // generar URLs enormes con nombres muy largos.
-function buildQuoteSubject(productName: string, productReference: string): string {
+export function buildQuoteSubject(productName: string, productReference: string): string {
   const name = productName.trim() || "Producto personalizado";
   const shortName = name.length > 120 ? `${name.slice(0, 117)}…` : name;
   return `${productReference} · ${shortName}`;
