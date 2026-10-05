@@ -1,5 +1,5 @@
 .env.development
-
+docs/http-client.env.json
 
 .idea
 .lighthouseci/

@@ -1,10 +1,10 @@
 "use client"
 
-import { useSyncExternalStore } from "react"
-import { CheckCircle2 } from "lucide-react"
+import { useState, useSyncExternalStore } from "react"
+import { CheckCircle2, X } from "lucide-react"
+import { ContactForm } from "@/components/custom/contact-form"
 import { ContactMethods } from "@/components/custom/contact-methods"
 
-const JOTFORM_URL = "https://form.jotform.com/262094096661058"
 const MAX_PRODUCT_LENGTH = 200
 
 function subscribeToNothing(): () => void {
@@ -24,12 +24,10 @@ function readRequestedProduct(): string | null {
 
 export function Contact() {
   // En el HTML estático no hay query string (null); en el cliente se lee de la URL.
-  const requestedProduct = useSyncExternalStore(subscribeToNothing, readRequestedProduct, () => null)
-
-  // JotForm prellena el campo cuyo nombre único sea "producto".
-  const formSrc = requestedProduct
-    ? `${JOTFORM_URL}?producto=${encodeURIComponent(requestedProduct)}`
-    : JOTFORM_URL
+  const productFromUrl = useSyncExternalStore(subscribeToNothing, readRequestedProduct, () => null)
+  // El visitante puede quitar el producto si quiere cotizar otra cosa.
+  const [productDismissed, setProductDismissed] = useState(false)
+  const requestedProduct = productDismissed ? null : productFromUrl
 
   return (
     <section id="contacto" className="py-24 bg-white">
@@ -37,7 +35,7 @@ export function Contact() {
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Info */}
           <div>
-            <span className="inline-block px-4 py-1 rounded-full bg-[#00B003]/10 text-[#00B003] text-sm font-medium mb-4">
+            <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-green/10 text-inspirarte-green text-sm font-medium mb-4">
               Contacto
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
@@ -55,19 +53,19 @@ export function Contact() {
             {/* Trust badges */}
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
+                <CheckCircle2 aria-hidden="true" className="w-4 h-4 text-inspirarte-green" />
                 <span className="text-sm text-muted-foreground">
                   Respuesta en 24h
                 </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
+                <CheckCircle2 aria-hidden="true" className="w-4 h-4 text-inspirarte-green" />
                 <span className="text-sm text-muted-foreground">
                   Sin compromiso
                 </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-[#00B003]" />
+                <CheckCircle2 aria-hidden="true" className="w-4 h-4 text-inspirarte-green" />
                 <span className="text-sm text-muted-foreground">
                   Cotización gratis
                 </span>
@@ -78,22 +76,25 @@ export function Contact() {
           {/* Form */}
           <div className="bg-muted/50 rounded-2xl p-2 sm:p-4 lg:p-6">
             {requestedProduct && (
-              <p
+              <div
                 role="status"
-                className="mb-3 rounded-xl border border-border bg-white px-4 py-3 text-sm text-foreground wrap-break-word"
+                className="mb-3 flex items-start gap-3 rounded-xl border border-border bg-white px-4 py-3 text-sm text-foreground"
               >
-                <span className="text-muted-foreground">Estás cotizando: </span>
-                <span className="font-semibold">{requestedProduct}</span>
-              </p>
+                <p className="min-w-0 flex-1 wrap-break-word">
+                  <span className="text-muted-foreground">Estás cotizando: </span>
+                  <span className="font-semibold">{requestedProduct}</span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setProductDismissed(true)}
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <X aria-hidden="true" className="size-4" />
+                  <span className="sr-only">Quitar producto</span>
+                </button>
+              </div>
             )}
-            <iframe
-              key={formSrc}
-              title="Formulario de contacto"
-              src={formSrc}
-              className="w-full rounded-xl bg-white border-0"
-              style={{ minHeight: 780 }}
-              allow="geolocation; microphone; camera; fullscreen"
-            />
+            <ContactForm requestedProduct={requestedProduct} />
           </div>
         </div>
       </div>

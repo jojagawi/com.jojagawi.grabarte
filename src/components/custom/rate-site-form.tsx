@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { getRecaptchaToken, googleSiteKey } from "@/lib/recaptcha";
 
 type RateFormState = {
   name: string;
@@ -30,39 +31,7 @@ const initialFormState: RateFormState = {
 const ratesSubmitUrl =
   process.env.NEXT_PUBLIC_RATES_LAMBDA_URL?.trim() || "/api/rates";
 const ratesSubmitApiKey = process.env.NEXT_PUBLIC_RATES_LAMBDA_API_KEY?.trim() || "";
-const googleSiteKey = process.env.NEXT_PUBLIC_GOOGLE_SITE_KEY?.trim() || "";
 const recaptchaAction = "add_client_rate";
-
-declare global {
-  interface Window {
-    grecaptcha?: {
-      ready: (callback: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
-  }
-}
-
-function getRecaptchaToken(siteKey: string, action: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    if (!window.grecaptcha) {
-      reject(new Error("reCAPTCHA no esta disponible."));
-      return;
-    }
-
-    window.grecaptcha.ready(() => {
-      window.grecaptcha
-        ?.execute(siteKey, { action })
-        .then((token) => {
-          if (!token) {
-            reject(new Error("No se pudo generar token de reCAPTCHA."));
-            return;
-          }
-          resolve(token);
-        })
-        .catch(() => reject(new Error("No se pudo completar la validacion reCAPTCHA.")));
-    });
-  });
-}
 
 export function RateSiteForm() {
   const [formState, setFormState] = useState<RateFormState>(initialFormState);
