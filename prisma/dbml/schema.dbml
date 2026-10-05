@@ -109,6 +109,7 @@ Table Designs {
   suggestedPrice Float
   mayoreo Float
   minimumPrice Float
+  requests Int [not null, default: 0]
   material CatMaterials
   relDesignsCategories RelDesignsCategories [not null]
   relDesignsFiles RelDesignsFiles [not null]

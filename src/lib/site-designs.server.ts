@@ -33,6 +33,8 @@ export function getSiteDesigns() {
       isTested: true,
       showInHome: true,
       productionTime: true,
+      // Pedidos ganados en HubSpot (lo actualiza hubspot:sync-products).
+      requests: true,
       relDesignsCategories: {
         where: {
           status: 1,

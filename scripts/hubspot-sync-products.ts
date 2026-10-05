@@ -9,6 +9,8 @@ import sharp from "sharp";
 // - Imágenes: sube la vista previa al administrador de archivos de HubSpot (JPG)
 //   y guarda esa URL en hs_images; solo se sube si el producto aún no tiene una
 //   imagen alojada en HubSpot (o con --refresh-images).
+// - Pedidos: cuenta los negocios (deals) GANADOS distintos que tienen una línea
+//   de producto con cada producto y lo guarda en Designs.requests (SQLite).
 //
 // Uso:
 //   pnpm run hubspot:sync-products              sincroniza los diseños activos
@@ -54,6 +56,12 @@ type HubspotProduct = {
 };
 
 type RawValue = string | number | boolean | null | undefined;
+
+type HubspotLineItem = {
+  id: string;
+  properties: Record<string, string | null>;
+  associations?: { deals?: { results: Array<{ id: string }> } };
+};
 
 // Tolera valores "sucios" en el .env: comillas, espacios o un "Bearer " incluido.
 function normalizeToken(value: string | undefined): string {
@@ -126,7 +134,7 @@ async function hubspot<T>(path: string, init: RequestInit = {}): Promise<T> {
     }
     if (response.status === 403) {
       throw new Error(
-        `El token no tiene permisos para ${path} (403). En la app privada activa los scopes "e-commerce" (Productos) y "files" (imágenes). Respuesta: ${body.slice(0, 300)}`,
+        `El token no tiene permisos para ${path} (403). En la app privada activa los scopes "e-commerce" (Productos), "files" (imágenes) y "crm.objects.deals.read" (pedidos). Respuesta: ${body.slice(0, 300)}`,
       );
     }
     throw new Error(`HubSpot ${init.method ?? "GET"} ${path} → ${response.status}: ${body.slice(0, 500)}`);
@@ -143,6 +151,57 @@ function chunk<T>(items: T[], size: number): T[][] {
 
 function productReference(id: number): string {
   return `IA-${String(id).padStart(4, "0")}`;
+}
+
+// Pedidos por producto: las líneas de producto (line_items) apuntan al producto con
+// hs_product_id y están asociadas a su negocio. Se cuentan negocios distintos, así
+// que dos líneas del mismo producto en un negocio cuentan como un pedido.
+async function getDealIdsByProductId(): Promise<Map<string, Set<string>>> {
+  const dealsByProduct = new Map<string, Set<string>>();
+  let after: string | undefined;
+  do {
+    const query = new URLSearchParams({ limit: "100", properties: "hs_product_id", associations: "deals" });
+    if (after) {
+      query.set("after", after);
+    }
+    const page = await hubspot<{ results: HubspotLineItem[]; paging?: { next?: { after: string } } }>(
+      `/crm/v3/objects/line_items?${query.toString()}`,
+    );
+    for (const lineItem of page.results) {
+      const productId = lineItem.properties.hs_product_id?.trim();
+      const dealIds = lineItem.associations?.deals?.results.map((deal) => deal.id) ?? [];
+      if (!productId || dealIds.length === 0) {
+        continue;
+      }
+      const deals = dealsByProduct.get(productId) ?? new Set<string>();
+      dealIds.forEach((dealId) => deals.add(dealId));
+      dealsByProduct.set(productId, deals);
+    }
+    after = page.paging?.next?.after;
+  } while (after);
+  return dealsByProduct;
+}
+
+// Negocios ganados entre los dados. hs_is_closed_won lo calcula HubSpot a partir de la
+// etapa, así que cubre la etapa "ganado" de cualquier pipeline. Requiere crm.objects.deals.read.
+// Un negocio archivado o borrado no regresa en el batch y no cuenta.
+async function getWonDealIds(dealIds: string[]): Promise<Set<string>> {
+  const won = new Set<string>();
+  for (const batch of chunk(dealIds, BATCH_SIZE)) {
+    const result = await hubspot<{ results: Array<{ id: string; properties: Record<string, string | null> }> }>(
+      "/crm/v3/objects/deals/batch/read",
+      {
+        method: "POST",
+        body: JSON.stringify({ properties: ["hs_is_closed_won"], inputs: batch.map((id) => ({ id })) }),
+      },
+    );
+    for (const deal of result.results) {
+      if (deal.properties.hs_is_closed_won === "true") {
+        won.add(deal.id);
+      }
+    }
+  }
+  return won;
 }
 
 // Descarga la vista previa, la convierte a JPG (el preview de HubSpot no muestra
@@ -346,6 +405,20 @@ async function main() {
       after = page.paging?.next?.after;
     } while (after);
 
+    // Pedidos ganados de cada producto, para guardarlos en Designs.requests.
+    const dealIdsByProductId = await getDealIdsByProductId();
+    const allDealIds = [...new Set([...dealIdsByProductId.values()].flatMap((deals) => [...deals]))];
+    const wonDealIds = await getWonDealIds(allDealIds);
+    console.log(
+      `[hubspot:sync-products] Negocios con productos: ${allDealIds.length} | Ganados: ${wonDealIds.size}`,
+    );
+    const requestUpdates = designs.flatMap((design) => {
+      const productId = existingBySku.get(productReference(design.id))?.id;
+      const deals = productId ? dealIdsByProductId.get(productId) : undefined;
+      const requests = deals ? [...deals].filter((dealId) => wonDealIds.has(dealId)).length : 0;
+      return requests === design.requests ? [] : [{ id: design.id, sku: productReference(design.id), from: design.requests, to: requests }];
+    });
+
     // HubSpot devuelve todo como texto: "250" y "250.0" son el mismo número.
     const sameValue = (current: string | null | undefined, next: string) => {
       const left = (current ?? "").trim();
@@ -401,7 +474,7 @@ async function main() {
     }
 
     console.log(
-      `[hubspot:sync-products] Diseños: ${designs.length}${siteOnly ? " (solo publicados)" : ""} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length}`,
+      `[hubspot:sync-products] Diseños: ${designs.length}${siteOnly ? " (solo publicados)" : ""} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length} | Pedidos por actualizar: ${requestUpdates.length}`,
     );
     if (duplicatedSkus > 0) {
       console.warn(`[hubspot:sync-products] Aviso: ${duplicatedSkus} productos de HubSpot repiten SKU; se usa el primero.`);
@@ -421,7 +494,10 @@ async function main() {
       for (const item of updates.slice(0, 5)) {
         console.log("  ~ actualizar", item.id, JSON.stringify(item.properties).slice(0, 200) + imageNote(item.properties));
       }
-      console.log("[hubspot:sync-products] --dry-run: no se escribió nada en HubSpot.");
+      for (const update of requestUpdates.slice(0, 5)) {
+        console.log("  # pedidos", update.sku, `${update.from} → ${update.to}`);
+      }
+      console.log("[hubspot:sync-products] --dry-run: no se escribió nada en HubSpot ni en SQLite.");
       return;
     }
 
@@ -466,7 +542,13 @@ async function main() {
       updated += result.results.length;
     }
 
-    console.log(`[hubspot:sync-products] Listo. Creados: ${created} | Actualizados: ${updated} | Sin cambios: ${unchanged}`);
+    for (const update of requestUpdates) {
+      await prisma.designs.update({ where: { id: update.id }, data: { requests: update.to } });
+    }
+
+    console.log(
+      `[hubspot:sync-products] Listo. Creados: ${created} | Actualizados: ${updated} | Sin cambios: ${unchanged} | Pedidos actualizados en SQLite: ${requestUpdates.length}`,
+    );
   } finally {
     await prisma.$disconnect();
   }

@@ -27,6 +27,7 @@ import {
 } from "@/lib/site-designs.server";
 import { buildQuoteSubject } from "@/components/custom/product-quote-actions";
 import { QuoteDoors } from "@/components/custom/quote-doors";
+import { TopRequested } from "@/components/custom/top-requested";
 import {
   SeasonShowcase,
   type SeasonShowcaseItem,
@@ -67,6 +68,24 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 const MAX_SHOWCASE_DESIGNS = 20;
+
+// "Los más pedidos": hasta 8 diseños publicados con pedidos ganados (Designs.requests).
+// Con menos de 4 la sección no se muestra: no es una lista de lo más pedido.
+const MAX_TOP_REQUESTED = 4;
+const MIN_TOP_REQUESTED = 2;
+
+function getTopRequested(designs: SiteDesign[]): SeasonShowcaseItem[] {
+  return designs
+    .filter((design) => design.requests > 0)
+    .sort(
+      (a, b) =>
+        b.requests - a.requests || byShowcasePriority(a, b) || a.id - b.id,
+    )
+    .slice(0, MAX_TOP_REQUESTED)
+    .map((design) =>
+      toShowcaseItem(design, getDesignCategoryNames(design)[0] ?? null),
+    );
+}
 
 interface ShowcaseContent {
   isSeasonal: boolean;
@@ -220,6 +239,8 @@ export default async function Home() {
   const heroIds = new Set(heroDesigns.map((design) => design.id));
   const showcaseItems = showcase.items.filter((item) => !heroIds.has(item.id));
 
+  const topRequested = getTopRequested(siteDesigns);
+
   const testimonials = await getRandomHomeTestimonialsFromAthena(4).catch(
     (error: unknown) => {
       console.error("No se pudieron cargar los testimonios de Athena", error);
@@ -239,6 +260,9 @@ export default async function Home() {
           totalDesigns={siteDesigns.length}
           seasonLinks={showcase.seasonLinks}
         />
+      )}
+      {topRequested.length >= MIN_TOP_REQUESTED && (
+        <TopRequested items={topRequested} />
       )}
       <QuoteDoors />
       <Process />

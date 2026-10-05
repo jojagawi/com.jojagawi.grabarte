@@ -124,6 +124,8 @@ model Designs {
   suggestedPrice       Float?
   mayoreo              Float?
   minimumPrice         Float?
+  // Pedidos en HubSpot (negocios distintos con este producto); lo actualiza hubspot:sync-products.
+  requests             Int                    @default(0)
   material             CatMaterials?          @relation(fields: [materialId], references: [id])
   relDesignsCategories RelDesignsCategories[]
   relDesignsFiles      RelDesignsFiles[]
