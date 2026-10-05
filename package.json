@@ -10,6 +10,7 @@
     "build:sw": "tsc --project tsconfig.sw.json",
     "build:mcp": "tsx scripts/build-mcp-fallback.ts",
     "hubspot:properties": "tsx scripts/hubspot-product-properties.ts",
+    "hubspot:sync-products": "tsx scripts/hubspot-sync-products.ts",
     "images:optimize": "node scripts/optimize-images.mjs",
     "images:thumbnails": "tsx scripts/build-preview-thumbnails.ts",
     "prebuild": "run-s build:sw prisma:generate build:mcp images:optimize images:thumbnails",
