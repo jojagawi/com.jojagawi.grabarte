@@ -29,6 +29,22 @@ export interface AdminSeason {
   categoryIds: number[];
 }
 
+// Estados de CatSeasons.status.
+// - activa: entra a la vitrina de la portada y tiene página /temporada/[slug].
+// - solo página: tiene página, pero no aparece en la portada.
+// - inactiva: ni portada ni página.
+export const SEASON_STATUS = { inactive: 0, active: 1, pageOnly: 2 } as const;
+export const SEASON_PAGE_STATUSES: number[] = [SEASON_STATUS.active, SEASON_STATUS.pageOnly];
+export const SEASON_STATUS_LABELS: Record<number, string> = {
+  [SEASON_STATUS.active]: "Activa",
+  [SEASON_STATUS.pageOnly]: "Solo página",
+  [SEASON_STATUS.inactive]: "Inactiva",
+};
+
+export function isValidSeasonStatus(value: number): boolean {
+  return Object.values(SEASON_STATUS).some((status) => status === value);
+}
+
 export const DEFAULT_SEASON_LEAD_DAYS = 21;
 
 // Menos piezas que esto no sostienen un carrusel con el nombre de la ocasión.

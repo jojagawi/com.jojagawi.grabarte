@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
-import { type AdminSeason, isValidMonth } from "@/lib/seasons";
+import { type AdminSeason, isValidMonth, isValidSeasonStatus, SEASON_STATUS } from "@/lib/seasons";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -37,7 +37,8 @@ function parseInput(body: unknown): SeasonInput | string {
   const endMonth = Number(data.endMonth);
   const leadDays = Number(data.leadDays);
   const sortOrder = Number(data.sortOrder ?? 0);
-  const status = Number(data.status) === 0 ? 0 : 1;
+  const requestedStatus = Number(data.status);
+  const status = isValidSeasonStatus(requestedStatus) ? requestedStatus : SEASON_STATUS.active;
   const categoryIds = Array.isArray(data.categoryIds)
     ? [...new Set(data.categoryIds.map(Number).filter((id) => Number.isInteger(id) && id > 0))]
     : [];

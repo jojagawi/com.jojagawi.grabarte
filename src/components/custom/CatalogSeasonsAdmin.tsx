@@ -30,6 +30,8 @@ import {
   MIN_SEASON_DESIGNS,
   MONTH_NAMES,
   normalizeCategoryName,
+  SEASON_STATUS,
+  SEASON_STATUS_LABELS,
 } from "@/lib/seasons";
 
 type CategoryOption = {
@@ -47,7 +49,7 @@ type SeasonDraft = {
   endMonth: number;
   leadDays: string;
   sortOrder: string;
-  status: "1" | "0";
+  status: "1" | "2" | "0";
   categoryIds: number[];
 };
 
@@ -82,7 +84,7 @@ function draftFromSeason(season: AdminSeason): SeasonDraft {
     endMonth: season.endMonth,
     leadDays: String(season.leadDays),
     sortOrder: String(season.sortOrder),
-    status: season.status === 1 ? "1" : "0",
+    status: season.status === 2 ? "2" : season.status === 1 ? "1" : "0",
     categoryIds: season.categoryIds,
   };
 }
@@ -266,13 +268,19 @@ export function CatalogSeasonsAdmin({ todayIso, initialSeasons, categories }: Ca
             {seasons.map((season) => {
               const designCount = countDesigns(season.categoryIds);
               return (
-                <TableRow key={season.id} className={season.status === 1 ? undefined : "text-muted-foreground"}>
+                <TableRow key={season.id} className={season.status === SEASON_STATUS.inactive ? "text-muted-foreground" : undefined}>
                   <TableCell className="tabular-nums">{season.sortOrder}</TableCell>
                   <TableCell className="font-medium">{season.name}</TableCell>
                   <TableCell>{formatSeasonMonths(season.startMonth, season.endMonth)}</TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {formatShowsFrom(season.startMonth, season.leadDays, today.getFullYear())}
-                    <span className="text-muted-foreground"> ({season.leadDays} días antes)</span>
+                    {season.status === SEASON_STATUS.active ? (
+                      <>
+                        {formatShowsFrom(season.startMonth, season.leadDays, today.getFullYear())}
+                        <span className="text-muted-foreground"> ({season.leadDays} días antes)</span>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">No sale en la portada</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     {season.categoryIds.length === 0 ? (
@@ -298,7 +306,7 @@ export function CatalogSeasonsAdmin({ todayIso, initialSeasons, categories }: Ca
                       )}
                     </span>
                   </TableCell>
-                  <TableCell>{season.status === 1 ? "Activa" : "Inactiva"}</TableCell>
+                  <TableCell>{SEASON_STATUS_LABELS[season.status] ?? "Inactiva"}</TableCell>
                   <TableCell className="text-right">
                     <Button type="button" variant="outline" size="sm" onClick={() => openEdit(season)}>
                       <Pencil className="size-4" />
@@ -425,14 +433,20 @@ export function CatalogSeasonsAdmin({ todayIso, initialSeasons, categories }: Ca
                   <select
                     className={selectClassName}
                     value={draft.status}
-                    onChange={(event) => setDraft({ ...draft, status: event.target.value as "1" | "0" })}
+                    onChange={(event) => setDraft({ ...draft, status: event.target.value as "1" | "2" | "0" })}
                   >
                     <option value="1">Activa</option>
+                    <option value="2">Solo página</option>
                     <option value="0">Inactiva</option>
                   </select>
                 </label>
               </div>
-              {Number.isInteger(Number(draft.leadDays)) && Number(draft.leadDays) >= 0 && (
+              <p className="text-xs text-muted-foreground">
+                {draft.status === "1" && "Activa: aparece en la vitrina de la portada en sus fechas y tiene su página."}
+                {draft.status === "2" && "Solo página: se genera /temporada/… pero no aparece en la portada."}
+                {draft.status === "0" && "Inactiva: no aparece en la portada ni genera página."}
+              </p>
+              {draft.status === "1" && Number.isInteger(Number(draft.leadDays)) && Number(draft.leadDays) >= 0 && (
                 <p className="text-xs text-muted-foreground">
                   Se empieza a mostrar el{" "}
                   {formatShowsFrom(draft.startMonth, Number(draft.leadDays), today.getFullYear())}.

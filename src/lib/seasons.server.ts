@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import type { Season } from "@/lib/seasons";
+import { SEASON_PAGE_STATUSES, SEASON_STATUS, type Season } from "@/lib/seasons";
 
-// Temporadas activas con sus categorías activas, en el orden del panel.
-export async function getSeasons(): Promise<Season[]> {
+// Temporadas con sus categorías activas, en el orden del panel. Por defecto solo las
+// activas: son las que entran a la vitrina de la portada.
+export async function getSeasons(statuses: number[] = [SEASON_STATUS.active]): Promise<Season[]> {
   const seasons = await prisma.catSeasons.findMany({
-    where: { status: 1 },
+    where: { status: { in: statuses } },
     orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
     select: {
       id: true,
@@ -35,12 +36,12 @@ export interface SeasonPage extends Season {
   description: string | null;
 }
 
-// Temporadas activas que generan página /temporada/[slug].
+// Temporadas que generan página /temporada/[slug]: activas y "solo página".
 export async function getSeasonPages(): Promise<SeasonPage[]> {
   const [seasons, descriptions] = await Promise.all([
-    getSeasons(),
+    getSeasons(SEASON_PAGE_STATUSES),
     prisma.catSeasons.findMany({
-      where: { status: 1 },
+      where: { status: { in: SEASON_PAGE_STATUSES } },
       select: { id: true, description: true },
     }),
   ]);

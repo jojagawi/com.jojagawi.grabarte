@@ -38,6 +38,7 @@ model CatSeasons {
   endMonth             Int
   leadDays             Int                    @default(21)
   sortOrder            Int                    @default(0)
+  // 1 = activa (portada + página), 2 = solo página, 0 = inactiva.
   status               Int                    @default(1)
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
