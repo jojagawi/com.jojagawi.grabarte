@@ -32,6 +32,10 @@ const steps = [
   },
 ];
 
+// Mismo formato que las puertas de cotización: deja a la vista lo que el taller necesita.
+const whatsappMessage =
+  "Hola, quiero cotizar una pieza personalizada.\n\nQué necesito: \nCantidad: \nFecha en que lo necesito: ";
+
 export function Process() {
   return (
     <section id="proceso" className="py-24 bg-white">
@@ -84,11 +88,10 @@ export function Process() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <h3 className="font-serif text-2xl font-bold text-white mb-2">
-                ¿Un regalo único o 500 piezas para tu evento?
+                ¿Un regalo único o un pedido para tu evento?
               </h3>
               <p className="text-white">
-                Cuéntanos qué necesitas y para cuándo. Te respondemos en menos
-                de 24 horas.
+                Cuéntanos qué necesitas y para cuándo.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -103,10 +106,7 @@ export function Process() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 border border-white/70 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-                  href={
-                    "https://wa.me/" +
-                    process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")
-                  }
+                  href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")}?text=${encodeURIComponent(whatsappMessage)}`}
                 >
                   <svg
                     aria-hidden="true"

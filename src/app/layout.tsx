@@ -4,6 +4,7 @@ import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { buildMetadataBase } from "@/lib/metadata";
 import { buildOrganizationJsonLd, serializeJsonLd } from "@/lib/structured-data";
+import { BugsnagBoundary } from "@/components/structure/bugsnag-boundary";
 import { Footer } from "@/components/structure/footer";
 import { Header } from "@/components/structure/header";
 import { PwaAnalytics } from "@/components/structure/pwa-analytics";
@@ -104,7 +105,7 @@ gtag('consent', 'default', {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationJsonLd) }}
           />
-          {children}
+          <BugsnagBoundary>{children}</BugsnagBoundary>
           <Footer />
           <PwaAnalytics />
           <WebMcpInit />

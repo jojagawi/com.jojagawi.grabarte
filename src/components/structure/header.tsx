@@ -130,8 +130,7 @@ export function Header() {
           <div className="flex items-center gap-1 md:hidden">
             <Button
               asChild
-              size="sm"
-              className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
+              className="h-11 bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
               <Link href="/contacto">Cotizar</Link>
             </Button>

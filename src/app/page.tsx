@@ -5,7 +5,8 @@ import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
 import { getRandomHomeTestimonialsFromAthena } from "@/lib/rates-athena.server";
-import { toResizedWebpDataUrlFromUrl } from "@/lib/utils.server";
+import { selectDesignImagePath } from "@/lib/preview-thumbnails";
+import { getPreviewThumbnailUrl } from "@/lib/preview-thumbnails.server";
 import { slugify } from "@/lib/slug";
 import {
   FALLBACK_CATEGORY_ALIASES,
@@ -16,7 +17,10 @@ import {
 } from "@/lib/seasons";
 import { buildQuoteSubject } from "@/components/custom/product-quote-actions";
 import { QuoteDoors } from "@/components/custom/quote-doors";
-import { SeasonShowcase, type SeasonShowcaseItem } from "@/components/custom/season-showcase";
+import {
+  SeasonShowcase,
+  type SeasonShowcaseItem,
+} from "@/components/custom/season-showcase";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "InspiraArte | Regalos y productos personalizados en México",
@@ -111,24 +115,18 @@ function getSiteDesigns() {
   });
 }
 
-const mediaBaseUrl = (process.env.NEXT_PUBLIC_S3_PROTOCOL || "http")
+const mediaBaseUrl = (process.env.NEXT_PUBLIC_S3_PROTOCOL || "https")
   .concat("://")
   .concat(process.env.NEXT_PUBLIC_S3 || "/dam/files/");
 
 function getDesignImagePath(design: SiteDesign): string | null {
-  const previewFile = design.relDesignsFiles.find(
-    (relation) =>
-      relation.file?.fileType?.name === "Vista previa" &&
-      relation.file.filePath,
-  );
-  const firstFileWithPath = design.relDesignsFiles.find(
-    (relation) => relation.file?.filePath,
-  );
-  return previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+  return selectDesignImagePath(design.relDesignsFiles);
 }
 
 function getDesignImageUrl(imagePath: string | null): string {
-  return imagePath ? `${mediaBaseUrl}/${imagePath.replace(/^\/+/, "")}` : defaultImage;
+  return imagePath
+    ? `${mediaBaseUrl}/${imagePath.replace(/^\/+/, "")}`
+    : defaultImage;
 }
 
 function getDesignCategoryNames(design: SiteDesign): string[] {
@@ -147,7 +145,10 @@ function getDesignHref(design: SiteDesign): string {
 
 // Probados y elegidos para la portada primero; el resto conserva el orden de más reciente.
 function byShowcasePriority(a: SiteDesign, b: SiteDesign): number {
-  return (b.isTested ?? 0) - (a.isTested ?? 0) || (b.showInHome ?? 0) - (a.showInHome ?? 0);
+  return (
+    (b.isTested ?? 0) - (a.isTested ?? 0) ||
+    (b.showInHome ?? 0) - (a.showInHome ?? 0)
+  );
 }
 
 // Fisher-Yates. En el export estático el orden queda fijo hasta el siguiente build.
@@ -163,6 +164,7 @@ function shuffle<T>(items: T[]): T[] {
 const MAX_SHOWCASE_DESIGNS = 20;
 
 interface ShowcaseContent {
+  isSeasonal: boolean;
   eyebrow: string;
   title: string;
   description: string;
@@ -183,12 +185,19 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
     );
   }
 
-  function toItem(design: SiteDesign, occasion: string | null): SeasonShowcaseItem {
+  function toItem(
+    design: SiteDesign,
+    occasion: string | null,
+  ): SeasonShowcaseItem {
     return {
       id: design.id,
       name: design.name ?? "Diseño sin nombre",
       href: getDesignHref(design),
-      image: getDesignImageUrl(getDesignImagePath(design)),
+      image: getPreviewThumbnailUrl(
+        design.id,
+        480,
+        getDesignImageUrl(getDesignImagePath(design)),
+      ),
       occasion,
       isCustomizable: design.isCustomizable === 1,
       productionTime: toDisplayProductionTime(design.productionTime),
@@ -215,6 +224,7 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
 
   if (seasonItems.length >= MIN_SEASON_DESIGNS) {
     return {
+      isSeasonal: true,
       eyebrow: "De temporada",
       title: `Para ${joinSpanishList(shownSeasons)}`,
       description:
@@ -235,10 +245,13 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
       continue;
     }
     fallbackIds.add(design.id);
-    fallbackItems.push(toItem(design, getDesignCategoryNames(design)[0] ?? null));
+    fallbackItems.push(
+      toItem(design, getDesignCategoryNames(design)[0] ?? null),
+    );
   }
 
   return {
+    isSeasonal: false,
     eyebrow: "Nuestro catálogo",
     title: "Diseños del catálogo",
     description:
@@ -250,55 +263,62 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
 export default async function Home() {
   const siteDesigns = await getSiteDesigns();
 
-  const designs = shuffle(siteDesigns.filter((design) => design.showInHome === 1));
+  const showcase = buildShowcase(siteDesigns);
 
-  const heroDesigns = await Promise.all(
-    designs.slice(0, 3).map(async (design) => {
-      const selectedPath = getDesignImagePath(design);
-      const imageUrl = getDesignImageUrl(selectedPath);
+  // Con temporada activa, el hero abre con sus piezas (probadas primero) para que
+  // portada y vitrina hablen de la misma fecha; sin temporada, una selección de portada.
+  const designsById = new Map(siteDesigns.map((design) => [design.id, design]));
+  const designs = showcase.isSeasonal
+    ? showcase.items
+        .map((item) => designsById.get(item.id))
+        .filter((design): design is SiteDesign => Boolean(design))
+    : shuffle(siteDesigns.filter((design) => design.showInHome === 1));
 
-      const [featuredBase64, secondaryBase64] = selectedPath
-        ? await Promise.all([
-            toResizedWebpDataUrlFromUrl(imageUrl, 600),
-            toResizedWebpDataUrlFromUrl(imageUrl, 300),
-          ])
-        : [null, null];
+  // Miniaturas generadas en el prebuild (no base64: viajaban dos veces, en el HTML y en el payload RSC).
+  const heroDesigns = designs.slice(0, 3).map((design) => {
+    const imageUrl = getDesignImageUrl(getDesignImagePath(design));
+    const name = design.name ?? "Diseño sin nombre";
+    const productReference = `IA-${String(design.id).padStart(4, "0")}`;
 
-      const name = design.name ?? "Diseño sin nombre";
-      const productReference = `IA-${String(design.id).padStart(4, "0")}`;
-
-      return {
-        id: design.id,
-        name,
-        description:
-          design.description?.trim() ||
-          "Diseño personalizado disponible bajo cotización.",
-        href: getDesignHref(design),
-        quoteHref: `/contacto?producto=${encodeURIComponent(buildQuoteSubject(name, productReference))}`,
-        isCustomizable: design.isCustomizable === 1,
-        productionTime: toDisplayProductionTime(design.productionTime),
-        image: imageUrl,
-        featuredImageDataUrl: featuredBase64 ?? imageUrl,
-        secondaryImageDataUrl: secondaryBase64 ?? featuredBase64 ?? imageUrl,
-        categories: getDesignCategoryNames(design),
-      };
-    }),
-  );
+    return {
+      id: design.id,
+      name,
+      description:
+        design.description?.trim() ||
+        "Diseño personalizado disponible bajo cotización.",
+      href: getDesignHref(design),
+      quoteHref: `/contacto?producto=${encodeURIComponent(buildQuoteSubject(name, productReference))}`,
+      isCustomizable: design.isCustomizable === 1,
+      productionTime: toDisplayProductionTime(design.productionTime),
+      image: imageUrl,
+      featuredImage: getPreviewThumbnailUrl(design.id, 960, imageUrl),
+      secondaryImage: getPreviewThumbnailUrl(design.id, 480, imageUrl),
+      categories: getDesignCategoryNames(design),
+    };
+  });
 
   // Las piezas del hero no se repiten en la vitrina.
   const heroIds = new Set(heroDesigns.map((design) => design.id));
-  const showcase = buildShowcase(siteDesigns.filter((design) => !heroIds.has(design.id)));
+  const showcaseItems = showcase.items.filter((item) => !heroIds.has(item.id));
 
-  const testimonials = await getRandomHomeTestimonialsFromAthena(4).catch((error: unknown) => {
-    console.error("No se pudieron cargar los testimonios de Athena", error);
-    return [];
-  });
+  const testimonials = await getRandomHomeTestimonialsFromAthena(4).catch(
+    (error: unknown) => {
+      console.error("No se pudieron cargar los testimonios de Athena", error);
+      return [];
+    },
+  );
 
   return (
     <>
       <Hero designs={heroDesigns} />
-      {showcase.items.length > 0 && (
-        <SeasonShowcase {...showcase} totalDesigns={siteDesigns.length} />
+      {showcaseItems.length > 0 && (
+        <SeasonShowcase
+          eyebrow={showcase.eyebrow}
+          title={showcase.title}
+          description={showcase.description}
+          items={showcaseItems}
+          totalDesigns={siteDesigns.length}
+        />
       )}
       <QuoteDoors />
       <Process />

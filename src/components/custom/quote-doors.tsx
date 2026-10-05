@@ -22,7 +22,7 @@ const doors: QuoteDoor[] = [
     id: "evento",
     title: "Recuerdos para tu evento",
     description:
-      "Bodas, XV años, primeras comuniones y graduaciones. Desde unas cuantas piezas hasta 500 para tus invitados, con la fecha de tu evento como límite.",
+      "Bodas, XV años, primeras comuniones y graduaciones. Desde unas cuantas piezas hasta pedidos grandes para todos tus invitados, con la fecha de tu evento como límite.",
     checklistTitle: "Para cotizar, cuéntanos:",
     checklist: [
       "Tipo de evento y fecha",
@@ -73,7 +73,6 @@ export function QuoteDoors() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Diseñamos la pieza contigo y te enviamos una propuesta antes de producir.
-            Te respondemos en menos de 24 horas.
           </p>
         </div>
 
@@ -120,7 +119,7 @@ export function QuoteDoors() {
                       href={whatsappHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                      className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary underline-offset-4 hover:underline"
                     >
                       <FaWhatsapp aria-hidden="true" className="size-4" />
                       Preguntar por WhatsApp

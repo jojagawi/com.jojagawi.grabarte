@@ -1,8 +1,6 @@
-"use client"
-
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, Clock, Palette, Sparkles, Truck } from "lucide-react"
+import { ArrowRight, Clock, MapPin, Palette, Truck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PersonalizableTag } from "@/components/custom/product-personalization"
 
@@ -13,8 +11,8 @@ export type HeroDesignItem = {
   name: string
   description: string
   image: string
-  featuredImageDataUrl: string
-  secondaryImageDataUrl: string
+  featuredImage: string
+  secondaryImage: string
   categories: string[]
   href: string
   quoteHref: string
@@ -53,7 +51,7 @@ function HeroTile({ design, featured = false, wide = false }: HeroTileProps) {
     <article className={tileClassName}>
       <div className={`relative isolate flex flex-col justify-end ${aspectClassName}`}>
         <Image
-          src={(featured ? design.featuredImageDataUrl : design.secondaryImageDataUrl) || design.image}
+          src={featured ? design.featuredImage : design.secondaryImage}
           alt={`Foto de ${design.name}`}
           fill
           loading={featured ? "eager" : "lazy"}
@@ -90,8 +88,7 @@ function HeroTile({ design, featured = false, wide = false }: HeroTileProps) {
               )}
               <Button
                 asChild
-                size="sm"
-                className="relative z-10 mt-4 bg-primary text-primary-foreground hover:bg-inspirarte-petroleum-deep group/quote"
+                className="relative z-10 mt-4 h-11 sm:h-9 bg-primary text-primary-foreground hover:bg-inspirarte-petroleum-deep group/quote"
               >
                 <Link href={design.quoteHref}>
                   Cotizar este diseño
@@ -149,9 +146,9 @@ export function Hero({ designs }: HeroProps) {
             {/* Content */}
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
-                <Sparkles className="w-4 h-4" />
+                <MapPin aria-hidden="true" className="w-4 h-4" />
                 <span className="text-sm font-medium">
-                  Productos 100% personalizados
+                  Desde Ciudad de México
                 </span>
               </div>
 
@@ -161,10 +158,9 @@ export function Hero({ designs }: HeroProps) {
               </h1>
 
               <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Creamos productos personalizados con impresión láser y corte en
-                MDF. Desde termos y llaveros hasta figuras decorativas para cada
-                ocasión especial.
-                <strong className="text-foreground"> ¡Hazlo tuyo!</strong>
+                Diseñamos y producimos piezas personalizadas en MDF, acrílico,
+                metal y más, con corte y grabado láser e impresión 3D. Para
+                regalar, para tu evento o con el logo de tu empresa.
               </p>
 
               <div className="space-y-4">
@@ -176,7 +172,7 @@ export function Hero({ designs }: HeroProps) {
                   >
                     <Link href="/contacto">
                       Cotizar mi idea
-                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight aria-hidden="true" className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
                     </Link>
                   </Button>
                   <Button
@@ -227,7 +223,7 @@ export function Hero({ designs }: HeroProps) {
 
             {/* Hero Image Grid */}
             <div>
-              <h2 className="sr-only">Diseños del catálogo</h2>
+              <h2 className="sr-only">Piezas destacadas</h2>
               <ul className="grid grid-cols-2 gap-4">
                 <li className="col-span-2">
                   {featuredDesign ? <HeroTile design={featuredDesign} featured /> : <HeroFallbackTile />}

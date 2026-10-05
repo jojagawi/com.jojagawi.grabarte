@@ -7,11 +7,22 @@ import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { FaEnvelope } from "@react-icons/all-files/fa/FaEnvelope";
 import { SiTiktok } from "@react-icons/all-files/si/SiTiktok";
 
+const footerLinkClassName =
+  "rounded-sm underline-offset-4 transition-colors hover:text-inspirarte-petroleum-deep hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+
+const socialLinkClassName =
+  "w-11 h-11 rounded-full border border-border bg-white/70 text-foreground flex items-center justify-center transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+
+const contactIconClassName = "w-5 h-5 shrink-0 text-inspirarte-petroleum-deep"
+
 export function Footer() {
 
   return (
+    // Madera clara de fondo (≈ rgb 246 229 213). Petróleo Profundo es el único tono de
+    // acción que llega a AA sobre ella (4.69:1); el petróleo base (3.95:1) y el cian no.
     <footer
       id="legales"
+      className="bg-background text-foreground"
       style={{
         backgroundImage: "url('/dam/background.webp')",
         backgroundSize: "cover",
@@ -44,10 +55,10 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_INSTAGRAM}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  className={socialLinkClassName}
                   aria-label="Instagram"
                 >
-                  <FaInstagram className="w-5 h-5" />
+                  <FaInstagram aria-hidden="true" className="w-5 h-5" />
                 </Link>
               )}
               {process.env.NEXT_PUBLIC_FACEBOOK && (
@@ -55,10 +66,10 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_FACEBOOK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  className={socialLinkClassName}
                   aria-label="Facebook"
                 >
-                  <FaFacebookF className="w-5 h-5" />
+                  <FaFacebookF aria-hidden="true" className="w-5 h-5" />
                 </Link>
               )}
               {process.env.NEXT_PUBLIC_TIKTOK && (
@@ -66,10 +77,10 @@ export function Footer() {
                   href={process.env.NEXT_PUBLIC_TIKTOK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  className={socialLinkClassName}
                   aria-label="Tiktok"
                 >
-                  <SiTiktok className="w-5 h-5" />
+                  <SiTiktok aria-hidden="true" className="w-5 h-5" />
                 </Link>
               )}
             </div>
@@ -89,7 +100,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="hover:text-[#3ACBFE] transition-colors text-sm"
+                    className={`${footerLinkClassName} text-sm`}
                   >
                     {link.name}
                   </Link>
@@ -122,11 +133,11 @@ export function Footer() {
             <ul className="space-y-4">
               {process.env.NEXT_PUBLIC_EMAIL && (
                 <li className="flex items-center gap-3">
-                  <FaEnvelope className="w-5 h-5 text-[#3ACBFE]" />
+                  <FaEnvelope aria-hidden="true" className={contactIconClassName} />
                   <span className="text-sm">
                     <Link
                       rel="noopener noreferrer"
-                      className="hover:text-[#3ACBFE]"
+                      className={footerLinkClassName}
                       href={"mailto:" + process.env.NEXT_PUBLIC_EMAIL}
                     >
                       {process.env.NEXT_PUBLIC_EMAIL}
@@ -136,11 +147,11 @@ export function Footer() {
               )}
               {process.env.NEXT_PUBLIC_WHATSAPP && (
                 <li className="flex items-center gap-3">
-                  <FaWhatsapp className="w-5 h-5 text-[#3ACBFE]" />
+                  <FaWhatsapp aria-hidden="true" className={contactIconClassName} />
                   <span className="text-sm">
                     <Link
                       rel="noopener noreferrer"
-                      className="hover:text-[#3ACBFE]"
+                      className={footerLinkClassName}
                       href={
                         "https://wa.me/" +
                         process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "")
@@ -153,7 +164,7 @@ export function Footer() {
               )}
               {process.env.NEXT_PUBLIC_DIR && (
                 <li className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-[#3ACBFE] shrink-0" />
+                  <MapPin aria-hidden="true" className={contactIconClassName} />
                   <span className="text-sm">{process.env.NEXT_PUBLIC_DIR}</span>
                 </li>
               )}
@@ -162,7 +173,7 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t  mt-12 pt-8">
+        <div className="border-t border-border mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm">
               © {new Date().getFullYear()} InspiraArte. Todos los derechos
@@ -171,13 +182,13 @@ export function Footer() {
             <div className="flex gap-6">
               <Link
                 href="/aviso-de-privacidad"
-                className="hover:text-[#3ACBFE] text-sm transition-colors"
+                className={`${footerLinkClassName} text-sm`}
               >
                 Aviso de Privacidad
               </Link>
               <Link
                 href="/terminos-y-condiciones"
-                className="hover:text-[#3ACBFE] text-sm transition-colors"
+                className={`${footerLinkClassName} text-sm`}
               >
                 Términos y Condiciones
               </Link>
