@@ -1,3 +1,5 @@
+.env.development
+
 
 .idea
 .lighthouseci/
@@ -49,3 +51,7 @@ next-env.d.ts
 
 # Miniaturas del catálogo (scripts/build-preview-thumbnails.ts)
 /public/generated
+
+# Empaquetado de las Lambdas (.aws/lambda/*/README.md)
+/.aws/lambda/*/node_modules
+/.aws/lambda/*/*.zip
