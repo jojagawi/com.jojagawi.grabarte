@@ -95,6 +95,7 @@ jobs:
           template: "./.aws/infra.yml"
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},
           RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }},
+          ContactLambdaCodeS3Key=${{ steps.contact-zip.outputs.artifact_key }},
           SlackWebhookUrl=${{ steps.rates-zip.outputs.SLACKWEBHOOKURL }},
           HubspotApiToken=${{ secrets.HUBSPOTAPIKEY }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
