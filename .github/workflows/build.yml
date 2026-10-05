@@ -75,7 +75,7 @@ jobs:
           cd .aws/lambda/contact
           zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
           CONTENT_HASH=$(sha256sum lambda-contact-handler.mjs | awk '{print $1}' | cut -c1-16)
-          echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
+          echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/contact-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload contact lambda zip to S3
         run: |
