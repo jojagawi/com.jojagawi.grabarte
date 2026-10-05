@@ -37,7 +37,17 @@ const navigation: NavItem[] = [
   { name: "Contacto", href: "/contacto" },
 ];
 
-export function Header() {
+export type SeasonLink = {
+  slug: string;
+  name: string;
+};
+
+interface HeaderProps {
+  // Solo llega con datos en desarrollo (ver layout.tsx); en producción va vacío.
+  seasonLinks?: SeasonLink[];
+}
+
+export function Header({ seasonLinks = [] }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const canShowByAcl = (acl?: AclKey) => {
     if (!acl) return true;
@@ -84,6 +94,25 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+            {seasonLinks.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
+                  >
+                    Productos por temporada
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="max-h-[70vh] overflow-y-auto">
+                  {seasonLinks.map((season) => (
+                    <DropdownMenuItem key={season.slug} asChild>
+                      <Link href={`/temporada/${season.slug}`}>{season.name}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             {canShowAdmin && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -111,6 +140,9 @@ export function Header() {
                         <Link href="/catalogos/calificaciones">
                           Calificaciones
                         </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/temporadas">Temporadas</Link>
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
@@ -153,6 +185,23 @@ export function Header() {
                       {item.name}
                     </Link>
                   ))}
+                  {seasonLinks.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-lg font-medium text-foreground">
+                        Productos por temporada
+                      </span>
+                      {seasonLinks.map((season) => (
+                        <Link
+                          key={season.slug}
+                          href={`/temporada/${season.slug}`}
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {season.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                   {canShowAdmin && (
                     <div className="flex flex-col gap-4">
                       <span className="text-lg font-medium text-foreground">
@@ -189,6 +238,13 @@ export function Header() {
                           className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                           Calificaciones
+                        </Link>
+                        <Link
+                          href="/catalogos/temporadas"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Temporadas
                         </Link>
                       </div>
                     </div>

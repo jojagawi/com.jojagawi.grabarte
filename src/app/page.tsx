@@ -1,25 +1,36 @@
 import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
 import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
 import { getRandomHomeTestimonialsFromAthena } from "@/lib/rates-athena.server";
-import { selectDesignImagePath } from "@/lib/preview-thumbnails";
 import { getPreviewThumbnailUrl } from "@/lib/preview-thumbnails.server";
-import { slugify } from "@/lib/slug";
 import {
   FALLBACK_CATEGORY_ALIASES,
   getActiveSeasons,
   joinSpanishList,
   MIN_SEASON_DESIGNS,
   normalizeCategoryName,
+  type Season,
 } from "@/lib/seasons";
+import { getSeasons } from "@/lib/seasons.server";
+import {
+  byShowcasePriority,
+  getDesignCategoryNames,
+  getDesignHref,
+  getDesignImagePath,
+  getDesignImageUrl,
+  getSiteDesigns,
+  type SiteDesign,
+  toDisplayProductionTime,
+  toShowcaseItem,
+} from "@/lib/site-designs.server";
 import { buildQuoteSubject } from "@/components/custom/product-quote-actions";
 import { QuoteDoors } from "@/components/custom/quote-doors";
 import {
   SeasonShowcase,
   type SeasonShowcaseItem,
+  type SeasonShowcaseLink,
 } from "@/components/custom/season-showcase";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -45,112 +56,6 @@ export const llmstxt = {
   description: "Presentación general de InspiraArte y acceso al catálogo.",
 };
 
-const defaultImage = "/dam/dafault-image-product.webp";
-
-// Solo se muestra un plazo concreto ("2 a 4 días hábiles"); los textos tipo
-// "A confirmar" o "Consultar" no le dicen nada al visitante en la portada.
-function toDisplayProductionTime(value: string | null): string | null {
-  const text = value?.trim() ?? "";
-  return /^\d+\s*(a|-)\s*\d+\s*días hábiles$/i.test(text) ? text : null;
-}
-
-type SiteDesign = Awaited<ReturnType<typeof getSiteDesigns>>[number];
-
-function getSiteDesigns() {
-  return prisma.designs.findMany({
-    where: {
-      status: 1,
-      showInSite: 1,
-      name: { not: null },
-    },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      isCustomizable: true,
-      isTested: true,
-      showInHome: true,
-      productionTime: true,
-      relDesignsCategories: {
-        where: {
-          status: 1,
-          category: {
-            status: 1,
-            name: { not: null },
-          },
-        },
-        select: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-      relDesignsFiles: {
-        where: {
-          status: 1,
-          file: {
-            status: 1,
-            filePath: { not: null },
-          },
-        },
-        select: {
-          file: {
-            select: {
-              filePath: true,
-              fileType: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-}
-
-const mediaBaseUrl = (process.env.NEXT_PUBLIC_S3_PROTOCOL || "https")
-  .concat("://")
-  .concat(process.env.NEXT_PUBLIC_S3 || "/dam/files/");
-
-function getDesignImagePath(design: SiteDesign): string | null {
-  return selectDesignImagePath(design.relDesignsFiles);
-}
-
-function getDesignImageUrl(imagePath: string | null): string {
-  return imagePath
-    ? `${mediaBaseUrl}/${imagePath.replace(/^\/+/, "")}`
-    : defaultImage;
-}
-
-function getDesignCategoryNames(design: SiteDesign): string[] {
-  return Array.from(
-    new Set(
-      design.relDesignsCategories
-        .map((relation) => relation.category?.name)
-        .filter((name): name is string => Boolean(name?.trim())),
-    ),
-  );
-}
-
-function getDesignHref(design: SiteDesign): string {
-  return `/productos/${design.id}-${slugify(design.name ?? "Diseño sin nombre")}`;
-}
-
-// Probados y elegidos para la portada primero; el resto conserva el orden de más reciente.
-function byShowcasePriority(a: SiteDesign, b: SiteDesign): number {
-  return (
-    (b.isTested ?? 0) - (a.isTested ?? 0) ||
-    (b.showInHome ?? 0) - (a.showInHome ?? 0)
-  );
-}
-
 // Fisher-Yates. En el export estático el orden queda fijo hasta el siguiente build.
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -165,13 +70,17 @@ const MAX_SHOWCASE_DESIGNS = 20;
 
 interface ShowcaseContent {
   isSeasonal: boolean;
+  seasonLinks: SeasonShowcaseLink[];
   eyebrow: string;
   title: string;
   description: string;
   items: SeasonShowcaseItem[];
 }
 
-function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
+function buildShowcase(
+  designs: SiteDesign[],
+  seasons: Season[],
+): ShowcaseContent {
   const designCategories = new Map(
     designs.map((design) => [
       design.id,
@@ -185,37 +94,42 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
     );
   }
 
+  // Temporadas: por id de categoría, tal como se asignan en /catalogos/temporadas.
+  function inCategories(categoryIds: number[]): SiteDesign[] {
+    return designs.filter((design) =>
+      design.relDesignsCategories.some(
+        (relation) =>
+          relation.category && categoryIds.includes(relation.category.id),
+      ),
+    );
+  }
+
   function toItem(
     design: SiteDesign,
     occasion: string | null,
   ): SeasonShowcaseItem {
-    return {
-      id: design.id,
-      name: design.name ?? "Diseño sin nombre",
-      href: getDesignHref(design),
-      image: getPreviewThumbnailUrl(
-        design.id,
-        480,
-        getDesignImageUrl(getDesignImagePath(design)),
-      ),
-      occasion,
-      isCustomizable: design.isCustomizable === 1,
-      productionTime: toDisplayProductionTime(design.productionTime),
-    };
+    return toShowcaseItem(design, occasion);
   }
 
   const seenIds = new Set<number>();
   const seasonItems: SeasonShowcaseItem[] = [];
   const shownSeasons: string[] = [];
+  const seasonLinks: SeasonShowcaseLink[] = [];
 
-  for (const season of getActiveSeasons()) {
-    const seasonDesigns = matching(season.categoryAliases)
+  for (const season of getActiveSeasons(seasons)) {
+    const seasonDesigns = inCategories(season.categoryIds)
       .filter((design) => !seenIds.has(design.id))
       .sort(byShowcasePriority);
     if (seasonDesigns.length === 0) {
       continue;
     }
     shownSeasons.push(season.label);
+    // El conteo es de toda la temporada, no solo de lo que cabe en el carrusel.
+    seasonLinks.push({
+      slug: season.slug,
+      label: season.label,
+      count: inCategories(season.categoryIds).length,
+    });
     for (const design of seasonDesigns) {
       seenIds.add(design.id);
       seasonItems.push(toItem(design, season.label));
@@ -225,6 +139,7 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
   if (seasonItems.length >= MIN_SEASON_DESIGNS) {
     return {
       isSeasonal: true,
+      seasonLinks,
       eyebrow: "De temporada",
       title: `Para ${joinSpanishList(shownSeasons)}`,
       description:
@@ -252,6 +167,7 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
 
   return {
     isSeasonal: false,
+    seasonLinks: [],
     eyebrow: "Nuestro catálogo",
     title: "Diseños del catálogo",
     description:
@@ -261,9 +177,12 @@ function buildShowcase(designs: SiteDesign[]): ShowcaseContent {
 }
 
 export default async function Home() {
-  const siteDesigns = await getSiteDesigns();
+  const [siteDesigns, seasons] = await Promise.all([
+    getSiteDesigns(),
+    getSeasons(),
+  ]);
 
-  const showcase = buildShowcase(siteDesigns);
+  const showcase = buildShowcase(siteDesigns, seasons);
 
   // Con temporada activa, el hero abre con sus piezas (probadas primero) para que
   // portada y vitrina hablen de la misma fecha; sin temporada, una selección de portada.
@@ -318,6 +237,7 @@ export default async function Home() {
           description={showcase.description}
           items={showcaseItems}
           totalDesigns={siteDesigns.length}
+          seasonLinks={showcase.seasonLinks}
         />
       )}
       <QuoteDoors />

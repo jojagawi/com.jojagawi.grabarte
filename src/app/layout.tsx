@@ -6,7 +6,8 @@ import { buildMetadataBase } from "@/lib/metadata";
 import { buildOrganizationJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { BugsnagBoundary } from "@/components/structure/bugsnag-boundary";
 import { Footer } from "@/components/structure/footer";
-import { Header } from "@/components/structure/header";
+import { Header, type SeasonLink } from "@/components/structure/header";
+import { getSeasonPages } from "@/lib/seasons.server";
 import { PwaAnalytics } from "@/components/structure/pwa-analytics";
 import { WebMcpInit } from "@/components/structure/webmcp-init";
 import "./globals.css";
@@ -67,7 +68,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+// "Productos por temporada" solo aparece en desarrollo: en el build no se consulta.
+async function getDevSeasonLinks(): Promise<SeasonLink[]> {
+  if (process.env.NODE_ENV !== "development") {
+    return [];
+  }
+  return (await getSeasonPages()).map((season) => ({ slug: season.slug, name: season.label }));
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -85,7 +94,7 @@ export default function RootLayout({
         className={`${dmSans.variable} ${playfair.variable} font-sans antialiased`}
       >
         <main className="min-h-screen">
-          <Header />
+          <Header seasonLinks={await getDevSeasonLinks()} />
           {process.env.NEXT_GTM && (
             <Script id="google-consent-mode" strategy="beforeInteractive">
               {`window.dataLayer = window.dataLayer || [];

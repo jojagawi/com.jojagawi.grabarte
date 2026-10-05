@@ -22,6 +22,37 @@ model CatCategories {
   status               Int                    @default(1)
   createdAt            DateTime               @default(now())
   relDesignsCategories RelDesignsCategories[]
+  relSeasonsCategories RelSeasonsCategories[]
+}
+
+// Temporadas de la vitrina de la portada (/catalogos/temporadas).
+// Meses de 1 a 12, inclusivos; startMonth > endMonth cruza el año.
+// leadDays: días antes del primer mes en que la temporada empieza a mostrarse.
+model CatSeasons {
+  id                   Int                    @id @default(autoincrement())
+  slug                 String                 @unique
+  name                 String
+  // Texto introductorio de la página /temporada/[slug].
+  description          String?
+  startMonth           Int
+  endMonth             Int
+  leadDays             Int                    @default(21)
+  sortOrder            Int                    @default(0)
+  status               Int                    @default(1)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  relSeasonsCategories RelSeasonsCategories[]
+}
+
+model RelSeasonsCategories {
+  id         Int           @id @default(autoincrement())
+  seasonId   Int
+  categoryId Int
+  createdAt  DateTime      @default(now())
+  season     CatSeasons    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  category   CatCategories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, categoryId])
 }
 
 model CatDesignsType {

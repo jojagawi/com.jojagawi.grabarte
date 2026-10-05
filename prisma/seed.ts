@@ -148,6 +148,91 @@ const faqs = [
   },
 ] as const;
 
+// Temporadas de la vitrina de la portada. Las categorías se enlazan por nombre
+// normalizado (sin acentos ni mayúsculas); las que todavía no existen (Pascua,
+// Primavera, Día del maestro…) se asignan después en /catalogos/temporadas.
+const seasons = [
+  { slug: "amor-y-amistad", name: "Amor y amistad", description: "Regalos para el 14 de febrero: detalles para tu pareja, tus amigos o tu equipo de trabajo. Cuéntanos qué te gustaría grabar y te enviamos una propuesta antes de producir.", startMonth: 1, endMonth: 2, categories: ["dia del amor y la amistad", "amor y amistad", "san valentin"] },
+  { slug: "primavera", name: "Primavera", description: "Piezas para la temporada de primavera: decoración, regalos y detalles para celebrar la llegada del buen clima.", startMonth: 3, endMonth: 3, categories: ["primavera"] },
+  { slug: "pascua", name: "Pascua", description: "Detalles y decoración para Pascua: piezas para regalar o para ambientar tu casa y tus reuniones familiares.", startMonth: 4, endMonth: 4, categories: ["pascua"] },
+  { slug: "dia-del-nino", name: "Día del niño", description: "Regalos para el Día del niño, el 30 de abril: piezas para jugar, aprender y decorar el cuarto de los más pequeños.", startMonth: 4, endMonth: 4, categories: ["dia del nino", "dia de los ninos", "dia del nino y la nina"] },
+  { slug: "dia-de-la-madre", name: "Día de la madre", description: "Regalos para el 10 de mayo: piezas para mamá, abuela o quien celebres ese día. Pide con anticipación para que llegue a tiempo.", startMonth: 5, endMonth: 5, categories: ["dia de la madre", "dia de las madres"] },
+  { slug: "dia-del-maestro", name: "Día del maestro", description: "Detalles para el 15 de mayo: regalos de agradecimiento para maestras y maestros, individuales o para todo el grupo.", startMonth: 5, endMonth: 5, categories: ["dia del maestro", "dia de los maestros"] },
+  { slug: "dia-del-padre", name: "Día del padre", description: "Regalos para el Día del padre, el tercer domingo de junio: piezas para papá, abuelo o quien celebres ese día.", startMonth: 6, endMonth: 6, categories: ["dia del padre"] },
+  { slug: "graduaciones", name: "Graduaciones", description: "Recuerdos y regalos de graduación: piezas para quien se gradúa o recuerdos para toda la generación.", startMonth: 6, endMonth: 7, categories: ["graduacion", "graduaciones"] },
+  { slug: "regreso-a-clases", name: "Regreso a clases", description: "Artículos para el regreso a clases: piezas para el salón, el escritorio o para identificar las cosas de cada niño.", startMonth: 8, endMonth: 8, categories: ["regreso a clases", "escuela"] },
+  { slug: "fiestas-patrias", name: "Fiestas patrias", description: "Decoración y detalles para las fiestas patrias de septiembre, con motivos mexicanos para tu casa, oficina o reunión.", startMonth: 9, endMonth: 9, categories: ["fiestas patrias", "mexico"] },
+  { slug: "dia-de-muertos", name: "Día de muertos", description: "Piezas para tu altar del 1 y 2 de noviembre: portavelas, calaveras, marcos y adornos para recordar a quienes ya no están.", startMonth: 10, endMonth: 10, categories: ["dia de muertos"] },
+  { slug: "halloween", name: "Halloween", description: "Decoración y detalles para Halloween, el 31 de octubre: piezas para ambientar tu casa, tu fiesta o para regalar.", startMonth: 10, endMonth: 10, categories: ["halloween"] },
+  { slug: "navidad", name: "Navidad", description: "Decoración y regalos para Navidad: nacimientos, esferas y adornos para tu casa, y detalles para regalar en posadas e intercambios.", startMonth: 11, endMonth: 12, categories: ["navidad", "nacimiento"] },
+] as const;
+
+function normalizeName(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+// Solo inserta las temporadas que faltan (por slug) y llena descripciones vacías:
+// no pisa lo editado en el panel.
+async function seedSeasons() {
+  const existingSeasons = await prisma.catSeasons.findMany({ select: { slug: true, description: true } });
+  const existingSlugs = new Set(existingSeasons.map((season) => season.slug));
+  const pendingSeasons = seasons.filter((season) => !existingSlugs.has(season.slug));
+
+  let filledDescriptions = 0;
+  for (const existing of existingSeasons) {
+    const defaults = seasons.find((season) => season.slug === existing.slug);
+    if (defaults && !existing.description?.trim()) {
+      await prisma.catSeasons.update({ where: { slug: existing.slug }, data: { description: defaults.description } });
+      filledDescriptions += 1;
+    }
+  }
+  if (filledDescriptions > 0) {
+    console.log(`[prisma:seed] CatSeasons: ${filledDescriptions} descripciones completadas.`);
+  }
+
+  if (pendingSeasons.length === 0) {
+    console.log("[prisma:seed] CatSeasons ya contiene todas las temporadas esperadas.");
+    return;
+  }
+
+  const categories = await prisma.catCategories.findMany({ select: { id: true, name: true } });
+  const categoryIdsByName = new Map<string, number[]>();
+  for (const category of categories) {
+    if (!category.name) continue;
+    const key = normalizeName(category.name);
+    categoryIdsByName.set(key, [...(categoryIdsByName.get(key) ?? []), category.id]);
+  }
+
+  let linkedCategories = 0;
+  for (const season of pendingSeasons) {
+    const categoryIds = [...new Set(season.categories.flatMap((name) => categoryIdsByName.get(name) ?? []))];
+    linkedCategories += categoryIds.length;
+
+    await prisma.catSeasons.create({
+      data: {
+        slug: season.slug,
+        name: season.name,
+        description: season.description,
+        startMonth: season.startMonth,
+        endMonth: season.endMonth,
+        sortOrder: seasons.findIndex((item) => item.slug === season.slug) + 1,
+        relSeasonsCategories: {
+          create: categoryIds.map((categoryId) => ({ categoryId })),
+        },
+      },
+    });
+  }
+
+  console.log(
+    `[prisma:seed] CatSeasons: insertadas ${pendingSeasons.length} temporadas con ${linkedCategories} categorías enlazadas.`,
+  );
+}
+
 async function main() {
   const existing = await prisma.catCategories.findMany({
     where: {
@@ -354,6 +439,8 @@ async function main() {
       `[prisma:seed] Faqs: insertados ${faqResult.count} registros (faltaban ${pendingFaqs.length}).`,
     );
   }
+
+  await seedSeasons();
 }
 
 main()
