@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "e121810a-5765-4288-b4fe-33b4013f2647",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "J:\\com.jojagawi.grabarte\\.archify\\architecture-sitio-inspiraarte-20261005-031522\\candidate.json",
+  "output": "J:\\com.jojagawi.grabarte\\.archify\\architecture-sitio-inspiraarte-20261005-031522\\sitio-inspiraarte.html",
+  "specification": {
+    "sha256": "8adc795ead4d4351e16410f4718c0efc391de7174b3ecb886c51fd12f5a963c1",
+    "bytes": 6992
+  },
+  "artifact": {
+    "sha256": "9029a55ae6e64bfc83c6068075e1b9dbb8b7075f8cee2beea006b59f2acb4d62",
+    "bytes": 776587
+  }
+}

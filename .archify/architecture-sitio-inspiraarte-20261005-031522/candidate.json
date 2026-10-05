@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura de InspiraArte",
+    "output": ".archify/architecture-sitio-inspiraarte-20261005-031522/sitio-inspiraarte.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "bugsnag",
+      "type": "external",
+      "label": "Bugsnag",
+      "sublabel": "errores y rendimiento",
+      "pos": [
+        20,
+        230
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitante",
+      "sublabel": "navegador",
+      "icon": "person",
+      "pos": [
+        235,
+        230
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "cdn",
+      "type": "cloud",
+      "label": "CDN CloudFlare",
+      "sublabel": "www.inspiraarte.com",
+      "pos": [
+        235,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "site",
+      "type": "frontend",
+      "label": "Sitio estático",
+      "sublabel": "Next 16 export · S3",
+      "pos": [
+        437,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "contact_lambda",
+      "type": "backend",
+      "label": "Lambda contacto",
+      "sublabel": "Function URL · reCAPTCHA",
+      "pos": [
+        632,
+        230
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "slack",
+      "type": "external",
+      "label": "Slack",
+      "sublabel": "aviso de cotización",
+      "pos": [
+        632,
+        60
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "hubspot",
+      "type": "external",
+      "label": "HubSpot CRM",
+      "sublabel": "contactos y productos",
+      "pos": [
+        1036,
+        230
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "rates_lambda",
+      "type": "backend",
+      "label": "Lambda calificación",
+      "sublabel": "Function URL · reCAPTCHA",
+      "pos": [
+        235,
+        400
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "dam",
+      "type": "database",
+      "label": "Bucket DAM (S3)",
+      "sublabel": "preview, contact, rates",
+      "pos": [
+        632,
+        400
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "athena",
+      "type": "database",
+      "label": "Athena",
+      "sublabel": "consulta rates/",
+      "pos": [
+        437,
+        580
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "build",
+      "type": "backend",
+      "label": "Build estático",
+      "sublabel": "export → S3 del sitio",
+      "pos": [
+        834,
+        580
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "team",
+      "type": "external",
+      "label": "Equipo InspiraArte",
+      "sublabel": "edita catálogo",
+      "icon": "person",
+      "pos": [
+        437,
+        750
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "admin",
+      "type": "frontend",
+      "label": "Panel admin",
+      "sublabel": "next dev · /api/admin",
+      "pos": [
+        632,
+        750
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "sqlite",
+      "type": "database",
+      "label": "SQLite + Prisma",
+      "sublabel": "data/mydb.sqlite",
+      "pos": [
+        834,
+        750
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "sync",
+      "type": "backend",
+      "label": "Sync HubSpot",
+      "sublabel": "hubspot:sync-products",
+      "pos": [
+        1036,
+        750
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Solo en local (desarrollo y build)",
+      "wraps": [
+        "admin",
+        "sqlite",
+        "build",
+        "sync"
+      ],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    {
+      "from": "visitor",
+      "to": "cdn",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "from": "cdn",
+      "to": "site",
+      "label": "origen",
+      "variant": "emphasis"
+    },
+    {
+      "from": "visitor",
+      "to": "contact_lambda",
+      "label": "POST cotización",
+      "variant": "emphasis"
+    },
+    {
+      "from": "contact_lambda",
+      "to": "hubspot",
+      "label": "contacto + nota"
+    },
+    {
+      "from": "contact_lambda",
+      "to": "slack",
+      "label": "webhook",
+      "variant": "dashed"
+    },
+    {
+      "from": "contact_lambda",
+      "to": "dam",
+      "label": "solicitud + URLs firmadas"
+    },
+    {
+      "from": "visitor",
+      "to": "rates_lambda",
+      "label": "POST calificación"
+    },
+    {
+      "from": "rates_lambda",
+      "to": "dam",
+      "label": "rates/*.json"
+    },
+    {
+      "from": "visitor",
+      "to": "bugsnag",
+      "label": "reportes",
+      "variant": "dashed"
+    },
+    {
+      "from": "athena",
+      "to": "dam",
+      "label": "lee rates/",
+      "fromSide": "right",
+      "toSide": "bottom"
+    },
+    {
+      "from": "build",
+      "to": "athena",
+      "label": "testimonios"
+    },
+    {
+      "from": "build",
+      "to": "dam",
+      "label": "previews"
+    },
+    {
+      "from": "build",
+      "to": "sqlite",
+      "label": "catálogo y temporadas"
+    },
+    {
+      "from": "team",
+      "to": "admin",
+      "label": "edita"
+    },
+    {
+      "from": "admin",
+      "to": "sqlite",
+      "label": "Prisma"
+    },
+    {
+      "from": "sync",
+      "to": "sqlite",
+      "label": "diseños"
+    },
+    {
+      "from": "sync",
+      "to": "hubspot",
+      "label": "productos + imágenes"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Sitio sin servidor",
+      "items": [
+        "pnpm build:static genera el HTML y se sube al S3 del sitio; CloudFlare lo sirve",
+        "SQLite vive en local: los datos llegan al sitio al compilar",
+        "Temporadas, miniaturas y JSON para agentes salen del build"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Formularios",
+      "items": [
+        "Cotización y calificación van del navegador a Lambdas con reCAPTCHA v3",
+        "Los adjuntos suben del navegador directo a S3 con URLs firmadas",
+        "S3 es la fuente de verdad; HubSpot y Slack son avisos"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Pendiente",
+      "items": [
+        "Lambda de contacto y miniaturas aún sin desplegar ni commitear",
+        "NEXT_PUBLIC_S3_PROTOCOL sirve las imágenes por http"
+      ]
+    }
+  ]
+}
