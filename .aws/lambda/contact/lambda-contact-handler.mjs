@@ -254,6 +254,8 @@ function normalizeSubmitInput(payload) {
       ? payload.attachmentKeys.map((key) => text(key, 400)).slice(0, MAX_FILES)
       : [],
     pageUrl: text(payload.pageUrl, 500),
+    // El sitio la marca cuando la fecha pedida no alcanza el tiempo estándar del diseño.
+    urgent: payload.urgent === true,
   };
 }
 
@@ -301,6 +303,7 @@ function escapeSlack(value) {
 
 function summaryRows(request) {
   return [
+    ["Prioridad", request.urgent ? "URGENTE: la fecha no alcanza el tiempo estándar" : ""],
     ["Producto", request.requestedProduct],
     ["Material", request.productType],
     ["Ocasión", request.occasion],
@@ -350,7 +353,7 @@ async function createHubspotNote(contactId, request, record) {
     .join("");
 
   const body = [
-    "<p><strong>Solicitud de cotización desde el sitio</strong></p>",
+    `<p><strong>${request.urgent ? "URGENTE · " : ""}Solicitud de cotización desde el sitio</strong></p>`,
     rows ? `<ul>${rows}</ul>` : "",
     `<p>${escapeHtml(request.details).replace(/\n/g, "<br>")}</p>`,
     attachments ? `<p><strong>Archivos de referencia (S3):</strong></p><ul>${attachments}</ul>` : "",
@@ -401,7 +404,10 @@ async function notifySlack(request, record) {
   ].map((textValue) => ({ type: "mrkdwn", text: textValue }));
 
   const blocks = [
-    { type: "header", text: { type: "plain_text", text: "Nueva solicitud de cotización" } },
+    {
+      type: "header",
+      text: { type: "plain_text", text: `${request.urgent ? "URGENTE · " : ""}Nueva solicitud de cotización` },
+    },
     // Slack admite hasta 10 campos por sección.
     { type: "section", fields: fields.slice(0, 10) },
     { type: "section", text: { type: "mrkdwn", text: `*Detalles:*\n${escapeSlack(request.details).slice(0, 2900)}` } },
@@ -427,7 +433,10 @@ async function notifySlack(request, record) {
   const response = await fetch(slackWebhookUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: `Nueva solicitud de cotización de ${request.name}`, blocks }),
+    body: JSON.stringify({
+      text: `${request.urgent ? "URGENTE · " : ""}Nueva solicitud de cotización de ${request.name}`,
+      blocks,
+    }),
   });
 
   if (!response.ok) {
@@ -463,6 +472,7 @@ async function handleSubmit(payload) {
     neededBy: request.neededBy,
     details: request.details,
     pageUrl: request.pageUrl,
+    urgent: request.urgent,
     attachments,
     createdAt: new Date().toISOString(),
     status: 0,

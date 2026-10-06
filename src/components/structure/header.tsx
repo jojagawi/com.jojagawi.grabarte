@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,9 @@ interface HeaderProps {
 
 export function Header({ seasonLinks = [] }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
+  // El sitio usa barra final (/contacto/); se normaliza para comparar con los href.
+  const pathname = (usePathname() || "/").replace(/(.)\/$/u, "$1");
+  const isCurrent = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
   const canShowByAcl = (acl?: AclKey) => {
     if (!acl) return true;
     return ACL_FLAGS[acl];
@@ -90,7 +94,8 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                aria-current={isCurrent(item.href) ? "page" : undefined}
+                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors aria-[current=page]:text-primary"
               >
                 {item.name}
               </Link>
@@ -159,7 +164,9 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
               asChild
               className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
-              <Link href="/contacto">Cotizar</Link>
+              <Link href="/contacto" aria-current={isCurrent("/contacto") ? "page" : undefined}>
+                Cotizar
+              </Link>
             </Button>
           </div>
 
@@ -169,7 +176,9 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
               asChild
               className="h-11 bg-primary hover:bg-inspirarte-petroleum-deep text-white"
             >
-              <Link href="/contacto">Cotizar</Link>
+              <Link href="/contacto" aria-current={isCurrent("/contacto") ? "page" : undefined}>
+                Cotizar
+              </Link>
             </Button>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="md:hidden">
@@ -185,7 +194,8 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                      aria-current={isCurrent(item.href) ? "page" : undefined}
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors aria-[current=page]:text-primary"
                     >
                       {item.name}
                     </Link>

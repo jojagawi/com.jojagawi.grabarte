@@ -21,7 +21,9 @@ import { ProductOrderPath } from "@/components/custom/product-order-path";
 import {
   PersonalizableTag,
   ProductFeatureLists,
+  personalizationSectionId,
   splitFeatures,
+  splitPersonalization,
 } from "@/components/custom/product-personalization";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
@@ -60,6 +62,7 @@ type RelatedProductItem = {
   categories: string[];
   material: string | null;
   price: string | null;
+  isCustomizable: boolean;
 };
 
 function parseIdSlug(value: string): { id: number } | null {
@@ -525,6 +528,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       : null;
   const previewItem =
     previewItemRaw && previewThumbUrl ? { ...previewItemRaw, displayUrl: previewThumbUrl } : previewItemRaw;
+  // /contacto recibe solo la ruta (no una URL) y la valida antes de pintarla.
+  const contactImagePath = previewRelation?.filePath
+    ? previewRelation.thumbGenerated
+      ? buildAiThumbObjectKey(previewRelation.filePath)
+      : previewRelation.filePath.replace(/^\/+/, "")
+    : null;
 
   const galleryItems = fileRelations
     .filter((file) => file.fileTypeId === 2)
@@ -657,6 +666,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             description: true,
             seoDescription: true,
             suggestedPrice: true,
+            isCustomizable: true,
             material: { select: { name: true } },
             relDesignsCategories: {
               where: {
@@ -725,6 +735,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         categories: relatedCategories,
         material: relatedDesign.material?.name?.trim() || null,
         price: formatPrice(relatedDesign.suggestedPrice),
+        isCustomizable: relatedDesign.isCustomizable === 1,
       };
     });
 
@@ -745,6 +756,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const productDescription = design.longDescription?.trim() || design.description?.trim();
   const isCustomizable = design.isCustomizable === 1;
   const hasFeatures = splitFeatures(design.features).length > 0;
+  const hasPersonalizationList = splitPersonalization(design.features, isCustomizable).length > 0;
   const productUrl = toAbsoluteUrl(`/productos/${design.id}-${slugify(design.name)}`);
 
   return (
@@ -795,7 +807,20 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground text-balance wrap-break-word">
                   {design.name}
                 </h1>
-                {isCustomizable && <PersonalizableTag />}
+                {/* Qué se personaliza vive más abajo; el enlace lo acerca a la decisión. */}
+                {isCustomizable && (
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <PersonalizableTag />
+                    {hasPersonalizationList && (
+                      <a
+                        href={`#${personalizationSectionId}`}
+                        className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+                      >
+                        Ver qué puedes personalizar
+                      </a>
+                    )}
+                  </div>
+                )}
                 <p className="text-muted-foreground text-base leading-relaxed">
                   {design.seoDescription?.trim() ||
                     design.description?.trim() ||
@@ -804,7 +829,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </div>
 
               {productFacts.length > 0 && (
-                <dl className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4">
+                <dl className="grid grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] gap-x-4 gap-y-4 sm:gap-x-6">
                   {productFacts.map((fact) => (
                     <div key={fact.label} className="min-w-0">
                       <dt className="text-sm text-muted-foreground">{fact.label}</dt>
@@ -823,6 +848,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 suggestedPrice={
                   Number.isFinite(design.suggestedPrice) ? (design.suggestedPrice as number) : null
                 }
+                hasWholesale={mayoreoPrice > 0}
+                productionTime={productFacts.find((fact) => fact.label === "Producción")?.value}
+                shippingTime={productFacts.find((fact) => fact.label === "Envío")?.value}
+                imagePath={contactImagePath}
               />
 
               <ProductOrderPath />
@@ -919,12 +948,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             className="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-16"
           >
             <div className="max-w-3xl">
-            <h2
-              id="sobre-el-diseno"
-              className="mb-4 font-serif text-2xl sm:text-3xl font-bold text-foreground"
-            >
-              Sobre este diseño
-            </h2>
+              <h2
+                id="sobre-el-diseno"
+                className="mb-4 font-serif text-2xl sm:text-3xl font-bold text-foreground"
+              >
+                Sobre este diseño
+              </h2>
               {productDescription && (
                 <div className="whitespace-pre-line text-base leading-7 text-foreground/80 wrap-break-word">
                   {productDescription}
@@ -958,7 +987,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   <Link
                     key={product.id}
                     href={`/productos/${product.id}-${slugify(product.name)}`}
-                    className="group block overflow-hidden rounded-2xl border border-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <div
                       className="relative aspect-square overflow-hidden bg-muted"
@@ -980,8 +1009,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       </div>
 
                       {/* Material primero y máximo dos categorías: la tarjeta compara, no cataloga. */}
-                      {(product.material || product.categories.length > 0) && (
+                      {(product.isCustomizable || product.material || product.categories.length > 0) && (
                         <div className="flex flex-wrap gap-2">
+                          {product.isCustomizable && <PersonalizableTag className="py-0.5 text-xs" />}
                           {[product.material, ...product.categories.slice(0, 2)]
                             .filter((chip): chip is string => Boolean(chip))
                             .map((chip) => (
@@ -1000,6 +1030,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                           <>
                             <span className="text-muted-foreground">Desde </span>
                             <span className="font-semibold tabular-nums">{product.price}</span>
+                            <span className="text-muted-foreground"> por pieza</span>
                           </>
                         ) : (
                           <span className="text-muted-foreground">Precio bajo cotización</span>

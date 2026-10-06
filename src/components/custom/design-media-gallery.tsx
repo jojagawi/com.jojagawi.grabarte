@@ -164,7 +164,8 @@ export function DesignMediaGallery({
   return (
     <>
       <div className="grid items-start gap-8 lg:grid-cols-2">
-        <Card className="overflow-hidden py-0">
+        {/* La pieza acompaña la lectura de la ficha en escritorio en lugar de dejar un hueco. */}
+        <Card className="overflow-hidden py-0 lg:sticky lg:top-24">
           <CardContent className="p-0">
             {previewItem?.isVideo ? (
               <video

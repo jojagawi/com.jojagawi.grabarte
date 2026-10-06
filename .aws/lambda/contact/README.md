@@ -70,6 +70,7 @@ La salida `ContactLambdaFunctionUrl` va en `NEXT_PUBLIC_CONTACT_LAMBDA_URL` del 
   "neededBy": "2026-12-12",
   "details": "Recuerdos para 120 invitados…",
   "attachmentKeys": ["contact/uploads/<requestId>/1-boceto.png"],
-  "pageUrl": "https://www.inspiraarte.com/contacto/?producto=…"
+  "pageUrl": "https://www.inspiraarte.com/contacto/?producto=…",
+  "urgent": false
 }
 ```

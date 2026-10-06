@@ -48,13 +48,22 @@ function toPersonalizationOption(item: string): string {
   return capitalize(item.replace(/^personalizaci[oó]n\s+(con|de|en|por)\s+/iu, ""));
 }
 
+// Solo se separan las frases de personalización cuando el producto es personalizable;
+// si no, "personalizar" sería una promesa que el producto no cumple.
+export function splitPersonalization(
+  features: string | null | undefined,
+  isCustomizable: boolean,
+): string[] {
+  return isCustomizable
+    ? splitFeatures(features).filter((item) => personalizationPattern.test(item))
+    : [];
+}
+
+export const personalizationSectionId = "lo-que-puedes-personalizar";
+
 export function ProductFeatureLists({ features, isCustomizable }: ProductFeatureListsProps) {
   const items = splitFeatures(features);
-  // Solo se separan las frases de personalización cuando el producto es personalizable;
-  // si no, "personalizar" sería una promesa que el producto no cumple.
-  const personalization = isCustomizable
-    ? items.filter((item) => personalizationPattern.test(item))
-    : [];
+  const personalization = splitPersonalization(features, isCustomizable);
   const characteristics = items.filter((item) => !personalization.includes(item));
 
   if (personalization.length === 0 && characteristics.length === 0) {
@@ -65,12 +74,12 @@ export function ProductFeatureLists({ features, isCustomizable }: ProductFeature
     <div className="space-y-8">
       {personalization.length > 0 && (
         <section
-          aria-labelledby="lo-que-puedes-personalizar"
+          aria-labelledby={personalizationSectionId}
           className="rounded-2xl border border-secondary/20 bg-secondary/5 p-6"
         >
           <h3
-            id="lo-que-puedes-personalizar"
-            className="mb-3 flex items-center gap-2 font-medium text-secondary"
+            id={personalizationSectionId}
+            className="mb-3 flex scroll-mt-32 items-center gap-2 font-medium text-secondary"
           >
             <PenLine aria-hidden="true" className="size-4" />
             Lo que puedes personalizar

@@ -2,13 +2,24 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { Button } from "@/components/ui/button";
+import { buildWhatsappQuoteHref } from "@/lib/quote-request";
+import { ProductQuoteBar } from "@/components/custom/product-quote-bar";
 
 interface ProductQuoteActionsProps {
   productName: string;
   productReference: string;
   productUrl: string;
   suggestedPrice: number | null;
+  // El diseño tiene precio de mayoreo: se avisa que existe, la cifra no se publica.
+  hasWholesale?: boolean;
+  // Solo valores reales (sin rellenos como "No especificado").
+  productionTime?: string;
+  shippingTime?: string;
+  // Ruta en S3 de la miniatura (preview/…); /contacto la muestra junto al producto.
+  imagePath?: string | null;
 }
+
+const actionsId = "acciones-de-cotizacion";
 
 const priceFormatter = new Intl.NumberFormat("es-MX", {
   style: "currency",
@@ -24,15 +35,30 @@ export function buildQuoteSubject(productName: string, productReference: string)
   return `${productReference} · ${shortName}`;
 }
 
-function buildWhatsappHref(subject: string, productUrl: string): string | null {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP?.replace(/\D/g, "");
-  if (!phone) {
-    return null;
+// Los tiempos del diseño viajan a /contacto para orientar la fecha que pide el cliente,
+// y la miniatura para que vea la pieza que está cotizando.
+function buildContactHref(
+  subject: string,
+  productionTime?: string,
+  shippingTime?: string,
+  imagePath?: string | null,
+  productPath?: string,
+): string {
+  const params = new URLSearchParams({ producto: subject });
+  if (productionTime) {
+    params.set("produccion", productionTime.slice(0, 80));
+  }
+  if (shippingTime) {
+    params.set("envio", shippingTime.slice(0, 80));
+  }
+  if (imagePath) {
+    params.set("imagen", imagePath);
+  }
+  if (productPath) {
+    params.set("ficha", productPath);
   }
 
-  // Deja a la vista lo que el taller necesita para cotizar (cantidad y fecha).
-  const message = `Hola, me interesa cotizar este diseño: ${subject}\n${productUrl}\n\nCantidad: \nFecha en que lo necesito: `;
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return `/contacto?${params.toString()}`;
 }
 
 export function formatPrice(suggestedPrice: number | null): string | null {
@@ -48,26 +74,37 @@ export function ProductQuoteActions({
   productReference,
   productUrl,
   suggestedPrice,
+  hasWholesale = false,
+  productionTime,
+  shippingTime,
+  imagePath,
 }: ProductQuoteActionsProps) {
   const subject = buildQuoteSubject(productName, productReference);
-  const contactHref = `/contacto?producto=${encodeURIComponent(subject)}`;
-  const whatsappHref = buildWhatsappHref(subject, productUrl);
+  const contactHref = buildContactHref(subject, productionTime, shippingTime, imagePath, new URL(productUrl).pathname);
+  const whatsappHref = buildWhatsappQuoteHref({ product: subject, productUrl });
   const price = formatPrice(suggestedPrice);
 
   return (
     <>
-      <div className="space-y-4 border-t border-border pt-6">
-        <p className="text-foreground">
-          {price ? (
-            <>
-              <span className="text-sm text-muted-foreground">Desde </span>
-              <span className="text-2xl font-semibold tabular-nums">{price}</span>
-              <span className="text-sm text-muted-foreground"> MXN</span>
-            </>
-          ) : (
-            <span className="text-lg font-semibold">Precio bajo cotización</span>
+      <div id={actionsId} className="space-y-4 border-t border-border pt-6">
+        <div className="space-y-1">
+          <p className="text-foreground">
+            {price ? (
+              <>
+                <span className="text-sm text-muted-foreground">Desde </span>
+                <span className="text-2xl font-semibold tabular-nums">{price}</span>
+                <span className="text-sm text-muted-foreground"> MXN por pieza</span>
+              </>
+            ) : (
+              <span className="text-lg font-semibold">Precio bajo cotización</span>
+            )}
+          </p>
+          {hasWholesale && (
+            <p className="text-sm text-muted-foreground">
+              ¿Necesitas varias piezas? Pide precio de mayoreo en tu cotización.
+            </p>
           )}
-        </p>
+        </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button
@@ -104,14 +141,14 @@ export function ProductQuoteActions({
         </p>
       </div>
 
-      {/* Barra fija en móvil: la acción queda al alcance del pulgar en todo momento. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden">
+      <ProductQuoteBar actionsId={actionsId}>
         <div className="flex items-center gap-3">
           <p className="min-w-0 flex-1 truncate text-sm text-foreground">
             {price ? (
               <>
                 <span className="text-muted-foreground">Desde </span>
                 <span className="font-semibold tabular-nums">{price}</span>
+                <span className="text-muted-foreground"> por pieza</span>
               </>
             ) : (
               <span className="font-semibold">Precio bajo cotización</span>
@@ -142,7 +179,7 @@ export function ProductQuoteActions({
             <Link href={contactHref}>Cotizar</Link>
           </Button>
         </div>
-      </div>
+      </ProductQuoteBar>
     </>
   );
 }
