@@ -1,6 +1,7 @@
 type SeoRewriteMode = "complement" | "rewrite-soft" | "rewrite-hard";
 
-type SeoAiProvider = "gemini" | "openrouter";
+// Proveedores del asistente SEO (debe coincidir con SEO_AI_PROVIDERS en ai-models.ts).
+type SeoAiProvider = "gemini" | "openrouter" | "openai" | "github";
 
 type SeoDraftContext = {
   name: string;
@@ -326,6 +327,77 @@ class OpenRouterSeoProvider implements SeoGenerationProvider {
   }
 }
 
+// API compatible con OpenAI (chat completions con imagen): OpenAI (ChatGPT) y GitHub Models.
+// Sin temperature: los modelos de razonamiento de OpenAI solo aceptan el valor por defecto.
+class OpenAICompatibleSeoProvider implements SeoGenerationProvider {
+  constructor(
+    private readonly config: {
+      label: string;
+      endpoint: string;
+      apiKeyEnv: string;
+      defaultModel: string;
+      extraHeaders?: Record<string, string>;
+    },
+  ) {}
+
+  async generateDraft(input: GenerateSeoDraftInput): Promise<GeneratedSeoDraft> {
+    const { label, endpoint, apiKeyEnv, defaultModel, extraHeaders } = this.config;
+    const apiKey = process.env[apiKeyEnv]?.trim();
+    if (!apiKey) {
+      throw new Error(`Falta ${apiKeyEnv} para generar contenido SEO con ${label}`);
+    }
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        ...extraHeaders,
+      },
+      body: JSON.stringify({
+        model: input.model?.trim() || defaultModel,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: buildPrompt(input) },
+              { type: "image_url", image_url: { url: `data:${input.imageMimeType};base64,${input.imageBase64}` } },
+            ],
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      if (response.status === 401 || response.status === 403) {
+        throw new Error(`${label} rechazó la clave ${apiKeyEnv} (${response.status}). Revisa que sea válida y tenga permisos.`);
+      }
+      if (response.status === 429) {
+        throw new Error(`${label} rechazó por límite de uso o saldo (429). Espera o revisa tu plan.`);
+      }
+      throw new Error(`Error de ${label} (${response.status}): ${body.slice(0, 400) || "sin detalle"}`);
+    }
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | Array<{ type?: string; text?: string }> } }>;
+    };
+    const content = payload.choices?.[0]?.message?.content;
+    const text =
+      typeof content === "string"
+        ? content
+        : Array.isArray(content)
+          ? content.find((part) => typeof part.text === "string")?.text
+          : undefined;
+    if (!text) {
+      throw new Error(`${label} no devolvio texto utilizable`);
+    }
+
+    return sanitizeGeneratedDraft(parseJsonCandidate(text));
+  }
+}
+
 function getProvider(providerOverride?: SeoAiProvider): SeoGenerationProvider {
   const provider = providerOverride || normalizeProvider(process.env.SEO_AI_PROVIDER);
 
@@ -334,6 +406,21 @@ function getProvider(providerOverride?: SeoAiProvider): SeoGenerationProvider {
       return new GeminiSeoProvider();
     case "openrouter":
       return new OpenRouterSeoProvider();
+    case "openai":
+      return new OpenAICompatibleSeoProvider({
+        label: "OpenAI",
+        endpoint: "https://api.openai.com/v1/chat/completions",
+        apiKeyEnv: "OPENAI_API_KEY",
+        defaultModel: "gpt-4.1-mini",
+      });
+    case "github":
+      return new OpenAICompatibleSeoProvider({
+        label: "GitHub Models",
+        endpoint: "https://models.github.ai/inference/chat/completions",
+        apiKeyEnv: "GITHUB_MODELS_TOKEN",
+        defaultModel: "openai/gpt-4.1-mini",
+        extraHeaders: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
+      });
     default:
       throw new Error(`Proveedor SEO no soportado: ${provider}`);
   }

@@ -17,7 +17,7 @@ type AiPromptItem = {
 
 interface AiPromptsAdminProps {
   prompts: AiPromptItem[];
-  // Modelos habilitados que editan imagen (Administrar › Modelos de IA), como "proveedor:modelo".
+  // Modelos habilitados que editan imagen (Administrar › IA › Modelos), como "proveedor:modelo".
   imageModels: Array<{ value: string; label: string }>;
 }
 
@@ -128,8 +128,8 @@ function PromptEditor({
           ))}
         </select>
         <p className="text-xs text-muted-foreground">
-          Aparecen los modelos habilitados que editan imagen (Gemini, Hugging Face o Pollinations.ai) en
-          Administrar › Modelos de IA.
+          Aparecen los modelos habilitados que editan imagen (Gemini, OpenAI, Hugging Face o Pollinations.ai) en
+          Administrar › IA › Modelos.
         </p>
       </div>
 

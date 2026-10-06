@@ -228,9 +228,121 @@ function legacyEnvModels(provider: AiProvider): { enabled: Set<string>; defaultM
   };
 }
 
+// OpenAI (ChatGPT): /v1/models solo publica los ids, así que las capacidades se deducen
+// del nombre. Solo se importan los que sirven al flujo: chat con visión (SEO) y gpt-image
+// (miniaturas). Todo es de pago (la suscripción de ChatGPT no incluye la API).
+async function fetchOpenAiModels(): Promise<OfficialModel[]> {
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("Falta OPENAI_API_KEY para leer la lista de modelos de OpenAI.");
+  }
+
+  const response = await fetch("https://api.openai.com/v1/models", {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  if (!response.ok) {
+    throw new Error(`OpenAI respondió ${response.status} al listar modelos.`);
+  }
+
+  const payload = (await response.json()) as { data?: Array<{ id: string }> };
+  const notForThisFlow = /audio|realtime|transcribe|tts|embedding|moderation|whisper|search|instruct|davinci|babbage|codex|computer-use/i;
+
+  return (payload.data ?? []).flatMap((model): OfficialModel[] => {
+    const id = model.id;
+    if (notForThisFlow.test(id)) {
+      return [];
+    }
+    if (/^gpt-image/i.test(id)) {
+      return [
+        {
+          provider: "openai" as const,
+          modelId: id,
+          displayName: id,
+          description: "Genera y edita imágenes a partir de una foto (endpoint /v1/images/edits).",
+          inputText: true,
+          inputImage: true,
+          outputText: false,
+          outputImage: true,
+          pricing: "paid" as const,
+          contextLength: null,
+        },
+      ];
+    }
+    if (/^(gpt-4o|chatgpt-4o|gpt-4\.1|gpt-4\.5|gpt-5|o1|o3|o4)/i.test(id)) {
+      return [
+        {
+          provider: "openai" as const,
+          modelId: id,
+          displayName: id,
+          description: "Chat con visión: analiza la imagen y responde texto.",
+          inputText: true,
+          inputImage: true,
+          outputText: true,
+          outputImage: false,
+          pricing: "paid" as const,
+          contextLength: null,
+        },
+      ];
+    }
+    return [];
+  });
+}
+
+// GitHub Models (familia de GitHub Copilot): catálogo con modalidades. Uso gratuito con
+// límites por cuenta de GitHub. Requiere un token con permiso models:read.
+async function fetchGitHubModels(): Promise<OfficialModel[]> {
+  const token = process.env.GITHUB_MODELS_TOKEN?.trim();
+  if (!token) {
+    throw new Error("Falta GITHUB_MODELS_TOKEN para leer la lista de GitHub Models.");
+  }
+
+  const response = await fetch("https://models.github.ai/catalog/models", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`GitHub Models respondió ${response.status} al listar modelos.`);
+  }
+
+  const payload = (await response.json().catch(() => null)) as Array<{
+    id: string;
+    name?: string;
+    summary?: string;
+    publisher?: string;
+    supported_input_modalities?: string[];
+    supported_output_modalities?: string[];
+    limits?: { max_input_tokens?: number };
+  }> | null;
+  if (!Array.isArray(payload)) {
+    throw new Error("GitHub Models no devolvió el catálogo (revisa el token y su permiso models:read).");
+  }
+
+  return payload.map((model) => {
+    const inputs = model.supported_input_modalities ?? ["text"];
+    const outputs = model.supported_output_modalities ?? ["text"];
+    return {
+      provider: "github" as const,
+      modelId: model.id,
+      displayName: model.name?.trim() || model.id,
+      description: [model.publisher, model.summary?.trim()].filter(Boolean).join(" · ").slice(0, 500) || null,
+      inputText: inputs.includes("text"),
+      inputImage: inputs.includes("image"),
+      outputText: outputs.includes("text"),
+      outputImage: outputs.includes("image"),
+      pricing: "free-tier" as const,
+      contextLength: model.limits?.max_input_tokens ?? null,
+    };
+  });
+}
+
 const OFFICIAL_FETCHERS: Record<AiProvider, () => Promise<OfficialModel[]>> = {
   gemini: fetchGeminiModels,
+  openai: fetchOpenAiModels,
   openrouter: fetchOpenRouterModels,
+  github: fetchGitHubModels,
   huggingface: fetchHuggingFaceModels,
   pollinations: fetchPollinationsModels,
 };

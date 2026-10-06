@@ -3,7 +3,7 @@ import type { AiProvider } from "@/lib/ai-models";
 
 // Edición de imagen con IA (foto de origen + prompt → imagen nueva) para las miniaturas.
 // Un adaptador por proveedor; todos reciben un PNG y devuelven la imagen generada.
-// Claves en el environment: GEMINI_API_KEY, HF_TOKEN y POLLINATIONS_API_KEY.
+// Claves en el environment: GEMINI_API_KEY, OPENAI_API_KEY, HF_TOKEN y POLLINATIONS_API_KEY.
 
 export interface ImageEditInput {
   provider: AiProvider;
@@ -134,8 +134,44 @@ async function editWithPollinations({ modelId, prompt, sourcePng }: ImageEditInp
   throw new Error("Pollinations no devolvió una imagen.");
 }
 
+// OpenAI (ChatGPT): modelos gpt-image por /v1/images/edits (multipart). Devuelve base64.
+async function editWithOpenAI({ modelId, prompt, sourcePng }: ImageEditInput): Promise<Buffer> {
+  const apiKey = requireKey("OPENAI_API_KEY", "OpenAI");
+  const form = new FormData();
+  form.append("model", modelId);
+  form.append("prompt", prompt);
+  form.append("image", new Blob([new Uint8Array(sourcePng)], { type: "image/png" }), "producto.png");
+  form.append("size", "1024x1024");
+  form.append("n", "1");
+
+  const response = await fetch("https://api.openai.com/v1/images/edits", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}` },
+    body: form,
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error(describeHttpError("OpenAI", response.status, body));
+  }
+
+  const payload = (await response.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
+  const result = payload.data?.[0];
+  if (result?.b64_json) {
+    return Buffer.from(result.b64_json, "base64");
+  }
+  if (result?.url) {
+    const image = await fetch(result.url);
+    if (image.ok) {
+      return Buffer.from(await image.arrayBuffer());
+    }
+  }
+  throw new Error("OpenAI no devolvió una imagen.");
+}
+
 const IMAGE_EDITORS: Partial<Record<AiProvider, (input: ImageEditInput) => Promise<Buffer>>> = {
   gemini: editWithGemini,
+  openai: editWithOpenAI,
   huggingface: editWithHuggingFace,
   pollinations: editWithPollinations,
 };

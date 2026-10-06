@@ -122,8 +122,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       return NextResponse.json(
         {
           error:
-            "El modelo elegido no sirve para la miniatura: debe estar habilitado en Administrar › Modelos de IA, " +
-            "recibir y generar imagen, y ser de Gemini, Hugging Face o Pollinations.ai.",
+            "El modelo elegido no sirve para la miniatura: debe estar habilitado en Administrar › IA › Modelos, " +
+            "recibir y generar imagen, y ser de Gemini, OpenAI, Hugging Face o Pollinations.ai.",
         },
         { status: 400 },
       );

@@ -29,7 +29,7 @@ interface EditProductPageProps {
   params: Promise<{ id: string }>;
 }
 
-// Si un proveedor aún no tiene modelos habilitados en Administrar › Modelos de IA,
+// Si un proveedor aún no tiene modelos habilitados en Administrar › IA › Modelos,
 // el selector ofrece este modelo para no quedar vacío.
 const FALLBACK_SEO_MODELS = {
   gemini: "gemini-2.5-flash",

@@ -194,9 +194,9 @@ export function CatalogAiModelsAdmin({ initialModels }: CatalogAiModelsAdminProp
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Modelos de IA</h1>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            Los modelos habilitados aparecen en el editor: el asistente SEO usa los de Gemini y OpenRouter que
-            analizan imagen y responden texto; las miniaturas usan los que editan imagen (Gemini, Hugging Face o
-            Pollinations.ai). El predeterminado se selecciona al abrir el editor.
+            Los modelos habilitados aparecen en el editor: el asistente SEO usa los de Gemini, OpenAI, OpenRouter y GitHub Models que
+            analizan imagen y responden texto; las miniaturas usan los que editan imagen (Gemini, OpenAI, Hugging
+            Face o Pollinations.ai). El predeterminado se selecciona al abrir el editor.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {lastSyncedAt

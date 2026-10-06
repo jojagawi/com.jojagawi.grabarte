@@ -50,7 +50,7 @@ export async function PUT(request: Request) {
   if (body?.isDefault === true) {
     if (!isSeoAiProvider(model.provider) || !model.inputImage || !model.outputText) {
       return NextResponse.json(
-        { error: "Solo un modelo de Gemini u OpenRouter que analiza imágenes y responde texto puede ser el predeterminado del asistente SEO." },
+        { error: "Solo un modelo de Gemini, OpenAI, OpenRouter o GitHub Models que analiza imágenes y responde texto puede ser el predeterminado del asistente SEO." },
         { status: 400 },
       );
     }

@@ -1,26 +1,28 @@
 // Catálogo de modelos de IA (tabla AiModels). Tipos y etiquetas compartidos por
 // el panel, las rutas de API y los selectores del editor.
 
-export const AI_PROVIDERS = ["gemini", "openrouter", "huggingface", "pollinations"] as const;
+export const AI_PROVIDERS = ["gemini", "openai", "openrouter", "github", "huggingface", "pollinations"] as const;
 export type AiProvider = (typeof AI_PROVIDERS)[number];
 
 export const AI_PROVIDER_LABELS: Record<AiProvider, string> = {
   gemini: "Gemini",
+  openai: "OpenAI (ChatGPT)",
   openrouter: "OpenRouter",
+  github: "GitHub Models",
   huggingface: "Hugging Face",
   pollinations: "Pollinations.ai",
 };
 
 // Proveedores que usa el asistente SEO (analizar imagen → texto). Los demás solo
 // se usan para generar imágenes (miniaturas).
-export const SEO_AI_PROVIDERS = ["gemini", "openrouter"] as const;
+export const SEO_AI_PROVIDERS = ["gemini", "openai", "openrouter", "github"] as const;
 
 export function isSeoAiProvider(value: string): boolean {
   return (SEO_AI_PROVIDERS as readonly string[]).includes(value);
 }
 
 // Proveedores con integración para editar imágenes (miniaturas): ver image-generation.server.ts.
-export const IMAGE_EDIT_PROVIDERS = ["gemini", "huggingface", "pollinations"] as const;
+export const IMAGE_EDIT_PROVIDERS = ["gemini", "openai", "huggingface", "pollinations"] as const;
 
 export function isImageEditProvider(value: string): boolean {
   return (IMAGE_EDIT_PROVIDERS as readonly string[]).includes(value);

@@ -1145,12 +1145,12 @@ export function EditDesign({
                 {defaultSeoAiModels[selectedSeoProvider].length === 0 ? (
                   <p className="text-xs text-muted-foreground">
                     {AI_PROVIDER_LABELS[selectedSeoProvider]} no tiene modelos habilitados. Habilítalos en
-                    Administrar › Modelos de IA.
+                    Administrar › IA › Modelos.
                   </p>
                 ) : (
                   !canGenerateSeoWithModel && (
                     <p className="text-xs text-muted-foreground">
-                      El SEO necesita un modelo de Gemini u OpenRouter que genere texto; este modelo solo sirve
+                      El SEO necesita un modelo de Gemini, OpenAI, OpenRouter o GitHub Models que genere texto; este modelo solo sirve
                       para la miniatura.
                     </p>
                   )
@@ -1185,7 +1185,7 @@ export function EditDesign({
 
                   {selectedModelOption && !canGenerateThumbWithModel && (
                     <p className="text-xs text-muted-foreground">
-                      La miniatura necesita un modelo que genere imagen (Gemini, Hugging Face o Pollinations.ai);
+                      La miniatura necesita un modelo que genere imagen (Gemini, OpenAI, Hugging Face o Pollinations.ai);
                       elige uno con «genera imagen» en el combo de modelo.
                     </p>
                   )}
@@ -1212,7 +1212,7 @@ export function EditDesign({
                     <details className="text-xs text-muted-foreground">
                       <summary className="cursor-pointer">Ver el prompt usado</summary>
                       <pre className="mt-2 whitespace-pre-wrap rounded-md bg-white p-3 font-sans">{lastThumbPrompt}</pre>
-                      <p className="mt-1">Se edita en Administrar › Prompts de IA.</p>
+                      <p className="mt-1">Se edita en Administrar › IA › Prompts.</p>
                     </details>
                   )}
                 </div>

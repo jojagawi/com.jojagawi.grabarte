@@ -109,15 +109,20 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                   <DropdownMenuItem asChild>
                     <Link href="/agregar">Agregar producto</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/agregar/redaccion-seo">Redaccion SEO IA</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/catalogos/prompts-ia">Prompts de IA</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/catalogos/modelos-ia">Modelos de IA</Link>
-                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>IA</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem asChild>
+                        <Link href="/agregar/redaccion-seo">Redacción SEO</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/modelos-ia">Modelos</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/prompts-ia">Prompts</Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>Catalogos</DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
@@ -197,27 +202,32 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                       >
                         Agregar producto
                       </Link>
-                      <Link
-                        href="/agregar/redaccion-seo"
-                        onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Redaccion SEO IA
-                      </Link>
-                      <Link
-                        href="/catalogos/prompts-ia"
-                        onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Prompts de IA
-                      </Link>
-                      <Link
-                        href="/catalogos/modelos-ia"
-                        onClick={() => setIsOpen(false)}
-                        className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        Modelos de IA
-                      </Link>
+                      <div className="flex flex-col gap-2 pl-4">
+                        <span className="text-base font-medium text-muted-foreground">
+                          IA
+                        </span>
+                        <Link
+                          href="/agregar/redaccion-seo"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Redacción SEO
+                        </Link>
+                        <Link
+                          href="/catalogos/modelos-ia"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Modelos
+                        </Link>
+                        <Link
+                          href="/catalogos/prompts-ia"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Prompts
+                        </Link>
+                      </div>
                       <div className="flex flex-col gap-2 pl-4">
                         <span className="text-base font-medium text-muted-foreground">
                           Catalogos

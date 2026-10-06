@@ -1,4 +1,4 @@
-// Prompts de IA editables (tabla AiPrompts, Administrar › Prompts de IA).
+// Prompts de IA editables (tabla AiPrompts, Administrar › IA › Prompts).
 // Sin dependencias: lo usan el seed, la API y el panel.
 
 export const PRODUCT_THUMBNAIL_PROMPT_KEY = "product-thumbnail";

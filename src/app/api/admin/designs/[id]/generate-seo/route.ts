@@ -5,6 +5,7 @@ import {
   type SeoAiProvider,
   type SeoRewriteMode,
 } from "@/lib/seo-ai.server";
+import { isSeoAiProvider } from "@/lib/ai-models";
 
 export const dynamic = "force-static";
 export const revalidate = false;
@@ -45,7 +46,7 @@ function isValidMode(mode: string): mode is SeoRewriteMode {
 }
 
 function isValidProvider(provider: string): provider is SeoAiProvider {
-  return provider === "gemini" || provider === "openrouter";
+  return isSeoAiProvider(provider);
 }
 
 export async function POST(
