@@ -1,5 +1,10 @@
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "@prisma/client";
+import {
+  DEFAULT_PRODUCT_THUMBNAIL_PROMPT,
+  DEFAULT_THUMBNAIL_IMAGE_MODEL,
+  PRODUCT_THUMBNAIL_PROMPT_KEY,
+} from "../src/lib/ai-prompts";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL ?? "file:./data/mydb.sqlite",
@@ -233,6 +238,25 @@ async function seedSeasons() {
   );
 }
 
+// Prompts de IA: solo se crean si faltan; lo editado en el panel no se pisa.
+async function seedAiPrompts() {
+  const existing = await prisma.aiPrompts.findUnique({ where: { key: PRODUCT_THUMBNAIL_PROMPT_KEY } });
+  if (existing) {
+    console.log("[prisma:seed] AiPrompts ya contiene el prompt de miniaturas.");
+    return;
+  }
+  await prisma.aiPrompts.create({
+    data: {
+      key: PRODUCT_THUMBNAIL_PROMPT_KEY,
+      name: "Miniatura de producto (590×590)",
+      description: "Convierte la vista previa en una foto de producto atractiva para el sitio.",
+      prompt: DEFAULT_PRODUCT_THUMBNAIL_PROMPT,
+      model: DEFAULT_THUMBNAIL_IMAGE_MODEL,
+    },
+  });
+  console.log("[prisma:seed] AiPrompts: prompt de miniaturas creado.");
+}
+
 async function main() {
   const existing = await prisma.catCategories.findMany({
     where: {
@@ -441,6 +465,7 @@ async function main() {
   }
 
   await seedSeasons();
+  await seedAiPrompts();
 }
 
 main()

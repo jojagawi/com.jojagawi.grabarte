@@ -6,6 +6,8 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import { buildPageMetadata, toAbsoluteUrl } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import { buildAiThumbObjectKey } from "@/lib/preview-paths";
+import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
 import { buildProductCode } from "@/lib/utils";
 import { DesignMediaGallery } from "@/components/custom/design-media-gallery";
 import { FilePreview } from "@/components/custom/file-preview";
@@ -457,6 +459,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             select: {
               id: true,
               filePath: true,
+              thumbGenerated: true,
               fileTypeId: true,
               fileType: {
                 select: {
@@ -514,7 +517,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   // Las imágenes se sirven desde el CDN (cacheables y a resolución original) en lugar de
   // incrustarlas en base64: el HTML pesa menos y la pieza se ve nítida.
-  const previewItem = previewItemRaw;
+  // En la página se muestra la miniatura de IA (displayUrl); la pantalla completa
+  // sigue abriendo la vista previa original (previewUrl).
+  const previewThumbUrl =
+    previewRelation?.thumbGenerated && previewRelation.filePath
+      ? toMediaUrl(buildAiThumbObjectKey(previewRelation.filePath))
+      : null;
+  const previewItem =
+    previewItemRaw && previewThumbUrl ? { ...previewItemRaw, displayUrl: previewThumbUrl } : previewItemRaw;
 
   const galleryItems = fileRelations
     .filter((file) => file.fileTypeId === 2)
@@ -677,6 +687,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 file: {
                   select: {
                     filePath: true,
+                    thumbGenerated: true,
                     fileType: {
                       select: {
                         name: true,
@@ -693,11 +704,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const relatedProducts: RelatedProductItem[] = shuffleArray(relatedDesigns)
     .slice(0, 4)
     .map((relatedDesign) => {
-      const previewFile = relatedDesign.relDesignsFiles.find(
-        (relation) => relation.file?.fileType?.name === "Vista previa" && relation.file.filePath,
-      );
-      const firstFileWithPath = relatedDesign.relDesignsFiles.find((relation) => relation.file?.filePath);
-      const selectedPath = previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+      const selectedPath = selectDesignCardImagePath(relatedDesign.relDesignsFiles);
       const image = toMediaUrl(selectedPath) || defaultImage;
       const relatedCategories = Array.from(
         new Set(

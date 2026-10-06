@@ -2,8 +2,14 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { CheckCircle2, Loader2, Save, Sparkles, Upload, X } from "lucide-react";
+import { CheckCircle2, ImageIcon, Loader2, Save, Sparkles, Upload, X } from "lucide-react";
 import { sendGTMEvent } from "@next/third-parties/google";
+import {
+  AI_PROVIDER_LABELS,
+  AI_PROVIDERS,
+  type AiProvider,
+  type EditorModelOption,
+} from "@/lib/ai-models";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,8 +46,9 @@ type SeoWriterProfileOption = {
 };
 
 type SeoRewriteMode = "complement" | "rewrite-soft" | "rewrite-hard";
-type SeoAiProvider = "gemini" | "openrouter";
-type SeoModelOptionsByProvider = Record<SeoAiProvider, string[]>;
+// Combo "IA para generar": los cuatro proveedores del catálogo de modelos.
+type SeoAiProvider = AiProvider;
+type SeoModelOptionsByProvider = Record<AiProvider, EditorModelOption[]>;
 
 type SeoDraftResponse = {
   title: string;
@@ -66,6 +73,7 @@ type ExistingFile = {
   filePath: string | null;
   typeName: string;
   mimeType: string;
+  thumbGenerated?: boolean;
 };
 
 type EditableDesign = {
@@ -161,13 +169,25 @@ export function EditDesign({
   );
   const [selectedSeoModelByProvider, setSelectedSeoModelByProvider] = useState<
     Record<SeoAiProvider, string>
-  >(() => ({
-    gemini: defaultSeoAiModels.gemini[0],
-    openrouter: defaultSeoAiModels.openrouter[0],
-  }));
+  >(
+    () =>
+      Object.fromEntries(
+        AI_PROVIDERS.map((provider) => [provider, defaultSeoAiModels[provider][0]?.modelId ?? ""]),
+      ) as Record<SeoAiProvider, string>,
+  );
   const selectedSeoModel = selectedSeoModelByProvider[selectedSeoProvider];
+  // Para qué sirve el modelo del combo: activa o explica cada botón.
+  const selectedModelOption = defaultSeoAiModels[selectedSeoProvider].find(
+    (option) => option.modelId === selectedSeoModel,
+  );
+  const canGenerateSeoWithModel = Boolean(selectedModelOption?.canSeo);
+  const canGenerateThumbWithModel = Boolean(selectedModelOption?.canThumb);
   const [seoMode, setSeoMode] = useState<SeoRewriteMode>("rewrite-soft");
   const [isGeneratingSeo, setIsGeneratingSeo] = useState(false);
+  const [isGeneratingThumb, setIsGeneratingThumb] = useState(false);
+  const [thumbGenerationError, setThumbGenerationError] = useState<string | null>(null);
+  const [generatedThumbUrl, setGeneratedThumbUrl] = useState<string | null>(null);
+  const [lastThumbPrompt, setLastThumbPrompt] = useState<string | null>(null);
   const [seoGenerationError, setSeoGenerationError] = useState<string | null>(null);
   const [isAddingSeoProfile, setIsAddingSeoProfile] = useState(false);
   const [isSavingSeoProfile, setIsSavingSeoProfile] = useState(false);
@@ -496,6 +516,47 @@ export function EditDesign({
       alert(error instanceof Error ? error.message : "No se pudo actualizar el diseno");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Miniatura actual generada con IA (si la vista previa activa ya la tiene).
+  const currentThumbUrl = useMemo(() => {
+    const currentPreview = filesByType.preview.find((file) => !deletedFileIds.includes(file.id));
+    if (!currentPreview?.filePath || !currentPreview.thumbGenerated) {
+      return null;
+    }
+    return getMediaUrl(`${currentPreview.filePath.replace(/\.[a-z0-9]+$/i, "")}-thumb.webp`);
+  }, [deletedFileIds, filesByType.preview]);
+
+  const handleGenerateThumb = async () => {
+    if (!previewFileId) {
+      setThumbGenerationError("Necesitas una vista previa guardada para generar la miniatura.");
+      return;
+    }
+
+    setThumbGenerationError(null);
+    setIsGeneratingThumb(true);
+
+    try {
+      const response = await fetch(`/api/admin/designs/${design.id}/generate-thumb`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider: selectedSeoProvider, model: selectedSeoModel }),
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { thumbUrl?: string; prompt?: string; error?: string }
+        | null;
+      if (payload?.prompt) {
+        setLastThumbPrompt(payload.prompt);
+      }
+      if (!response.ok || !payload?.thumbUrl) {
+        throw new Error(payload?.error || "No se pudo generar la miniatura con IA");
+      }
+      setGeneratedThumbUrl(payload.thumbUrl);
+    } catch (error) {
+      setThumbGenerationError(error instanceof Error ? error.message : "No se pudo generar la miniatura con IA");
+    } finally {
+      setIsGeneratingThumb(false);
     }
   };
 
@@ -985,8 +1046,11 @@ export function EditDesign({
                       onChange={(e) => setSelectedSeoProvider(e.target.value as SeoAiProvider)}
                       className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
                     >
-                      <option value="gemini">Gemini</option>
-                      <option value="openrouter">OpenRouter</option>
+                      {AI_PROVIDERS.map((provider) => (
+                        <option key={provider} value={provider}>
+                          {AI_PROVIDER_LABELS[provider]}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -1003,9 +1067,12 @@ export function EditDesign({
                       }
                       className="w-full h-10 px-3 rounded-md border border-input bg-white text-sm"
                     >
-                      {defaultSeoAiModels[selectedSeoProvider].map((model) => (
-                        <option key={model} value={model}>
-                          {model}
+                      {defaultSeoAiModels[selectedSeoProvider].length === 0 && (
+                        <option value="">Sin modelos habilitados</option>
+                      )}
+                      {defaultSeoAiModels[selectedSeoProvider].map((option) => (
+                        <option key={option.modelId} value={option.modelId}>
+                          {option.label}
                         </option>
                       ))}
                     </select>
@@ -1054,7 +1121,7 @@ export function EditDesign({
 
                 <Button
                   type="button"
-                  disabled={isGeneratingSeo || isSubmitting}
+                  disabled={isGeneratingSeo || isSubmitting || !canGenerateSeoWithModel}
                   onClick={handleGenerateSeo}
                   className="w-full sm:w-auto bg-inspirarte-teal hover:bg-[#168c8f] text-white"
                 >
@@ -1075,9 +1142,80 @@ export function EditDesign({
                   <p className="text-sm text-destructive">{seoGenerationError}</p>
                 )}
 
-                <p className="text-xs text-muted-foreground">
-                  Los modelos disponibles se leen del environment configurado para cada IA.
-                </p>
+                {defaultSeoAiModels[selectedSeoProvider].length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    {AI_PROVIDER_LABELS[selectedSeoProvider]} no tiene modelos habilitados. Habilítalos en
+                    Administrar › Modelos de IA.
+                  </p>
+                ) : (
+                  !canGenerateSeoWithModel && (
+                    <p className="text-xs text-muted-foreground">
+                      El SEO necesita un modelo de Gemini u OpenRouter que genere texto; este modelo solo sirve
+                      para la miniatura.
+                    </p>
+                  )
+                )}
+
+                <div className="space-y-3 border-t border-border pt-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isGeneratingThumb || isSubmitting || !previewFileId || !canGenerateThumbWithModel}
+                      onClick={handleGenerateThumb}
+                      className="w-full sm:w-auto"
+                    >
+                      {isGeneratingThumb ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generando miniatura...
+                        </>
+                      ) : (
+                        <>
+                          <ImageIcon className="w-4 h-4 mr-2" />
+                          {currentThumbUrl || generatedThumbUrl ? "Regenerar miniatura con IA" : "Generar miniatura con IA"}
+                        </>
+                      )}
+                    </Button>
+                    <span className="text-xs text-muted-foreground">
+                      590×590 px a partir de la vista previa, con la IA y el modelo elegidos arriba. Se usa en
+                      todo el sitio excepto en la pantalla completa.
+                    </span>
+                  </div>
+
+                  {selectedModelOption && !canGenerateThumbWithModel && (
+                    <p className="text-xs text-muted-foreground">
+                      La miniatura necesita un modelo que genere imagen (Gemini, Hugging Face o Pollinations.ai);
+                      elige uno con «genera imagen» en el combo de modelo.
+                    </p>
+                  )}
+
+                  {thumbGenerationError && <p className="text-sm text-destructive">{thumbGenerationError}</p>}
+
+                  {(generatedThumbUrl || currentThumbUrl) && (
+                    <div className="flex items-start gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element -- vista previa remota con ?v= para evitar caché */}
+                      <img
+                        src={generatedThumbUrl || currentThumbUrl || ""}
+                        alt={`Miniatura generada de ${name}`}
+                        width={148}
+                        height={148}
+                        className="size-37 rounded-lg border border-border object-cover"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {generatedThumbUrl ? "Miniatura nueva guardada." : "Miniatura actual."} Se verá en el sitio en el siguiente build.
+                      </p>
+                    </div>
+                  )}
+
+                  {lastThumbPrompt && (
+                    <details className="text-xs text-muted-foreground">
+                      <summary className="cursor-pointer">Ver el prompt usado</summary>
+                      <pre className="mt-2 whitespace-pre-wrap rounded-md bg-white p-3 font-sans">{lastThumbPrompt}</pre>
+                      <p className="mt-1">Se edita en Administrar › Prompts de IA.</p>
+                    </details>
+                  )}
+                </div>
 
                 {!previewFileId && (
                   <p className="text-xs text-muted-foreground">

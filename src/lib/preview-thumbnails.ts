@@ -1,3 +1,5 @@
+import { buildAiThumbObjectKey } from "@/lib/preview-paths";
+
 // Miniaturas de las vistas previas del catálogo, generadas en el prebuild
 // (scripts/build-preview-thumbnails.ts) y servidas como archivos estáticos.
 // En el export estático next/image no optimiza, así que sin esto cada tarjeta
@@ -17,6 +19,7 @@ export function previewThumbnailFileName(designId: number, width: PreviewThumbna
 interface DesignFileRelation {
   file: {
     filePath: string | null;
+    thumbGenerated?: boolean;
     fileType: { name: string | null } | null;
   } | null;
 }
@@ -28,4 +31,17 @@ export function selectDesignImagePath(relations: DesignFileRelation[]): string |
   );
   const firstFileWithPath = relations.find((relation) => relation.file?.filePath);
   return previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+}
+
+// Imagen para tarjetas y vistas del sitio: la miniatura de IA si ya se generó para la
+// vista previa (Files.thumbGenerated); si no, la vista previa original. La vista a
+// pantalla completa de la ficha sigue usando selectDesignImagePath (la original).
+export function selectDesignCardImagePath(relations: DesignFileRelation[]): string | null {
+  const preview = relations.find(
+    (relation) => relation.file?.fileType?.name === "Vista previa" && relation.file.filePath,
+  )?.file;
+  if (preview?.filePath && preview.thumbGenerated) {
+    return buildAiThumbObjectKey(preview.filePath);
+  }
+  return selectDesignImagePath(relations);
 }

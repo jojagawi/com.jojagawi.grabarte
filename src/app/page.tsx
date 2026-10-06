@@ -226,7 +226,9 @@ export default async function Home() {
 
   // Miniaturas generadas en el prebuild (no base64: viajaban dos veces, en el HTML y en el payload RSC).
   const heroDesigns = designs.slice(0, 3).map((design) => {
-    const imageUrl = getDesignImageUrl(getDesignImagePath(design));
+    // Miniatura de IA si existe (o la vista previa original).
+    const imagePath = getDesignImagePath(design);
+    const imageUrl = getDesignImageUrl(imagePath);
     const name = design.name ?? "Diseño sin nombre";
     const productReference = `IA-${String(design.id).padStart(4, "0")}`;
 
@@ -241,8 +243,8 @@ export default async function Home() {
       isCustomizable: design.isCustomizable === 1,
       productionTime: toDisplayProductionTime(design.productionTime),
       image: imageUrl,
-      featuredImage: getPreviewThumbnailUrl(design.id, 960, imageUrl),
-      secondaryImage: getPreviewThumbnailUrl(design.id, 480, imageUrl),
+      featuredImage: getPreviewThumbnailUrl(design.id, 960, imageUrl, imagePath),
+      secondaryImage: getPreviewThumbnailUrl(design.id, 480, imageUrl, imagePath),
       categories: getDesignCategoryNames(design),
     };
   });

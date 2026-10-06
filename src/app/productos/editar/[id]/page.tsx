@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { EditDesign } from "@/components/custom/edit-design";
+import { getEditorModelOptions } from "@/lib/ai-models.server";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Editar producto del catalogo | InspiraArte",
@@ -28,18 +29,12 @@ interface EditProductPageProps {
   params: Promise<{ id: string }>;
 }
 
-function parseModelOptions(rawValue: string | undefined, fallbackModel: string): string[] {
-  const options = String(rawValue || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  if (options.length > 0) {
-    return Array.from(new Set(options));
-  }
-
-  return [fallbackModel];
-}
+// Si un proveedor aún no tiene modelos habilitados en Administrar › Modelos de IA,
+// el selector ofrece este modelo para no quedar vacío.
+const FALLBACK_SEO_MODELS = {
+  gemini: "gemini-2.5-flash",
+  openrouter: "qwen/qwen2.5-vl-72b-instruct:free",
+} as const;
 
 function parseId(rawId: string): number | null {
   const id = Number(rawId);
@@ -54,16 +49,18 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   const { id: rawId } = await params;
   const defaultSeoAiProvider =
     process.env.SEO_AI_PROVIDER?.trim().toLowerCase() === "openrouter" ? "openrouter" : "gemini";
-  const defaultSeoAiModels = {
-    gemini: parseModelOptions(
-      process.env.SEO_AI_GEMINI_MODELS,
-      process.env.SEO_AI_GEMINI_MODEL?.trim() || "gemini-2.5-flash",
-    ),
-    openrouter: parseModelOptions(
-      process.env.SEO_AI_OPENROUTER_MODELS,
-      process.env.SEO_AI_OPENROUTER_MODEL?.trim() || "qwen/qwen2.5-vl-72b-instruct:free",
-    ),
-  };
+  // Modelos habilitados del catálogo para el asistente SEO y la miniatura, predeterminado primero.
+  const defaultSeoAiModels = await getEditorModelOptions();
+  for (const provider of ["gemini", "openrouter"] as const) {
+    if (!defaultSeoAiModels[provider].some((option) => option.canSeo)) {
+      defaultSeoAiModels[provider].push({
+        modelId: FALLBACK_SEO_MODELS[provider],
+        label: `${FALLBACK_SEO_MODELS[provider]} · genera texto (respaldo)`,
+        canSeo: true,
+        canThumb: false,
+      });
+    }
+  }
 
   const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
   if (!canEditDesigns || process.env.NODE_ENV !== "development") {
@@ -168,6 +165,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
               select: {
                 id: true,
                 filePath: true,
+                thumbGenerated: true,
                 fileType: {
                   select: {
                     name: true,
@@ -255,6 +253,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
             filePath: file.filePath,
             typeName: file.fileType?.name ?? "Sin tipo",
             mimeType: file.fileExtension?.mimeType ?? "",
+            thumbGenerated: file.thumbGenerated,
           })),
       }}
     />

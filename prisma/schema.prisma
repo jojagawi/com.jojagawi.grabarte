@@ -209,3 +209,51 @@ model Faqs {
   showInMcp  Int    @default(1)
   priority   Int    @default(1)
 }
+
+// Prompts de IA editables desde Administrar › Prompts de IA. "key" identifica el uso
+// (por ejemplo "product-thumbnail"); el texto admite variables {{nombre}}, {{descripcion}}…
+model AiPrompts {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  name        String
+  description String?
+  prompt      String
+  model       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Catálogo de modelos de IA (Administrar › Modelos de IA). Reemplaza las listas del
+// environment: los selectores del editor usan los habilitados. "Actualizar modelos
+// oficiales" sincroniza con Gemini y OpenRouter sin pisar lo editado a mano.
+model AiModels {
+  id            Int       @id @default(autoincrement())
+  // "gemini" | "openrouter"
+  provider      String
+  // Identificador para la API (gemini-2.5-flash, qwen/qwen2.5-vl-72b-instruct:free…)
+  modelId       String
+  displayName   String
+  description   String?
+  inputText     Boolean   @default(true)
+  inputImage    Boolean   @default(false)
+  outputText    Boolean   @default(true)
+  outputImage   Boolean   @default(false)
+  // "free" | "free-tier" | "paid" | "unknown"
+  pricing       String    @default("unknown")
+  // true si se editó en el panel: la sincronización ya no lo cambia.
+  pricingManual Boolean   @default(false)
+  contextLength Int?
+  // Aparece en los selectores del editor.
+  isEnabled     Boolean   @default(false)
+  // Modelo predeterminado del proveedor para el asistente SEO.
+  isDefault     Boolean   @default(false)
+  // Sigue en la lista oficial del proveedor (false = ya no se ofrece).
+  isAvailable   Boolean   @default(true)
+  // "official" (sincronizado) | "manual" (agregado en el panel)
+  source        String    @default("official")
+  lastSyncedAt  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([provider, modelId])
+}

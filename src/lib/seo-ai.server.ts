@@ -205,7 +205,7 @@ class GeminiSeoProvider implements SeoGenerationProvider {
     }
 
     const model =
-      input.model?.trim() || process.env.SEO_AI_GEMINI_MODEL || "gemini-2.5-flash";
+      input.model?.trim() || "gemini-2.5-flash";
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
@@ -265,7 +265,7 @@ class OpenRouterSeoProvider implements SeoGenerationProvider {
     }
 
     const model =
-      input.model?.trim() || process.env.SEO_AI_OPENROUTER_MODEL || "qwen/qwen2.5-vl-72b-instruct:free";
+      input.model?.trim() || "qwen/qwen2.5-vl-72b-instruct:free";
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com";
     const appTitle = process.env.OPENROUTER_APP_TITLE?.trim() || "InspiraArte SEO Writer";
 

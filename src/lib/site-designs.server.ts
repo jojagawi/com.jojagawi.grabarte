@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { selectDesignImagePath } from "@/lib/preview-thumbnails";
+import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
 import { getPreviewThumbnailUrl } from "@/lib/preview-thumbnails.server";
 import { slugify } from "@/lib/slug";
 import type { SeasonShowcaseItem } from "@/components/custom/showcase-card";
@@ -65,6 +65,7 @@ export function getSiteDesigns() {
           file: {
             select: {
               filePath: true,
+              thumbGenerated: true,
               fileType: {
                 select: {
                   name: true,
@@ -86,7 +87,8 @@ const mediaBaseUrl = (process.env.NEXT_PUBLIC_S3_PROTOCOL || "https")
   .concat(process.env.NEXT_PUBLIC_S3 || "/dam/files/");
 
 export function getDesignImagePath(design: SiteDesign): string | null {
-  return selectDesignImagePath(design.relDesignsFiles);
+  // Miniatura de IA si existe; si no, la vista previa original.
+  return selectDesignCardImagePath(design.relDesignsFiles);
 }
 
 export function getDesignImageUrl(imagePath: string | null): string {
@@ -121,15 +123,13 @@ export function toShowcaseItem(
   design: SiteDesign,
   occasion: string | null,
 ): SeasonShowcaseItem {
+  // Miniatura de IA si existe (o la vista previa); la copia local solo si salió de esa imagen.
+  const imagePath = getDesignImagePath(design);
   return {
     id: design.id,
     name: design.name ?? "Diseño sin nombre",
     href: getDesignHref(design),
-    image: getPreviewThumbnailUrl(
-      design.id,
-      480,
-      getDesignImageUrl(getDesignImagePath(design)),
-    ),
+    image: getPreviewThumbnailUrl(design.id, 480, getDesignImageUrl(imagePath), imagePath),
     occasion,
     isCustomizable: design.isCustomizable === 1,
     productionTime: toDisplayProductionTime(design.productionTime),

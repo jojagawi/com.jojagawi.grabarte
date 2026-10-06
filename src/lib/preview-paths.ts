@@ -13,3 +13,16 @@ export function buildPreviewObjectKey(
   const cleanExtension = extension.replace(/^\.+/, "").toLowerCase() || "webp";
   return `preview/${designId}-${fileId}-${slug}.${cleanExtension}`;
 }
+
+// Miniatura generada con IA (590×590) a partir de una vista previa:
+// preview/[id_diseño]-[id_archivo]-[slug].webp → preview/[id_diseño]-[id_archivo]-[slug]-thumb.webp
+// Se deriva de la ruta guardada de la vista previa, así no depende del nombre actual del diseño.
+export const AI_THUMB_SIZE = 590;
+
+export function buildAiThumbObjectKey(previewFilePath: string): string {
+  return `${previewFilePath.replace(/\.[a-z0-9]+$/i, "")}-thumb.webp`;
+}
+
+export function isAiThumbPath(path: string | null | undefined): boolean {
+  return Boolean(path?.endsWith("-thumb.webp"));
+}

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
+import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
 import { Products } from "@/components/custom/products";
 
 
@@ -106,6 +107,7 @@ export default async function Productos() {
           file: {
             select: {
               filePath: true,
+              thumbGenerated: true,
               fileType: {
                 select: {
                   name: true,
@@ -126,11 +128,8 @@ export default async function Productos() {
   );
 
   const products = designs.map((design, index) => {
-    const previewFile = design.relDesignsFiles.find(
-      (relation) => relation.file?.fileType?.name === "Vista previa" && relation.file.filePath,
-    );
-    const firstFileWithPath = design.relDesignsFiles.find((relation) => relation.file?.filePath);
-    const selectedPath = previewFile?.file?.filePath ?? firstFileWithPath?.file?.filePath ?? null;
+    // Miniatura de IA si existe; si no, la vista previa original.
+    const selectedPath = selectDesignCardImagePath(design.relDesignsFiles);
 
     const image =
       selectedPath && mediaBaseUrl
