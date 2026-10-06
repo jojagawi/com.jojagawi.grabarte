@@ -4,7 +4,7 @@ Recibe las solicitudes de cotización de `/contacto` (reemplaza el formulario de
 
 ## Flujo
 
-1. **`contact_upload`** (solo si hay adjuntos): valida hasta 5 archivos JPG, PNG o PDF de 10 MB
+1. **`contact_upload`** (solo si hay adjuntos): valida hasta 5 archivos JPG, PNG, PDF, Excel (xlsx/xls), CSV, Word (docx) o texto de 10 MB
    como máximo y devuelve un `requestId` y una URL firmada (POST) por archivo. El navegador sube
    cada archivo directo a `s3://<bucket>/contact/uploads/<requestId>/`. La política firmada limita
    tamaño y tipo, así que S3 rechaza lo que no coincida.
@@ -64,7 +64,7 @@ La salida `ContactLambdaFunctionUrl` va en `NEXT_PUBLIC_CONTACT_LAMBDA_URL` del 
   "email": "maria@example.com",
   "phone": "5512345678",
   "occasion": "Boda",
-  "productType": "Objetos MDF",
+  "productType": "MDF / madera",
   "requestedProduct": "IA-0185 · Torre de Dados en MDF",
   "quantity": "120",
   "neededBy": "2026-12-12",

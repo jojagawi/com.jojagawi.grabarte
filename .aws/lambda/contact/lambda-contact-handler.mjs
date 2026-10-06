@@ -26,11 +26,50 @@ const SUBMIT_ACTION = "contact_submit";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
-const ALLOWED_FILE_TYPES = new Set(["image/jpeg", "image/png", "application/pdf"]);
+// Referencias (fotos, PDF) y listas de nombres para eventos (Excel, CSV, Word, texto).
+// Debe coincidir con ALLOWED_FILE_TYPES de src/components/custom/contact-form.tsx.
+const ALLOWED_FILE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+  "text/csv",
+  "text/plain",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]);
 const UPLOAD_URL_TTL_SECONDS = 600;
 
-const OCCASIONS = new Set(["Cumpleaños", "Aniversario", "Boda", "Graduación", "Corporación", "Otra"]);
-const PRODUCT_TYPES = new Set(["Termos", "Llaveros", "Placas", "Objetos MDF", "Otro"]);
+// Deben coincidir con las opciones de src/components/custom/contact-form.tsx.
+const OCCASIONS = new Set([
+  "Cumpleaños",
+  "XV años",
+  "Boda",
+  "Primera comunión",
+  "Confirmación",
+  "Graduación",
+  "Aniversario",
+  "Día del amor y la amistad",
+  "Día de las madres",
+  "Día del maestro",
+  "Día del padre",
+  "Día de muertos",
+  "Navidad",
+  "Empresa / regalo corporativo",
+  "Otra",
+]);
+// El campo conserva el nombre productType, pero ahora guarda el material.
+const PRODUCT_TYPES = new Set([
+  "MDF / madera",
+  "Termo",
+  "Acrílico",
+  "Metal",
+  "Impresión 3D",
+  "Papel",
+  "Piedra",
+  "Caucho / sellos",
+  "Aún no lo sé",
+]);
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -150,12 +189,12 @@ async function handleUpload(payload) {
   const files = normalizeUploadInput(payload);
   if (!files) {
     return createResponse(400, {
-      message: `Archivos invalidos. Se permiten hasta ${MAX_FILES} archivos JPG, PNG o PDF de 10 MB como maximo.`,
+      message: `No pudimos aceptar tus archivos. Puedes adjuntar hasta ${MAX_FILES} archivos JPG, PNG, PDF, Excel, CSV, Word o texto de 10 MB como máximo.`,
     });
   }
 
   if (!(await verifyRecaptchaToken(text(payload.recaptchaToken, 4000), UPLOAD_ACTION))) {
-    return createResponse(400, { message: "La validacion de reCAPTCHA no fue exitosa." });
+    return createResponse(400, { message: "No pudimos verificar que no eres un robot. Recarga la página e intenta de nuevo." });
   }
 
   const requestId = randomUUID();
@@ -263,7 +302,7 @@ function escapeSlack(value) {
 function summaryRows(request) {
   return [
     ["Producto", request.requestedProduct],
-    ["Tipo de producto", request.productType],
+    ["Material", request.productType],
     ["Ocasión", request.occasion],
     ["Cantidad", request.quantity],
     ["Lo necesita para", request.neededBy],
@@ -401,12 +440,12 @@ async function handleSubmit(payload) {
   const request = normalizeSubmitInput(payload);
   if (!request) {
     return createResponse(400, {
-      message: "Datos invalidos. Revisa nombre, email y detalles de tu solicitud.",
+      message: "Faltan datos. Revisa tu nombre, tu correo y los detalles de tu solicitud.",
     });
   }
 
   if (!(await verifyRecaptchaToken(text(payload.recaptchaToken, 4000), SUBMIT_ACTION))) {
-    return createResponse(400, { message: "La validacion de reCAPTCHA no fue exitosa." });
+    return createResponse(400, { message: "No pudimos verificar que no eres un robot. Recarga la página e intenta de nuevo." });
   }
 
   const id = request.requestId ?? randomUUID();
@@ -476,6 +515,6 @@ export async function handler(event) {
     case SUBMIT_ACTION:
       return handleSubmit(payload);
     default:
-      return createResponse(400, { message: "Accion invalida." });
+      return createResponse(400, { message: "Acción inválida." });
   }
 }
