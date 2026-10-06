@@ -13,9 +13,9 @@ import sharp from "sharp";
 //   de producto con cada producto y lo guarda en Designs.requests (SQLite).
 //
 // Uso:
-//   pnpm run hubspot:sync-products              sincroniza los diseños activos
+//   pnpm run hubspot:sync-products              sincroniza los diseños que se muestran en el sitio
 //   pnpm run hubspot:sync-products --dry-run    muestra qué haría, sin escribir
-//   pnpm run hubspot:sync-products --site-only  solo los publicados en el sitio
+//   pnpm run hubspot:sync-products --all        incluye también los activos no publicados
 //   pnpm run hubspot:sync-products --refresh-images  vuelve a subir todas las imágenes
 //   pnpm run hubspot:sync-products --sku=IA-0003     solo ese producto
 
@@ -33,7 +33,8 @@ const IMAGE_UPLOAD_CONCURRENCY = 4;
 
 const args = new Set(process.argv.slice(2));
 const dryRun = args.has("--dry-run");
-const siteOnly = args.has("--site-only");
+// Por defecto solo los que muestra el sitio (status 1 + showInSite 1, mismo filtro que las páginas).
+const includeUnpublished = args.has("--all");
 const refreshImages = args.has("--refresh-images");
 // --sku=IA-0003: procesa un solo producto (útil para probar antes de correr todo).
 const onlyDesignId = Number(
@@ -255,7 +256,7 @@ async function main() {
       where: {
         status: 1,
         name: { not: null },
-        ...(siteOnly ? { showInSite: 1 } : {}),
+        ...(includeUnpublished ? {} : { showInSite: 1 }),
         ...(Number.isInteger(onlyDesignId) ? { id: onlyDesignId } : {}),
       },
       orderBy: { id: "asc" },
@@ -474,7 +475,7 @@ async function main() {
     }
 
     console.log(
-      `[hubspot:sync-products] Diseños: ${designs.length}${siteOnly ? " (solo publicados)" : ""} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length} | Pedidos por actualizar: ${requestUpdates.length}`,
+      `[hubspot:sync-products] Diseños: ${designs.length}${includeUnpublished ? " (incluye no publicados)" : " (solo publicados)"} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length} | Pedidos por actualizar: ${requestUpdates.length}`,
     );
     if (duplicatedSkus > 0) {
       console.warn(`[hubspot:sync-products] Aviso: ${duplicatedSkus} productos de HubSpot repiten SKU; se usa el primero.`);
