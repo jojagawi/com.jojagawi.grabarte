@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
+import { buildWebSiteJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { Hero } from "@/components/custom/hero";
 import { Process } from "@/components/custom/process";
 import { Testimonials } from "@/components/custom/testimonials";
@@ -49,7 +50,7 @@ export const metadata: Metadata = buildPageMetadata({
     "México",
   ],
   imagePath: "/dam/logos/hero.webp",
-  imageAlt: "Catalogo de productos personalizados de InspiraArte",
+  imageAlt: "Catálogo de productos personalizados de InspiraArte",
 });
 
 export const llmstxt = {
@@ -265,6 +266,10 @@ export default async function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildWebSiteJsonLd()) }}
+      />
       <Hero designs={heroDesigns} />
       {showcaseItems.length > 0 && (
         <SeasonShowcase

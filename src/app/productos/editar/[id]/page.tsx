@@ -10,7 +10,7 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "Panel interno para actualizar informacion, visibilidad, categorias, precios y archivos de un producto.",
   path: "/productos/editar",
-  imagePath: "/dam/dafault-image-product.webp",
+  imagePath: "/dam/default-image-product.webp",
   imageAlt: "Panel interno para editar productos en InspiraArte",
   noIndex: true,
 });

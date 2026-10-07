@@ -7,6 +7,7 @@ type CategoryPayload = {
   name: string;
   status: number;
   icon: string | null;
+  description: string | null;
   createdAt: string;
   created: boolean;
 };
@@ -16,6 +17,7 @@ type CategoryListItem = {
   name: string;
   status: number;
   icon: string | null;
+  description: string | null;
   createdAt: string;
 };
 
@@ -26,6 +28,14 @@ type CategoryListPayload = {
 type ErrorPayload = {
   error: string;
 };
+
+// Intro de /productos/categoria/[slug]; vacío vuelve al texto genérico de la página.
+const MAX_DESCRIPTION_LENGTH = 1200;
+
+function normalizeDescription(value: unknown): string | null {
+  const description = String(value ?? "").trim().slice(0, MAX_DESCRIPTION_LENGTH);
+  return description || null;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,6 +51,7 @@ export default async function handler(
         id: true,
         name: true,
         icon: true,
+        description: true,
         status: true,
         createdAt: true,
       },
@@ -53,6 +64,7 @@ export default async function handler(
         name: category.name?.trim() || "Sin nombre",
         status: Number(category.status ?? 0),
         icon: category.icon?.trim() || null,
+        description: category.description?.trim() || null,
         createdAt: category.createdAt.toISOString(),
       })),
     });
@@ -66,10 +78,11 @@ export default async function handler(
 
     const status = Number(req.body?.status) === 0 ? 0 : 1;
     const icon = normalizeCategoryIcon(req.body?.icon);
+    const description = normalizeDescription(req.body?.description);
 
     const existing = await prisma.catCategories.findFirst({
       where: { name },
-      select: { id: true, name: true, icon: true, status: true, createdAt: true },
+      select: { id: true, name: true, icon: true, description: true, status: true, createdAt: true },
     });
 
     if (existing) {
@@ -78,6 +91,7 @@ export default async function handler(
         name: existing.name?.trim() || name,
         status: Number(existing.status ?? 0),
         icon: existing.icon?.trim() || null,
+        description: existing.description?.trim() || null,
         createdAt: existing.createdAt.toISOString(),
         created: false,
       });
@@ -88,8 +102,9 @@ export default async function handler(
         name,
         status,
         icon,
+        description,
       },
-      select: { id: true, name: true, icon: true, status: true, createdAt: true },
+      select: { id: true, name: true, icon: true, description: true, status: true, createdAt: true },
     });
 
     return res.status(201).json({
@@ -97,6 +112,7 @@ export default async function handler(
       name: created.name?.trim() || name,
       status: Number(created.status ?? 0),
       icon: created.icon?.trim() || null,
+      description: created.description?.trim() || null,
       createdAt: created.createdAt.toISOString(),
       created: true,
     });
@@ -115,6 +131,7 @@ export default async function handler(
 
     const status = Number(req.body?.status) === 0 ? 0 : 1;
     const icon = normalizeCategoryIcon(req.body?.icon);
+    const description = normalizeDescription(req.body?.description);
 
     const duplicate = await prisma.catCategories.findFirst({
       where: {
@@ -134,8 +151,9 @@ export default async function handler(
         name,
         status,
         icon,
+        description,
       },
-      select: { id: true, name: true, icon: true, status: true, createdAt: true },
+      select: { id: true, name: true, icon: true, description: true, status: true, createdAt: true },
     });
 
     return res.status(200).json({
@@ -143,6 +161,7 @@ export default async function handler(
       name: updated.name?.trim() || name,
       status: Number(updated.status ?? 0),
       icon: updated.icon?.trim() || null,
+      description: updated.description?.trim() || null,
       createdAt: updated.createdAt.toISOString(),
       created: false,
     });

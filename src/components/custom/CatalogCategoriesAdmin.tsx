@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { slugify } from "@/lib/slug";
 import {
   Table,
   TableBody,
@@ -31,6 +33,7 @@ type CategoryItem = {
   id: number;
   name: string;
   icon: string | null;
+  description: string | null;
   status: number;
   createdAt: string;
 };
@@ -39,6 +42,7 @@ type CategoryApiPayload = {
   id: number;
   name: string;
   icon: string | null;
+  description: string | null;
   status: number;
   createdAt: string;
   created: boolean;
@@ -46,6 +50,29 @@ type CategoryApiPayload = {
 
 interface CatalogCategoriesAdminProps {
   initialCategories: CategoryItem[];
+}
+
+const MAX_DESCRIPTION_LENGTH = 1200;
+
+function DescriptionField({ id, name, value, onChange }: { id: string; name: string; value: string; onChange: (value: string) => void }) {
+  const slug = slugify(name);
+  return (
+    <div className="flex flex-col gap-1 text-sm text-foreground">
+      <label htmlFor={id}>Texto introductorio de la página</label>
+      <Textarea
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        maxLength={MAX_DESCRIPTION_LENGTH}
+        rows={5}
+        placeholder="Qué piezas incluye, para qué ocasiones, materiales y qué se puede personalizar."
+      />
+      <p className="text-xs text-muted-foreground">
+        {value.trim().length}/{MAX_DESCRIPTION_LENGTH}. Ideal: 150 a 300 palabras. Vacío usa un texto genérico.
+        {slug && <> Página: /productos/categoria/{slug}/</>}
+      </p>
+    </div>
+  );
 }
 
 function formatDate(value: string): string {
@@ -71,11 +98,13 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
   const [createName, setCreateName] = useState("");
   const [createIcon, setCreateIcon] = useState(defaultIcon);
   const [createStatus, setCreateStatus] = useState<"1" | "0">("1");
+  const [createDescription, setCreateDescription] = useState("");
 
   const [editId, setEditId] = useState<number | null>(null);
   const [editName, setEditName] = useState("");
   const [editIcon, setEditIcon] = useState(defaultIcon);
   const [editStatus, setEditStatus] = useState<"1" | "0">("1");
+  const [editDescription, setEditDescription] = useState("");
 
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" })),
@@ -96,7 +125,12 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
       const response = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, icon: normalizeCategoryIcon(createIcon), status: Number(createStatus) }),
+        body: JSON.stringify({
+          name,
+          icon: normalizeCategoryIcon(createIcon),
+          status: Number(createStatus),
+          description: createDescription,
+        }),
       });
 
       const payload = (await response.json()) as CategoryApiPayload | { error?: string };
@@ -109,7 +143,9 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
         const current = previous.find((item) => item.id === payload.id);
         if (current) {
           return previous.map((item) => (
-            item.id === payload.id ? { ...item, name: payload.name, icon: payload.icon, status: payload.status } : item
+            item.id === payload.id
+            ? { ...item, name: payload.name, icon: payload.icon, description: payload.description, status: payload.status }
+            : item
           ));
         }
 
@@ -117,6 +153,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
           id: payload.id,
           name: payload.name,
           icon: payload.icon,
+          description: payload.description,
           status: payload.status,
           createdAt: payload.createdAt,
         }];
@@ -135,6 +172,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
     setEditName(category.name);
     setEditIcon(resolveCategoryIconKey(category.icon, category.name));
     setEditStatus(String(category.status === 1 ? 1 : 0) as "1" | "0");
+    setEditDescription(category.description ?? "");
     setErrorMessage(null);
     setIsEditOpen(true);
   }
@@ -158,7 +196,13 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
       const response = await fetch("/api/admin/categories", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: editId, name, icon: normalizeCategoryIcon(editIcon), status: Number(editStatus) }),
+        body: JSON.stringify({
+          id: editId,
+          name,
+          icon: normalizeCategoryIcon(editIcon),
+          status: Number(editStatus),
+          description: editDescription,
+        }),
       });
 
       const payload = (await response.json()) as CategoryApiPayload | { error?: string };
@@ -168,7 +212,9 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
       }
 
       setCategories((previous) => previous.map((item) => (
-        item.id === payload.id ? { ...item, name: payload.name, icon: payload.icon, status: payload.status } : item
+        item.id === payload.id
+            ? { ...item, name: payload.name, icon: payload.icon, description: payload.description, status: payload.status }
+            : item
       )));
 
       setIsEditOpen(false);
@@ -194,6 +240,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
             setCreateName("");
             setCreateIcon(defaultIcon);
             setCreateStatus("1");
+            setCreateDescription("");
             setIsCreateOpen(true);
           }}
         >
@@ -210,6 +257,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
               <TableHead>Icono</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Intro</TableHead>
               <TableHead>Creado</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
@@ -223,6 +271,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
                 </TableCell>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.status === 1 ? "Activo" : "Inactivo"}</TableCell>
+                <TableCell>{category.description ? "Sí" : "—"}</TableCell>
                 <TableCell>{formatDate(category.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   <Button type="button" variant="outline" size="sm" onClick={() => openEditModal(category)}>
@@ -234,7 +283,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
             ))}
             {sortedCategories.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="py-6 text-center text-muted-foreground">
+                <TableCell colSpan={7} className="py-6 text-center text-muted-foreground">
                   No hay categorias registradas.
                 </TableCell>
               </TableRow>
@@ -273,6 +322,12 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
                 <option value="0">Inactivo</option>
               </select>
             </label>
+            <DescriptionField
+              id="create-category-description"
+              name={createName}
+              value={createDescription}
+              onChange={setCreateDescription}
+            />
             {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
           </div>
           <DialogFooter>
@@ -286,7 +341,7 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar categoria</DialogTitle>
-            <DialogDescription>Actualiza el nombre, icono y status de la categoria.</DialogDescription>
+            <DialogDescription>Actualiza el nombre, icono, status y texto de la página de la categoria.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <Input placeholder="Nombre de la categoria" value={editName} onChange={(event) => setEditName(event.target.value)} maxLength={120} />
@@ -312,6 +367,12 @@ export function CatalogCategoriesAdmin({ initialCategories }: CatalogCategoriesA
                 <option value="0">Inactivo</option>
               </select>
             </label>
+            <DescriptionField
+              id="edit-category-description"
+              name={editName}
+              value={editDescription}
+              onChange={setEditDescription}
+            />
             {errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
           </div>
           <DialogFooter>

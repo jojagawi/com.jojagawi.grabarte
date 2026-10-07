@@ -23,7 +23,7 @@ const gridColumnsByCount: Record<number, string> = {
 }
 
 // Iniciales del primer y último nombre: "María de los Ángeles" → "MÁ".
-function getInitials(name: string): string {
+export function getInitials(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean)
   if (words.length === 0) {
     return "?"

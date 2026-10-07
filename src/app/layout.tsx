@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     siteName: "InspiraArte",
     images: [
       {
-        url: "/dam/dafault-image-product.webp",
+        url: "/dam/default-image-product.webp",
         alt: "Productos personalizados de InspiraArte",
       },
     ],
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
     description:
       "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
-    images: ["/dam/dafault-image-product.webp"],
+    images: ["/dam/default-image-product.webp"],
   },
   icons: {
     icon: [

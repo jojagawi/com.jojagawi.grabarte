@@ -21,11 +21,20 @@ export type SiteRateItem = {
   product: string;
   description: string;
   rating: number;
+  designId: number | null;
   createdAt: string;
   status: number;
   source: string;
   s3Path: string;
   s3Key: string;
+};
+
+export type ProductRateItem = {
+  id: string;
+  name: string;
+  description: string;
+  rating: number;
+  createdAt: string;
 };
 
 const POLL_INTERVAL_MS = 750;
@@ -56,6 +65,17 @@ function normalizeRating(value: number) {
 
 function toFieldValue(value: string | undefined) {
   return String(value ?? "").trim();
+}
+
+function parseDesignId(value: string | undefined) {
+  const designId = Number(toFieldValue(value));
+  return Number.isInteger(designId) && designId > 0 ? designId : null;
+}
+
+function getRatesTableName() {
+  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
+  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
+  return `${database}.${table}`;
 }
 
 function s3KeyFromPath(path: string) {
@@ -145,12 +165,9 @@ async function executeAthenaQuery(query: string) {
 }
 
 export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateItem[]> {
-  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
-  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
-
   const query = [
-    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path",
-    `FROM ${database}.${table}`,
+    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path, designid",
+    `FROM ${getRatesTableName()}`,
     "ORDER BY from_iso8601_timestamp(createdat) DESC",
     `LIMIT ${Math.max(1, Math.min(500, Math.floor(limit)))}`,
   ].join(" ");
@@ -167,6 +184,7 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
       product: toFieldValue(cols[2]?.VarCharValue),
       description: toFieldValue(cols[3]?.VarCharValue),
       rating: parseNumber(cols[4]?.VarCharValue),
+      designId: parseDesignId(cols[9]?.VarCharValue),
       createdAt: toFieldValue(cols[5]?.VarCharValue),
       status: parseNumber(cols[6]?.VarCharValue),
       source: toFieldValue(cols[7]?.VarCharValue),
@@ -219,3 +237,53 @@ export async function getRandomHomeTestimonialsFromAthena(limit = 4): Promise<Pu
 }
 
 
+
+// Una sola consulta cada 10 minutos (y por build): todas las fichas de producto la comparten.
+// Los errores también se guardan, para no esperar a Athena en cada ficha mientras falle.
+const PRODUCT_RATES_TTL_MS = 1000 * 60 * 10;
+const productRatesCache = {
+  expiresAt: 0,
+  promise: null as Promise<Map<number, ProductRateItem[]>> | null,
+};
+
+// Calificaciones aprobadas (status 1) ligadas a un diseño con ?id= en el formulario, por designId.
+export function getApprovedProductRatesFromAthena(): Promise<Map<number, ProductRateItem[]>> {
+  if (productRatesCache.promise && productRatesCache.expiresAt > Date.now()) {
+    return productRatesCache.promise;
+  }
+
+  productRatesCache.expiresAt = Date.now() + PRODUCT_RATES_TTL_MS;
+  productRatesCache.promise = (async () => {
+    const query = [
+      "SELECT id, name, description, rating, createdat, designid",
+      `FROM ${getRatesTableName()}`,
+      "WHERE coalesce(status, 0) = 1",
+      "  AND designid IS NOT NULL",
+      "  AND trim(coalesce(name, '')) <> ''",
+      "  AND trim(coalesce(description, '')) <> ''",
+      "ORDER BY from_iso8601_timestamp(createdat) DESC",
+      "LIMIT 1000",
+    ].join(" ");
+
+    const ratesByDesign = new Map<number, ProductRateItem[]>();
+    for (const row of await executeAthenaQuery(query)) {
+      const cols = row.Data ?? [];
+      const designId = parseDesignId(cols[5]?.VarCharValue);
+      if (!designId) continue;
+
+      const rates = ratesByDesign.get(designId) ?? [];
+      rates.push({
+        id: toFieldValue(cols[0]?.VarCharValue),
+        name: toFieldValue(cols[1]?.VarCharValue),
+        description: toFieldValue(cols[2]?.VarCharValue),
+        rating: normalizeRating(parseNumber(cols[3]?.VarCharValue)),
+        createdAt: toFieldValue(cols[4]?.VarCharValue),
+      });
+      ratesByDesign.set(designId, rates);
+    }
+    return ratesByDesign;
+  })();
+
+  // Sin la columna designid en Athena (o sin credenciales) las fichas salen sin opiniones.
+  return productRatesCache.promise;
+}

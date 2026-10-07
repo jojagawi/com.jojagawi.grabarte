@@ -7,6 +7,7 @@ type CreateRatePayload = {
   rating: number;
   recaptchaToken: string;
   action: string;
+  designId?: number;
 };
 
 function getTrimmed(value: unknown) {
@@ -25,6 +26,8 @@ function parsePayload(payload: unknown): CreateRatePayload | null {
   const rating = Number(body.rating);
   const recaptchaToken = getTrimmed(body.recaptchaToken);
   const action = getTrimmed(body.action);
+  const rawDesignId = getTrimmed(body.designId);
+  const designId = rawDesignId ? Number(rawDesignId) : null;
 
   if (!name || !product || !description) {
     return null;
@@ -38,6 +41,11 @@ function parsePayload(payload: unknown): CreateRatePayload | null {
     return null;
   }
 
+  // Mismo criterio que la Lambda: opcional, pero si viene debe ser un id válido.
+  if (designId !== null && (!Number.isInteger(designId) || designId <= 0)) {
+    return null;
+  }
+
   return {
     name,
     product,
@@ -45,6 +53,7 @@ function parsePayload(payload: unknown): CreateRatePayload | null {
     rating,
     recaptchaToken,
     action,
+    ...(designId ? { designId } : {}),
   };
 }
 

@@ -9,7 +9,7 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "Panel interno para visualizar y editar perfiles y modos de redaccion SEO usados por la IA.",
   path: "/agregar/redaccion-seo",
-  imagePath: "/dam/dafault-image-product.webp",
+  imagePath: "/dam/default-image-product.webp",
   imageAlt: "Panel interno de perfiles de redaccion SEO",
   noIndex: true,
 });

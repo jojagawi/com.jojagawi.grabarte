@@ -15,7 +15,7 @@ export const metadata: Metadata = buildPageMetadata({
     "pedido personalizado",
     "InspiraArte",
   ],
-  imagePath: "/dam/dafault-image-product.webp",
+  imagePath: "/dam/default-image-product.webp",
   imageAlt: "Formulario de contacto para cotizaciones en InspiraArte",
 });
 

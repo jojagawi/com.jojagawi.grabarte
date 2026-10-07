@@ -22,6 +22,7 @@ type RateJson = {
   product?: string;
   description?: string;
   rating?: number;
+  designId?: number;
   createdAt?: string;
   source?: string;
   status?: number;

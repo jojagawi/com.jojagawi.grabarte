@@ -20,9 +20,26 @@ Handler para registrar calificaciones del sitio y guardar JSON en S3.
   "name": "Maria Perez",
   "product": "Termo personalizado",
   "description": "Excelente calidad y entrega puntual",
-  "rating": 5
+  "rating": 5,
+  "designId": 15
 }
 ```
+
+`designId` es opcional: es el `Designs.id` del producto calificado. El formulario lo envía cuando
+se abre con `?id=15` (por ejemplo `https://www.inspiraarte.com/agregar-calificacion/?id=15`) y el
+id corresponde a un diseño publicado. Si viene, debe ser un entero positivo o la Lambda responde 400.
+
+## Relación con productos en Athena
+
+La tabla de Athena necesita la columna `designid` (el SerDe JSON no distingue mayúsculas, así que
+lee la llave `designId` del JSON). Ejecutar **una vez, antes de desplegar el sitio** que la consulta:
+
+```sql
+ALTER TABLE inspiraarte_rates.rates ADD COLUMNS (designid int);
+```
+
+Las calificaciones anteriores quedan con `designid` nulo. Las aprobadas (`status = 1`) con
+`designid` se muestran en la ficha del producto y se marcan en su JSON-LD (`aggregateRating` y `review`).
 
 ## Prueba local rapida
 

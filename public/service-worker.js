@@ -2,7 +2,7 @@
 /// <reference lib="webworker" />
 // Service worker source of truth. Build output goes to public/service-worker.js.
 const sw = self;
-const SW_VERSION = "inspiraarte-sw-v3";
+const SW_VERSION = "inspiraarte-sw-v4";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
 const STATIC_ASSETS = [
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
     "/dam/logos/favicon-100.png",
     "/dam/logos/favicon-200.png",
     "/dam/logos/hero.webp",
-    "/dam/dafault-image-product.webp",
+    "/dam/default-image-product.webp",
 ];
 sw.addEventListener("install", (event) => {
     event.waitUntil(caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS)));

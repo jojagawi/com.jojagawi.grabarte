@@ -4,7 +4,7 @@ import { ArrowRight, Clock, MapPin, Palette, Truck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PersonalizableTag } from "@/components/custom/product-personalization"
 
-const defaultHeroImage = "/dam/dafault-image-product.webp"
+const defaultHeroImage = "/dam/default-image-product.webp"
 
 export type HeroDesignItem = {
   id: number
@@ -159,8 +159,8 @@ export function Hero({ designs }: HeroProps) {
 
               <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
                 Diseñamos y producimos piezas personalizadas en MDF, acrílico,
-                metal y más, con corte y grabado láser e impresión 3D. Para
-                regalar, para tu evento o con el logo de tu empresa.
+                metal y más, con corte y grabado láser. Para regalar, para tu
+                evento o con el logo de tu empresa.
               </p>
 
               <div className="space-y-4">

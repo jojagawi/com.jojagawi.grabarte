@@ -2,12 +2,13 @@ import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
 import { FAQ } from "@/components/custom/faq";
 import { prisma } from "@/lib/prisma";
+import { buildFaqPageJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Preguntas frecuentes | InspiraArte",
+  title: "Preguntas frecuentes: pedidos personalizados | InspiraArte",
   description:
-    "Resuelve dudas sobre tiempos de entrega, pedidos mínimos, formatos de archivo, envios, pagos y garantías.",
+    "Resuelve tus dudas sobre tiempos de entrega, pedido mínimo, formatos de archivo, envíos a todo México, pagos y garantía de tus productos personalizados.",
   path: "/faq",
   keywords: [
     "preguntas frecuentes",
@@ -16,7 +17,7 @@ export const metadata: Metadata = buildPageMetadata({
     "tiempos de entrega",
     "InspiraArte",
   ],
-  imagePath: "/dam/dafault-image-product.webp",
+  imagePath: "/dam/default-image-product.webp",
   imageAlt: "Preguntas frecuentes sobre pedidos personalizados en InspiraArte",
 });
 
@@ -45,9 +46,15 @@ export default async function Faq() {
     ],
   });
 
+  const faqJsonLd = buildFaqPageJsonLd("/faq/", faqs);
+
   return (
     <>
-      <FAQ faqs={faqs} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
+      />
+      <FAQ faqs={faqs} isPageTitle />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { MessageSquare, Palette, Package, Truck } from "lucide-react";
 import Link from "next/link";
 
-const steps = [
+export const processSteps = [
   {
     number: "01",
     title: "Cuéntanos tu idea",
@@ -36,7 +36,14 @@ const steps = [
 const whatsappMessage =
   "Hola, quiero cotizar una pieza personalizada.\n\nQué necesito: \nCantidad: \nFecha en que lo necesito: ";
 
-export function Process() {
+interface ProcessProps {
+  /** Página propia (/proceso): el título de la sección es el h1. */
+  isPageTitle?: boolean;
+}
+
+export function Process({ isPageTitle = false }: ProcessProps) {
+  const TitleTag = isPageTitle ? "h1" : "h2";
+
   return (
     <section id="proceso" className="py-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -45,10 +52,10 @@ export function Process() {
           <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-olive/10 text-inspirarte-olive text-sm font-medium mb-4">
             Proceso de Pedido
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+          <TitleTag className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
             Tan fácil como{" "}
             <span className="text-inspirarte-teal">1, 2, 3... ¡y 4!</span>
-          </h2>
+          </TitleTag>
           <p className="text-muted-foreground text-lg">
             Pedir tu producto personalizado es súper sencillo. Te acompañamos en
             cada paso para que el resultado sea exactamente lo que imaginaste.
@@ -57,10 +64,11 @@ export function Process() {
 
         {/* Steps */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step) => {
+          {processSteps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={step.number}>
+              // El id es el destino de cada HowToStep del JSON-LD de /proceso.
+              <div key={step.number} id={`paso-${index + 1}`}>
                 <div className="text-center">
                   {/* Step Number: la insignia se ancla al ícono en todos los anchos. */}
                   <div className="relative w-24 h-24 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">

@@ -44,7 +44,8 @@ export default async function CatalogRatesPage() {
           Calificaciones recibidas
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Consulta de datos desde Athena sobre los JSON guardados en S3.
+          Consulta de datos desde Athena sobre los JSON guardados en S3. Las que tienen ID de
+          producto aparecen, una vez activas, en la ficha de ese producto.
         </p>
       </header>
 
@@ -78,7 +79,15 @@ export default async function CatalogRatesPage() {
                   <tr key={item.id || `${item.name}-${item.createdAt}`}>
                     <td className="px-4 py-3 text-muted-foreground">{formatDate(item.createdAt)}</td>
                     <td className="px-4 py-3 text-foreground">{item.name || "-"}</td>
-                    <td className="px-4 py-3 text-foreground">{item.product || "-"}</td>
+                    <td className="px-4 py-3 text-foreground">
+                      {item.product || "-"}
+                      {item.designId && (
+                        // Llegó con ?id=: aprobada, aparece en la ficha del producto.
+                        <span className="ml-2 rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">
+                          ID {item.designId}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-foreground">{item.rating || 0}</td>
                     <td className="px-4 py-3 text-foreground">
                       <RateStatusSwitch

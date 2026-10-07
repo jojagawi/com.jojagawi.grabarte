@@ -4,7 +4,7 @@
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
-const SW_VERSION = "inspiraarte-sw-v3";
+const SW_VERSION = "inspiraarte-sw-v4";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
 
@@ -14,7 +14,7 @@ const STATIC_ASSETS: string[] = [
   "/dam/logos/favicon-100.png",
   "/dam/logos/favicon-200.png",
   "/dam/logos/hero.webp",
-  "/dam/dafault-image-product.webp",
+  "/dam/default-image-product.webp",
 ];
 
 sw.addEventListener("install", (event) => {

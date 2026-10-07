@@ -26,8 +26,11 @@ import {
   splitPersonalization,
 } from "@/components/custom/product-personalization";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
+import { getCategoryPathsByName } from "@/lib/categories.server";
+import { getApprovedProductRatesFromAthena } from "@/lib/rates-athena.server";
+import { ProductReviews } from "@/components/custom/product-reviews";
 
-const defaultImage = "/dam/dafault-image-product.webp";
+const defaultImage = "/dam/default-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
 
 interface ProductDetailPageProps {
@@ -495,6 +498,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     permanentRedirect(`/productos/${canonicalIdSlug}`);
   }
 
+  const categoryPaths = await getCategoryPathsByName();
   const categories = Array.from(
     new Set(
       design.relDesignsCategories
@@ -603,6 +607,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       ? buildProductCode(design.id, minimumPrice, suggestedPrice, mayoreoPrice)
       : null;
 
+  const productReviews = await getApprovedProductRatesFromAthena()
+    .then((ratesByDesign) => ratesByDesign.get(design.id) ?? [])
+    .catch((error: unknown) => {
+      console.error("No se pudieron cargar las opiniones de Athena", error);
+      return [];
+    });
+
   const productJsonLd = buildProductJsonLd({
     name: design.name,
     description:
@@ -630,6 +641,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     availability: design.availability,
     dimensions: design.dimensions,
     keywords: splitKeywords(design.keywords),
+    // Las mismas opiniones que se ven en la ficha (requisito de Google para marcarlas).
+    reviews: productReviews,
     // Solo el precio sugerido es público: coincide con el "Desde $X" de la página.
     // Mínimo y mayoreo se quedan en el código de cotización para el equipo.
     prices: {
@@ -859,15 +872,27 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               <div className="space-y-4 border-t border-border pt-6">
                 {categories.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {categories.map((categoryName) => (
-                      <Badge
-                        key={categoryName}
-                        variant="outline"
-                        className="border-transparent bg-muted text-sm font-normal text-muted-foreground"
-                      >
-                        {categoryName}
-                      </Badge>
-                    ))}
+                    {categories.map((categoryName) => {
+                      const categoryPath = categoryPaths.get(categoryName.trim());
+                      return categoryPath ? (
+                        <Badge
+                          key={categoryName}
+                          asChild
+                          variant="outline"
+                          className="border-transparent bg-muted text-sm font-normal text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Link href={categoryPath}>{categoryName}</Link>
+                        </Badge>
+                      ) : (
+                        <Badge
+                          key={categoryName}
+                          variant="outline"
+                          className="border-transparent bg-muted text-sm font-normal text-muted-foreground"
+                        >
+                          {categoryName}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -964,6 +989,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <ProductFeatureLists features={design.features} isCustomizable={isCustomizable} />
           </section>
         )}
+
+        <ProductReviews designId={design.id} productName={design.name} reviews={productReviews} />
 
         {productFaqs.length > 0 && <FAQ faqs={productFaqs} embedded />}
 

@@ -19,6 +19,8 @@ model CatCategories {
   id                   Int                    @id @default(autoincrement())
   name                 String?
   icon                 String?
+  // Texto introductorio de la página /productos/categoria/[slug].
+  description          String?
   status               Int                    @default(1)
   createdAt            DateTime               @default(now())
   relDesignsCategories RelDesignsCategories[]

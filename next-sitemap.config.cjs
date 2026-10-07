@@ -4,4 +4,16 @@ module.exports = {
   generateRobotsTxt: true,
   sitemapSize: 100,
   outDir: "out/",
+  // Solo páginas públicas indexables: el panel (noindex), los formularios de calificación (noindex),
+  // los endpoints MCP y los archivos de ruta (ícono, manifest, llms.txt) no van al sitemap.
+  exclude: [
+    "/agregar*",
+    "/catalogos*",
+    "/calificaciones*",
+    "/productos/editar*",
+    "/api/*",
+    "/icon.png*",
+    "/manifest.webmanifest*",
+    "/llms.txt*",
+  ],
 };

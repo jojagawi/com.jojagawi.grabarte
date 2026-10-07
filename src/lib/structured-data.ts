@@ -3,6 +3,16 @@ type FaqItem = {
   answer: string;
 };
 
+type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+type HowToStep = {
+  name: string;
+  text: string;
+};
+
 type OrganizationContactPoint = {
   contactType: string;
   email?: string;
@@ -17,9 +27,20 @@ type OrganizationStructuredDataInput = {
   url?: string;
   logo?: string;
   description?: string;
+  foundingDate?: string;
   sameAs?: string[];
   contactPoints?: OrganizationContactPoint[];
 };
+
+type ProductReviewInput = {
+  name: string;
+  description: string;
+  rating: number;
+  createdAt: string;
+};
+
+// Google muestra hasta unas cuantas reseñas; el promedio sí usa todas.
+const MAX_PRODUCT_REVIEWS_IN_JSON_LD = 10;
 
 type ProductStructuredDataInput = {
   name: string;
@@ -42,6 +63,7 @@ type ProductStructuredDataInput = {
   availability?: string | null;
   dimensions?: string | null;
   keywords?: string[];
+  reviews?: ProductReviewInput[];
   prices?: {
     minimumPrice?: number | null;
     suggestedPrice?: number | null;
@@ -51,6 +73,7 @@ type ProductStructuredDataInput = {
 };
 
 const DEFAULT_SITE_URL = "https://www.inspiraarte.com";
+const FOUNDING_YEAR = "2026";
 const DEFAULT_LOGO_PATH = "/dam/logos/logo.webp";
 const DEFAULT_LOGO_WIDTH = 192;
 const DEFAULT_LOGO_HEIGHT = 64;
@@ -254,8 +277,33 @@ function buildOrganizationNode(input: OrganizationStructuredDataInput) {
         )
       : undefined,
     description: normalizeText(input.description) || undefined,
+    foundingDate: normalizeText(input.foundingDate) || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
     contactPoint: contactPoint.length > 0 ? contactPoint : undefined,
+  };
+}
+
+function buildFaqMainEntity(items: FaqItem[]) {
+  return items.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  }));
+}
+
+function buildBreadcrumbNode(pageUrl: string, crumbs: BreadcrumbItem[]) {
+  return {
+    "@type": "BreadcrumbList",
+    "@id": `${pageUrl}#breadcrumbs`,
+    itemListElement: crumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: toAbsoluteLikeUrl(crumb.path),
+    })),
   };
 }
 
@@ -282,7 +330,8 @@ export function buildOrganizationJsonLd() {
       name: siteName,
       url: websiteUrl,
       logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
-      description: `Tienda y taller de productos personalizados de ${siteName}.`,
+      description: `${siteName} es un taller de corte y grabado láser en Ciudad de México que diseña y produce regalos y productos personalizados.`,
+      foundingDate: FOUNDING_YEAR,
       sameAs: socialProfiles.filter((profile): profile is string => Boolean(profile)),
       contactPoints: [
         {
@@ -388,6 +437,30 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
       : undefined,
   };
 
+  const reviews = (input.reviews ?? []).filter((review) => normalizeText(review.name) && normalizeText(review.description));
+  if (reviews.length > 0) {
+    const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+    productNode.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: Math.round(averageRating * 10) / 10,
+      reviewCount: reviews.length,
+      bestRating: 5,
+      worstRating: 1,
+    };
+    productNode.review = reviews.slice(0, MAX_PRODUCT_REVIEWS_IN_JSON_LD).map((review) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: normalizeText(review.name) },
+      reviewBody: normalizeText(review.description),
+      ...(normalizeText(review.createdAt) ? { datePublished: normalizeText(review.createdAt).slice(0, 10) } : {}),
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: review.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }));
+  }
+
   if (prices.length > 0) {
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
@@ -417,30 +490,11 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
           };
   }
 
-  const breadcrumbNode = {
-    "@type": "BreadcrumbList",
-    "@id": `${productUrl}#breadcrumbs`,
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Inicio",
-        item: toAbsoluteLikeUrl("/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Productos",
-        item: toAbsoluteLikeUrl("/productos"),
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: input.name,
-        item: productUrl,
-      },
-    ],
-  };
+  const breadcrumbNode = buildBreadcrumbNode(productUrl, [
+    { name: "Inicio", path: "/" },
+    { name: "Productos", path: "/productos" },
+    { name: input.name, path: productUrl },
+  ]);
 
   const faqItems = parseFaqItems(input.faq);
   const faqNode =
@@ -448,14 +502,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
       ? {
           "@type": "FAQPage",
           "@id": `${productUrl}#faq`,
-          mainEntity: faqItems.map((item) => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: item.answer,
-            },
-          })),
+          mainEntity: buildFaqMainEntity(faqItems),
         }
       : null;
 
@@ -465,3 +512,120 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
   };
 }
 
+
+export function buildWebSiteJsonLd() {
+  const siteName = process.env.NEXT_PUBLIC_SITENAME?.trim() || "InspiraArte";
+  const siteUrl = toAbsoluteLikeUrl("/");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}#website`,
+    name: siteName,
+    url: siteUrl,
+    inLanguage: "es-MX",
+    publisher: { "@id": `${siteUrl}#organization` },
+  };
+}
+
+export function buildFaqPageJsonLd(path: string, items: FaqItem[]) {
+  const pageUrl = toAbsoluteLikeUrl(path);
+  const validItems = items
+    .map((item) => ({ question: normalizeText(item.question), answer: normalizeText(item.answer) }))
+    .filter((item) => item.question && item.answer);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${pageUrl}#faq`,
+    url: pageUrl,
+    inLanguage: "es-MX",
+    mainEntity: buildFaqMainEntity(validItems),
+  };
+}
+
+export function buildHowToJsonLd(input: { path: string; name: string; description: string; steps: HowToStep[] }) {
+  const pageUrl = toAbsoluteLikeUrl(input.path);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${pageUrl}#howto`,
+    name: input.name,
+    description: input.description,
+    inLanguage: "es-MX",
+    step: input.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      url: `${pageUrl}#paso-${index + 1}`,
+    })),
+  };
+}
+
+export function buildBreadcrumbJsonLd(path: string, crumbs: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    ...buildBreadcrumbNode(toAbsoluteLikeUrl(path), crumbs),
+  };
+}
+
+export function buildCollectionPageJsonLd(input: {
+  path: string;
+  name: string;
+  description: string;
+  breadcrumbs: BreadcrumbItem[];
+  items: Array<{ name: string; path: string; image?: string }>;
+}) {
+  const pageUrl = toAbsoluteLikeUrl(input.path);
+  const siteUrl = toAbsoluteLikeUrl("/");
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${pageUrl}#collection`,
+        name: input.name,
+        description: input.description,
+        url: pageUrl,
+        inLanguage: "es-MX",
+        isPartOf: { "@id": `${siteUrl}#website` },
+        breadcrumb: { "@id": `${pageUrl}#breadcrumbs` },
+        mainEntity: { "@id": `${pageUrl}#items` },
+      },
+      buildBreadcrumbNode(pageUrl, input.breadcrumbs),
+      {
+        "@type": "ItemList",
+        "@id": `${pageUrl}#items`,
+        numberOfItems: input.items.length,
+        itemListElement: input.items.map((item, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.name,
+          url: toAbsoluteLikeUrl(item.path),
+          ...(item.image ? { image: toAbsoluteLikeUrl(item.image) } : {}),
+        })),
+      },
+    ],
+  };
+}
+
+export function buildAboutPageJsonLd(input: { path: string; name: string; description: string }) {
+  const pageUrl = toAbsoluteLikeUrl(input.path);
+  const siteUrl = toAbsoluteLikeUrl("/");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${pageUrl}#about`,
+    name: input.name,
+    description: input.description,
+    url: pageUrl,
+    inLanguage: "es-MX",
+    isPartOf: { "@id": `${siteUrl}#website` },
+    about: { "@id": `${siteUrl}#organization` },
+    mainEntity: { "@id": `${siteUrl}#organization` },
+  };
+}

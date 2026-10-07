@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import Link from "next/link";
+import { getCategoryPages, getCategoryPath } from "@/lib/categories.server";
 import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
@@ -8,17 +10,17 @@ import { Products } from "@/components/custom/products";
 export const metadata: Metadata = buildPageMetadata({
   title: "Catálogo de productos personalizados | InspiraArte",
   description:
-    "Explora nuestro catalogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.",
+    "Explora nuestro catálogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.",
   path: "/productos",
   keywords: [
-    "catalogo de productos",
+    "catálogo de productos",
     "productos personalizados",
     "diseños personalizados",
     "regalos",
     "InspiraArte",
   ],
-  imagePath: "/dam/dafault-image-product.webp",
-  imageAlt: "Catalogo de productos personalizados de InspiraArte",
+  imagePath: "/dam/default-image-product.webp",
+  imageAlt: "Catálogo de productos personalizados de InspiraArte",
 });
 
 export const llmstxt = {
@@ -26,7 +28,7 @@ export const llmstxt = {
   description: "Listado de diseños personalizados disponibles en InspiraArte.",
 };
 
-const defaultImage = "/dam/dafault-image-product.webp";
+const defaultImage = "/dam/default-image-product.webp";
 
 const cardGradients = [
   "from-primary/10 to-inspirarte-teal/10",
@@ -168,6 +170,9 @@ export default async function Productos() {
     ),
   ).sort((a, b) => a.localeCompare(b));
 
+  // Los chips del catálogo filtran en el cliente; estos enlaces llevan a la página indexable de cada categoría.
+  const categoryPages = await getCategoryPages();
+
   return (
     <>
       <Products
@@ -180,6 +185,28 @@ export default async function Productos() {
         materialOptions={materialOptions}
         products={products}
       />
+      {categoryPages.length > 0 && (
+        <nav aria-labelledby="categorias-titulo" className="pb-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <h2 id="categorias-titulo" className="mb-6 font-serif text-2xl font-bold text-foreground sm:text-3xl">
+              Explora por categoría
+            </h2>
+            <ul className="flex flex-wrap gap-3">
+              {categoryPages.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    href={getCategoryPath(category.slug)}
+                    className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    {category.name}
+                    <span className="text-muted-foreground">({category.designs.length})</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+      )}
     </>
   );
 }

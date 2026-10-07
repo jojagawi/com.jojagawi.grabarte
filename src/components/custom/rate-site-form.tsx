@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,16 @@ type RateFormState = {
   description: string;
   rating: string;
 };
+
+export type RateableProduct = {
+  id: number;
+  name: string;
+};
+
+interface RateSiteFormProps {
+  /** Diseños publicados: ?id= solo se acepta si corresponde a uno de ellos. */
+  products: RateableProduct[];
+}
 
 type SubmitState = {
   ok: boolean;
@@ -33,8 +43,33 @@ const ratesSubmitUrl =
 const ratesSubmitApiKey = process.env.NEXT_PUBLIC_RATES_LAMBDA_API_KEY?.trim() || "";
 const recaptchaAction = "add_client_rate";
 
-export function RateSiteForm() {
+// Export estático: el ?id= se lee en el cliente (useSearchParams obligaría a un Suspense).
+// En el HTML prerenderado no hay query string, así que el servidor reporta "".
+function subscribeToLocation(): () => void {
+  return () => {};
+}
+
+function getLocationSearch(): string {
+  return window.location.search;
+}
+
+function getServerLocationSearch(): string {
+  return "";
+}
+
+function findProductById(products: RateableProduct[], search: string): RateableProduct | null {
+  const rawId = new URLSearchParams(search).get("id")?.trim() ?? "";
+  if (!/^\d+$/u.test(rawId)) {
+    return null;
+  }
+
+  return products.find((product) => product.id === Number(rawId)) ?? null;
+}
+
+export function RateSiteForm({ products }: RateSiteFormProps) {
   const [formState, setFormState] = useState<RateFormState>(initialFormState);
+  const locationSearch = useSyncExternalStore(subscribeToLocation, getLocationSearch, getServerLocationSearch);
+  const ratedProduct = useMemo(() => findProductById(products, locationSearch), [products, locationSearch]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState | null>(null);
 
@@ -44,8 +79,9 @@ export function RateSiteForm() {
     sendGTMEvent({
       event: "form_rate_load",
       form_name: "RateSiteForm",
+      ...(ratedProduct ? { design_id: ratedProduct.id } : {}),
     });
-  }, []);
+  }, [ratedProduct]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,7 +97,7 @@ export function RateSiteForm() {
         });
         setSubmitState({
           ok: false,
-          message: "No hay configuracion de reCAPTCHA para este formulario.",
+          message: "No hay configuración de reCAPTCHA para este formulario.",
         });
         return;
       }
@@ -87,9 +123,10 @@ export function RateSiteForm() {
         headers,
         body: JSON.stringify({
           name: formState.name,
-          product: formState.product,
+          product: ratedProduct?.name ?? formState.product,
           description: formState.description,
           rating: Number(formState.rating),
+          ...(ratedProduct ? { designId: ratedProduct.id } : {}),
           recaptchaToken,
           action: recaptchaAction,
         }),
@@ -109,7 +146,7 @@ export function RateSiteForm() {
         setSubmitState({
           ok: false,
           message:
-            responseBody?.message || "No pudimos guardar tu calificacion. Intenta de nuevo.",
+            responseBody?.message || "No pudimos guardar tu calificación. Intenta de nuevo.",
         });
         return;
       }
@@ -121,7 +158,7 @@ export function RateSiteForm() {
 
       setSubmitState({
         ok: true,
-        message: "Gracias. Tu calificacion fue enviada correctamente.",
+        message: "Gracias. Tu calificación fue enviada correctamente.",
       });
       setFormState(initialFormState);
     } catch {
@@ -132,7 +169,7 @@ export function RateSiteForm() {
       });
       setSubmitState({
         ok: false,
-        message: "No se pudo enviar la calificacion en este momento.",
+        message: "No se pudo enviar la calificación en este momento.",
       });
     } finally {
       setIsSubmitting(false);
@@ -151,7 +188,7 @@ export function RateSiteForm() {
         <div className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8">
           <div className="mb-8">
             <h1 className="font-serif text-3xl font-bold text-foreground sm:text-4xl">
-              Agregar calificacion
+              Agregar calificación
             </h1>
             <p className="mt-3 text-muted-foreground">
               Comparte tu experiencia con InspiraArte. Nos ayuda a mejorar y a orientar
@@ -180,20 +217,25 @@ export function RateSiteForm() {
 
             <div className="space-y-2">
               <Label htmlFor="rate-product">Producto</Label>
-              <Input
-                id="rate-product"
-                name="product"
-                required
-                maxLength={120}
-                value={formState.product}
-                onChange={(event) =>
-                  setFormState((current) => ({
-                    ...current,
-                    product: event.target.value,
-                  }))
-                }
-                placeholder="Ej. Termo personalizado"
-              />
+              {ratedProduct ? (
+                // Ligado al diseño por ?id=: el nombre no se edita para que coincida con el catálogo.
+                <Input id="rate-product" name="product" value={ratedProduct.name} readOnly aria-readonly="true" />
+              ) : (
+                <Input
+                  id="rate-product"
+                  name="product"
+                  required
+                  maxLength={120}
+                  value={formState.product}
+                  onChange={(event) =>
+                    setFormState((current) => ({
+                      ...current,
+                      product: event.target.value,
+                    }))
+                  }
+                  placeholder="Ej. Termo personalizado"
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -252,7 +294,7 @@ export function RateSiteForm() {
               disabled={isSubmitting}
               className="w-full bg-primary text-white hover:bg-inspirarte-petroleum-deep sm:w-auto"
             >
-              {isSubmitting ? "Enviando..." : "Enviar calificacion"}
+              {isSubmitting ? "Enviando..." : "Enviar calificación"}
             </Button>
           </form>
         </div>

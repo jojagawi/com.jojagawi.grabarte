@@ -52,6 +52,16 @@ function readApiKeyFromHeaders(event) {
   return String(raw || "").trim();
 }
 
+// Id del diseño calificado (Designs.id). Opcional: sin él la calificación es del sitio.
+function normalizeDesignId(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const designId = Number(value);
+  return Number.isInteger(designId) && designId > 0 && designId <= 2147483647 ? designId : undefined;
+}
+
 function normalizeInput(payload) {
   if (!payload || typeof payload !== "object") {
     return null;
@@ -63,8 +73,13 @@ function normalizeInput(payload) {
   const rating = Number(payload.rating);
   const recaptchaToken = String(payload.recaptchaToken || "").trim();
   const action = String(payload.action || "").trim();
+  const designId = normalizeDesignId(payload.designId);
 
   if (!name || !product || !description) {
+    return null;
+  }
+
+  if (designId === undefined) {
     return null;
   }
 
@@ -83,6 +98,7 @@ function normalizeInput(payload) {
     rating,
     recaptchaToken,
     action,
+    ...(designId ? { designId } : {}),
   };
 }
 
@@ -136,7 +152,7 @@ export async function handler(event) {
 
   if (!input) {
     return createResponse(400, {
-      message: "Payload invalido. Se requiere name, product, description y rating (1-5).",
+      message: "Payload invalido. Se requiere name, product, description y rating (1-5); designId opcional debe ser entero positivo.",
     });
   }
 

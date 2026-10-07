@@ -6,6 +6,7 @@ import { FaFacebookF } from "@react-icons/all-files/fa/FaFacebookF";
 import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { FaEnvelope } from "@react-icons/all-files/fa/FaEnvelope";
 import { SiTiktok } from "@react-icons/all-files/si/SiTiktok";
+import { getCategoryPages, getCategoryPath } from "@/lib/categories.server";
 
 const footerLinkClassName =
   "rounded-sm underline-offset-4 transition-colors hover:text-inspirarte-petroleum-deep hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -15,7 +16,19 @@ const socialLinkClassName =
 
 const contactIconClassName = "w-5 h-5 shrink-0 text-inspirarte-petroleum-deep"
 
-export function Footer() {
+const MAX_FOOTER_CATEGORIES = 5
+
+// Las categorías con más diseños publicados: enlazan a su página desde todo el sitio.
+async function getFooterCategories(): Promise<Array<{ name: string; href: string }>> {
+  // Copia: getCategoryPages está memoizada y sort() muta el arreglo.
+  return [...(await getCategoryPages())]
+    .sort((a, b) => b.designs.length - a.designs.length || a.name.localeCompare(b.name, "es"))
+    .slice(0, MAX_FOOTER_CATEGORIES)
+    .map((category) => ({ name: category.name, href: getCategoryPath(category.slug) }))
+}
+
+export async function Footer() {
+  const footerCategories = await getFooterCategories()
 
   return (
     // Madera clara de fondo (≈ rgb 246 229 213). Petróleo Profundo es el único tono de
@@ -88,12 +101,13 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Navegación</h3>
+            <h2 className="font-semibold text-lg mb-4">Navegación</h2>
             <ul className="space-y-3">
               {[
                 { name: "Inicio", href: "/" },
                 { name: "Productos", href: "/productos" },
                 { name: "Proceso", href: "/proceso" },
+                { name: "Nosotros", href: "/nosotros" },
                 { name: "FAQ", href: "/faq" },
                 { name: "Contacto", href: "/contacto" },
               ].map((link) => (
@@ -111,17 +125,13 @@ export function Footer() {
 
           {/* Products */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Productos</h3>
+            <h2 className="font-semibold text-lg mb-4">Productos</h2>
             <ul className="space-y-3">
-              {[
-                "Termos Personalizados",
-                "Llaveros Grabados",
-                "Carteras y Carpetas",
-                "Figuras Decorativas MDF",
-                "Regalos Corporativos",
-              ].map((product) => (
-                <li key={product}>
-                  <span className="text-sm">{product}</span>
+              {[...footerCategories, { name: "Ver todo el catálogo", href: "/productos" }].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className={`${footerLinkClassName} text-sm`}>
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -129,7 +139,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Contacto</h3>
+            <h2 className="font-semibold text-lg mb-4">Contacto</h2>
             <ul className="space-y-4">
               {process.env.NEXT_PUBLIC_EMAIL && (
                 <li className="flex items-center gap-3">

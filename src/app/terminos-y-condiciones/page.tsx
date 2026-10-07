@@ -12,8 +12,8 @@ export const metadata: Metadata = buildPageMetadata({
     "cotización",
     "InspiraArte",
   ],
-  imagePath: "/dam/dafault-image-product.webp",
-  imageAlt: "Terminos y condiciones de InspiraArte",
+  imagePath: "/dam/default-image-product.webp",
+  imageAlt: "Términos y condiciones de InspiraArte",
 });
 
 export const llmstxt = {
@@ -32,51 +32,51 @@ export default function TerminosYCondiciones() {
             Documento legal
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-            Terminos y condiciones
+            Términos y condiciones
           </h1>
-          <p className="text-muted-foreground text-base">Ultima actualizacion: {updateDate}</p>
+          <p className="text-muted-foreground text-base">Última actualización: {updateDate}</p>
           <p className="text-muted-foreground text-lg">
-            Al acceder y utilizar este sitio, asi como al solicitar cotizaciones o pedidos con
+            Al acceder y utilizar este sitio, así como al solicitar cotizaciones o pedidos con
             InspiraArte, aceptas las presentes condiciones.
           </p>
         </div>
 
         <article className="space-y-8 text-foreground">
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">1. Aceptacion y alcance</h2>
+            <h2 className="font-semibold text-2xl">1. Aceptación y alcance</h2>
             <p className="text-muted-foreground">
-              Estos terminos regulan el uso de www.inspiraarte.com y las interacciones comerciales
-              relacionadas con productos personalizados y solicitudes de cotizacion.
+              Estos términos regulan el uso de www.inspiraarte.com y las interacciones comerciales
+              relacionadas con productos personalizados y solicitudes de cotización.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">2. Naturaleza del servicio</h2>
             <p className="text-muted-foreground">
-              InspiraArte ofrece productos personalizados y servicios de diseno/fabricacion sobre
-              pedido. Las imagenes y descripciones son referenciales y pueden presentar variaciones
-              razonables por proceso artesanal, materiales, resolucion de archivos o calibracion.
+              InspiraArte ofrece productos personalizados y servicios de diseño/fabricación sobre
+              pedido. Las imágenes y descripciones son referenciales y pueden presentar variaciones
+              razonables por proceso artesanal, materiales, resolución de archivos o calibración.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">3. Cotizaciones, pedidos y disponibilidad</h2>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-              <li>La cotizacion no constituye venta definitiva hasta su confirmacion expresa.</li>
+              <li>La cotización no constituye venta definitiva hasta su confirmación expresa.</li>
               <li>Los tiempos de entrega son estimados y pueden variar por volumen o complejidad.</li>
-              <li>Los pedidos pueden requerir anticipo para iniciar produccion.</li>
+              <li>Los pedidos pueden requerir anticipo para iniciar producción.</li>
               <li>
-                La aceptacion final del pedido puede condicionarse a validacion de arte y
+                La aceptación final del pedido puede condicionarse a validación de arte y
                 disponibilidad de materiales.
               </li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">4. Precios, pagos y facturacion</h2>
+            <h2 className="font-semibold text-2xl">4. Precios, pagos y facturación</h2>
             <p className="text-muted-foreground">
-              Los precios se informan en la cotizacion vigente y pueden cambiar sin previo aviso
-              para solicitudes futuras. El pago y, en su caso, la facturacion se rigen por los
+              Los precios se informan en la cotización vigente y pueden cambiar sin previo aviso
+              para solicitudes futuras. El pago y, en su caso, la facturación se rigen por los
               datos y condiciones confirmadas al momento del pedido.
             </p>
           </section>
@@ -85,8 +85,8 @@ export default function TerminosYCondiciones() {
             <h2 className="font-semibold text-2xl">5. Archivos del cliente y propiedad intelectual</h2>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
               <li>
-                El cliente declara contar con derechos o autorizaciones para usar marcas, imagenes,
-                textos o disenos que proporcione.
+                El cliente declara contar con derechos o autorizaciones para usar marcas, imágenes,
+                textos o diseños que proporcione.
               </li>
               <li>
                 InspiraArte puede rechazar contenidos que infrinjan derechos de terceros o normas
@@ -102,9 +102,9 @@ export default function TerminosYCondiciones() {
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">6. Cancelaciones, cambios y devoluciones</h2>
             <p className="text-muted-foreground">
-              Por tratarse de productos personalizados, una vez iniciada la produccion puede no ser
+              Por tratarse de productos personalizados, una vez iniciada la producción puede no ser
               posible cancelar o devolver, salvo defecto imputable a InspiraArte o supuestos
-              previstos en la ley aplicable. Cualquier ajuste debera solicitarse antes de aprobar el
+              previstos en la ley aplicable. Cualquier ajuste deberá solicitarse antes de aprobar el
               arte final.
             </p>
           </section>
@@ -113,16 +113,16 @@ export default function TerminosYCondiciones() {
             <h2 className="font-semibold text-2xl">7. Uso permitido del sitio</h2>
             <p className="text-muted-foreground">Queda prohibido:</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-              <li>Usar el sitio para actividades ilicitas o fraudulentas.</li>
+              <li>Usar el sitio para actividades ilícitas o fraudulentas.</li>
               <li>Intentar acceso no autorizado a sistemas, datos o cuentas.</li>
               <li>Enviar malware, spam o contenido que afecte la disponibilidad del servicio.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">8. Limitacion de responsabilidad</h2>
+            <h2 className="font-semibold text-2xl">8. Limitación de responsabilidad</h2>
             <p className="text-muted-foreground">
-              En la medida permitida por ley, InspiraArte no sera responsable por danos indirectos,
+              En la medida permitida por ley, InspiraArte no será responsable por daños indirectos,
               incidentales o lucro cesante derivados del uso del sitio o de retrasos por causas
               fuera de su control razonable (por ejemplo, eventos de fuerza mayor, fallas de
               proveedores o servicios de terceros).
@@ -138,11 +138,11 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">10. Ley aplicable y jurisdiccion</h2>
+            <h2 className="font-semibold text-2xl">10. Ley aplicable y jurisdicción</h2>
             <p className="text-muted-foreground">
-              Estos terminos se interpretan conforme a las leyes de los Estados Unidos Mexicanos. En
-              caso de controversia, las partes procuraran solucion amistosa y, de ser necesario,
-              acudiran a las autoridades competentes de Ciudad de Mexico, salvo disposicion legal en
+              Estos términos se interpretan conforme a las leyes de los Estados Unidos Mexicanos. En
+              caso de controversia, las partes procurarán solución amistosa y, de ser necesario,
+              acudirán a las autoridades competentes de Ciudad de México, salvo disposición legal en
               contrario.
             </p>
           </section>
@@ -150,7 +150,7 @@ export default function TerminosYCondiciones() {
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">11. Contacto</h2>
             <p className="text-muted-foreground">
-              Para dudas sobre estos terminos: contacto@inspiraarte.com.
+              Para dudas sobre estos términos: contacto@inspiraarte.com.
             </p>
           </section>
 

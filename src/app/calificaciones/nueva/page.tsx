@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
 import { RateSiteForm } from "@/components/custom/rate-site-form";
+import { getSiteDesigns } from "@/lib/site-designs.server";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Agregar calificacion | InspiraArte",
+  title: "Agregar calificación | InspiraArte",
   description:
-    "Formulario para compartir una nueva calificacion y experiencia de compra en InspiraArte.",
+    "Formulario para compartir una nueva calificación y experiencia de compra en InspiraArte.",
   path: "/calificaciones/nueva",
   keywords: ["calificaciones", "opiniones", "testimonios", "InspiraArte"],
-  imagePath: "/dam/dafault-image-product.webp",
-  imageAlt: "Formulario de calificacion de InspiraArte",
+  imagePath: "/dam/default-image-product.webp",
+  // Formulario sin contenido propio: no aporta a la búsqueda y duplica la otra ruta de calificación.
+  noIndex: true,
+  imageAlt: "Formulario de calificación de InspiraArte",
 });
 
-export default function NuevaCalificacionPage() {
-  return <RateSiteForm />;
+export default async function NuevaCalificacionPage() {
+  const products = (await getSiteDesigns()).map((design) => ({
+    id: design.id,
+    name: design.name ?? "Diseño sin nombre",
+  }));
+
+  return <RateSiteForm products={products} />;
 }
 

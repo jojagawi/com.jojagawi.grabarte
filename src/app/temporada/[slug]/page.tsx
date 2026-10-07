@@ -4,11 +4,14 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
-import { buildPageMetadata } from "@/lib/metadata";
+import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
 import { formatSeasonMonths } from "@/lib/seasons";
 import { getSeasonPage, getSeasonPages, type SeasonPage } from "@/lib/seasons.server";
+import { buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import {
   byShowcasePriority,
+  getDesignImagePath,
+  getDesignImageUrl,
   getSiteDesigns,
   type SiteDesign,
   toShowcaseItem,
@@ -47,9 +50,25 @@ async function getSeasonDesigns(season: SeasonPage): Promise<Array<{ design: Sit
 
 function describeSeason(season: SeasonPage): string {
   return (
-    season.description ??
+    season.description?.replace(/\s+/gu, " ").trim() ||
     `Diseños personalizados de InspiraArte para ${season.label}. Cotiza el tuyo y te enviamos una propuesta antes de producir.`
   );
+}
+
+const MAX_TITLE_LENGTH = 60;
+
+// Etiquetas largas ("Día de muertos y Halloween") desbordan el title: se recorta en este orden.
+function buildSeasonTitle(label: string): string {
+  const candidates = [
+    `${label}: regalos y decoración personalizados | InspiraArte`,
+    `${label}: regalos personalizados | InspiraArte`,
+    `${label}: regalos personalizados`,
+  ];
+  return candidates.find((title) => title.length <= MAX_TITLE_LENGTH) ?? `${label} | InspiraArte`;
+}
+
+function getSeasonPath(season: SeasonPage): string {
+  return `/temporada/${season.slug}`;
 }
 
 export async function generateMetadata({ params }: SeasonPageProps): Promise<Metadata> {
@@ -65,10 +84,13 @@ export async function generateMetadata({ params }: SeasonPageProps): Promise<Met
   }
 
   const designs = await getSeasonDesigns(season);
+  const coverDesign = designs[0]?.design;
   return buildPageMetadata({
-    title: `${season.label}: regalos y decoración personalizados | InspiraArte`,
-    description: describeSeason(season),
-    path: `/temporada/${season.slug}`,
+    title: buildSeasonTitle(season.label),
+    description: toMetaDescription(describeSeason(season)),
+    path: getSeasonPath(season),
+    imagePath: coverDesign ? getDesignImageUrl(getDesignImagePath(coverDesign)) : undefined,
+    imageAlt: coverDesign?.name ? `${coverDesign.name} de InspiraArte` : undefined,
     keywords: [season.label, "regalos personalizados", "grabado láser", "InspiraArte", "México"],
     // Sin piezas publicadas la página es delgada: no se indexa hasta tener catálogo.
     noIndex: designs.length === 0,
@@ -84,9 +106,18 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
 
   const designs = await getSeasonDesigns(season);
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Temporada: ${season.label}`)}`;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(`${getSeasonPath(season)}/`, [
+    { name: "Inicio", path: "/" },
+    { name: "Productos", path: "/productos/" },
+    { name: season.label, path: `${getSeasonPath(season)}/` },
+  ]);
 
   return (
     <section className="py-16 lg:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
+      />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav aria-label="Ruta de navegación" className="mb-8 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-2">

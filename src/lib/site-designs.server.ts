@@ -7,7 +7,7 @@ import type { SeasonShowcaseItem } from "@/components/custom/showcase-card";
 // Diseños publicados en el sitio y su mapeo a tarjetas. Lo comparten la portada
 // (hero y vitrina de temporada) y las páginas /temporada/[slug].
 
-const defaultImage = "/dam/dafault-image-product.webp";
+const defaultImage = "/dam/default-image-product.webp";
 
 // Solo se muestra un plazo concreto ("2 a 4 días hábiles"); los textos tipo
 // "A confirmar" o "Consultar" no le dicen nada al visitante en la portada.

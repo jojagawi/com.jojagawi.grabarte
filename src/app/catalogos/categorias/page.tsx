@@ -22,6 +22,7 @@ export default async function CatalogCategoriesPage() {
       id: true,
       name: true,
       icon: true,
+      description: true,
       status: true,
       createdAt: true,
     },
@@ -34,6 +35,7 @@ export default async function CatalogCategoriesPage() {
         id: category.id,
         name: category.name?.trim() || "Sin nombre",
         icon: category.icon?.trim() || null,
+        description: category.description?.trim() || null,
         status: Number(category.status ?? 0),
         createdAt: category.createdAt.toISOString(),
       }))}

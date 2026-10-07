@@ -13,7 +13,7 @@ export const metadata: Metadata = buildPageMetadata({
     "derechos ARCO",
     "InspiraArte",
   ],
-  imagePath: "/dam/dafault-image-product.webp",
+  imagePath: "/dam/default-image-product.webp",
   imageAlt: "Aviso de privacidad de InspiraArte",
 });
 
@@ -36,7 +36,7 @@ export default function AvisoDePrivacidad() {
             Aviso de privacidad
           </h1>
           <p className="text-muted-foreground text-base">
-            Ultima actualizacion: {updateDate}
+            Última actualización: {updateDate}
           </p>
           <p className="text-muted-foreground text-lg">
             Este aviso describe la forma en que InspiraArte recopila, usa, conserva y protege datos
@@ -48,26 +48,26 @@ export default function AvisoDePrivacidad() {
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">1. Responsable del tratamiento</h2>
             <p className="text-muted-foreground">
-              InspiraArte es responsable del tratamiento de datos personales recabados a traves de
-              sus formularios, canales de contacto y solicitudes de cotizacion.
+              InspiraArte es responsable del tratamiento de datos personales recabados a través de
+              sus formularios, canales de contacto y solicitudes de cotización.
             </p>
             <p className="text-muted-foreground">
-              Correo de contacto: contacto@inspiraarte.com. Domicilio referencial de operacion:
-              Ciudad de Mexico, Mexico.
+              Correo de contacto: contacto@inspiraarte.com. Domicilio referencial de operación:
+              Ciudad de México, México.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">2. Datos personales recabados</h2>
-            <p className="text-muted-foreground">Podemos recabar, segun el canal utilizado:</p>
+            <p className="text-muted-foreground">Podemos recabar, según el canal utilizado:</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-              <li>Datos de identificacion y contacto (nombre, correo, telefono o WhatsApp).</li>
-              <li>Datos de pedido o cotizacion (producto, cantidades, fecha estimada, mensaje).</li>
-              <li>Archivos de referencia y diseno que el titular decida compartir.</li>
-              <li>Datos tecnicos basicos de navegacion (por ejemplo, IP y eventos de analitica).</li>
+              <li>Datos de identificación y contacto (nombre, correo, teléfono o WhatsApp).</li>
+              <li>Datos de pedido o cotización (producto, cantidades, fecha estimada, mensaje).</li>
+              <li>Archivos de referencia y diseño que el titular decida compartir.</li>
+              <li>Datos técnicos básicos de navegación (por ejemplo, IP y eventos de analítica).</li>
             </ul>
             <p className="text-muted-foreground">
-              InspiraArte no solicita deliberadamente datos personales sensibles para la operacion
+              InspiraArte no solicita deliberadamente datos personales sensibles para la operación
               ordinaria del servicio.
             </p>
           </section>
@@ -76,10 +76,10 @@ export default function AvisoDePrivacidad() {
             <h2 className="font-semibold text-2xl">3. Finalidades del tratamiento</h2>
             <p className="text-muted-foreground">Finalidades primarias:</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-              <li>Atender solicitudes de informacion, cotizacion y seguimiento de pedidos.</li>
-              <li>Elaborar propuestas y producir articulos personalizados solicitados.</li>
-              <li>Gestionar pagos, facturacion y cumplimiento de obligaciones legales.</li>
-              <li>Brindar soporte y atencion postventa.</li>
+              <li>Atender solicitudes de información, cotización y seguimiento de pedidos.</li>
+              <li>Elaborar propuestas y producir artículos personalizados solicitados.</li>
+              <li>Gestionar pagos, facturación y cumplimiento de obligaciones legales.</li>
+              <li>Brindar soporte y atención postventa.</li>
             </ul>
             <p className="text-muted-foreground">Finalidades secundarias (opcionales):</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
@@ -91,52 +91,52 @@ export default function AvisoDePrivacidad() {
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">4. Fundamento y marco normativo</h2>
             <p className="text-muted-foreground">
-              El tratamiento se realiza conforme a la Ley Federal de Proteccion de Datos Personales
-              en Posesion de los Particulares (LFPDPPP), su Reglamento y lineamientos aplicables en
-              Mexico. Cuando resulte procedente por alcance territorial, se consideran principios de
-              buenas practicas internacionales en materia de privacidad.
+              El tratamiento se realiza conforme a la Ley Federal de Protección de Datos Personales
+              en Posesión de los Particulares (LFPDPPP), su Reglamento y lineamientos aplicables en
+              México. Cuando resulte procedente por alcance territorial, se consideran principios de
+              buenas prácticas internacionales en materia de privacidad.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="font-semibold text-2xl">5. Transferencias de datos</h2>
             <p className="text-muted-foreground">
-              InspiraArte puede apoyarse en proveedores tecnologicos para hosting, almacenamiento de
-              archivos, analitica y comunicaciones. Dichas transferencias se limitan a lo necesario
+              InspiraArte puede apoyarse en proveedores tecnológicos para hosting, almacenamiento de
+              archivos, analítica y comunicaciones. Dichas transferencias se limitan a lo necesario
               para cumplir las finalidades descritas y bajo medidas contractuales razonables de
               seguridad y confidencialidad.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">6. Derechos ARCO y revocacion</h2>
+            <h2 className="font-semibold text-2xl">6. Derechos ARCO y revocación</h2>
             <p className="text-muted-foreground">
-              El titular puede ejercer derechos de Acceso, Rectificacion, Cancelacion y Oposicion
-              (ARCO), asi como revocar el consentimiento para finalidades secundarias, enviando su
+              El titular puede ejercer derechos de Acceso, Rectificación, Cancelación y Oposición
+              (ARCO), así como revocar el consentimiento para finalidades secundarias, enviando su
               solicitud a contacto@inspiraarte.com con:
             </p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
               <li>Nombre del titular y medio para comunicar respuesta.</li>
-              <li>Descripcion clara de los datos o derecho a ejercer.</li>
-              <li>Documentos para acreditar identidad o representacion legal.</li>
+              <li>Descripción clara de los datos o derecho a ejercer.</li>
+              <li>Documentos para acreditar identidad o representación legal.</li>
             </ul>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">7. Medidas de seguridad y conservacion</h2>
+            <h2 className="font-semibold text-2xl">7. Medidas de seguridad y conservación</h2>
             <p className="text-muted-foreground">
-              Se aplican medidas administrativas, tecnicas y fisicas razonables para proteger los
-              datos contra dano, perdida, alteracion, destruccion o acceso no autorizado. La
-              conservacion se realiza solo por el tiempo necesario para cumplir finalidades
+              Se aplican medidas administrativas, técnicas y físicas razonables para proteger los
+              datos contra daño, pérdida, alteración, destrucción o acceso no autorizado. La
+              conservación se realiza solo por el tiempo necesario para cumplir finalidades
               contractuales, legales y de defensa de derechos.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">8. Uso de cookies y tecnologias similares</h2>
+            <h2 className="font-semibold text-2xl">8. Uso de cookies y tecnologías similares</h2>
             <p className="text-muted-foreground">
-              El sitio puede utilizar cookies y tecnologias similares para funcionamiento tecnico,
-              medicion de uso y mejora del servicio. Puedes gestionar cookies desde tu navegador.
+              El sitio puede utilizar cookies y tecnologías similares para funcionamiento técnico,
+              medición de uso y mejora del servicio. Puedes gestionar cookies desde tu navegador.
             </p>
           </section>
 
@@ -144,7 +144,7 @@ export default function AvisoDePrivacidad() {
             <h2 className="font-semibold text-2xl">9. Cambios al aviso</h2>
             <p className="text-muted-foreground">
               InspiraArte puede actualizar este aviso para reflejar cambios legales, operativos o de
-              servicio. La version vigente se publicara en esta misma pagina.
+              servicio. La versión vigente se publicará en esta misma página.
             </p>
           </section>
 
