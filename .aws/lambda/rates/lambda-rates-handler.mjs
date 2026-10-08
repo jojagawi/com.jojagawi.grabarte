@@ -29,6 +29,9 @@ const RECAPTCHA_MIN_SCORE = 0.5;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const IMAGE_CONTENT_TYPE = "image/webp";
 const UPLOAD_URL_TTL_SECONDS = 600;
+const VERSION_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TERMS_REQUIRED_MESSAGE =
+  "Para enviar tu calificacion debes aceptar los terminos y condiciones y el aviso de privacidad.";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function createResponse(statusCode, body) {
@@ -128,6 +131,10 @@ async function verifyRecaptchaToken(token, action) {
 // --- rate_upload ------------------------------------------------------------
 
 async function handleUpload(payload) {
+  if (payload?.acceptedTerms !== true) {
+    return createResponse(400, { message: TERMS_REQUIRED_MESSAGE });
+  }
+
   const size = Number(payload?.size);
   const type = String(payload?.type || "").trim();
   if (type !== IMAGE_CONTENT_TYPE || !Number.isInteger(size) || size <= 0 || size > MAX_IMAGE_BYTES) {
@@ -182,6 +189,8 @@ function normalizeSubmitInput(payload) {
   const rating = Number(payload.rating);
   const designId = normalizeDesignId(payload.designId);
   const rateId = String(payload.rateId || "").trim();
+  const privacyNoticeVersion = String(payload.privacyNoticeVersion || "").trim();
+  const termsVersion = String(payload.termsVersion || "").trim();
 
   if (!name || !product || !description) {
     return null;
@@ -202,6 +211,9 @@ function normalizeSubmitInput(payload) {
     rating,
     designId,
     rateId: rateId || null,
+    acceptedTerms: payload.acceptedTerms === true,
+    privacyNoticeVersion: VERSION_PATTERN.test(privacyNoticeVersion) ? privacyNoticeVersion : null,
+    termsVersion: VERSION_PATTERN.test(termsVersion) ? termsVersion : null,
     recaptchaToken: String(payload.recaptchaToken || "").trim(),
   };
 }
@@ -213,6 +225,11 @@ async function handleSubmit(payload) {
       message:
         "Payload invalido. Se requiere name, product, description y rating (1-5); designId y rateId son opcionales.",
     });
+  }
+
+  // Consentimiento obligatorio: términos y aviso de privacidad (casilla del formulario).
+  if (!input.acceptedTerms) {
+    return createResponse(400, { message: TERMS_REQUIRED_MESSAGE });
   }
 
   if (!(await verifyRecaptchaToken(input.recaptchaToken, SUBMIT_ACTION))) {
@@ -243,6 +260,7 @@ async function handleSubmit(payload) {
 
   const id = input.rateId || randomUUID();
   const objectKey = rateKey(id);
+  const createdAt = new Date().toISOString();
   const record = {
     id,
     name: input.name,
@@ -251,7 +269,12 @@ async function handleSubmit(payload) {
     rating: input.rating,
     ...(input.designId ? { designId: input.designId } : {}),
     hasImage: Boolean(input.rateId),
-    createdAt: new Date().toISOString(),
+    // Constancia del consentimiento (aviso de privacidad, sección 4).
+    acceptedTerms: true,
+    acceptedTermsAt: createdAt,
+    privacyNoticeVersion: input.privacyNoticeVersion,
+    termsVersion: input.termsVersion,
+    createdAt,
     status: 0,
     source: "web",
   };

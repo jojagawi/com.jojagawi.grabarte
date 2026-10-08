@@ -1,5 +1,7 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { buildPageMetadata } from "@/lib/metadata";
+import { PRIVACY_NOTICE } from "@/lib/legal";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Aviso de privacidad | InspiraArte",
@@ -23,7 +25,7 @@ export const llmstxt = {
 };
 
 export default function AvisoDePrivacidad() {
-  const updateDate = "28 de julio de 2026";
+  const updateDate = PRIVACY_NOTICE.updatedLabel;
 
   return (
     <section className="py-24 bg-white">
@@ -49,7 +51,7 @@ export default function AvisoDePrivacidad() {
             <h2 className="font-semibold text-2xl">1. Responsable del tratamiento</h2>
             <p className="text-muted-foreground">
               InspiraArte es responsable del tratamiento de datos personales recabados a través de
-              sus formularios, canales de contacto y solicitudes de cotización.
+              sus formularios de cotización y de calificaciones, y de sus canales de contacto.
             </p>
             <p className="text-muted-foreground">
               Correo de contacto: contacto@inspiraarte.com. Domicilio referencial de operación:
@@ -64,6 +66,10 @@ export default function AvisoDePrivacidad() {
               <li>Datos de identificación y contacto (nombre, correo, teléfono o WhatsApp).</li>
               <li>Datos de pedido o cotización (producto, cantidades, fecha estimada, mensaje).</li>
               <li>Archivos de referencia y diseño que el titular decida compartir.</li>
+              <li>
+                Datos de calificaciones y opiniones: el nombre con el que firmas, el producto, la
+                calificación, tu comentario y, si decides adjuntarla, una foto del producto.
+              </li>
               <li>Datos técnicos básicos de navegación (por ejemplo, IP y eventos de analítica).</li>
             </ul>
             <p className="text-muted-foreground">
@@ -80,6 +86,12 @@ export default function AvisoDePrivacidad() {
               <li>Elaborar propuestas y producir artículos personalizados solicitados.</li>
               <li>Gestionar pagos, facturación y cumplimiento de obligaciones legales.</li>
               <li>Brindar soporte y atención postventa.</li>
+              <li>
+                Revisar las calificaciones recibidas y publicar en el sitio las aprobadas, con el
+                nombre, comentario, calificación y foto que compartas, como referencia para otros
+                clientes.
+              </li>
+              <li>Proteger los formularios contra uso automatizado y abuso.</li>
             </ul>
             <p className="text-muted-foreground">Finalidades secundarias (opcionales):</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
@@ -89,7 +101,41 @@ export default function AvisoDePrivacidad() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">4. Fundamento y marco normativo</h2>
+            <h2 className="font-semibold text-2xl">4. Calificaciones, opiniones y fotos</h2>
+            <p className="text-muted-foreground">
+              Para enviar una calificación debes aceptar este aviso y los{" "}
+              <Link href="/terminos-y-condiciones" className="text-primary underline underline-offset-4">
+                términos y condiciones
+              </Link>
+              . Guardamos la fecha y la versión del aviso que aceptaste como constancia de tu
+              consentimiento.
+            </p>
+            <ul className="list-disc pl-6 text-muted-foreground space-y-1">
+              <li>
+                Revisamos cada calificación antes de publicarla. Solo se muestran en el sitio las
+                aprobadas, junto con el nombre que escribiste; te sugerimos usar tu nombre de pila o
+                tus iniciales.
+              </li>
+              <li>
+                Si adjuntas una foto, tu navegador la optimiza antes de enviarla y elimina sus
+                metadatos (por ejemplo, la ubicación GPS y el modelo del teléfono). La foto se
+                almacena en servidores de Amazon Web Services y es accesible mediante un enlace
+                único desde que se sube; en el sitio solo aparece cuando aprobamos la calificación.
+              </li>
+              <li>
+                Te pedimos no incluir en la foto rostros, datos o imágenes de otras personas sin su
+                autorización. Podemos rechazar fotos o comentarios que no correspondan al producto o
+                que contengan datos personales de terceros.
+              </li>
+              <li>
+                Puedes pedir en cualquier momento que retiremos tu calificación o tu foto escribiendo
+                a contacto@inspiraarte.com; las eliminamos del sitio y de nuestro almacenamiento.
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="font-semibold text-2xl">5. Fundamento y marco normativo</h2>
             <p className="text-muted-foreground">
               El tratamiento se realiza conforme a la Ley Federal de Protección de Datos Personales
               en Posesión de los Particulares (LFPDPPP), su Reglamento y lineamientos aplicables en
@@ -99,21 +145,30 @@ export default function AvisoDePrivacidad() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">5. Transferencias de datos</h2>
+            <h2 className="font-semibold text-2xl">6. Transferencias de datos</h2>
             <p className="text-muted-foreground">
-              InspiraArte puede apoyarse en proveedores tecnológicos para hosting, almacenamiento de
-              archivos, analítica y comunicaciones. Dichas transferencias se limitan a lo necesario
-              para cumplir las finalidades descritas y bajo medidas contractuales razonables de
-              seguridad y confidencialidad.
+              InspiraArte se apoya en proveedores tecnológicos que tratan datos por nuestra cuenta,
+              solo para las finalidades descritas:
+            </p>
+            <ul className="list-disc pl-6 text-muted-foreground space-y-1">
+              <li>Amazon Web Services: hospedaje del sitio y almacenamiento de solicitudes, archivos, calificaciones y fotos.</li>
+              <li>Google: reCAPTCHA para proteger los formularios, y Google Tag Manager y analítica para medir el uso del sitio.</li>
+              <li>HubSpot y Slack: seguimiento interno de las solicitudes de cotización.</li>
+              <li>Bugsnag: registro de errores técnicos del sitio.</li>
+            </ul>
+            <p className="text-muted-foreground">
+              Dichas transferencias se limitan a lo necesario para cumplir las finalidades descritas
+              y bajo medidas contractuales razonables de seguridad y confidencialidad.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">6. Derechos ARCO y revocación</h2>
+            <h2 className="font-semibold text-2xl">7. Derechos ARCO y revocación</h2>
             <p className="text-muted-foreground">
               El titular puede ejercer derechos de Acceso, Rectificación, Cancelación y Oposición
-              (ARCO), así como revocar el consentimiento para finalidades secundarias, enviando su
-              solicitud a contacto@inspiraarte.com con:
+              (ARCO), así como revocar el consentimiento para finalidades secundarias o para la
+              publicación de su calificación y foto, enviando su solicitud a contacto@inspiraarte.com
+              con:
             </p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
               <li>Nombre del titular y medio para comunicar respuesta.</li>
@@ -123,17 +178,18 @@ export default function AvisoDePrivacidad() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">7. Medidas de seguridad y conservación</h2>
+            <h2 className="font-semibold text-2xl">8. Medidas de seguridad y conservación</h2>
             <p className="text-muted-foreground">
               Se aplican medidas administrativas, técnicas y físicas razonables para proteger los
               datos contra daño, pérdida, alteración, destrucción o acceso no autorizado. La
               conservación se realiza solo por el tiempo necesario para cumplir finalidades
-              contractuales, legales y de defensa de derechos.
+              contractuales, legales y de defensa de derechos. Las calificaciones y sus fotos se
+              conservan mientras estén publicadas o hasta que solicites su eliminación.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">8. Uso de cookies y tecnologías similares</h2>
+            <h2 className="font-semibold text-2xl">9. Uso de cookies y tecnologías similares</h2>
             <p className="text-muted-foreground">
               El sitio puede utilizar cookies y tecnologías similares para funcionamiento técnico,
               medición de uso y mejora del servicio. Puedes gestionar cookies desde tu navegador.
@@ -141,7 +197,7 @@ export default function AvisoDePrivacidad() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">9. Cambios al aviso</h2>
+            <h2 className="font-semibold text-2xl">10. Cambios al aviso</h2>
             <p className="text-muted-foreground">
               InspiraArte puede actualizar este aviso para reflejar cambios legales, operativos o de
               servicio. La versión vigente se publicará en esta misma página.

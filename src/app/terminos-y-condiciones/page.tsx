@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/metadata";
+import { TERMS_AND_CONDITIONS } from "@/lib/legal";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Términos y condiciones | InspiraArte",
@@ -22,7 +23,7 @@ export const llmstxt = {
 };
 
 export default function TerminosYCondiciones() {
-  const updateDate = "28 de julio de 2026";
+  const updateDate = TERMS_AND_CONDITIONS.updatedLabel;
 
   return (
     <section className="py-24 bg-white">

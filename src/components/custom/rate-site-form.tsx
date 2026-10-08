@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import Link from "next/link";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
@@ -9,12 +10,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getRecaptchaToken, googleSiteKey } from "@/lib/recaptcha";
 import { convertToWebp } from "@/lib/rate-image";
+import { PRIVACY_NOTICE, TERMS_AND_CONDITIONS } from "@/lib/legal";
 
 type RateFormState = {
   name: string;
   product: string;
   description: string;
   rating: string;
+  acceptedTerms: boolean;
 };
 
 export type RateableProduct = {
@@ -49,6 +52,7 @@ const initialFormState: RateFormState = {
   product: "",
   description: "",
   rating: "5",
+  acceptedTerms: false,
 };
 
 const ratesSubmitUrl =
@@ -85,6 +89,7 @@ async function uploadRatePhoto(photo: Blob): Promise<string> {
     action: uploadRecaptchaAction,
     type: "image/webp",
     size: photo.size,
+    acceptedTerms: true,
     recaptchaToken,
   });
 
@@ -184,6 +189,15 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    // El navegador ya lo exige con `required`; esto cubre navegadores que no validan.
+    if (!formState.acceptedTerms) {
+      setSubmitState({
+        ok: false,
+        message: "Para enviar tu calificación debes aceptar los términos y condiciones y el aviso de privacidad.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitState(null);
 
@@ -236,6 +250,10 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
         ...(ratedProduct ? { designId: ratedProduct.id } : {}),
         // Mismo id que la foto: la Lambda confirma que existe y guarda rates/<rateId>.json.
         ...(rateId ? { rateId } : {}),
+        // Constancia del consentimiento: la Lambda guarda qué versiones se aceptaron.
+        acceptedTerms: true,
+        privacyNoticeVersion: PRIVACY_NOTICE.version,
+        termsVersion: TERMS_AND_CONDITIONS.version,
         recaptchaToken,
         action: recaptchaAction,
       });
@@ -430,6 +448,43 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
                 <option value="1">1 - Malo</option>
               </select>
               <p className="text-xs text-muted-foreground">Vista previa: {"★".repeat(ratingPreview)}</p>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <input
+                id="rate-accept-terms"
+                name="acceptedTerms"
+                type="checkbox"
+                required
+                checked={formState.acceptedTerms}
+                onChange={(event) =>
+                  setFormState((current) => ({
+                    ...current,
+                    acceptedTerms: event.target.checked,
+                  }))
+                }
+                className="mt-1 size-4 shrink-0 accent-primary"
+              />
+              <label htmlFor="rate-accept-terms" className="text-sm text-foreground">
+                Acepto los{" "}
+                <Link
+                  href={TERMS_AND_CONDITIONS.path}
+                  target="_blank"
+                  className="font-medium text-primary underline underline-offset-4"
+                >
+                  términos y condiciones
+                </Link>{" "}
+                y el{" "}
+                <Link
+                  href={PRIVACY_NOTICE.path}
+                  target="_blank"
+                  className="font-medium text-primary underline underline-offset-4"
+                >
+                  aviso de privacidad
+                </Link>
+                , incluida la publicación de mi calificación{photo ? " y mi foto" : ""} en el sitio una vez revisada.
+                <span className="text-destructive" aria-hidden="true"> *</span>
+              </label>
             </div>
 
             {submitState && (
