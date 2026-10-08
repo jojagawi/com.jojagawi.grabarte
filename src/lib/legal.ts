@@ -10,6 +10,6 @@ export const PRIVACY_NOTICE = {
 
 export const TERMS_AND_CONDITIONS = {
   path: "/terminos-y-condiciones",
-  version: "2026-07-28",
-  updatedLabel: "28 de julio de 2026",
+  version: "2026-10-07",
+  updatedLabel: "7 de octubre de 2026",
 } as const;

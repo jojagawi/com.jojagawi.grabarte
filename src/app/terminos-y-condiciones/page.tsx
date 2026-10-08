@@ -101,7 +101,35 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">6. Cancelaciones, cambios y devoluciones</h2>
+            <h2 className="font-semibold text-2xl">6. Calificaciones, opiniones y fotos</h2>
+            <p className="text-muted-foreground">
+              Al enviar una calificación en el sitio, con o sin foto del producto:
+            </p>
+            <ul className="list-disc pl-6 text-muted-foreground space-y-1">
+              <li>
+                Declaras que tu opinión refleja tu experiencia real con InspiraArte o con el producto
+                calificado, y que la foto es tuya o cuentas con autorización para compartirla.
+              </li>
+              <li>
+                Conservas la titularidad de tu comentario y de tu foto, y autorizas a InspiraArte, de
+                forma gratuita y no exclusiva, a publicarlos en este sitio junto con el nombre que
+                escribiste, así como a recortar o ajustar el tamaño de la foto para mostrarla.
+              </li>
+              <li>
+                InspiraArte revisa cada calificación antes de publicarla y puede no publicar o retirar
+                las que contengan datos personales de terceros, lenguaje ofensivo, publicidad,
+                contenido ajeno al producto o que infrinjan derechos de terceros. No modificamos el
+                texto de las opiniones publicadas.
+              </li>
+              <li>
+                Puedes pedir en cualquier momento que retiremos tu calificación o tu foto escribiendo a
+                contacto@inspiraarte.com.
+              </li>
+            </ul>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="font-semibold text-2xl">7. Cancelaciones, cambios y devoluciones</h2>
             <p className="text-muted-foreground">
               Por tratarse de productos personalizados, una vez iniciada la producción puede no ser
               posible cancelar o devolver, salvo defecto imputable a InspiraArte o supuestos
@@ -111,7 +139,7 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">7. Uso permitido del sitio</h2>
+            <h2 className="font-semibold text-2xl">8. Uso permitido del sitio</h2>
             <p className="text-muted-foreground">Queda prohibido:</p>
             <ul className="list-disc pl-6 text-muted-foreground space-y-1">
               <li>Usar el sitio para actividades ilícitas o fraudulentas.</li>
@@ -121,7 +149,7 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">8. Limitación de responsabilidad</h2>
+            <h2 className="font-semibold text-2xl">9. Limitación de responsabilidad</h2>
             <p className="text-muted-foreground">
               En la medida permitida por ley, InspiraArte no será responsable por daños indirectos,
               incidentales o lucro cesante derivados del uso del sitio o de retrasos por causas
@@ -131,15 +159,16 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">9. Privacidad y datos personales</h2>
+            <h2 className="font-semibold text-2xl">10. Privacidad y datos personales</h2>
             <p className="text-muted-foreground">
-              El tratamiento de datos personales se rige por el Aviso de Privacidad publicado en
-              este sitio, conforme a la LFPDPPP y normativa mexicana aplicable.
+              El tratamiento de datos personales, incluidas las calificaciones y fotos, se rige por
+              el Aviso de Privacidad publicado en este sitio, conforme a la LFPDPPP y normativa
+              mexicana aplicable.
             </p>
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">10. Ley aplicable y jurisdicción</h2>
+            <h2 className="font-semibold text-2xl">11. Ley aplicable y jurisdicción</h2>
             <p className="text-muted-foreground">
               Estos términos se interpretan conforme a las leyes de los Estados Unidos Mexicanos. En
               caso de controversia, las partes procurarán solución amistosa y, de ser necesario,
@@ -149,7 +178,7 @@ export default function TerminosYCondiciones() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-semibold text-2xl">11. Contacto</h2>
+            <h2 className="font-semibold text-2xl">12. Contacto</h2>
             <p className="text-muted-foreground">
               Para dudas sobre estos términos: contacto@inspiraarte.com.
             </p>
