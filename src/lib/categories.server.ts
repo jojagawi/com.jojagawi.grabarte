@@ -40,7 +40,13 @@ export const getCategoryPages = cache(async (): Promise<CategoryPage[]> => {
     id: category.id,
     slug: slugify(category.name ?? ""),
     name: category.name?.trim() ?? "",
-    description: category.description?.replace(/\s+/gu, " ").trim() || null,
+    // Conserva los párrafos (línea en blanco) y normaliza los espacios dentro de cada uno.
+    description:
+      category.description
+        ?.split(/\n\s*\n/u)
+        .map((paragraph) => paragraph.replace(/\s+/gu, " ").trim())
+        .filter(Boolean)
+        .join("\n\n") || null,
     designs: designs
       .filter((design) => design.relDesignsCategories.some((relation) => relation.category?.id === category.id))
       .sort(byShowcasePriority),

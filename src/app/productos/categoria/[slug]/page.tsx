@@ -132,7 +132,13 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
             Categoría
           </span>
           <h1 className="font-serif text-4xl font-bold text-foreground text-balance sm:text-5xl">{category.name}</h1>
-          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">{describeCategory(category)}</p>
+          <div className="mt-4 max-w-2xl space-y-4 text-lg leading-relaxed text-muted-foreground">
+            {describeCategory(category)
+              .split("\n\n")
+              .map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+          </div>
           {category.description && (
             <p className="mt-4 text-sm text-muted-foreground">
               {category.designs.length} {category.designs.length === 1 ? "diseño" : "diseños"} de nuestro catálogo

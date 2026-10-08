@@ -136,7 +136,7 @@ function getPageKind(path: string): PageKind {
   if (path === "/") return "home";
   if (LEGAL_PATHS.has(path)) return "legal";
   if (path.startsWith("/productos/categoria/")) return "category";
-  if (path.startsWith("/temporada/")) return "season";
+  if (/^\/temporada\/[^/]+\/$/u.test(path)) return "season";
   if (/^\/productos\/\d+-/u.test(path)) return "product";
   return "page";
 }

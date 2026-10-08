@@ -49,10 +49,20 @@ export function Process({ isPageTitle = false }: ProcessProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-olive/10 text-inspirarte-olive text-sm font-medium mb-4">
-            Proceso de Pedido
-          </span>
+          {!isPageTitle && (
+            <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-olive/10 text-inspirarte-olive text-sm font-medium mb-4">
+              Proceso de Pedido
+            </span>
+          )}
           <TitleTag className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
+            {/* En /proceso la etiqueta entra al h1 con la búsqueda que describe la página. */}
+            {isPageTitle && (
+              <span className="mb-4 block">
+                <span className="inline-block px-4 py-1 rounded-full bg-inspirarte-olive/10 text-inspirarte-olive font-sans text-sm font-medium">
+                  Cómo pedir tu producto personalizado
+                </span>
+              </span>
+            )}
             Tan fácil como{" "}
             <span className="text-inspirarte-teal">1, 2, 3... ¡y 4!</span>
           </TitleTag>

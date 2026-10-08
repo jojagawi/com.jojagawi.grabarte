@@ -106,6 +106,7 @@ export async function Footer() {
               {[
                 { name: "Inicio", href: "/" },
                 { name: "Productos", href: "/productos" },
+                { name: "Temporadas", href: "/temporada" },
                 { name: "Proceso", href: "/proceso" },
                 { name: "Nosotros", href: "/nosotros" },
                 { name: "FAQ", href: "/faq" },

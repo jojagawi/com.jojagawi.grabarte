@@ -1,3 +1,5 @@
+import { normalizeAvailability } from "@/lib/product-facts";
+
 type FaqItem = {
   question: string;
   answer: string;
@@ -210,25 +212,7 @@ function parseFaqItems(rawFaq: string | null | undefined): FaqItem[] {
 }
 
 function mapAvailability(value: string | null | undefined) {
-  const normalized = normalizeText(value).toLowerCase();
-
-  if (!normalized) {
-    return "https://schema.org/MadeToOrder";
-  }
-
-  if (normalized.includes("agot")) {
-    return "https://schema.org/OutOfStock";
-  }
-
-  if (normalized.includes("pedido") || normalized.includes("produccion")) {
-    return "https://schema.org/MadeToOrder";
-  }
-
-  if (normalized.includes("pre")) {
-    return "https://schema.org/PreOrder";
-  }
-
-  return "https://schema.org/InStock";
+  return normalizeAvailability(value).schema;
 }
 
 function buildOrganizationNode(input: OrganizationStructuredDataInput) {

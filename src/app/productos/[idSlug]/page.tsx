@@ -27,6 +27,8 @@ import {
 } from "@/components/custom/product-personalization";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { getCategoryPathsByName } from "@/lib/categories.server";
+import { toDisplayProductionTime } from "@/lib/site-designs.server";
+import { normalizeAvailability, SHIPPING_FALLBACK, toDisplayShippingTime } from "@/lib/product-facts";
 import { getApprovedProductRatesFromAthena } from "@/lib/rates-athena.server";
 import { ProductReviews } from "@/components/custom/product-reviews";
 
@@ -377,7 +379,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     "Conoce este diseño personalizado de InspiraArte y solicita tu cotización.";
 
   return buildPageMetadata({
-    title: `${design.name} | InspiraArte`,
+    // Con la marca, la mayoría de los nombres pasa de 60 caracteres y Google corta el título.
+    title: `${design.name} | InspiraArte`.length <= 60 ? `${design.name} | InspiraArte` : design.name,
     description: seoDescription,
     path: canonicalPath,
     imagePath: socialImagePath,
@@ -636,9 +639,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     audience: design.audience,
     faq: design.faq,
     imageDescription: design.imageDescription,
-    productionTime: design.productionTime,
-    shippingTime: design.shippingTime,
-    availability: design.availability,
+    productionTime: toDisplayProductionTime(design.productionTime),
+    shippingTime: toDisplayShippingTime(design.shippingTime),
+    availability: normalizeAvailability(design.availability).label,
     dimensions: design.dimensions,
     keywords: splitKeywords(design.keywords),
     // Las mismas opiniones que se ven en la ficha (requisito de Google para marcarlas).
@@ -758,10 +761,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   // real: la BD guarda rellenos como "No especificado" que no informan nada.
   const productFacts: Array<{ label: string; value: string }> = [
     { label: "Material", value: design.material?.name },
-    { label: "Producción", value: design.productionTime },
-    { label: "Envío", value: design.shippingTime },
+    // Sin plazo concreto en la BD ("A confirmar con el proveedor", "Consultar") se muestra un texto neutro.
+    { label: "Producción", value: toDisplayProductionTime(design.productionTime) ?? "Se confirma al cotizar" },
+    { label: "Envío", value: toDisplayShippingTime(design.shippingTime) ?? SHIPPING_FALLBACK },
     { label: "Medidas", value: design.dimensions },
-    { label: "Disponibilidad", value: design.availability },
+    { label: "Disponibilidad", value: normalizeAvailability(design.availability).label },
   ].flatMap(({ label, value }) => {
     const text = value?.trim();
     return text && !/^no especificad[oa]s?\.?$/iu.test(text) ? [{ label, value: text }] : [];
@@ -863,8 +867,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   Number.isFinite(design.suggestedPrice) ? (design.suggestedPrice as number) : null
                 }
                 hasWholesale={mayoreoPrice > 0}
-                productionTime={productFacts.find((fact) => fact.label === "Producción")?.value}
-                shippingTime={productFacts.find((fact) => fact.label === "Envío")?.value}
+                productionTime={toDisplayProductionTime(design.productionTime) ?? undefined}
+                shippingTime={toDisplayShippingTime(design.shippingTime) ?? undefined}
                 imagePath={contactImagePath}
               />
 

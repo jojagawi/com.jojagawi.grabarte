@@ -9,11 +9,12 @@ import type { SeasonShowcaseItem } from "@/components/custom/showcase-card";
 
 const defaultImage = "/dam/default-image-product.webp";
 
-// Solo se muestra un plazo concreto ("2 a 4 días hábiles"); los textos tipo
-// "A confirmar" o "Consultar" no le dicen nada al visitante en la portada.
-export function toDisplayProductionTime(value: string | null): string | null {
-  const text = value?.trim() ?? "";
-  return /^\d+\s*(a|-)\s*\d+\s*días hábiles$/i.test(text) ? text : null;
+// Solo se muestra un plazo concreto ("2 a 4 días hábiles", "Hasta 5 días hábiles"); los textos
+// tipo "A confirmar" o "Consultar" no le dicen nada al visitante. Si el plazo trae una coletilla
+// ("3 a 5 días hábiles de fabricación artesanal") se muestra solo el plazo.
+export function toDisplayProductionTime(value: string | null | undefined): string | null {
+  const match = value?.trim().match(/^(\d+\s*(?:a|-)\s*\d+|hasta\s+\d+)\s*días hábiles/iu);
+  return match ? match[0].replace(/\s+/gu, " ") : null;
 }
 
 export type SiteDesign = Awaited<ReturnType<typeof getSiteDesigns>>[number];

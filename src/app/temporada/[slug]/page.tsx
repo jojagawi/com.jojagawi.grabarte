@@ -6,16 +6,15 @@ import { Button } from "@/components/ui/button";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
 import { formatSeasonMonths } from "@/lib/seasons";
-import { getSeasonPage, getSeasonPages, type SeasonPage } from "@/lib/seasons.server";
-import { buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import {
-  byShowcasePriority,
-  getDesignImagePath,
-  getDesignImageUrl,
-  getSiteDesigns,
-  type SiteDesign,
-  toShowcaseItem,
-} from "@/lib/site-designs.server";
+  describeSeason,
+  getSeasonDesigns,
+  getSeasonPage,
+  getSeasonPages,
+  getSeasonPath,
+} from "@/lib/seasons.server";
+import { buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/structured-data";
+import { getDesignImagePath, getDesignImageUrl, toShowcaseItem } from "@/lib/site-designs.server";
 
 interface SeasonPageProps {
   params: Promise<{ slug: string }>;
@@ -28,32 +27,6 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return (await getSeasonPages()).map((season) => ({ slug: season.slug }));
 }
 
-// Diseños publicados de las categorías de la temporada; cada uno con el nombre
-// de la categoría que lo trajo para el chip de la tarjeta.
-async function getSeasonDesigns(season: SeasonPage): Promise<Array<{ design: SiteDesign; categoryName: string | null }>> {
-  const designs = await getSiteDesigns();
-  return designs
-    .filter((design) =>
-      design.relDesignsCategories.some(
-        (relation) => relation.category && season.categoryIds.includes(relation.category.id),
-      ),
-    )
-    .sort(byShowcasePriority)
-    .map((design) => ({
-      design,
-      categoryName:
-        design.relDesignsCategories.find(
-          (relation) => relation.category && season.categoryIds.includes(relation.category.id),
-        )?.category?.name ?? null,
-    }));
-}
-
-function describeSeason(season: SeasonPage): string {
-  return (
-    season.description?.replace(/\s+/gu, " ").trim() ||
-    `Diseños personalizados de InspiraArte para ${season.label}. Cotiza el tuyo y te enviamos una propuesta antes de producir.`
-  );
-}
 
 const MAX_TITLE_LENGTH = 60;
 
@@ -67,9 +40,6 @@ function buildSeasonTitle(label: string): string {
   return candidates.find((title) => title.length <= MAX_TITLE_LENGTH) ?? `${label} | InspiraArte`;
 }
 
-function getSeasonPath(season: SeasonPage): string {
-  return `/temporada/${season.slug}`;
-}
 
 export async function generateMetadata({ params }: SeasonPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -88,7 +58,7 @@ export async function generateMetadata({ params }: SeasonPageProps): Promise<Met
   return buildPageMetadata({
     title: buildSeasonTitle(season.label),
     description: toMetaDescription(describeSeason(season)),
-    path: getSeasonPath(season),
+    path: getSeasonPath(season.slug),
     imagePath: coverDesign ? getDesignImageUrl(getDesignImagePath(coverDesign)) : undefined,
     imageAlt: coverDesign?.name ? `${coverDesign.name} de InspiraArte` : undefined,
     keywords: [season.label, "regalos personalizados", "grabado láser", "InspiraArte", "México"],
@@ -106,10 +76,10 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
 
   const designs = await getSeasonDesigns(season);
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Temporada: ${season.label}`)}`;
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd(`${getSeasonPath(season)}/`, [
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(`${getSeasonPath(season.slug)}/`, [
     { name: "Inicio", path: "/" },
-    { name: "Productos", path: "/productos/" },
-    { name: season.label, path: `${getSeasonPath(season)}/` },
+    { name: "Temporadas", path: "/temporada/" },
+    { name: season.label, path: `${getSeasonPath(season.slug)}/` },
   ]);
 
   return (
@@ -128,8 +98,8 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
             </li>
             <li aria-hidden="true">›</li>
             <li>
-              <Link href="/productos" className="hover:text-primary hover:underline underline-offset-4">
-                Productos
+              <Link href="/temporada" className="hover:text-primary hover:underline underline-offset-4">
+                Temporadas
               </Link>
             </li>
             <li aria-hidden="true">›</li>
