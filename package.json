@@ -52,6 +52,7 @@
     "@bugsnag/plugin-react": "^9.0.0",
     "@hookform/resolvers": "^3.9.1",
     "@huggingface/inference": "^4.13.30",
+    "@jsquash/webp": "1.5.0",
     "@mcp-b/webmcp-polyfill": "^4.0.0",
     "@next/third-parties": "^16.2.11",
     "@prisma/adapter-better-sqlite3": "^7.9.0",

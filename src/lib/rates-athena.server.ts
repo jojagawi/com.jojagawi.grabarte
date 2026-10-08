@@ -5,6 +5,7 @@ import {
   QueryExecutionState,
   StartQueryExecutionCommand,
 } from "@aws-sdk/client-athena";
+import { getRateImageUrl } from "@/lib/rate-image";
 
 type PublicTestimonialItem = {
   id: string;
@@ -13,6 +14,8 @@ type PublicTestimonialItem = {
   content: string;
   rating: number;
   role: string;
+  hasImage: boolean;
+  image: string | null;
 };
 
 export type SiteRateItem = {
@@ -22,6 +25,8 @@ export type SiteRateItem = {
   description: string;
   rating: number;
   designId: number | null;
+  hasImage: boolean;
+  image: string | null;
   createdAt: string;
   status: number;
   source: string;
@@ -34,6 +39,8 @@ export type ProductRateItem = {
   name: string;
   description: string;
   rating: number;
+  hasImage: boolean;
+  image: string | null;
   createdAt: string;
 };
 
@@ -65,6 +72,15 @@ function normalizeRating(value: number) {
 
 function toFieldValue(value: string | undefined) {
   return String(value ?? "").trim();
+}
+
+// Athena devuelve los booleanos como "true"/"false"; nulo (calificaciones anteriores) es false.
+function parseBoolean(value: string | undefined) {
+  return toFieldValue(value).toLowerCase() === "true";
+}
+
+function toRateImage(id: string, hasImage: boolean) {
+  return hasImage && id ? getRateImageUrl(id) : null;
 }
 
 function parseDesignId(value: string | undefined) {
@@ -166,7 +182,7 @@ async function executeAthenaQuery(query: string) {
 
 export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateItem[]> {
   const query = [
-    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path, designid",
+    "SELECT id, name, product, description, rating, createdat, coalesce(status, 0) AS status, source, \"$path\" AS s3_path, designid, hasimage",
     `FROM ${getRatesTableName()}`,
     "ORDER BY from_iso8601_timestamp(createdat) DESC",
     `LIMIT ${Math.max(1, Math.min(500, Math.floor(limit)))}`,
@@ -177,14 +193,18 @@ export async function getLatestRatesFromAthena(limit = 100): Promise<SiteRateIte
   return dataRows.map((row) => {
     const cols = row.Data ?? [];
     const path = toFieldValue(cols[8]?.VarCharValue);
+    const id = toFieldValue(cols[0]?.VarCharValue);
+    const hasImage = parseBoolean(cols[10]?.VarCharValue);
 
     return {
-      id: toFieldValue(cols[0]?.VarCharValue),
+      id,
       name: toFieldValue(cols[1]?.VarCharValue),
       product: toFieldValue(cols[2]?.VarCharValue),
       description: toFieldValue(cols[3]?.VarCharValue),
       rating: parseNumber(cols[4]?.VarCharValue),
       designId: parseDesignId(cols[9]?.VarCharValue),
+      hasImage,
+      image: toRateImage(id, hasImage),
       createdAt: toFieldValue(cols[5]?.VarCharValue),
       status: parseNumber(cols[6]?.VarCharValue),
       source: toFieldValue(cols[7]?.VarCharValue),
@@ -202,12 +222,9 @@ export async function getRandomHomeTestimonialsFromAthena(limit = 4): Promise<Pu
     }
   }
 
-  const database = process.env.NEXT_AWS_ATHENA_RATES_DATABASE || "inspiraarte_rates";
-  const table = process.env.NEXT_AWS_ATHENA_RATES_TABLE || "rates";
-
   const query = [
-    "SELECT id, name, product, description, rating",
-    `FROM ${database}.${table}`,
+    "SELECT id, name, product, description, rating, hasimage",
+    `FROM ${getRatesTableName()}`,
     "WHERE coalesce(status, 0) = 1",
     "  AND trim(coalesce(name, '')) <> ''",
     "  AND trim(coalesce(description, '')) <> ''",
@@ -218,13 +235,17 @@ export async function getRandomHomeTestimonialsFromAthena(limit = 4): Promise<Pu
   const rows = await executeAthenaQuery(query);
   const mapped = rows.map((row) => {
     const cols = row.Data ?? [];
+    const id = toFieldValue(cols[0]?.VarCharValue);
+    const hasImage = parseBoolean(cols[5]?.VarCharValue);
     return {
-      id: toFieldValue(cols[0]?.VarCharValue),
+      id,
       name: toFieldValue(cols[1]?.VarCharValue),
       product: toFieldValue(cols[2]?.VarCharValue),
       content: toFieldValue(cols[3]?.VarCharValue),
       rating: normalizeRating(parseNumber(cols[4]?.VarCharValue)),
       role: "Cliente",
+      hasImage,
+      image: toRateImage(id, hasImage),
     };
   });
 
@@ -255,7 +276,7 @@ export function getApprovedProductRatesFromAthena(): Promise<Map<number, Product
   productRatesCache.expiresAt = Date.now() + PRODUCT_RATES_TTL_MS;
   productRatesCache.promise = (async () => {
     const query = [
-      "SELECT id, name, description, rating, createdat, designid",
+      "SELECT id, name, description, rating, createdat, designid, hasimage",
       `FROM ${getRatesTableName()}`,
       "WHERE coalesce(status, 0) = 1",
       "  AND designid IS NOT NULL",
@@ -272,11 +293,15 @@ export function getApprovedProductRatesFromAthena(): Promise<Map<number, Product
       if (!designId) continue;
 
       const rates = ratesByDesign.get(designId) ?? [];
+      const id = toFieldValue(cols[0]?.VarCharValue);
+      const hasImage = parseBoolean(cols[6]?.VarCharValue);
       rates.push({
-        id: toFieldValue(cols[0]?.VarCharValue),
+        id,
         name: toFieldValue(cols[1]?.VarCharValue),
         description: toFieldValue(cols[2]?.VarCharValue),
         rating: normalizeRating(parseNumber(cols[3]?.VarCharValue)),
+        hasImage,
+        image: toRateImage(id, hasImage),
         createdAt: toFieldValue(cols[4]?.VarCharValue),
       });
       ratesByDesign.set(designId, rates);

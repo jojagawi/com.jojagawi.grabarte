@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -9,6 +10,8 @@ export type TestimonialItem = {
   content: string
   rating: number
   product: string
+  /** Foto que subió el cliente (imagenes-usuarios/<id>.webp), si la hay. */
+  image?: string | null
 }
 
 type TestimonialsProps = {
@@ -65,6 +68,19 @@ export function Testimonials({ testimonials }: TestimonialsProps) {
               key={testimonial.id}
               className="bg-white rounded-2xl p-6 border border-border"
             >
+              {testimonial.image && (
+                <div className="relative mb-5 aspect-4/3 overflow-hidden rounded-xl bg-muted">
+                  <Image
+                    src={testimonial.image}
+                    alt={`Foto de ${testimonial.product || "su producto"} enviada por ${testimonial.name}`}
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 90vw, (max-width: 1024px) 45vw, 25vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+
               {/* Stars */}
               <div className="flex gap-1 mb-4">
                 <span className="sr-only">Calificación: {testimonial.rating} de 5</span>

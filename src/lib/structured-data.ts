@@ -37,6 +37,7 @@ type ProductReviewInput = {
   description: string;
   rating: number;
   createdAt: string;
+  image?: string | null;
 };
 
 // Google muestra hasta unas cuantas reseñas; el promedio sí usa todas.
@@ -451,6 +452,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
       "@type": "Review",
       author: { "@type": "Person", name: normalizeText(review.name) },
       reviewBody: normalizeText(review.description),
+      ...(review.image ? { image: review.image } : {}),
       ...(normalizeText(review.createdAt) ? { datePublished: normalizeText(review.createdAt).slice(0, 10) } : {}),
       reviewRating: {
         "@type": "Rating",

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getRecaptchaToken, googleSiteKey } from "@/lib/recaptcha";
+import { convertToWebp } from "@/lib/rate-image";
 
 type RateFormState = {
   name: string;
@@ -26,6 +27,18 @@ interface RateSiteFormProps {
   products: RateableProduct[];
 }
 
+type RatePhoto = {
+  blob: Blob;
+  previewUrl: string;
+};
+
+type RateUploadResponse = {
+  rateId?: string;
+  url?: string;
+  fields?: Record<string, string>;
+  message?: string;
+};
+
 type SubmitState = {
   ok: boolean;
   message: string;
@@ -42,6 +55,54 @@ const ratesSubmitUrl =
   process.env.NEXT_PUBLIC_RATES_LAMBDA_URL?.trim() || "/api/rates";
 const ratesSubmitApiKey = process.env.NEXT_PUBLIC_RATES_LAMBDA_API_KEY?.trim() || "";
 const recaptchaAction = "add_client_rate";
+const uploadRecaptchaAction = "rate_upload";
+
+async function postToRates(body: Record<string, unknown>): Promise<{ ok: boolean; status: number; body: RateUploadResponse | null }> {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (ratesSubmitApiKey) {
+    headers["x-api-key"] = ratesSubmitApiKey;
+  }
+
+  const response = await fetch(ratesSubmitUrl, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+  return {
+    ok: response.ok,
+    status: response.status,
+    body: (await response.json().catch(() => null)) as RateUploadResponse | null,
+  };
+}
+
+// Pide a la Lambda el id de la calificación y un POST firmado, y sube la foto ya en WebP.
+async function uploadRatePhoto(photo: Blob): Promise<string> {
+  const recaptchaToken = await getRecaptchaToken(googleSiteKey, uploadRecaptchaAction);
+  const signed = await postToRates({
+    action: uploadRecaptchaAction,
+    type: "image/webp",
+    size: photo.size,
+    recaptchaToken,
+  });
+
+  if (!signed.ok || !signed.body?.rateId || !signed.body.url || !signed.body.fields) {
+    throw new Error(signed.body?.message || "No pudimos preparar la subida de tu foto.");
+  }
+
+  const formData = new FormData();
+  Object.entries(signed.body.fields).forEach(([field, value]) => formData.append(field, value));
+  // S3 exige que el archivo sea el último campo del POST.
+  formData.append("file", photo, `${signed.body.rateId}.webp`);
+
+  const upload = await fetch(signed.body.url, { method: "POST", body: formData });
+  if (!upload.ok) {
+    throw new Error("No pudimos subir tu foto. Intenta de nuevo o envía tu calificación sin foto.");
+  }
+  return signed.body.rateId;
+}
 
 // Export estático: el ?id= se lee en el cliente (useSearchParams obligaría a un Suspense).
 // En el HTML prerenderado no hay query string, así que el servidor reporta "".
@@ -72,6 +133,44 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
   const ratedProduct = useMemo(() => findProductById(products, locationSearch), [products, locationSearch]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState | null>(null);
+  const [photo, setPhoto] = useState<RatePhoto | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // Libera la vista previa anterior al cambiar de foto o al salir de la página.
+  useEffect(() => {
+    return () => {
+      if (photo) URL.revokeObjectURL(photo.previewUrl);
+    };
+  }, [photo]);
+
+  const clearPhoto = () => {
+    setPhoto(null);
+    setPhotoError(null);
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  };
+
+  const handlePhotoChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setPhotoError(null);
+    if (!file) {
+      setPhoto(null);
+      return;
+    }
+
+    setIsProcessingPhoto(true);
+    try {
+      const blob = await convertToWebp(file);
+      setPhoto({ blob, previewUrl: URL.createObjectURL(blob) });
+    } catch (error) {
+      setPhoto(null);
+      event.target.value = "";
+      setPhotoError(error instanceof Error ? error.message : "No pudimos procesar la foto.");
+    } finally {
+      setIsProcessingPhoto(false);
+    }
+  };
 
   const ratingPreview = useMemo(() => Number(formState.rating) || 0, [formState.rating]);
 
@@ -102,39 +201,45 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
         return;
       }
 
+      let rateId: string | null = null;
+      if (photo) {
+        try {
+          rateId = await uploadRatePhoto(photo.blob);
+        } catch (error) {
+          sendGTMEvent({
+            event: "form_rate_error",
+            form_name: "RateSiteForm",
+            error_type: "photo_upload_failed",
+          });
+          setSubmitState({
+            ok: false,
+            message: error instanceof Error ? error.message : "No pudimos subir tu foto.",
+          });
+          return;
+        }
+      }
+
       const recaptchaToken = await getRecaptchaToken(googleSiteKey, recaptchaAction);
 
       sendGTMEvent({
         event: "form_rate_send",
         form_name: "RateSiteForm",
         form_action: recaptchaAction,
+        has_image: Boolean(rateId),
       });
 
-      const headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
-
-      if (ratesSubmitApiKey) {
-        headers["x-api-key"] = ratesSubmitApiKey;
-      }
-
-      const response = await fetch(ratesSubmitUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          name: formState.name,
-          product: ratedProduct?.name ?? formState.product,
-          description: formState.description,
-          rating: Number(formState.rating),
-          ...(ratedProduct ? { designId: ratedProduct.id } : {}),
-          recaptchaToken,
-          action: recaptchaAction,
-        }),
+      const response = await postToRates({
+        name: formState.name,
+        product: ratedProduct?.name ?? formState.product,
+        description: formState.description,
+        rating: Number(formState.rating),
+        ...(ratedProduct ? { designId: ratedProduct.id } : {}),
+        // Mismo id que la foto: la Lambda confirma que existe y guarda rates/<rateId>.json.
+        ...(rateId ? { rateId } : {}),
+        recaptchaToken,
+        action: recaptchaAction,
       });
-
-      const responseBody = (await response.json().catch(() => null)) as
-        | { message?: string }
-        | null;
+      const responseBody = response.body;
 
       if (!response.ok) {
         sendGTMEvent({
@@ -161,6 +266,7 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
         message: "Gracias. Tu calificación fue enviada correctamente.",
       });
       setFormState(initialFormState);
+      clearPhoto();
     } catch {
       sendGTMEvent({
         event: "form_rate_error",
@@ -258,6 +364,52 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="rate-photo">Foto de tu producto (opcional)</Label>
+              <p id="rate-photo-help" className="text-xs text-muted-foreground">
+                JPG, PNG o WebP. La optimizamos antes de subirla y le quitamos los datos de ubicación.
+                Se publica junto a tu opinión cuando la revisemos.
+              </p>
+              {photo ? (
+                <div className="flex items-start gap-4 rounded-lg border border-border p-3">
+                  {/* Vista previa local (blob:), no pasa por el optimizador de imágenes. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo.previewUrl}
+                    alt="Vista previa de la foto de tu producto"
+                    className="size-24 shrink-0 rounded-md object-cover"
+                  />
+                  <div className="space-y-2 text-sm">
+                    <p className="text-muted-foreground">Foto lista ({Math.round(photo.blob.size / 1024)} KB).</p>
+                    <Button type="button" variant="outline" size="sm" onClick={clearPhoto} disabled={isSubmitting}>
+                      Quitar foto
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Input
+                  ref={photoInputRef}
+                  id="rate-photo"
+                  name="photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  aria-describedby="rate-photo-help"
+                  disabled={isProcessingPhoto || isSubmitting}
+                  onChange={handlePhotoChange}
+                />
+              )}
+              {isProcessingPhoto && (
+                <p className="text-xs text-muted-foreground" role="status">
+                  Optimizando tu foto...
+                </p>
+              )}
+              {photoError && (
+                <p className="text-sm text-destructive" role="alert">
+                  {photoError}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="rate-rating">Calificacion (1 a 5)</Label>
               <select
                 id="rate-rating"
@@ -291,7 +443,7 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
 
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isProcessingPhoto}
               className="w-full bg-primary text-white hover:bg-inspirarte-petroleum-deep sm:w-auto"
             >
               {isSubmitting ? "Enviando..." : "Enviar calificación"}

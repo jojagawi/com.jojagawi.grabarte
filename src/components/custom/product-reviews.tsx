@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/components/custom/testimonials";
@@ -88,6 +89,18 @@ export function ProductReviews({ designId, productName, reviews }: ProductReview
           const reviewDate = formatReviewDate(review.createdAt);
           return (
             <li key={review.id} className="rounded-2xl border border-border bg-white p-6">
+              {review.image && (
+                <div className="relative mb-5 aspect-4/3 overflow-hidden rounded-xl bg-muted">
+                  <Image
+                    src={review.image}
+                    alt={`Foto de ${productName} enviada por ${review.name}`}
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 90vw, (max-width: 1024px) 45vw, 30vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
               <StarRow rating={review.rating} className="size-4" />
               <p className="mt-4 mb-6 leading-relaxed text-foreground">&ldquo;{review.description}&rdquo;</p>
               <div className="flex items-center gap-3">

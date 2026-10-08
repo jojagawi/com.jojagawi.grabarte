@@ -1,70 +1,16 @@
 import { NextResponse } from "next/server";
 
-type CreateRatePayload = {
-  name: string;
-  product: string;
-  description: string;
-  rating: number;
-  recaptchaToken: string;
-  action: string;
-  designId?: number;
-};
-
-function getTrimmed(value: unknown) {
-  return String(value ?? "").trim();
-}
-
-function parsePayload(payload: unknown): CreateRatePayload | null {
-  if (!payload || typeof payload !== "object") {
-    return null;
-  }
-
-  const body = payload as Record<string, unknown>;
-  const name = getTrimmed(body.name);
-  const product = getTrimmed(body.product);
-  const description = getTrimmed(body.description);
-  const rating = Number(body.rating);
-  const recaptchaToken = getTrimmed(body.recaptchaToken);
-  const action = getTrimmed(body.action);
-  const rawDesignId = getTrimmed(body.designId);
-  const designId = rawDesignId ? Number(rawDesignId) : null;
-
-  if (!name || !product || !description) {
-    return null;
-  }
-
-  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return null;
-  }
-
-  if (!recaptchaToken || action !== "add_client_rate") {
-    return null;
-  }
-
-  // Mismo criterio que la Lambda: opcional, pero si viene debe ser un id válido.
-  if (designId !== null && (!Number.isInteger(designId) || designId <= 0)) {
-    return null;
-  }
-
-  return {
-    name,
-    product,
-    description,
-    rating,
-    recaptchaToken,
-    action,
-    ...(designId ? { designId } : {}),
-  };
-}
+// Proxy a la Lambda de calificaciones (cuando no hay NEXT_PUBLIC_RATES_LAMBDA_URL, el formulario
+// llama aquí). Responde lo mismo que la Lambda para que el formulario no distinga entre ambos:
+// la validación completa (reCAPTCHA, foto en S3, ids) vive en la Lambda.
+const ALLOWED_ACTIONS = new Set(["rate_upload", "add_client_rate"]);
 
 export async function POST(request: Request) {
-  const parsedRequestBody = parsePayload(await request.json().catch(() => null));
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+  const action = String(body?.action ?? "").trim();
 
-  if (!parsedRequestBody) {
-    return NextResponse.json(
-      { message: "Datos invalidos. Revisa nombre, producto, descripcion y calificacion." },
-      { status: 400 },
-    );
+  if (!body || !ALLOWED_ACTIONS.has(action)) {
+    return NextResponse.json({ message: "Accion invalida." }, { status: 400 });
   }
 
   const lambdaUrl = process.env.RATES_LAMBDA_URL;
@@ -75,11 +21,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const lambdaApiKey = process.env.RATES_LAMBDA_API_KEY;
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
 
+  const lambdaApiKey = process.env.RATES_LAMBDA_API_KEY;
   if (lambdaApiKey) {
     headers["x-api-key"] = lambdaApiKey;
   }
@@ -87,30 +33,13 @@ export async function POST(request: Request) {
   const lambdaResponse = await fetch(lambdaUrl, {
     method: "POST",
     headers,
-    body: JSON.stringify(parsedRequestBody),
+    body: JSON.stringify(body),
     cache: "no-store",
   });
 
-  const lambdaBody = (await lambdaResponse.json().catch(() => null)) as
-    | Record<string, unknown>
-    | null;
+  const lambdaBody = (await lambdaResponse.json().catch(() => null)) as Record<string, unknown> | null;
 
-  if (!lambdaResponse.ok) {
-    return NextResponse.json(
-      {
-        message:
-          String(lambdaBody?.message ?? "La funcion lambda rechazo la solicitud."),
-      },
-      { status: 502 },
-    );
-  }
-
-  return NextResponse.json(
-    {
-      message: "Calificacion enviada y procesada correctamente.",
-      data: lambdaBody,
-    },
-    { status: 201 },
-  );
+  return NextResponse.json(lambdaBody ?? { message: "La funcion lambda no respondio JSON." }, {
+    status: lambdaBody ? lambdaResponse.status : 502,
+  });
 }
-

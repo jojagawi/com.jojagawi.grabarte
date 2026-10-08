@@ -1,15 +1,35 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { randomUUID } from "node:crypto";
 
+// Calificaciones del sitio (/agregar-calificacion). Dos acciones en la misma Function URL:
+//   - rate_upload: reserva el id de la calificación y entrega un POST firmado para subir la
+//     foto del cliente a imagenes-usuarios/<id>.webp (el navegador ya la convierte a WebP).
+//   - add_client_rate: guarda rates/<id>.json. Si trae rateId, confirma que la foto existe y
+//     usa ese mismo id, así la foto y la fila de Athena comparten identificador.
+
+// El bucket lleva puntos (dam.inspiraarte.com): con estilo "virtual host" el certificado
+// HTTPS no coincide, así que las URLs firmadas usan estilo de ruta.
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
+  forcePathStyle: true,
 });
 
 const ratesBucket = process.env.RATES_BUCKET || "dam.inspiraarte.com";
 const ratesPrefix = (process.env.RATES_PREFIX || "rates/").replace(/^\/+/, "");
+const imagesPrefix = (process.env.RATES_IMAGES_PREFIX || "imagenes-usuarios/").replace(/^\/+/, "");
 const ratesApiKey = String(process.env.RATES_API_KEY || "").trim();
 const googleRecaptchaSecretKey = String(process.env.NEXT_GOOGLE_SECRET_KEY || "").trim();
-const recaptchaExpectedAction = "add_client_rate";
+
+const UPLOAD_ACTION = "rate_upload";
+const SUBMIT_ACTION = "add_client_rate";
+const RECAPTCHA_MIN_SCORE = 0.5;
+
+// Debe coincidir con MAX_RATE_IMAGE_BYTES de src/components/custom/rate-site-form.tsx.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const IMAGE_CONTENT_TYPE = "image/webp";
+const UPLOAD_URL_TTL_SECONDS = 600;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function createResponse(statusCode, body) {
   return {
@@ -29,7 +49,7 @@ function parseEventBody(event) {
 
   if (typeof rawBody === "string") {
     try {
-      return JSON.parse(rawBody);
+      return JSON.parse(event?.isBase64Encoded ? Buffer.from(rawBody, "base64").toString("utf-8") : rawBody);
     } catch {
       return null;
     }
@@ -52,58 +72,26 @@ function readApiKeyFromHeaders(event) {
   return String(raw || "").trim();
 }
 
-// Id del diseño calificado (Designs.id). Opcional: sin él la calificación es del sitio.
-function normalizeDesignId(value) {
-  if (value === undefined || value === null || value === "") {
-    return null;
-  }
-
-  const designId = Number(value);
-  return Number.isInteger(designId) && designId > 0 && designId <= 2147483647 ? designId : undefined;
+function imageKey(rateId) {
+  return `${imagesPrefix}${rateId}.webp`;
 }
 
-function normalizeInput(payload) {
-  if (!payload || typeof payload !== "object") {
-    return null;
+function rateKey(rateId) {
+  return `${ratesPrefix}${rateId}.json`;
+}
+
+// Sin s3:ListBucket, S3 responde 403 (no 404) a un objeto inexistente: ambos cuentan como "no existe".
+async function objectExists(key) {
+  try {
+    await s3Client.send(new HeadObjectCommand({ Bucket: ratesBucket, Key: key }));
+    return true;
+  } catch {
+    return false;
   }
-
-  const name = String(payload.name || "").trim();
-  const product = String(payload.product || "").trim();
-  const description = String(payload.description || "").trim();
-  const rating = Number(payload.rating);
-  const recaptchaToken = String(payload.recaptchaToken || "").trim();
-  const action = String(payload.action || "").trim();
-  const designId = normalizeDesignId(payload.designId);
-
-  if (!name || !product || !description) {
-    return null;
-  }
-
-  if (designId === undefined) {
-    return null;
-  }
-
-  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return null;
-  }
-
-  if (!recaptchaToken || action !== recaptchaExpectedAction) {
-    return null;
-  }
-
-  return {
-    name,
-    product,
-    description,
-    rating,
-    recaptchaToken,
-    action,
-    ...(designId ? { designId } : {}),
-  };
 }
 
 async function verifyRecaptchaToken(token, action) {
-  if (!googleRecaptchaSecretKey) {
+  if (!googleRecaptchaSecretKey || !token) {
     return false;
   }
 
@@ -134,54 +122,146 @@ async function verifyRecaptchaToken(token, action) {
   }
 
   const score = Number(payload.score ?? 0);
-  return Number.isFinite(score) && score >= 0.5;
+  return Number.isFinite(score) && score >= RECAPTCHA_MIN_SCORE;
 }
 
-export async function handler(event) {
-  if (ratesApiKey) {
-    const requestApiKey = readApiKeyFromHeaders(event);
-    if (!requestApiKey || requestApiKey !== ratesApiKey) {
-      return createResponse(403, {
-        message: "Forbidden",
-      });
-    }
-  }
+// --- rate_upload ------------------------------------------------------------
 
-  const parsedBody = parseEventBody(event);
-  const input = normalizeInput(parsedBody);
-
-  if (!input) {
+async function handleUpload(payload) {
+  const size = Number(payload?.size);
+  const type = String(payload?.type || "").trim();
+  if (type !== IMAGE_CONTENT_TYPE || !Number.isInteger(size) || size <= 0 || size > MAX_IMAGE_BYTES) {
     return createResponse(400, {
-      message: "Payload invalido. Se requiere name, product, description y rating (1-5); designId opcional debe ser entero positivo.",
+      message: "La foto debe ser una imagen de 5 MB como máximo.",
     });
   }
 
-  const recaptchaValid = await verifyRecaptchaToken(input.recaptchaToken, input.action);
-  if (!recaptchaValid) {
+  if (!(await verifyRecaptchaToken(String(payload.recaptchaToken || "").trim(), UPLOAD_ACTION))) {
     return createResponse(400, {
       message: "La validacion de reCAPTCHA no fue exitosa.",
     });
   }
 
-  const uuid = randomUUID();
-  const objectKey = `${ratesPrefix}${uuid}.json`;
-  const payload = {
-    id: uuid,
-    ...input,
+  const rateId = randomUUID();
+  const key = imageKey(rateId);
+  // La política firmada fija llave, tipo y tamaño: S3 rechaza lo que no coincida.
+  const { url, fields } = await createPresignedPost(s3Client, {
+    Bucket: ratesBucket,
+    Key: key,
+    Conditions: [
+      ["content-length-range", 1, MAX_IMAGE_BYTES],
+      ["eq", "$Content-Type", IMAGE_CONTENT_TYPE],
+    ],
+    Fields: { "Content-Type": IMAGE_CONTENT_TYPE },
+    Expires: UPLOAD_URL_TTL_SECONDS,
+  });
+
+  return createResponse(200, { rateId, key, url, fields });
+}
+
+// --- add_client_rate --------------------------------------------------------
+
+// Id del diseño calificado (Designs.id). Opcional: sin él la calificación es del sitio.
+function normalizeDesignId(value) {
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+
+  const designId = Number(value);
+  return Number.isInteger(designId) && designId > 0 && designId <= 2147483647 ? designId : undefined;
+}
+
+function normalizeSubmitInput(payload) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const name = String(payload.name || "").trim();
+  const product = String(payload.product || "").trim();
+  const description = String(payload.description || "").trim();
+  const rating = Number(payload.rating);
+  const designId = normalizeDesignId(payload.designId);
+  const rateId = String(payload.rateId || "").trim();
+
+  if (!name || !product || !description) {
+    return null;
+  }
+
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return null;
+  }
+
+  if (designId === undefined || (rateId && !UUID_PATTERN.test(rateId))) {
+    return null;
+  }
+
+  return {
+    name,
+    product,
+    description,
+    rating,
+    designId,
+    rateId: rateId || null,
+    recaptchaToken: String(payload.recaptchaToken || "").trim(),
+  };
+}
+
+async function handleSubmit(payload) {
+  const input = normalizeSubmitInput(payload);
+  if (!input) {
+    return createResponse(400, {
+      message:
+        "Payload invalido. Se requiere name, product, description y rating (1-5); designId y rateId son opcionales.",
+    });
+  }
+
+  if (!(await verifyRecaptchaToken(input.recaptchaToken, SUBMIT_ACTION))) {
+    return createResponse(400, {
+      message: "La validacion de reCAPTCHA no fue exitosa.",
+    });
+  }
+
+  // Con rateId, la foto ya debe estar en S3 y el id no puede pisar otra calificación.
+  if (input.rateId) {
+    const [hasImage, alreadySaved] = await Promise.all([
+      objectExists(imageKey(input.rateId)),
+      objectExists(rateKey(input.rateId)),
+    ]);
+
+    if (!hasImage) {
+      return createResponse(400, {
+        message: "No encontramos tu foto. Vuelve a subirla e intenta de nuevo.",
+      });
+    }
+
+    if (alreadySaved) {
+      return createResponse(409, {
+        message: "Esta calificacion ya fue registrada.",
+      });
+    }
+  }
+
+  const id = input.rateId || randomUUID();
+  const objectKey = rateKey(id);
+  const record = {
+    id,
+    name: input.name,
+    product: input.product,
+    description: input.description,
+    rating: input.rating,
+    ...(input.designId ? { designId: input.designId } : {}),
+    hasImage: Boolean(input.rateId),
     createdAt: new Date().toISOString(),
     status: 0,
     source: "web",
   };
-
-  delete payload.recaptchaToken;
-  delete payload.action;
 
   try {
     await s3Client.send(
       new PutObjectCommand({
         Bucket: ratesBucket,
         Key: objectKey,
-          Body: JSON.stringify(payload),
+        Body: JSON.stringify(record),
         ContentType: "application/json",
         CacheControl: "no-store",
       }),
@@ -194,9 +274,35 @@ export async function handler(event) {
 
   return createResponse(201, {
     message: "Calificacion guardada",
-    id: uuid,
+    id,
     bucket: ratesBucket,
     key: objectKey,
+    hasImage: record.hasImage,
   });
 }
 
+export async function handler(event) {
+  if (ratesApiKey) {
+    const requestApiKey = readApiKeyFromHeaders(event);
+    if (!requestApiKey || requestApiKey !== ratesApiKey) {
+      return createResponse(403, {
+        message: "Forbidden",
+      });
+    }
+  }
+
+  const payload = parseEventBody(event);
+  const action = String(payload?.action || "").trim();
+
+  if (action === UPLOAD_ACTION) {
+    return handleUpload(payload);
+  }
+
+  if (action === SUBMIT_ACTION) {
+    return handleSubmit(payload);
+  }
+
+  return createResponse(400, {
+    message: "Accion invalida.",
+  });
+}
