@@ -1,5 +1,197 @@
 [
   {
+    "id": 242,
+    "idSlug": "242-trajinera-decorativa-mdf-para-armar-y-pintar-centro-de-mesa",
+    "name": "Trajinera Decorativa MDF para Armar y Pintar | Centro de Mesa",
+    "description": "Decora tus eventos y ofrendas con esta trajinera de MDF para armar y pintar. Funciona como dulcero o centro de mesa tradicional mexicano. Se envía sin armar ni pintar.",
+    "categories": [
+      "Adornos",
+      "Tradiciones",
+      "México",
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/242-821-trajinera-de-adorno.webp",
+    "gallery": [],
+    "url": "/productos/242-trajinera-decorativa-mdf-para-armar-y-pintar-centro-de-mesa"
+  },
+  {
+    "id": 241,
+    "idSlug": "241-calavera-mdf-personalizable-base-normal-o-portavelas",
+    "name": "Calavera MDF personalizable: base normal o portavelas",
+    "description": "Calavera de MDF personalizable con nombre propio. Elige entre base plana normal o base portavelas. Decoración artesanal para altar de muertos y eventos especiales.",
+    "categories": [
+      "Día de muertos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 50,
+    "suggestedPrice": 80,
+    "image": "https://dam.inspiraarte.com/preview/241-820-calavera-con-base-normal-o-base-para-vela.webp",
+    "gallery": [],
+    "url": "/productos/241-calavera-mdf-personalizable-base-normal-o-portavelas"
+  },
+  {
+    "id": 240,
+    "idSlug": "240-porta-uvas-ano-nuevo-de-mdf-para-personalizar",
+    "name": "Porta uvas Año Nuevo de MDF para personalizar",
+    "description": "Porta uvas de MDF para personalizar con las fotos del año. Incluye etiqueta 'Feliz 2027'. Listo para pintar y decorar en Año Nuevo.",
+    "categories": [
+      "Adornos",
+      "Año nuevo"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 120,
+    "image": "https://dam.inspiraarte.com/preview/240-817-porta-uvas-para-ano-nuevo.webp",
+    "gallery": [],
+    "url": "/productos/240-porta-uvas-ano-nuevo-de-mdf-para-personalizar"
+  },
+  {
+    "id": 239,
+    "idSlug": "239-porta-post-it-y-pluma-personalizable-con-nombre-y-logo",
+    "name": "Porta Post-it y pluma personalizable con nombre y logo",
+    "description": "Organizador de escritorio en MDF personalizable con nombre y logo. Ideal para regalos de día del maestro, profesionales y corporativos. Material MDF crudo.",
+    "categories": [
+      "Regalos",
+      "Doctor / Enfermera / Dentista",
+      "Día del maestro",
+      "Regalos Corporativos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 100,
+    "suggestedPrice": 120,
+    "image": "https://dam.inspiraarte.com/preview/239-814-porta-postits-y-plumas-personalizables.webp",
+    "gallery": [],
+    "url": "/productos/239-porta-post-it-y-pluma-personalizable-con-nombre-y-logo"
+  },
+  {
+    "id": 238,
+    "idSlug": "238-porta-plumas-de-mdf-figura-medica-para-doctor-y-enfermera",
+    "name": "Porta Plumas de MDF Figura Médica para Doctor y Enfermera",
+    "description": "Porta plumas de MDF al natural con diseño de filipina médica. Ideal para regalar a doctores, enfermeras o graduados de medicina. Se envía sin pintar ni armar.",
+    "categories": [
+      "Doctor / Enfermera / Dentista",
+      "Regalos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 80,
+    "suggestedPrice": 100,
+    "image": "https://dam.inspiraarte.com/preview/238-811-porta-plumas-de-mdf-figura-medica-para-doctor-y-enfermera.webp",
+    "gallery": [],
+    "url": "/productos/238-porta-plumas-de-mdf-figura-medica-para-doctor-y-enfermera"
+  },
+  {
+    "id": 186,
+    "idSlug": "186-medallero-de-madera-mdf-organizador-deportivo",
+    "name": "Medallero de Madera MDF Organizador Deportivo",
+    "description": "Exhibe tus logros con los diferentes modelos de medalleros en MDF. Ideal para personalizar a tu gusto y colgar tus medallas deportivas. Se envía sin pintar ni armar.",
+    "categories": [
+      "Deportes"
+    ],
+    "material": "MDF",
+    "minimumPrice": 120,
+    "suggestedPrice": 200,
+    "image": "https://dam.inspiraarte.com/preview/186-673-medallero-de-madera-mdf-organizador-deportivo.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/186/668.webp",
+      "https://dam.inspiraarte.com/preview/186/669.webp"
+    ],
+    "url": "/productos/186-medallero-de-madera-mdf-organizador-deportivo"
+  },
+  {
+    "id": 185,
+    "idSlug": "185-torre-de-dados-en-mdf-para-juegos-de-rol-y-mesa",
+    "name": "Torre de Dados en MDF para Juegos de Rol y Mesa",
+    "description": "Torre de dados en MDF para tus partidas de rol y juegos de mesa. Asegura tiradas aleatorias y ordenadas. Se envía sin armar ni pintar para que la personalices a tu gusto.",
+    "categories": [
+      "Regalos",
+      "Juegos de Mesa"
+    ],
+    "material": "MDF",
+    "minimumPrice": 200,
+    "suggestedPrice": 250,
+    "image": "https://dam.inspiraarte.com/preview/185-665-torre-de-dados-en-mdf-para-juegos-de-rol-y-mesa.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/185/1790047249989-stnvpzoj.webp"
+    ],
+    "url": "/productos/185-torre-de-dados-en-mdf-para-juegos-de-rol-y-mesa"
+  },
+  {
+    "id": 184,
+    "idSlug": "184-llavero-destapador-de-metal-personalizado-para-eventos",
+    "name": "Llavero Destapador de Metal Personalizado para Eventos",
+    "description": "Llavero destapador de metal resistente con grabado personalizado. Ideal para recuerdos de eventos, bodas y regalos corporativos prácticos.",
+    "categories": [
+      "Llaveros",
+      "Regalos"
+    ],
+    "material": "Metal",
+    "minimumPrice": 50,
+    "suggestedPrice": 70,
+    "image": "https://dam.inspiraarte.com/preview/184-660-llavero-destapador-de-metal-personalizado-para-eventos.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/184/1789808307194-p9vf30r9.webp"
+    ],
+    "url": "/productos/184-llavero-destapador-de-metal-personalizado-para-eventos"
+  },
+  {
+    "id": 183,
+    "idSlug": "183-portacelular-de-mdf-personalizable-para-escritorio",
+    "name": "Portacelular de MDF Personalizable para Escritorio",
+    "description": "Organiza tu espacio con este portacelular de MDF personalizable. Ideal para escritorio o regalos corporativos. Se envía al natural, sin pintar ni armar.",
+    "categories": [
+      "Oficina",
+      "Regalos"
+    ],
+    "material": "MDF",
+    "minimumPrice": 50,
+    "suggestedPrice": 60,
+    "image": "https://dam.inspiraarte.com/preview/183-648-portacelular-de-mdf-personalizable-para-escritorio.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/183/649.webp",
+      "https://dam.inspiraarte.com/preview/183/650.webp"
+    ],
+    "url": "/productos/183-portacelular-de-mdf-personalizable-para-escritorio"
+  },
+  {
+    "id": 181,
+    "idSlug": "181-llavero-anime-casa-con-pareja-mdf",
+    "name": "Llavero Anime Casa con Pareja - MDF",
+    "description": "Llavero de MDF con diseño de casa y pareja estilo anime. Ideal para regalar, decorar o como porta llaves. Se envía sin pintar ni armar.",
+    "categories": [
+      "Porta Llaves",
+      "Adornos",
+      "Anime"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/181-655-llavero-anime-casa-con-pareja-mdf.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/181/1789427262293-kdvniku1.webp"
+    ],
+    "url": "/productos/181-llavero-anime-casa-con-pareja-mdf"
+  },
+  {
+    "id": 180,
+    "idSlug": "180-plantilla-animales-para-pintar-en-mdf",
+    "name": "Plantilla Animales para Pintar en MDF",
+    "description": "Plantilla de madera MDF con dibujos de animales para pintar. Ideal para niños, actividades escolares y decoración personalizada. ¡Crea arte divertido!",
+    "categories": [
+      "Montesori",
+      "Niños",
+      "Escuela"
+    ],
+    "material": "MDF",
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/180-653-plantilla-animales-para-pintar-en-mdf.webp",
+    "gallery": [],
+    "url": "/productos/180-plantilla-animales-para-pintar-en-mdf"
+  },
+  {
     "id": 132,
     "idSlug": "132-rompecabezas-didactico-de-abecedario-y-animales-en-mdf",
     "name": "Rompecabezas Didáctico de Abecedario y Animales en MDF",
@@ -12,7 +204,7 @@
     "material": "MDF",
     "minimumPrice": 150,
     "suggestedPrice": 200,
-    "image": "https://dam.inspiraarte.com/preview/132.webp",
+    "image": "https://dam.inspiraarte.com/preview/132-512-rompecabezas-didactico-de-abecedario-y-animales-en-mdf.webp",
     "gallery": [],
     "url": "/productos/132-rompecabezas-didactico-de-abecedario-y-animales-en-mdf"
   },
@@ -22,12 +214,13 @@
     "name": "Mini Altar de Muertos en MDF con Marco para Foto",
     "description": "Honra a tus seres queridos este Día de Muertos con este mini altar de MDF calado en láser. Incluye marco para fotografía y detalles tradicionales. Ideal para espacios pequeños.",
     "categories": [
-      "Día de muertos"
+      "Día de muertos",
+      "Altar de muertos"
     ],
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 120,
-    "image": "https://dam.inspiraarte.com/preview/131.webp",
+    "image": "https://dam.inspiraarte.com/preview/131-515-mini-altar-de-muertos-en-mdf-con-marco-para-foto.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/131/510.webp"
     ],
@@ -45,7 +238,7 @@
     "material": "MDF",
     "minimumPrice": 40,
     "suggestedPrice": 60,
-    "image": "https://dam.inspiraarte.com/preview/130.webp",
+    "image": "https://dam.inspiraarte.com/preview/130-508-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos.webp",
     "gallery": [],
     "url": "/productos/130-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos"
   },
@@ -61,7 +254,7 @@
     "material": "MDF",
     "minimumPrice": 40,
     "suggestedPrice": 60,
-    "image": "https://dam.inspiraarte.com/preview/129.webp",
+    "image": "https://dam.inspiraarte.com/preview/129-506-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela.webp",
     "gallery": [],
     "url": "/productos/129-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela"
   },
@@ -78,7 +271,7 @@
     "material": "MDF",
     "minimumPrice": null,
     "suggestedPrice": null,
-    "image": "https://dam.inspiraarte.com/preview/127.webp",
+    "image": "https://dam.inspiraarte.com/preview/127-490-servilleteros-de-mdf-fiestas-patrias-decoracion-mexicana.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/127/491.webp",
       "https://dam.inspiraarte.com/preview/127/492.webp",
@@ -98,33 +291,34 @@
     "material": "MDF",
     "minimumPrice": 40,
     "suggestedPrice": 60,
-    "image": "https://dam.inspiraarte.com/preview/109.webp",
+    "image": "https://dam.inspiraarte.com/preview/109-442-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre.webp",
     "gallery": [],
     "url": "/productos/109-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre"
   },
   {
     "id": 108,
-    "idSlug": "108-servilletero-de-madera-mdf-osito-decorativo-para-mesa-y-eventos",
-    "name": "Servilletero de Madera MDF Osito Decorativo para Mesa y Eventos",
-    "description": "Añade un toque tierno a tu mesa con este servilletero individual de osito en madera MDF. Ideal para baby showers, bautizos y eventos especiales. Listo para personalizar o usar al natural.",
+    "idSlug": "108-servilletero-de-mdf-en-forma-de-osito-para-mesa-y-eventos",
+    "name": "Servilletero de MDF en Forma de Osito para Mesa y Eventos",
+    "description": "Dale un toque tierno a tu mesa con este servilletero individual de MDF en forma de osito. Su aro práctico sostiene la servilleta y su diseño natural combina con baby showers, bautizos y fiestas infantiles.",
     "categories": [
       "Cocina",
-      "Adornos"
+      "Adornos",
+      "Fiesta"
     ],
     "material": "MDF",
     "minimumPrice": 30,
     "suggestedPrice": 50,
-    "image": "https://dam.inspiraarte.com/preview/108.webp",
+    "image": "https://dam.inspiraarte.com/preview/108-436-servilletero-de-mdf-en-forma-de-osito-para-mesa-y-eventos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/108/437.webp"
     ],
-    "url": "/productos/108-servilletero-de-madera-mdf-osito-decorativo-para-mesa-y-eventos"
+    "url": "/productos/108-servilletero-de-mdf-en-forma-de-osito-para-mesa-y-eventos"
   },
   {
     "id": 107,
-    "idSlug": "107-portavelas-ataud-de-madera-mdf-para-dia-de-muertos-y-halloween",
-    "name": "Portavelas Ataúd de Madera MDF para Día de Muertos y Halloween",
-    "description": "Añade un toque místico a tu ofrenda o fiesta con este portavelas de MDF en forma de ataúd. Diseño en capas con detalles calados de telarañas y cruces. ¡Ideal para iluminar tu espacio!",
+    "idSlug": "107-portavelas-de-mdf-en-forma-de-ataud-para-halloween-y-dia-de-muertos",
+    "name": "Portavelas de MDF en forma de ataúd para Halloween y Día de Muertos",
+    "description": "Dale un toque inquietante a tu ofrenda o fiesta con este portavelas de MDF en forma de ataúd. Sus cortes calados de telaraña, cruz y mano crean una ambientación temática ideal para centros de mesa.",
     "categories": [
       "Halloween",
       "Adornos",
@@ -134,37 +328,37 @@
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 120,
-    "image": "https://dam.inspiraarte.com/preview/107.webp",
+    "image": "https://dam.inspiraarte.com/preview/107-432-portavelas-de-mdf-en-forma-de-ataud-para-halloween-y-dia-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/107/433.webp",
       "https://dam.inspiraarte.com/preview/107/1787185003586-psigs7q0.webp",
       "https://dam.inspiraarte.com/preview/107/1787185004344-1koj6na0.webp",
       "https://dam.inspiraarte.com/preview/107/1787185004992-uu6r2mv1.webp"
     ],
-    "url": "/productos/107-portavelas-ataud-de-madera-mdf-para-dia-de-muertos-y-halloween"
+    "url": "/productos/107-portavelas-de-mdf-en-forma-de-ataud-para-halloween-y-dia-de-muertos"
   },
   {
     "id": 105,
-    "idSlug": "105-calendario-perpetuo-con-base",
-    "name": "Calendario perpetuo con base",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "105-calendario-perpetuo-decorativo-con-base-de-mdf",
+    "name": "Calendario perpetuo decorativo con base de MDF",
+    "description": "Calendario perpetuo con base para marcar fechas importantes en escritorio, mesa de trabajo o rincón de decoración. Pieza de MDF con diseño ornamental y mecanismo circular para día, mes y año.",
     "categories": [
       "Calendario"
     ],
     "material": "MDF",
     "minimumPrice": 130,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/105.webp",
+    "image": "https://dam.inspiraarte.com/preview/105-495-calendario-perpetuo-decorativo-con-base-de-mdf.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/105/1787772505749-jrccwdk7.webp"
     ],
-    "url": "/productos/105-calendario-perpetuo-con-base"
+    "url": "/productos/105-calendario-perpetuo-decorativo-con-base-de-mdf"
   },
   {
     "id": 98,
-    "idSlug": "98-gato-tres-en-raya-version-halloween",
-    "name": "Gato / Tres en raya versión Halloween",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "98-juego-tres-en-raya-de-halloween-en-mdf-con-forma-de-manzana",
+    "name": "Juego tres en raya de Halloween en MDF con forma de manzana",
+    "description": "Juega y decora con este tres en raya de Halloween en forma de manzana, con fichas de fantasmas, calabazas y calaveras para partidas familiares o fiestas temáticas.",
     "categories": [
       "Juegos de Mesa",
       "Halloween",
@@ -173,15 +367,15 @@
     "material": "MDF",
     "minimumPrice": 50,
     "suggestedPrice": 80,
-    "image": "https://dam.inspiraarte.com/preview/98.webp",
+    "image": "https://dam.inspiraarte.com/preview/98-497-juego-tres-en-raya-de-halloween-en-mdf-con-forma-de-manzana.webp",
     "gallery": [],
-    "url": "/productos/98-gato-tres-en-raya-version-halloween"
+    "url": "/productos/98-juego-tres-en-raya-de-halloween-en-mdf-con-forma-de-manzana"
   },
   {
     "id": 92,
-    "idSlug": "92-adorno-de-halloween",
-    "name": "Adorno de halloween",
-    "description": "Estos bonitos adornos, utilizan la luz de una vela para proyectar figuras en la pared",
+    "idSlug": "92-adorno-proyectable-de-murcielago-con-soporte-para-vela",
+    "name": "Adorno proyectable de murciélago con soporte para vela",
+    "description": "Da un toque inquietante a tu decoración con este adorno de murciélago en MDF. Su silueta proyecta sombras al encender una vela, ideal para crear ambientes de Halloween.",
     "categories": [
       "Halloween",
       "Vela",
@@ -190,39 +384,40 @@
     "material": "MDF",
     "minimumPrice": 50,
     "suggestedPrice": 80,
-    "image": "https://dam.inspiraarte.com/preview/92.webp",
+    "image": "https://dam.inspiraarte.com/preview/92-394-adorno-proyectable-de-murcielago-con-soporte-para-vela.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/92/378.webp",
       "https://dam.inspiraarte.com/preview/92/379.webp",
       "https://dam.inspiraarte.com/preview/92/380.webp"
     ],
-    "url": "/productos/92-adorno-de-halloween"
+    "url": "/productos/92-adorno-proyectable-de-murcielago-con-soporte-para-vela"
   },
   {
     "id": 91,
-    "idSlug": "91-mini-altar-de-muertos-en-caja",
-    "name": "Mini altar de muertos en caja",
-    "description": "Perfecto para espacios pequeños",
+    "idSlug": "91-mini-altar-de-muertos-en-caja-mdf-decoracion-dia-de-muertos",
+    "name": "Mini Altar de Muertos en Caja MDF - Decoración Día de Muertos",
+    "description": "Mini altar de muertos en caja de MDF con detalles láserados. Ideal para decorar espacios pequeños en temporada de Día de Muertos o como regalo personalizado.",
     "categories": [
       "Día de muertos",
       "Regalos",
-      "Adornos"
+      "Adornos",
+      "Altar de muertos"
     ],
     "material": "MDF",
     "minimumPrice": 150,
     "suggestedPrice": 200,
-    "image": "https://dam.inspiraarte.com/preview/91.jpeg",
+    "image": "https://dam.inspiraarte.com/preview/91-516-mini-altar-de-muertos-en-caja-mdf-decoracion-dia-de-muertos.jpeg",
     "gallery": [
       "https://dam.inspiraarte.com/preview/91/1787087257715-x73ydc5g.webp",
       "https://dam.inspiraarte.com/preview/91/1787087274308-z3dep9fx.webp"
     ],
-    "url": "/productos/91-mini-altar-de-muertos-en-caja"
+    "url": "/productos/91-mini-altar-de-muertos-en-caja-mdf-decoracion-dia-de-muertos"
   },
   {
     "id": 90,
-    "idSlug": "90-mini-pesebre-de-regalo",
-    "name": "Mini pesebre de regalo",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "90-mini-pesebre-de-mdf-en-caja-decorativa",
+    "name": "Mini pesebre de MDF en caja decorativa",
+    "description": "Mini pesebre de MDF en caja, con figuras de la Natividad y un diseño pensado para exhibirse o regalarse. Una opción navideña para decorar mesas y crear momentos familiares.",
     "categories": [
       "Navidad",
       "Regalos",
@@ -231,17 +426,17 @@
     "material": "MDF",
     "minimumPrice": 140,
     "suggestedPrice": 180,
-    "image": "https://dam.inspiraarte.com/preview/90.webp",
+    "image": "https://dam.inspiraarte.com/preview/90-498-mini-pesebre-de-mdf-en-caja-decorativa.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/90/1787777996781-m9ok3hia.webp"
     ],
-    "url": "/productos/90-mini-pesebre-de-regalo"
+    "url": "/productos/90-mini-pesebre-de-mdf-en-caja-decorativa"
   },
   {
     "id": 80,
-    "idSlug": "80-calavera-en-mecedora",
-    "name": "Calavera en mecedora",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "80-calavera-en-mecedora-de-mdf-para-dia-de-muertos",
+    "name": "Calavera en mecedora de MDF para Día de Muertos",
+    "description": "Adorno de calavera sentada en mecedora, ideal para crear un rincón festivo de Día de Muertos. Su diseño de MDF aporta un toque artesanal, elegante y temático para mesas, estanterías o vitrinas.",
     "categories": [
       "Adornos",
       "Día de muertos"
@@ -249,81 +444,85 @@
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 120,
-    "image": "https://dam.inspiraarte.com/preview/80.webp",
+    "image": "https://dam.inspiraarte.com/preview/80-504-calavera-en-mecedora-de-mdf-para-dia-de-muertos.webp",
     "gallery": [],
-    "url": "/productos/80-calavera-en-mecedora"
+    "url": "/productos/80-calavera-en-mecedora-de-mdf-para-dia-de-muertos"
   },
   {
     "id": 71,
-    "idSlug": "71-ajedrez",
-    "name": "Ajedrez",
-    "description": "Este juego de mesa clásico a la alcance de tu mano, y de un tamaño óptimo para ser jugable y poder llevártelo de viaje",
+    "idSlug": "71-ajedrez-armable-de-mdf-con-piezas-grabadas",
+    "name": "Ajedrez armable de MDF con piezas grabadas",
+    "description": "Juega ajedrez en casa o de viaje con este tablero de MDF, con casillas definidas y piezas circulares grabadas para partidas cómodas y ordenadas.",
     "categories": [
       "Juegos de Mesa"
     ],
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/71.webp",
+    "image": "https://dam.inspiraarte.com/preview/71-478-ajedrez-armable-de-mdf-con-piezas-grabadas.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/71/1787268877619-cmm4gg1i.webp"
     ],
-    "url": "/productos/71-ajedrez"
+    "url": "/productos/71-ajedrez-armable-de-mdf-con-piezas-grabadas"
   },
   {
-    "id": 70,
-    "idSlug": "70-serpientes-y-escaleras",
-    "name": "Serpientes y escaleras",
-    "description": "Diviertete con este bonito tablera del clasico juego de mesa",
+    "id": 64,
+    "idSlug": "64-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween",
+    "name": "Calabaza Cuadrada de MDF para Decoración de Halloween",
+    "description": "Dale un toque original a tu espacio con esta calabaza cuadrada de MDF. Ideal para armar, pintar y personalizar a tu gusto en esta temporada festiva.",
     "categories": [
-      "Juegos de Mesa"
+      "Halloween",
+      "Adornos"
     ],
     "material": "MDF",
-    "minimumPrice": 100,
-    "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/70.webp",
-    "gallery": [],
-    "url": "/productos/70-serpientes-y-escaleras"
+    "minimumPrice": null,
+    "suggestedPrice": null,
+    "image": "https://dam.inspiraarte.com/preview/64-807-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween.webp",
+    "gallery": [
+      "https://dam.inspiraarte.com/preview/64/1790966320148-vaucjiep.webp",
+      "https://dam.inspiraarte.com/preview/64/1790966320767-uo2fjt44.webp"
+    ],
+    "url": "/productos/64-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween"
   },
   {
     "id": 63,
-    "idSlug": "63-personalizacion-de-toallas-personalizadas",
-    "name": "Personalización de toallas personalizadas",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "63-toallas-personalizadas-para-regalos-y-eventos",
+    "name": "Toallas personalizadas para regalos y eventos",
+    "description": "Personaliza una toalla con el nombre o diseño que elijas y crea un detalle útil para cumpleaños, despedidas, equipos y eventos especiales. Ideal como recuerdo personalizado.",
     "categories": [
       "Regalos"
     ],
     "material": "Varios",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/63.webp",
+    "image": "https://dam.inspiraarte.com/preview/63-385-toallas-personalizadas-para-regalos-y-eventos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/63/1787035723573-tda1888g.webp"
     ],
-    "url": "/productos/63-personalizacion-de-toallas-personalizadas"
+    "url": "/productos/63-toallas-personalizadas-para-regalos-y-eventos"
   },
   {
     "id": 62,
-    "idSlug": "62-termos-personalizados",
-    "name": "Termos personalizados",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "62-termo-personalizado-con-grabado-y-diseno-a-tu-gusto",
+    "name": "Termo personalizado con grabado y diseño a tu gusto",
+    "description": "Personaliza un termo con tu nombre, logo o ilustración para crear un regalo útil en cumpleaños, eventos y celebraciones. El precio varía según la personalización.",
     "categories": [
       "Regalos"
     ],
     "material": "Termo",
     "minimumPrice": null,
     "suggestedPrice": null,
-    "image": "https://dam.inspiraarte.com/preview/62.webp",
+    "image": "https://dam.inspiraarte.com/preview/62-386-termo-personalizado-con-grabado-y-diseno-a-tu-gusto.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/62/1787035520381-hdlp8fx9.webp"
     ],
-    "url": "/productos/62-termos-personalizados"
+    "url": "/productos/62-termo-personalizado-con-grabado-y-diseno-a-tu-gusto"
   },
   {
     "id": 61,
-    "idSlug": "61-lapices-y-plumas-personalizados",
-    "name": "Lapices y plumas personalizados",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "61-lapices-y-plumas-personalizados-para-escuela-y-oficina",
+    "name": "Lápices y plumas personalizados para escuela y oficina",
+    "description": "Personaliza lápices y plumas con nombres, iniciales o mensajes para escuela, oficina y regalos corporativos. Ideales para estudiantes, equipos y eventos.",
     "categories": [
       "Oficina",
       "Escuela"
@@ -331,15 +530,15 @@
     "material": "Varios",
     "minimumPrice": null,
     "suggestedPrice": null,
-    "image": "https://dam.inspiraarte.com/preview/61.webp",
+    "image": "https://dam.inspiraarte.com/preview/61-388-lapices-y-plumas-personalizados-para-escuela-y-oficina.webp",
     "gallery": [],
-    "url": "/productos/61-lapices-y-plumas-personalizados"
+    "url": "/productos/61-lapices-y-plumas-personalizados-para-escuela-y-oficina"
   },
   {
     "id": 60,
-    "idSlug": "60-adorno-halloween-calavera",
-    "name": "Adorno Halloween, calavera",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "60-adorno-de-halloween-en-mdf-con-calavera-y-vela",
+    "name": "Adorno de Halloween en MDF con calavera y vela",
+    "description": "Adorno de Halloween en MDF con diseño de calavera y vela, ideal para crear rincones festivos, decorar mesas o añadir un toque creativo a tu celebración.",
     "categories": [
       "Halloween",
       "Adornos"
@@ -347,15 +546,15 @@
     "material": "MDF",
     "minimumPrice": 120,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/60.webp",
+    "image": "https://dam.inspiraarte.com/preview/60-439-adorno-de-halloween-en-mdf-con-calavera-y-vela.webp",
     "gallery": [],
-    "url": "/productos/60-adorno-halloween-calavera"
+    "url": "/productos/60-adorno-de-halloween-en-mdf-con-calavera-y-vela"
   },
   {
     "id": 59,
-    "idSlug": "59-grabado-de-piedra",
-    "name": "Grabado de Piedra",
-    "description": "Personalización de piedras con logos, tablas o nombres de las personas, ideal para restaurantes o regalos únicos.",
+    "idSlug": "59-placa-de-piedra-personalizada-con-grabado",
+    "name": "Placa de piedra personalizada con grabado",
+    "description": "Placa de piedra personalizada con grabado de logos, nombres o tablas prácticas; ideal para cocinas, restaurantes, oficinas y regalos con estilo.",
     "categories": [
       "Regalos",
       "Oficina"
@@ -363,17 +562,17 @@
     "material": "Piedra",
     "minimumPrice": 300,
     "suggestedPrice": 400,
-    "image": "https://dam.inspiraarte.com/preview/59.webp",
+    "image": "https://dam.inspiraarte.com/preview/59-392-placa-de-piedra-personalizada-con-grabado.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/59/1786653114876-dd50eham.webp"
     ],
-    "url": "/productos/59-grabado-de-piedra"
+    "url": "/productos/59-placa-de-piedra-personalizada-con-grabado"
   },
   {
     "id": 57,
-    "idSlug": "57-lampara-halloween",
-    "name": "Lampara Halloween",
-    "description": "Usa esta lampara para decorar tu casa en esta epoca de halloween, puedes usar velas tradicionales o electrónicas.",
+    "idSlug": "57-lampara-de-mdf-para-vela-con-escenario-de-casa-de-halloween",
+    "name": "Lámpara de MDF para Vela con Escenario de Casa de Halloween",
+    "description": "Esta lámpara de MDF para vela tiene recortes de casas, luna y calabazas que crean una atmósfera cálida y festiva. Decórala en mesas, estanterías o rincones de Halloween con vela LED o tradicional de tamaño adecuado.",
     "categories": [
       "Halloween",
       "Vela"
@@ -381,15 +580,15 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/57.webp",
+    "image": "https://dam.inspiraarte.com/preview/57-218-lampara-de-mdf-para-vela-con-escenario-de-casa-de-halloween.webp",
     "gallery": [],
-    "url": "/productos/57-lampara-halloween"
+    "url": "/productos/57-lampara-de-mdf-para-vela-con-escenario-de-casa-de-halloween"
   },
   {
     "id": 54,
-    "idSlug": "54-lampara-hallowen",
-    "name": "Lampara Hallowen",
-    "description": "Diversas modelos de lámparas de adorno para este halloween, puedes usar velas tradicionales o de led.",
+    "idSlug": "54-lampara-decorativa-halloween-en-mdf-con-brazo-esqueletico-y-arana",
+    "name": "Lámpara decorativa Halloween en MDF con brazo esquelético y araña",
+    "description": "Lámpara decorativa de Halloween en MDF con brazo esquelético, araña y recortes tétricos. Ideal para mesas, repisas o fiestas, aporta un ambiente oscuro y festivo como pieza de ambientación.",
     "categories": [
       "Halloween",
       "Adornos",
@@ -398,15 +597,15 @@
     "material": "MDF",
     "minimumPrice": 200,
     "suggestedPrice": 300,
-    "image": "https://dam.inspiraarte.com/preview/54.webp",
+    "image": "https://dam.inspiraarte.com/preview/54-210-lampara-decorativa-halloween-en-mdf-con-brazo-esqueletico-y-arana.webp",
     "gallery": [],
-    "url": "/productos/54-lampara-hallowen"
+    "url": "/productos/54-lampara-decorativa-halloween-en-mdf-con-brazo-esqueletico-y-arana"
   },
   {
     "id": 53,
-    "idSlug": "53-cajas-criptas-de-adorno",
-    "name": "Cajas / criptas de adorno",
-    "description": "Esta caja puede servir para adorno y/o guardar los dulces de las calaveritas",
+    "idSlug": "53-caja-cripta-de-mdf-para-halloween-y-dulces",
+    "name": "Caja cripta de MDF para Halloween y dulces",
+    "description": "Caja cripta de MDF con diseño de tumba y manos, ideal para decorar tu fiesta de Halloween y presentar dulces, calaveritas o pequeños detalles de forma temática.",
     "categories": [
       "Adornos",
       "Halloween",
@@ -415,15 +614,15 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/53.webp",
+    "image": "https://dam.inspiraarte.com/preview/53-209-caja-cripta-de-mdf-para-halloween-y-dulces.webp",
     "gallery": [],
-    "url": "/productos/53-cajas-criptas-de-adorno"
+    "url": "/productos/53-caja-cripta-de-mdf-para-halloween-y-dulces"
   },
   {
     "id": 52,
-    "idSlug": "52-llaveros-de-harry-potter",
-    "name": "Llaveros de Harry Potter",
-    "description": "Varios modelos disponibles",
+    "idSlug": "52-llaveros-de-harry-potter-en-mdf-con-disenos-variados",
+    "name": "Llaveros de Harry Potter en MDF con diseños variados",
+    "description": "Llaveros en MDF con diseños inspirados en Harry Potter: anillos, llaveteros y piezas decorativas para regalo, bolso o detalle para fans.",
     "categories": [
       "Llaveros",
       "Harry Potter"
@@ -431,15 +630,15 @@
     "material": "MDF",
     "minimumPrice": 15,
     "suggestedPrice": 30,
-    "image": "https://dam.inspiraarte.com/preview/52.webp",
+    "image": "https://dam.inspiraarte.com/preview/52-208-llaveros-de-harry-potter-en-mdf-con-disenos-variados.webp",
     "gallery": [],
-    "url": "/productos/52-llaveros-de-harry-potter"
+    "url": "/productos/52-llaveros-de-harry-potter-en-mdf-con-disenos-variados"
   },
   {
     "id": 51,
-    "idSlug": "51-calavera-personalizada",
-    "name": "Calavera personalizada",
-    "description": "Esta calaverita complementa perfectamente tu altar de muertos, el cual puedes personalizar con el nombre de tus seres queridos.",
+    "idSlug": "51-calavera-personalizada-en-mdf-para-altar-de-muertos",
+    "name": "Calavera personalizada en MDF para altar de muertos",
+    "description": "Decora tu altar de muertos con una calavera en MDF que puedes personalizar con el nombre de un ser querido. Su diseño floral aporta un detalle conmemorativo y artesanal para la fecha.",
     "categories": [
       "Día de muertos",
       "Adornos"
@@ -447,17 +646,17 @@
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/51.webp",
+    "image": "https://dam.inspiraarte.com/preview/51-399-calavera-personalizada-en-mdf-para-altar-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/51/1787037093094-n7mdm81c.webp"
     ],
-    "url": "/productos/51-calavera-personalizada"
+    "url": "/productos/51-calavera-personalizada-en-mdf-para-altar-de-muertos"
   },
   {
     "id": 47,
-    "idSlug": "47-adorno-calaverita",
-    "name": "Adorno Calaverita",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "47-adorno-de-calaverita-en-mdf-para-dia-de-muertos",
+    "name": "Adorno de calaverita en MDF para Día de Muertos",
+    "description": "Decora tu espacio con un adorno de calaverita en MDF inspirado en Día de Muertos. Su diseño festivo aporta un toque tradicional a mesas, pared, vitrinas y altares.",
     "categories": [
       "México",
       "Día de muertos",
@@ -467,15 +666,15 @@
     "material": "MDF",
     "minimumPrice": 30,
     "suggestedPrice": 50,
-    "image": "https://dam.inspiraarte.com/preview/47.webp",
+    "image": "https://dam.inspiraarte.com/preview/47-223-adorno-de-calaverita-en-mdf-para-dia-de-muertos.webp",
     "gallery": [],
-    "url": "/productos/47-adorno-calaverita"
+    "url": "/productos/47-adorno-de-calaverita-en-mdf-para-dia-de-muertos"
   },
   {
     "id": 46,
-    "idSlug": "46-marco-fotografico-para-altar",
-    "name": "Marco fotográfico para altar",
-    "description": "Diferentes modelos de marcos y/o tamaños de marcos para poner tus fotos en el altar de muertos.",
+    "idSlug": "46-marco-fotografico-de-mdf-para-altar-de-dia-de-muertos",
+    "name": "Marco fotográfico de MDF para altar de Día de Muertos",
+    "description": "Decora tu altar de muertos con marcos fotográficos de MDF con diseños de flores y calaveras. Elige el tamaño o modelo adecuado para mostrar fotos de seres queridos con un detalle lleno de significado.",
     "categories": [
       "Portaretrato",
       "Día de muertos"
@@ -483,17 +682,17 @@
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/46.webp",
+    "image": "https://dam.inspiraarte.com/preview/46-402-marco-fotografico-de-mdf-para-altar-de-dia-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/46/1787037118079-kh9g1mr8.webp"
     ],
-    "url": "/productos/46-marco-fotografico-para-altar"
+    "url": "/productos/46-marco-fotografico-de-mdf-para-altar-de-dia-de-muertos"
   },
   {
     "id": 41,
-    "idSlug": "41-adorno-navidad-luna-con-pesebre-navideno",
-    "name": "Adorno navidad, Luna con pesebre navideño",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "41-adorno-de-luna-con-pesebre-navideno-en-mdf",
+    "name": "Adorno de luna con pesebre navideño en MDF",
+    "description": "Decora tu nacimiento con un adorno de luna en MDF que reúne la escena del pesebre, magos, astros y detalles inspirados en la Navidad. Ideal para regalar o complementar tu decoración festiva.",
     "categories": [
       "Adornos",
       "Navidad",
@@ -502,18 +701,18 @@
     "material": "MDF",
     "minimumPrice": 150,
     "suggestedPrice": 300,
-    "image": "https://dam.inspiraarte.com/preview/41.webp",
+    "image": "https://dam.inspiraarte.com/preview/41-389-adorno-de-luna-con-pesebre-navideno-en-mdf.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/41/1787185022329-cscy890r.webp",
       "https://dam.inspiraarte.com/preview/41/1787185023516-06orvkno.webp"
     ],
-    "url": "/productos/41-adorno-navidad-luna-con-pesebre-navideno"
+    "url": "/productos/41-adorno-de-luna-con-pesebre-navideno-en-mdf"
   },
   {
     "id": 30,
-    "idSlug": "30-mini-pesebre",
-    "name": "Mini pesebre",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "30-mini-pesebre-de-mdf-para-decoracion-de-navidad",
+    "name": "Mini pesebre de MDF para decoración de Navidad",
+    "description": "Decora tu espacio con un mini pesebre de MDF con figuras y escenas inspiradas en el nacimiento. Ideal para regalo navideño y centro de mesa.",
     "categories": [
       "Navidad",
       "Regalos",
@@ -522,19 +721,19 @@
     "material": "MDF",
     "minimumPrice": 200,
     "suggestedPrice": 300,
-    "image": "https://dam.inspiraarte.com/preview/30.webp",
+    "image": "https://dam.inspiraarte.com/preview/30-395-mini-pesebre-de-mdf-para-decoracion-de-navidad.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/30/1787037003703-tbskzb0f.webp",
       "https://dam.inspiraarte.com/preview/30/1787037004390-l0emdkit.webp",
       "https://dam.inspiraarte.com/preview/30/1787037004994-w0me5eqi.webp"
     ],
-    "url": "/productos/30-mini-pesebre"
+    "url": "/productos/30-mini-pesebre-de-mdf-para-decoracion-de-navidad"
   },
   {
     "id": 29,
-    "idSlug": "29-nicho-para-altar-de-muertos",
-    "name": "Nicho para Altar de muertos",
-    "description": "Diferentes nichos y tamaños para tu decorar tu altar",
+    "idSlug": "29-nicho-de-mdf-para-altar-de-muertos",
+    "name": "Nicho de MDF para Altar de Muertos",
+    "description": "Nicho de MDF con diseño tradicional para altar de muertos. Ideal para colocar retratos, fotografías o pequeños recuerdos en tu ofrenda familiar.",
     "categories": [
       "Día de muertos",
       "Tradiciones",
@@ -543,17 +742,17 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/29.webp",
+    "image": "https://dam.inspiraarte.com/preview/29-128-nicho-de-mdf-para-altar-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/29/129.webp"
     ],
-    "url": "/productos/29-nicho-para-altar-de-muertos"
+    "url": "/productos/29-nicho-de-mdf-para-altar-de-muertos"
   },
   {
     "id": 27,
-    "idSlug": "27-aretes-halloween",
-    "name": "Aretes Halloween",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "27-aretes-de-mdf-con-gatito-esqueletico-y-huesitos",
+    "name": "Aretes de MDF con gatito esquelético y huesitos",
+    "description": "Da un toque festivo a tu look con estos aretes de MDF con gatito esquelético y huesitos. Diseño artesanal en tono marrón, ideal para fiestas de Halloween.",
     "categories": [
       "Aretes",
       "Halloween"
@@ -561,17 +760,17 @@
     "material": "MDF",
     "minimumPrice": 15,
     "suggestedPrice": 30,
-    "image": "https://dam.inspiraarte.com/preview/27.webp",
+    "image": "https://dam.inspiraarte.com/preview/27-214-aretes-de-mdf-con-gatito-esqueletico-y-huesitos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/27/1786607285200-k9zne1g4.webp"
     ],
-    "url": "/productos/27-aretes-halloween"
+    "url": "/productos/27-aretes-de-mdf-con-gatito-esqueletico-y-huesitos"
   },
   {
     "id": 17,
-    "idSlug": "17-calendario-eterno",
-    "name": "Calendario eterno",
-    "description": "Ten este bonito calendario en tu escritorio, y siempre tendrás el mes actual",
+    "idSlug": "17-calendario-eterno-de-madera-personalizable-escritorio",
+    "name": "Calendario Eterno de Madera Personalizable– Escritorio",
+    "description": "Calendario eterno de MDF, ideal para tu escritorio. Desliza el mes y día para mantener siempre la fecha actual. Un detalle creativo y duradero.",
     "categories": [
       "Oficina",
       "Adornos"
@@ -579,15 +778,15 @@
     "material": "MDF",
     "minimumPrice": 100,
     "suggestedPrice": 150,
-    "image": "https://dam.inspiraarte.com/preview/17.webp",
+    "image": "https://dam.inspiraarte.com/preview/17-207-calendario-eterno-de-madera-personalizable-escritorio.webp",
     "gallery": [],
-    "url": "/productos/17-calendario-eterno"
+    "url": "/productos/17-calendario-eterno-de-madera-personalizable-escritorio"
   },
   {
     "id": 16,
-    "idSlug": "16-nacimiento-mini-con-vela",
-    "name": "Nacimiento mini con vela",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "16-mini-nacimiento-de-mdf-con-vela",
+    "name": "Mini nacimiento de MDF con vela",
+    "description": "Decora tu mesa con una escena navideña de MDF que incluye figuras, portal y portavelas para vela tipo té. Ideal para regalar o ambientar en Navidad.",
     "categories": [
       "Adornos",
       "Nacimiento",
@@ -597,15 +796,15 @@
     "material": "MDF",
     "minimumPrice": 80,
     "suggestedPrice": 120,
-    "image": "https://dam.inspiraarte.com/preview/16.webp",
+    "image": "https://dam.inspiraarte.com/preview/16-211-mini-nacimiento-de-mdf-con-vela.webp",
     "gallery": [],
-    "url": "/productos/16-nacimiento-mini-con-vela"
+    "url": "/productos/16-mini-nacimiento-de-mdf-con-vela"
   },
   {
     "id": 15,
-    "idSlug": "15-nacimiento",
-    "name": "Nacimiento",
-    "description": "Producto personalizado disponible bajo cotización.",
+    "idSlug": "15-nacimiento-decorativo-de-mdf-con-figuras-para-navidad",
+    "name": "Nacimiento decorativo de MDF con figuras para Navidad",
+    "description": "Nacimiento decorativo en MDF con figuras desmontables para crear un pesebre de mesa durante la temporada navideña.",
     "categories": [
       "Adornos",
       "Nacimiento",
@@ -614,15 +813,15 @@
     "material": "MDF",
     "minimumPrice": 350,
     "suggestedPrice": 500,
-    "image": "https://dam.inspiraarte.com/preview/15.webp",
+    "image": "https://dam.inspiraarte.com/preview/15-28-nacimiento-decorativo-de-mdf-con-figuras-para-navidad.webp",
     "gallery": [],
-    "url": "/productos/15-nacimiento"
+    "url": "/productos/15-nacimiento-decorativo-de-mdf-con-figuras-para-navidad"
   },
   {
     "id": 4,
-    "idSlug": "4-regalo-armable-navidad",
-    "name": "Regalo armable navidad",
-    "description": "Regala esta tarjeta que al armar y formar un bonito adorno navideño",
+    "idSlug": "4-tarjeta-3d-navidena-de-mdf-para-armar",
+    "name": "Tarjeta 3D navideña de MDF para armar",
+    "description": "Regala una tarjeta 3D de MDF con diseño navideño que se arma para crear un bonito adorno con árbol, regalo y mensajes de Merry Christmas. Ideal para detalles personalizados.",
     "categories": [
       "Adornos",
       "Navidad",
@@ -632,32 +831,33 @@
     "material": "MDF",
     "minimumPrice": 45,
     "suggestedPrice": 80,
-    "image": "https://dam.inspiraarte.com/preview/4.webp",
+    "image": "https://dam.inspiraarte.com/preview/4-390-tarjeta-3d-navidena-de-mdf-para-armar.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp"
     ],
-    "url": "/productos/4-regalo-armable-navidad"
+    "url": "/productos/4-tarjeta-3d-navidena-de-mdf-para-armar"
   },
   {
     "id": 3,
-    "idSlug": "3-altar-de-muertos",
-    "name": "Altar de muertos",
-    "description": "Perfecto para continuar con las tradiciones Mexicanas y colocar un altar de muertos para todos tus seres queridos.",
+    "idSlug": "3-altar-de-muertos-de-mdf-con-tres-niveles-y-detalles",
+    "name": "Altar de muertos de MDF con tres niveles y detalles",
+    "description": "Altar de muertos de MDF con tres niveles y piezas decorativas integradas para organizar una ofrenda tradicional con fotografías, flores, veladoras y recuerdos de tus seres queridos.",
     "categories": [
       "Adornos",
       "Día de muertos",
       "México",
-      "Tradiciones"
+      "Tradiciones",
+      "Altar de muertos"
     ],
     "material": "MDF",
     "minimumPrice": 250,
     "suggestedPrice": 400,
-    "image": "https://dam.inspiraarte.com/preview/3.webp",
+    "image": "https://dam.inspiraarte.com/preview/3-127-altar-de-muertos-de-mdf-con-tres-niveles-y-detalles.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/3/1785260700034-21p6rg5u.webp",
       "https://dam.inspiraarte.com/preview/3/1785260707569-78f6n3h6.webp",
       "https://dam.inspiraarte.com/preview/3/1785260710880-0clggm8e.webp"
     ],
-    "url": "/productos/3-altar-de-muertos"
+    "url": "/productos/3-altar-de-muertos-de-mdf-con-tres-niveles-y-detalles"
   }
 ]

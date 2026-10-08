@@ -779,8 +779,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(productJsonLd) }}
       />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-24">
-        {/* Navegación pegada al contenido (space-y de Tailwind 4 usa margin-bottom; este lo reemplaza). */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-8">
+        {/* Navegación pegada al contenido (space-y de Tailwind 4 usa margin-bottom; este lo reemplaza).
+            data-llms-skip: scripts/build-llms.ts no la incluye en llms-full.txt. */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-8" data-llms-skip>
           <Button
             asChild
             variant="ghost"
@@ -995,7 +996,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         {productFaqs.length > 0 && <FAQ faqs={productFaqs} embedded />}
 
         {relatedProducts.length > 0 && (
-          <section aria-labelledby="relacionados">
+          // data-llms-skip: tarjetas de otras fichas; scripts/build-llms.ts las omite.
+          <section aria-labelledby="relacionados" data-llms-skip>
             <div>
               <div className="mb-12 text-center">
                 <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">

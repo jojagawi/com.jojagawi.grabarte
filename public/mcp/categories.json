@@ -4,8 +4,20 @@
     "name": "Adornos"
   },
   {
+    "id": 73,
+    "name": "Altar de muertos"
+  },
+  {
+    "id": 57,
+    "name": "Anime"
+  },
+  {
     "id": 39,
     "name": "Aretes"
+  },
+  {
+    "id": 76,
+    "name": "Año nuevo"
   },
   {
     "id": 46,
@@ -20,8 +32,20 @@
     "name": "Cocina"
   },
   {
+    "id": 69,
+    "name": "Deportes"
+  },
+  {
+    "id": 72,
+    "name": "Doctor / Enfermera / Dentista"
+  },
+  {
     "id": 36,
     "name": "Día de muertos"
+  },
+  {
+    "id": 74,
+    "name": "Día del maestro"
   },
   {
     "id": 51,
@@ -30,6 +54,10 @@
   {
     "id": 3,
     "name": "Esferas"
+  },
+  {
+    "id": 52,
+    "name": "Fiesta"
   },
   {
     "id": 5,
@@ -68,8 +96,16 @@
     "name": "Navidad"
   },
   {
+    "id": 56,
+    "name": "Niños"
+  },
+  {
     "id": 7,
     "name": "Oficina"
+  },
+  {
+    "id": 28,
+    "name": "Porta Llaves"
   },
   {
     "id": 50,
@@ -78,6 +114,10 @@
   {
     "id": 29,
     "name": "Regalos"
+  },
+  {
+    "id": 75,
+    "name": "Regalos Corporativos"
   },
   {
     "id": 19,

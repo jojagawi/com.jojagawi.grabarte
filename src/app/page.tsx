@@ -53,11 +53,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Catálogo de productos personalizados de InspiraArte",
 });
 
-export const llmstxt = {
-  title: "Inicio",
-  description: "Presentación general de InspiraArte y acceso al catálogo.",
-};
-
 // Fisher-Yates. En el export estático el orden queda fijo hasta el siguiente build.
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];

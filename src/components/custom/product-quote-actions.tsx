@@ -106,7 +106,8 @@ export function ProductQuoteActions({
           )}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        {/* data-llms-skip: botones repetidos en cada ficha; scripts/build-llms.ts los omite. */}
+        <div className="flex flex-col gap-3 sm:flex-row" data-llms-skip>
           <Button
             asChild
             size="lg"
@@ -142,7 +143,7 @@ export function ProductQuoteActions({
       </div>
 
       <ProductQuoteBar actionsId={actionsId}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" data-llms-skip>
           <p className="min-w-0 flex-1 truncate text-sm text-foreground">
             {price ? (
               <>

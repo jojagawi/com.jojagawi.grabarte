@@ -15,11 +15,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Taller de corte y grabado láser InspiraArte en Ciudad de México",
 });
 
-export const llmstxt = {
-  title: "Nosotros",
-  description: "Quiénes somos, qué hacemos hoy y hacia dónde crece el taller.",
-};
-
 const aboutJsonLd = buildAboutPageJsonLd({
   path: "/nosotros/",
   name: "Nosotros | InspiraArte",

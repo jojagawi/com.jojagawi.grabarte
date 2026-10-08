@@ -12,7 +12,8 @@ const orderSteps = [
 
 export function ProductOrderPath() {
   return (
-    <div className="space-y-3">
+    // data-llms-skip: los mismos 4 pasos en cada ficha; scripts/build-llms.ts los omite.
+    <div className="space-y-3" data-llms-skip>
       <ol className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4" aria-label="Cómo trabajamos tu pedido">
         {orderSteps.map((step, index) => {
           const Icon = step.icon;

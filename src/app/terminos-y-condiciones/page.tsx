@@ -17,11 +17,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Términos y condiciones de InspiraArte",
 });
 
-export const llmstxt = {
-  title: "Términos y condiciones",
-  description: "Condiciones de uso del sitio y contratación de pedidos personalizados.",
-};
-
 export default function TerminosYCondiciones() {
   const updateDate = TERMS_AND_CONDITIONS.updatedLabel;
 

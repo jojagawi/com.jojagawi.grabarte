@@ -19,11 +19,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Formulario de contacto para cotizaciones en InspiraArte",
 });
 
-export const llmstxt = {
-  title: "Contacto",
-  description: "Formulario para solicitar cotizaciones de productos personalizados.",
-};
-
 export default function Contacto() {
   return (
     <>

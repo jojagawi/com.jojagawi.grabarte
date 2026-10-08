@@ -21,11 +21,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Preguntas frecuentes sobre pedidos personalizados en InspiraArte",
 });
 
-export const llmstxt = {
-  title: "Preguntas frecuentes",
-  description: "Respuestas rápidas sobre pedidos, entregas, envíos y pagos.",
-};
-
 export default async function Faq() {
   const faqs = await prisma.faqs.findMany({
     where: {

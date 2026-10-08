@@ -159,8 +159,8 @@ export function Products({ products, categories, materialOptions, enableDevFilte
           </div>
         )}
 
-        {/* Categories Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        {/* Categories Filter. data-llms-skip: botones de filtro, sin texto útil para llms-full.txt. */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12" data-llms-skip>
           <button
             onClick={() => setSelectedCategory(null)}
             className={cn(
@@ -195,8 +195,8 @@ export function Products({ products, categories, materialOptions, enableDevFilte
           })}
         </div>
 
-        {/* Products Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Products Grid. data-llms-skip: cada diseño tiene su ficha; scripts/build-llms.ts omite la rejilla. */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" data-llms-skip>
           {filteredProducts.map((product) => (
             <Link
               key={product.id}

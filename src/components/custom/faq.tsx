@@ -100,7 +100,7 @@ export function FAQ({ faqs, embedded = false, isPageTitle = false }: FAQProps) {
         </div>
 
         {/* Bottom Help */}
-        <div className="mt-12 text-center">
+        <div className="mt-12 text-center" data-llms-skip>
           <p className="text-muted-foreground">
             ¿Aún tienes preguntas?{" "}
             <a href="/contacto" className="text-primary font-medium hover:underline">

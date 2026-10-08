@@ -19,11 +19,6 @@ export const metadata: Metadata = buildPageMetadata({
   imageAlt: "Aviso de privacidad de InspiraArte",
 });
 
-export const llmstxt = {
-  title: "Aviso de privacidad",
-  description: "Tratamiento de datos personales y derechos ARCO.",
-};
-
 export default function AvisoDePrivacidad() {
   const updateDate = PRIVACY_NOTICE.updatedLabel;
 
