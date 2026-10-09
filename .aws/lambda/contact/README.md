@@ -49,6 +49,11 @@ Después se despliega `.aws/infra.yml` pasando los secretos como parámetros
 (`ContactLambdaApiKey`, `HubspotApiToken`, `SlackWebhookUrl`, `NextGoogleSecretKey`).
 La salida `ContactLambdaFunctionUrl` va en `NEXT_PUBLIC_CONTACT_LAMBDA_URL` del sitio.
 
+En CI (`.github/workflows/build.yml`) los secretos `HUBSPOTAPIKEY`, `SLACKWEBHOOKURL` y
+`NEXT_GOOGLE_SECRET_KEY` se escriben en un `.env` que viaja dentro del zip. Al arrancar, el handler
+completa con ese archivo las variables que CloudFormation dejó vacías. Si un secreto no existe, el
+run muestra el aviso "Secreto vacio" y ese servicio se omite.
+
 ## Payloads
 
 ```json

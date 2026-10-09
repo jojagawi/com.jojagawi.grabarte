@@ -1,6 +1,27 @@
 import { HeadObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { parseEnv } from "node:util";
+
+// CI escribe los secretos en un .env junto al handler (ver .github/workflows/build.yml).
+// Lambda no lo lee solo, y las variables que define CloudFormation pueden llegar vacías:
+// se completan solo las que no tienen valor.
+function loadBundledEnv() {
+  let values;
+  try {
+    values = parseEnv(readFileSync(new URL("./.env", import.meta.url), "utf8"));
+  } catch {
+    return;
+  }
+  for (const [key, value] of Object.entries(values)) {
+    if (!String(process.env[key] ?? "").trim() && value) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadBundledEnv();
 
 // Solicitudes de cotización del sitio (/contacto).
 // Dos acciones en la misma Function URL:

@@ -40,12 +40,24 @@ jobs:
         run: echo "value=$(date +%s)" >> $GITHUB_OUTPUT
 
 
+      # Los nombres deben coincidir con los que lee cada handler (HUBSPOT_API, no HUBSPOT_API_KEY).
+      # Los secretos van por env: y no dentro del script, para que comillas o $ no rompan el .env.
       - name: Set secrets in lambda
+        env:
+          HUBSPOT_API: ${{ secrets.HUBSPOTAPIKEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACKWEBHOOKURL }}
+          NEXT_GOOGLE_SECRET_KEY: ${{ secrets.NEXT_GOOGLE_SECRET_KEY }}
         run: |
-          echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .aws/lambda/contact/.env
-          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACKWEBHOOKURL }}" >> .aws/lambda/contact/.env
-          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .aws/lambda/contact/.env
-          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .aws/lambda/rates/.env
+          for name in HUBSPOT_API SLACK_WEBHOOK_URL NEXT_GOOGLE_SECRET_KEY; do
+            # Un secreto inexistente llega vacío sin error: se avisa en el resumen del run.
+            [ -n "${!name}" ] || echo "::warning title=Secreto vacio::${name} llega vacio; la Lambda de contacto lo omitira."
+          done
+          # Comillas simples: el valor queda literal (un # sin comillas se leería como comentario).
+          printf "%s='%s'\n" \
+            HUBSPOT_API "$HUBSPOT_API" \
+            SLACK_WEBHOOK_URL "$SLACK_WEBHOOK_URL" \
+            NEXT_GOOGLE_SECRET_KEY "$NEXT_GOOGLE_SECRET_KEY" > .aws/lambda/contact/.env
+          printf "%s='%s'\n" NEXT_GOOGLE_SECRET_KEY "$NEXT_GOOGLE_SECRET_KEY" > .aws/lambda/rates/.env
 
 
 
@@ -76,7 +88,9 @@ jobs:
           cd .aws/lambda/contact
           zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
           zip -ur ../../dist/contact-lambda.zip .env
-          CONTENT_HASH=$(sha256sum lambda-contact-handler.mjs | awk '{print $1}' | cut -c1-16)
+          # El hash incluye el .env: si solo cambian los secretos, la llave del zip cambia y
+          # CloudFormation actualiza la Lambda (con la misma llave omitiría la subida y el cambio).
+          CONTENT_HASH=$(cat lambda-contact-handler.mjs .env | sha256sum | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/contact-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload contact lambda zip to S3
