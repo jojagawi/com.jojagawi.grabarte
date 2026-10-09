@@ -68,7 +68,7 @@ jobs:
           cd .aws/lambda/rates
           zip -r ../../dist/rates-lambda.zip lambda-rates-handler.mjs
           zip -ur ../../dist/rates-lambda.zip .env
-          CONTENT_HASH=$(sha256sum lambda-rates-handler.mjs | awk '{print $1}' | cut -c1-16)
+          CONTENT_HASH=$(sha256sum ../../dist/rates-lambda.zip | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload rates lambda zip to S3
@@ -90,7 +90,7 @@ jobs:
           zip -ur ../../dist/contact-lambda.zip .env
           # El hash incluye el .env: si solo cambian los secretos, la llave del zip cambia y
           # CloudFormation actualiza la Lambda (con la misma llave omitiría la subida y el cambio).
-          CONTENT_HASH=$(cat lambda-contact-handler.mjs .env | sha256sum | awk '{print $1}' | cut -c1-16)
+          CONTENT_HASH=$(cat ../../dist/contact-lambda.zip .env | sha256sum | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/contact-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload contact lambda zip to S3
