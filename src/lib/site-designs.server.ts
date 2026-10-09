@@ -34,6 +34,9 @@ export function getSiteDesigns() {
       isTested: true,
       showInHome: true,
       productionTime: true,
+      // Precio de referencia y material: los resumen las preguntas frecuentes de categorías y temporadas.
+      suggestedPrice: true,
+      material: { select: { name: true } },
       // Pedidos ganados en HubSpot (lo actualiza hubspot:sync-products).
       requests: true,
       createdAt: true,

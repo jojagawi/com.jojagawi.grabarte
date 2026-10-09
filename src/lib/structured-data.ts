@@ -83,6 +83,61 @@ const DEFAULT_LOGO_HEIGHT = 64;
 const DEFAULT_PRODUCT_IMAGE_WIDTH = 1200;
 const DEFAULT_PRODUCT_IMAGE_HEIGHT = 1200;
 
+// Política de devoluciones de los términos (sección 7): al ser piezas personalizadas no hay
+// devoluciones, salvo defecto de producción (eso lo cubre la garantía, no una devolución).
+// Google la pide en el Organization; las ofertas la referencian por @id.
+function buildReturnPolicyNode() {
+  return {
+    "@type": "MerchantReturnPolicy",
+    "@id": `${toAbsoluteLikeUrl("/")}#return-policy`,
+    applicableCountry: "MX",
+    returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+    merchantReturnLink: toAbsoluteLikeUrl("/terminos-y-condiciones/"),
+  };
+}
+
+// Envío a todo México. Google exige shippingRate en OfferShippingDetails y hoy el costo depende
+// del destino y del paquete (FAQ "¿Hacen envíos a todo México?"), así que no se publica
+// shippingDetails hasta tener una tarifa real: escribe aquí el monto en MXN (0 = envío gratis).
+const SHIPPING_RATE_MXN: number | null = null;
+
+type DayRange = { minValue: number; maxValue: number };
+
+// "3 a 5 días hábiles" → { 3, 5 }; textos sin plazo concreto → null.
+function parseBusinessDayRange(value: string | null | undefined): DayRange | null {
+  const match = normalizeText(value).match(/^(\d+)\s*(?:a|-)\s*(\d+)\s*días hábiles/iu);
+  if (!match) {
+    return null;
+  }
+  const [minValue, maxValue] = [Number(match[1]), Number(match[2])];
+  return minValue <= maxValue ? { minValue, maxValue } : null;
+}
+
+function buildShippingDetails(productionTime: string | null | undefined, shippingTime: string | null | undefined) {
+  if (SHIPPING_RATE_MXN === null) {
+    return null;
+  }
+
+  const handling = parseBusinessDayRange(productionTime);
+  const transit = parseBusinessDayRange(shippingTime);
+  const days = (range: DayRange) => ({ "@type": "QuantitativeValue", ...range, unitCode: "DAY" });
+
+  return {
+    "@type": "OfferShippingDetails",
+    shippingRate: { "@type": "MonetaryAmount", value: SHIPPING_RATE_MXN, currency: "MXN" },
+    shippingDestination: { "@type": "DefinedRegion", addressCountry: "MX" },
+    ...(handling || transit
+      ? {
+          deliveryTime: {
+            "@type": "ShippingDeliveryTime",
+            ...(handling ? { handlingTime: days(handling) } : {}),
+            ...(transit ? { transitTime: days(transit) } : {}),
+          },
+        }
+      : {}),
+  };
+}
+
 function toAbsoluteLikeUrl(url: string) {
   if (/^https?:\/\//iu.test(url)) {
     return url;
@@ -265,6 +320,7 @@ function buildOrganizationNode(input: OrganizationStructuredDataInput) {
     foundingDate: normalizeText(input.foundingDate) || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
     contactPoint: contactPoint.length > 0 ? contactPoint : undefined,
+    hasMerchantReturnPolicy: buildReturnPolicyNode(),
   };
 }
 
@@ -452,6 +508,11 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
     const maxPrice = Math.max(...prices);
     const currency = input.prices?.currency || "MXN";
     const availability = mapAvailability(input.availability);
+    const shippingDetails = buildShippingDetails(input.productionTime, input.shippingTime);
+    const offerPolicies = {
+      hasMerchantReturnPolicy: { "@id": `${toAbsoluteLikeUrl("/")}#return-policy` },
+      ...(shippingDetails ? { shippingDetails } : {}),
+    };
 
     productNode.offers =
       prices.length > 1
@@ -464,6 +525,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
             availability,
             url: productUrl,
             seller: organization,
+            ...offerPolicies,
           }
         : {
             "@type": "Offer",
@@ -473,6 +535,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
             url: productUrl,
             itemCondition: "https://schema.org/NewCondition",
             seller: organization,
+            ...offerPolicies,
           };
   }
 

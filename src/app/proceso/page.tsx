@@ -16,8 +16,6 @@ export const metadata: Metadata = buildPageMetadata({
     "cotización",
     "InspiraArte",
   ],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Proceso de pedido de productos personalizados en InspiraArte",
 });
 
 const howToJsonLd = buildHowToJsonLd({

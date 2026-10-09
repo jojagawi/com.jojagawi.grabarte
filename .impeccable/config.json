@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "${family.replace(/\\s /gu,",
+        "createdAt": "2026-10-09T01:10:17.702Z",
+        "reason": "Claude: false positive, the matched text is a template expression in src/lib/og-image.tsx that URL-encodes the font names; the only fonts loaded are Playfair Display and DM Sans, both declared in DESIGN.md"
+      }
+    ]
+  }
+}

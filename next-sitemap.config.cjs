@@ -3,6 +3,22 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const OUT_DIR = path.join(__dirname, "out");
+// Lo escribe scripts/build-sitemap-lastmod.ts (postbuild, antes de este paso).
+const LASTMOD_FILE = path.join(__dirname, ".next", "sitemap-lastmod.json");
+
+function readLastmodByPath() {
+  if (!fs.existsSync(LASTMOD_FILE)) {
+    console.warn(`[next-sitemap] Sin ${LASTMOD_FILE}: el sitemap sale sin lastmod. Corre pnpm run build:sitemap-lastmod.`);
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(LASTMOD_FILE, "utf8"));
+}
+
+const lastmodByPath = readLastmodByPath();
+
+function stripTrailingSlash(value) {
+  return value.length > 1 ? value.replace(/\/+$/u, "") : value;
+}
 
 // Rutas cuyo HTML del build lleva <meta name="robots" content="noindex…">: categorías y temporadas
 // con poco catálogo, formularios, 404. Mismo criterio que scripts/build-llms.ts.
@@ -32,9 +48,15 @@ module.exports = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
   generateRobotsTxt: true,
   sitemapSize: 100,
+  // lastmod real por ruta, no la hora del build; sin changefreq ni priority (Google los ignora).
+  autoLastmod: false,
+  transform: async (config, loc) => ({
+    loc,
+    lastmod: lastmodByPath[stripTrailingSlash(loc)],
+  }),
   outDir: "out/",
   // Solo páginas públicas indexables: el panel (noindex), los formularios de calificación (noindex),
-  // los endpoints MCP y los archivos de ruta (ícono, manifest) no van al sitemap.
+  // los endpoints MCP y los archivos de ruta (ícono, manifest, og.png) no van al sitemap.
   exclude: async () => [
     "/agregar*",
     "/catalogos*",
@@ -44,6 +66,8 @@ module.exports = {
     "/icon.png*",
     "/manifest.webmanifest*",
     "/llms.txt*",
+    // Tarjetas Open Graph de categorías y temporadas (og.png/route.tsx).
+    "*/og.png",
     ...findNoIndexPaths(),
   ],
 };

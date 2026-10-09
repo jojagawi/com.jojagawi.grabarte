@@ -12,8 +12,6 @@ export const metadata: Metadata = buildPageMetadata({
     "Panel interno para registrar nuevos diseños, categorías, materiales y archivos del catálogo de InspiraArte.",
   path: "/agregar",
   keywords: ["panel interno", "agregar diseño", "catálogo", "InspiraArte"],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Panel interno para agregar productos en InspiraArte",
   noIndex: true,
 });
 

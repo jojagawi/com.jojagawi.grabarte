@@ -543,8 +543,10 @@ async function main() {
       updated += result.results.length;
     }
 
+    // SQL directo: prisma.designs.update tocaría updatedAt (@updatedAt) y el sitemap marcaría la
+    // ficha como editada solo porque cambió el conteo de pedidos.
     for (const update of requestUpdates) {
-      await prisma.designs.update({ where: { id: update.id }, data: { requests: update.to } });
+      await prisma.$executeRaw`UPDATE "Designs" SET "requests" = ${update.to} WHERE "id" = ${update.id}`;
     }
 
     console.log(

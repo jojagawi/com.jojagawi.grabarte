@@ -185,8 +185,8 @@
       "Escuela"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 50,
+    "suggestedPrice": 80,
     "image": "https://dam.inspiraarte.com/preview/180-653-plantilla-animales-para-pintar-en-mdf.webp",
     "gallery": [],
     "url": "/productos/180-plantilla-animales-para-pintar-en-mdf"
@@ -269,8 +269,8 @@
       "México"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 80,
+    "suggestedPrice": 100,
     "image": "https://dam.inspiraarte.com/preview/127-490-servilleteros-de-mdf-fiestas-patrias-decoracion-mexicana.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/127/491.webp",
@@ -475,8 +475,8 @@
       "Adornos"
     ],
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 90,
+    "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/64-807-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/64/1790966320148-vaucjiep.webp",
@@ -528,8 +528,8 @@
       "Escuela"
     ],
     "material": "Varios",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "minimumPrice": 80,
+    "suggestedPrice": 150,
     "image": "https://dam.inspiraarte.com/preview/61-388-lapices-y-plumas-personalizados-para-escuela-y-oficina.webp",
     "gallery": [],
     "url": "/productos/61-lapices-y-plumas-personalizados-para-escuela-y-oficina"

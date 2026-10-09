@@ -15,8 +15,6 @@ export const metadata: Metadata = buildPageMetadata({
     "derechos ARCO",
     "InspiraArte",
   ],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Aviso de privacidad de InspiraArte",
 });
 
 export default function AvisoDePrivacidad() {

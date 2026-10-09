@@ -4,13 +4,16 @@ import { getCategoryPages, getCategoryPath } from "@/lib/categories.server";
 import { buildPageMetadata } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
+import { slugify } from "@/lib/slug";
+import { buildCollectionPageJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { Products } from "@/components/custom/products";
 
+const CATALOG_DESCRIPTION =
+  "Explora nuestro catálogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Catálogo de productos personalizados | InspiraArte",
-  description:
-    "Explora nuestro catálogo por categorías y encuentra diseños personalizados para regalos, eventos y proyectos corporativos.",
+  description: CATALOG_DESCRIPTION,
   path: "/productos",
   keywords: [
     "catálogo de productos",
@@ -19,8 +22,6 @@ export const metadata: Metadata = buildPageMetadata({
     "regalos",
     "InspiraArte",
   ],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Catálogo de productos personalizados de InspiraArte",
 });
 
 const defaultImage = "/dam/default-image-product.webp";
@@ -167,9 +168,27 @@ export default async function Productos() {
 
   // Los chips del catálogo filtran en el cliente; estos enlaces llevan a la página indexable de cada categoría.
   const categoryPages = await getCategoryPages();
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    path: "/productos/",
+    name: "Catálogo de productos personalizados",
+    description: CATALOG_DESCRIPTION,
+    breadcrumbs: [
+      { name: "Inicio", path: "/" },
+      { name: "Productos", path: "/productos/" },
+    ],
+    items: products.map((product) => ({
+      name: product.name,
+      path: `/productos/${product.id}-${slugify(product.name)}/`,
+      image: product.image,
+    })),
+  });
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionJsonLd) }}
+      />
       <Products
         enableDevFilters={isDevelopment}
         categories={categories.map((category) => ({

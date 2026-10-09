@@ -51,6 +51,8 @@ export const metadata: Metadata = buildPageMetadata({
   ],
   imagePath: "/dam/logos/hero.webp",
   imageAlt: "Catálogo de productos personalizados de InspiraArte",
+  imageWidth: 2816,
+  imageHeight: 1536,
 });
 
 // Fisher-Yates. En el export estático el orden queda fijo hasta el siguiente build.

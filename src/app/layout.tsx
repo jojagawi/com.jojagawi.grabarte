@@ -35,10 +35,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     siteName: "InspiraArte",
+    // Tarjeta genérica 1200×630 (la misma que usa buildPageMetadata por defecto).
     images: [
       {
-        url: "/dam/default-image-product.webp",
-        alt: "Productos personalizados de InspiraArte",
+        url: "/dam/og/inspiraarte.png",
+        alt: "InspiraArte: productos personalizados con corte y grabado láser",
+        width: 1200,
+        height: 630,
+        type: "image/png",
       },
     ],
   },
@@ -47,7 +51,7 @@ export const metadata: Metadata = {
     title: "InspiraArte | Personalización sin límites: del diseño a la realidad",
     description:
       "Descubre nuestro catálogo de productos personalizados. Expertos en corte y grabado láser en MDF, acrílico y cuero, y personalización de termos. ¡Haz tu pedido!",
-    images: ["/dam/default-image-product.webp"],
+    images: ["/dam/og/inspiraarte.png"],
   },
   icons: {
     icon: [

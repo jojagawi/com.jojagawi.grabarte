@@ -13,8 +13,6 @@ export const metadata: Metadata = buildPageMetadata({
     "cotización",
     "InspiraArte",
   ],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Términos y condiciones de InspiraArte",
 });
 
 export default function TerminosYCondiciones() {

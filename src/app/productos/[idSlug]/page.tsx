@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, Pencil } from "lucide-react";
-import { buildPageMetadata, toAbsoluteUrl } from "@/lib/metadata";
+import { buildPageMetadata, fitTitle, toAbsoluteUrl, toMetaDescription } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
 import { buildAiThumbObjectKey } from "@/lib/preview-paths";
@@ -379,18 +379,15 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     "Conoce este diseño personalizado de InspiraArte y solicita tu cotización.";
 
   return buildPageMetadata({
-    // Con la marca, la mayoría de los nombres pasa de 60 caracteres y Google corta el título.
-    title: `${design.name} | InspiraArte`.length <= 60 ? `${design.name} | InspiraArte` : design.name,
-    description: seoDescription,
+    title: fitTitle(design.name),
+    description: toMetaDescription(seoDescription),
     path: canonicalPath,
     imagePath: socialImagePath,
     imageAlt: `Vista previa del producto ${design.name} de InspiraArte`,
     keywords: splitKeywords(design.keywords),
     locale: "es_MX",
     countryName: "MX",
-    imageWidth: 1200,
-    imageHeight: 630,
-    imageType: "image/webp",
+    // Sin imageWidth/imageHeight: las vistas previas no tienen un tamaño fijo.
   });
 }
 

@@ -121,6 +121,8 @@ model Designs {
   showInHome           Int                    @default(0)
   showInSite           Int                    @default(0)
   createdAt            DateTime               @default(now())
+  // Última edición del diseño: el sitemap la usa como lastmod de la ficha y de sus categorías.
+  updatedAt            DateTime               @default(now()) @updatedAt
   materialId           Int?
   numberMdfTables      Int                    @default(0)
   timeMachine          Int                    @default(0)

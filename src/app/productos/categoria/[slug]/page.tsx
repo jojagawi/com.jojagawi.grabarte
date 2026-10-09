@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { FAQ } from "@/components/custom/faq";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
+import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
+import { OG_IMAGE_SIZE } from "@/lib/og-image";
 import {
   type CategoryPage,
   getCategoryPage,
@@ -17,7 +20,7 @@ import {
   getDesignImageUrl,
   toShowcaseItem,
 } from "@/lib/site-designs.server";
-import { buildCollectionPageJsonLd, serializeJsonLd } from "@/lib/structured-data";
+import { buildCollectionPageJsonLd, buildFaqPageJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -62,14 +65,16 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     });
   }
 
-  const coverDesign = category.designs[0];
   return buildPageMetadata({
     title: buildCategoryTitle(category.name),
     description: toMetaDescription(describeCategory(category)),
     path: getCategoryPath(category.slug),
     keywords: [category.name, "productos personalizados", "grabado láser", "InspiraArte", "México"],
-    imagePath: coverDesign ? getDesignImageUrl(getDesignImagePath(coverDesign)) : undefined,
-    imageAlt: coverDesign?.name ? `${coverDesign.name} de InspiraArte` : undefined,
+    // Tarjeta 1200×630 generada en el build (og.png/route.tsx).
+    imagePath: `${getCategoryPath(category.slug)}/og.png`,
+    imageAlt: `${category.name}: productos personalizados de InspiraArte`,
+    imageWidth: OG_IMAGE_SIZE.width,
+    imageHeight: OG_IMAGE_SIZE.height,
     noIndex: !isCategoryIndexable(category),
     followLinks: true,
   });
@@ -99,6 +104,7 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
       image: getDesignImageUrl(getDesignImagePath(design)),
     })),
   });
+  const faqs = buildCollectionFaq({ name: category.name, designs: category.designs });
 
   return (
     <section className="py-16 lg:py-24">
@@ -106,6 +112,12 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionJsonLd) }}
       />
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildFaqPageJsonLd(categoryPath, faqs)) }}
+        />
+      )}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav aria-label="Ruta de navegación" className="mb-8 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-2">
@@ -153,6 +165,12 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
             </li>
           ))}
         </ul>
+
+        {faqs.length > 0 && (
+          <div className="mt-16">
+            <FAQ faqs={faqs} embedded />
+          </div>
+        )}
 
         <div className="mt-16 flex flex-col gap-6 rounded-2xl bg-primary p-8 md:flex-row md:items-center md:justify-between md:p-12">
           <div>

@@ -17,8 +17,6 @@ export const metadata: Metadata = buildPageMetadata({
     "tiempos de entrega",
     "InspiraArte",
   ],
-  imagePath: "/dam/default-image-product.webp",
-  imageAlt: "Preguntas frecuentes sobre pedidos personalizados en InspiraArte",
 });
 
 export default async function Faq() {

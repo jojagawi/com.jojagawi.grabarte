@@ -104,6 +104,7 @@ Table Designs {
   showInHome Int [not null, default: 0]
   showInSite Int [not null, default: 0]
   createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
   materialId Int
   numberMdfTables Int [not null, default: 0]
   timeMachine Int [not null, default: 0]

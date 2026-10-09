@@ -9,7 +9,6 @@ export const metadata: Metadata = buildPageMetadata({
     "Formulario para compartir una nueva calificación y experiencia de compra en InspiraArte.",
   path: "/calificaciones/nueva",
   keywords: ["calificaciones", "opiniones", "testimonios", "InspiraArte"],
-  imagePath: "/dam/default-image-product.webp",
   // Formulario sin contenido propio: no aporta a la búsqueda y duplica la otra ruta de calificación.
   noIndex: true,
   imageAlt: "Formulario de calificación de InspiraArte",

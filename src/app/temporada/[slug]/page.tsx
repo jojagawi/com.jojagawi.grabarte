@@ -3,8 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FAQ } from "@/components/custom/faq";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
+import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
+import { OG_IMAGE_SIZE } from "@/lib/og-image";
 import { formatSeasonMonths } from "@/lib/seasons";
 import {
   describeSeason,
@@ -13,8 +16,8 @@ import {
   getSeasonPages,
   getSeasonPath,
 } from "@/lib/seasons.server";
-import { buildBreadcrumbJsonLd, serializeJsonLd } from "@/lib/structured-data";
-import { getDesignImagePath, getDesignImageUrl, toShowcaseItem } from "@/lib/site-designs.server";
+import { buildCollectionPageJsonLd, buildFaqPageJsonLd, serializeJsonLd } from "@/lib/structured-data";
+import { getDesignHref, getDesignImagePath, getDesignImageUrl, toShowcaseItem } from "@/lib/site-designs.server";
 
 interface SeasonPageProps {
   params: Promise<{ slug: string }>;
@@ -54,13 +57,15 @@ export async function generateMetadata({ params }: SeasonPageProps): Promise<Met
   }
 
   const designs = await getSeasonDesigns(season);
-  const coverDesign = designs[0]?.design;
   return buildPageMetadata({
     title: buildSeasonTitle(season.label),
     description: toMetaDescription(describeSeason(season)),
     path: getSeasonPath(season.slug),
-    imagePath: coverDesign ? getDesignImageUrl(getDesignImagePath(coverDesign)) : undefined,
-    imageAlt: coverDesign?.name ? `${coverDesign.name} de InspiraArte` : undefined,
+    // Tarjeta 1200×630 generada en el build (og.png/route.tsx).
+    imagePath: `${getSeasonPath(season.slug)}/og.png`,
+    imageAlt: `${season.label}: regalos personalizados de InspiraArte`,
+    imageWidth: OG_IMAGE_SIZE.width,
+    imageHeight: OG_IMAGE_SIZE.height,
     keywords: [season.label, "regalos personalizados", "grabado láser", "InspiraArte", "México"],
     // Sin piezas publicadas la página es delgada: no se indexa hasta tener catálogo.
     noIndex: designs.length === 0,
@@ -76,18 +81,40 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
 
   const designs = await getSeasonDesigns(season);
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Temporada: ${season.label}`)}`;
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd(`${getSeasonPath(season.slug)}/`, [
-    { name: "Inicio", path: "/" },
-    { name: "Temporadas", path: "/temporada/" },
-    { name: season.label, path: `${getSeasonPath(season.slug)}/` },
-  ]);
+  const seasonPath = `${getSeasonPath(season.slug)}/`;
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    path: seasonPath,
+    name: season.label,
+    description: describeSeason(season),
+    breadcrumbs: [
+      { name: "Inicio", path: "/" },
+      { name: "Temporadas", path: "/temporada/" },
+      { name: season.label, path: seasonPath },
+    ],
+    items: designs.map(({ design }) => ({
+      name: design.name ?? "Diseño sin nombre",
+      path: `${getDesignHref(design)}/`,
+      image: getDesignImageUrl(getDesignImagePath(design)),
+    })),
+  });
+  const faqs = buildCollectionFaq({
+    name: season.label,
+    designs: designs.map(({ design }) => design),
+    leadDays: season.leadDays,
+  });
 
   return (
     <section className="py-16 lg:py-24">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionJsonLd) }}
       />
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildFaqPageJsonLd(seasonPath, faqs)) }}
+        />
+      )}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav aria-label="Ruta de navegación" className="mb-8 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-2">
@@ -146,6 +173,12 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
                 <Link href={quoteHref}>Cotizar mi idea</Link>
               </Button>
             </div>
+          </div>
+        )}
+
+        {faqs.length > 0 && (
+          <div className="mt-16">
+            <FAQ faqs={faqs} embedded />
           </div>
         )}
 

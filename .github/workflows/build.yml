@@ -43,6 +43,7 @@ jobs:
       - name: Set secrets in .env.production
         run: |
           echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .env.production
+          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACKWEBHOOKURL }}" >> .env.production
           echo "NEXT_PUBLIC_BUGSNAG=${{ secrets.NEXT_PUBLIC_BUGSNAG }}" >> .env.production
           echo "NEXT_CLOUDFLARE_TOKEN=${{ secrets.NEXT_CLOUDFLARE_TOKEN }}" >> .env.production
           echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .env.production
@@ -96,7 +97,7 @@ jobs:
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},
           RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }},
           ContactLambdaCodeS3Key=${{ steps.contact-zip.outputs.artifact_key }},
-          SlackWebhookUrl=${{ steps.rates-zip.outputs.SLACKWEBHOOKURL }},
+          SlackWebhookUrl=${{ secrets.SLACKWEBHOOKURL }},
           HubspotApiToken=${{ secrets.HUBSPOTAPIKEY }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 
