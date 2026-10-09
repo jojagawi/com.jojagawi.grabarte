@@ -19,6 +19,9 @@ jobs:
   aws-infra:
     name: Setup infrastructure in AWS
     runs-on: ubuntu-latest
+    # Los secretos del environment Prod (HUBSPOTAPIKEY, SLACKWEBHOOKURL, NEXT_GOOGLE_SECRET_KEY…)
+    # solo llegan a los jobs que lo declaran; sin esto se leen vacíos.
+    environment: Prod
     env:
       S3_LAMBDA_BUCKET: dam.inspiraarte.com
       RATES_LAMBDA_KEY_PREFIX: lambda/rates
@@ -119,6 +122,7 @@ jobs:
   static-site:
     name: Validate and build static-site
     runs-on: ubuntu-latest
+    environment: Prod
     needs: aws-infra
 
     steps:
