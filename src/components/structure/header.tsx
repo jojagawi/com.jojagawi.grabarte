@@ -141,6 +141,9 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link href="/catalogos/contactos">Contactos</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link href="/catalogos/temporadas">Temporadas</Link>
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
@@ -256,6 +259,13 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                           className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                           Calificaciones
+                        </Link>
+                        <Link
+                          href="/catalogos/contactos"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Contactos
                         </Link>
                         <Link
                           href="/catalogos/temporadas"

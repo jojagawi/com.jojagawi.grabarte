@@ -127,7 +127,8 @@ function createAthenaClient() {
   });
 }
 
-async function executeAthenaQuery(query: string) {
+// También la usa contacts-athena.server.ts: comparten workgroup y base de datos.
+export async function executeAthenaQuery(query: string) {
   const client = createAthenaClient();
   const workGroup = process.env.NEXT_AWS_ATHENA_WORKGROUP || "inspiraarte-prod-rates";
 
