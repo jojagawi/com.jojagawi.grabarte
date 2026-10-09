@@ -40,14 +40,6 @@ jobs:
         run: echo "value=$(date +%s)" >> $GITHUB_OUTPUT
 
 
-      - name: Set secrets in .env.production
-        run: |
-          echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .env.production
-          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACKWEBHOOKURL }}" >> .env.production
-          echo "NEXT_PUBLIC_BUGSNAG=${{ secrets.NEXT_PUBLIC_BUGSNAG }}" >> .env.production
-          echo "NEXT_CLOUDFLARE_TOKEN=${{ secrets.NEXT_CLOUDFLARE_TOKEN }}" >> .env.production
-          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .env.production
-
       - name: Set secrets in lambda
         run: |
           echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .aws/lambda/contact/.env
@@ -118,6 +110,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Set secrets in .env.production
+        run: |
+          echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .env.production
+          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACKWEBHOOKURL }}" >> .env.production
+          echo "NEXT_PUBLIC_BUGSNAG=${{ secrets.NEXT_PUBLIC_BUGSNAG }}" >> .env.production
+          echo "NEXT_CLOUDFLARE_TOKEN=${{ secrets.NEXT_CLOUDFLARE_TOKEN }}" >> .env.production
+          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .env.production
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
