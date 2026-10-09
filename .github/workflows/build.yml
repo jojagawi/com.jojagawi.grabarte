@@ -73,8 +73,11 @@ jobs:
         run: |
           mkdir -p .aws/dist
           cd .aws/lambda/contact
-          zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
-          CONTENT_HASH=$(sha256sum lambda-contact-handler.mjs | awk '{print $1}' | cut -c1-16)
+          # @aws-sdk/s3-presigned-post no viene en el runtime de Lambda: sin node_modules la
+          # función falla al importar y ninguna solicitud llega a S3, HubSpot ni Slack.
+          npm install --omit=dev --no-audit --no-fund
+          zip -qr ../../dist/contact-lambda.zip lambda-contact-handler.mjs package.json node_modules
+          CONTENT_HASH=$(cat lambda-contact-handler.mjs package.json | sha256sum | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/contact-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
       - name: Upload contact lambda zip to S3
@@ -96,7 +99,7 @@ jobs:
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }},
           RatesLambdaCodeS3Key=${{ steps.rates-zip.outputs.artifact_key }},
           ContactLambdaCodeS3Key=${{ steps.contact-zip.outputs.artifact_key }},
-          SlackWebhookUrl=${{ steps.rates-zip.outputs.SLACKWEBHOOKURL }},
+          SlackWebhookUrl=${{ secrets.SLACK_WEBHOOK_URL }},
           HubspotApiToken=${{ secrets.HUBSPOTAPIKEY }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
 

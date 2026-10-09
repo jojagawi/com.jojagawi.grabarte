@@ -49,6 +49,11 @@ Después se despliega `.aws/infra.yml` pasando los secretos como parámetros
 (`ContactLambdaApiKey`, `HubspotApiToken`, `SlackWebhookUrl`, `NextGoogleSecretKey`).
 La salida `ContactLambdaFunctionUrl` va en `NEXT_PUBLIC_CONTACT_LAMBDA_URL` del sitio.
 
+En CI (`.github/workflows/build.yml`) el zip se arma igual, con `node_modules`, y los avisos toman
+los secretos del repositorio `HUBSPOTAPIKEY` (→ `HubspotApiToken`) y `SLACK_WEBHOOK_URL`
+(→ `SlackWebhookUrl`). Si falta alguno, el parámetro queda vacío y ese aviso se omite en silencio
+(CloudWatch registra `omitido (sin …)`).
+
 ## Payloads
 
 ```json
