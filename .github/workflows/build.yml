@@ -48,6 +48,13 @@ jobs:
           echo "NEXT_CLOUDFLARE_TOKEN=${{ secrets.NEXT_CLOUDFLARE_TOKEN }}" >> .env.production
           echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .env.production
 
+      - name: Set secrets in lambda
+        run: |
+          echo "HUBSPOT_API_KEY=${{ secrets.HUBSPOTAPIKEY }}" >> .aws/lambda/contact/.env
+          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACKWEBHOOKURL }}" >> .aws/lambda/contact/.env
+          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .aws/lambda/contact/.env
+          echo "NEXT_GOOGLE_SECRET_KEY=${{ secrets.NEXT_GOOGLE_SECRET_KEY }}" >> .aws/lambda/rates/.env
+
 
 
       - name: Build rates lambda zip
@@ -56,6 +63,7 @@ jobs:
           mkdir -p .aws/dist
           cd .aws/lambda/rates
           zip -r ../../dist/rates-lambda.zip lambda-rates-handler.mjs
+          zip -ur ../../dist/rates-lambda.zip .env
           CONTENT_HASH=$(sha256sum lambda-rates-handler.mjs | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
@@ -75,6 +83,7 @@ jobs:
           mkdir -p .aws/dist
           cd .aws/lambda/contact
           zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
+          zip -ur ../../dist/contact-lambda.zip .env
           CONTENT_HASH=$(sha256sum lambda-contact-handler.mjs | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${CONTACT_LAMBDA_KEY_PREFIX}/contact-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
 
