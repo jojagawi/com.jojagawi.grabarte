@@ -186,7 +186,7 @@ export function DesignMediaGallery({
               <button
                 type="button"
                 onClick={() => openBySrc(previewItem?.previewUrl || defaultImage)}
-                className="relative block w-full aspect-square bg-linear-to-br from-primary/10 to-inspirarte-teal/10 cursor-zoom-in"
+                className="relative block w-full aspect-square bg-linear-to-br from-primary/10 to-inspirarte-teal/10 cursor-zoom-in transition-[scale] duration-150 ease-snappy touch-manipulation active:scale-[0.98]"
                 aria-label="Abrir imagen principal en pantalla completa"
               >
                 <Image
@@ -241,7 +241,7 @@ export function DesignMediaGallery({
                     <button
                       type="button"
                       onClick={() => openBySrc(item.previewUrl)}
-                      className="relative block w-full aspect-4/3 bg-muted cursor-zoom-in"
+                      className="relative block w-full aspect-4/3 bg-muted cursor-zoom-in transition-[scale] duration-150 ease-snappy touch-manipulation active:scale-[0.98]"
                       aria-label={`Abrir imagen ${index + 1} en pantalla completa`}
                     >
                       <Image

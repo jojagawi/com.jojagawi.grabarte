@@ -72,7 +72,7 @@ export function SeasonShowcase({ eyebrow, title, description, items, totalDesign
   }
 
   const arrowClassName =
-    "inline-flex size-10 items-center justify-center rounded-full border border-border bg-card text-primary shadow-xs transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40"
+    "inline-flex size-10 items-center justify-center rounded-full border border-border bg-card text-primary shadow-xs transition-[background-color,scale] duration-150 ease-snappy touch-manipulation select-none active:scale-[0.94] hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40"
 
   return (
     <section id="temporada" aria-labelledby="temporada-titulo" className="py-24">

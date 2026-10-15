@@ -1010,7 +1010,7 @@ export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentC
               <button
                 type="button"
                 onClick={() => document.getElementById(`contact-${missingOrderData[0]}`)?.focus()}
-                className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 transition-opacity duration-150 ease-snappy touch-manipulation select-none active:opacity-60 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 {missingOrderData.length === 2 ? "Agregar cantidad y fecha" : "Agregarlo"}
               </button>

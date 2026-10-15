@@ -66,7 +66,7 @@ export function FAQ({ faqs, embedded = false, isPageTitle = false }: FAQProps) {
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="w-full px-6 py-5 flex items-center justify-between text-left rounded-xl transition-colors duration-150 ease-snappy touch-manipulation active:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span className="font-medium text-foreground pr-4">
                     {faq.question}

@@ -186,7 +186,7 @@ export function Contact() {
                     pendingFocus.current = "restore"
                     setProductDismissed(true)
                   }}
-                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-[color,background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94] hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
                   <X aria-hidden="true" className="size-4" />
                   <span className="sr-only">Quitar producto</span>
@@ -205,7 +205,7 @@ export function Contact() {
                   pendingFocus.current = "dismiss"
                   setProductDismissed(false)
                 }}
-                className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 transition-opacity duration-150 ease-snappy touch-manipulation select-none active:opacity-60 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 Volver a agregarlo
               </button>

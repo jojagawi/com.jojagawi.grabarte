@@ -128,6 +128,9 @@
   --font-sans: "DM Sans", "DM Sans Fallback", system-ui, sans-serif;
   --font-serif: "Playfair Display", "Playfair Display Fallback", georgia, serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
+
+  /* Curva de salida fuerte: arranca rápido, frena suave (respuesta táctil inmediata). */
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

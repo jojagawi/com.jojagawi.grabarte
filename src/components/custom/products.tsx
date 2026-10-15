@@ -164,7 +164,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
           <button
             onClick={() => setSelectedCategory(null)}
             className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium transition-all",
+              "px-4 py-2 rounded-full text-sm font-medium transition-[color,background-color,box-shadow,scale] duration-150 ease-snappy touch-manipulation select-none active:scale-[0.96]",
               !selectedCategory
                 ? "bg-primary text-white shadow-lg shadow-primary/25"
                 : "bg-white text-foreground hover:bg-primary/10 border border-border"
@@ -179,7 +179,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
                 key={category.id}
                 onClick={() => setSelectedCategory(category.name === selectedCategory ? null : category.name)}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
+                  "px-4 py-2 rounded-full text-sm font-medium transition-[color,background-color,box-shadow,scale] duration-150 ease-snappy touch-manipulation select-none active:scale-[0.96] flex items-center gap-2",
                   selectedCategory === category.name
                     ? "bg-primary text-white shadow-lg shadow-primary/25"
                     : "bg-white text-foreground hover:bg-primary/10 border border-border"
