@@ -293,6 +293,39 @@ select {
   touch-action: manipulation;
 }
 
+/*
+ * "Reducir movimiento" activado en el teléfono o la computadora: nada viaja, crece ni se desliza.
+ * Se conserva la respuesta, pero con cambios de opacidad que no provocan mareo.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Menús, paneles y ventanas (Radix + tw-animate): sin zoom ni deslizamiento, solo aparecen y se desvanecen. */
+  [data-state] {
+    --tw-enter-scale: 1;
+    --tw-exit-scale: 1;
+    --tw-enter-translate-x: 0;
+    --tw-enter-translate-y: 0;
+    --tw-exit-translate-x: 0;
+    --tw-exit-translate-y: 0;
+    --tw-enter-rotate: 0;
+    --tw-exit-rotate: 0;
+  }
+
+  /* Botones: en lugar de hundirse, se atenúan al tocarlos. */
+  [class*="active:scale-"]:active {
+    scale: none;
+    opacity: 0.7;
+  }
+
+  /* Visor de fotos: aparece con un fundido, sin crecer desde la miniatura. */
+  .zoom-from-origin {
+    scale: none;
+  }
+}
+
 /* iPhone hace zoom a cualquier campo con letra menor a 16 px y no regresa; con 16 px nunca lo hace. */
 @media (pointer: coarse) {
   input,

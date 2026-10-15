@@ -201,7 +201,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
             <Link
               key={product.id}
               href={`/productos/${product.id}-${slugify(product.name)}`}
-              className="group block bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="group block bg-white rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/10 transition-[translate,box-shadow] duration-300 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             >
               {/* Product Image */}
               <div className={cn(
@@ -214,7 +214,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
                   fill
                   loading="lazy"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
               </div>
 

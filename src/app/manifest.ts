@@ -9,8 +9,9 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "fullscreen",
-    background_color: "#fff",
-    theme_color: "#000",
+    // Pantalla de arranque del color de fondo del sitio y barra del sistema del tono de la barra superior.
+    background_color: "#fdfcf8",
+    theme_color: "#faecdd",
     prefer_related_applications: true,
     icons: [
       {

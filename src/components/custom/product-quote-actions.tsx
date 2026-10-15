@@ -117,7 +117,7 @@ export function ProductQuoteActions({
               Cotizar este diseño
               <ArrowRight
                 aria-hidden="true"
-                className="transition-transform group-hover:translate-x-1"
+                className="transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
               />
             </Link>
           </Button>

@@ -1017,7 +1017,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   <Link
                     key={product.id}
                     href={`/productos/${product.id}-${slugify(product.name)}`}
-                    className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="group block overflow-hidden rounded-2xl border border-border bg-card transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-visible:translate-y-0"
                   >
                     <div
                       className="relative aspect-square overflow-hidden bg-muted"
@@ -1028,7 +1028,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         fill
                         loading="lazy"
                         sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       />
                     </div>
 
