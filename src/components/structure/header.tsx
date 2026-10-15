@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
@@ -61,16 +61,20 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
   };
   const visibleNavigation = navigation.filter((item) => canShowByAcl(item.acl));
   const canShowAdmin = canShowByAcl("ADD_DESIGNS");
+  // La línea inferior solo aparece cuando hay contenido pasando por debajo de la barra.
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 border-b border-border"
-      style={{
-        backgroundImage: "url('/dam/background.webp')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      data-scrolled={isScrolled}
+      className="glass-chrome fixed top-0 left-0 right-0 z-50 border-b border-transparent transition-[border-color] duration-200 data-[scrolled=true]:border-(--chrome-hairline)"
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
@@ -96,7 +100,7 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                 key={item.name}
                 href={item.href}
                 aria-current={isCurrent(item.href) ? "page" : undefined}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors aria-[current=page]:text-primary"
+                className="text-sm font-medium text-foreground/75 hover:text-primary transition-colors aria-[current=page]:text-primary"
               >
                 {item.name}
               </Link>
@@ -106,7 +110,7 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="h-auto px-0 py-0 text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
+                    className="h-auto px-0 py-0 text-sm font-medium text-foreground/75 hover:bg-transparent hover:text-primary"
                   >
                     Administrar
                   </Button>

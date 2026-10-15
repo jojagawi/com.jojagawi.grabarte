@@ -80,6 +80,11 @@
   --inspirarte-purple-deep: #7e3af2; /* El púrpura creativo */
   --inspirarte-charcoal-text: #323236; /* Gris oscuro del texto del logo */
   --inspirarte-placeholder-grey: #676767; /* Gris de la leyenda 'ejemplos de acabado' */
+
+  /* Barra superior: vidrio esmerilado con el tono de la madera clara de la marca */
+  --chrome-glass: oklch(95% 0.025 70deg / 72%);
+  --chrome-solid: oklch(95% 0.025 70deg);
+  --chrome-hairline: oklch(20% 0.01 240deg / 8%);
 }
 
 /* --- MODO OSCURO ACTUALIZADO --- */
@@ -121,6 +126,9 @@
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
+  --chrome-glass: oklch(20% 0.01 240deg / 72%);
+  --chrome-solid: oklch(20% 0.01 240deg);
+  --chrome-hairline: oklch(98% 0.005 240deg / 10%);
 }
 
 @theme inline {
@@ -189,6 +197,35 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/*
+ * Material de vidrio esmerilado para barras fijas: el contenido se ve pasar por debajo, borroso.
+ * Sin soporte de backdrop-filter, o si la persona pide menos transparencia o más contraste, queda sólido.
+ */
+.glass-chrome {
+  background-color: var(--chrome-solid);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass-chrome {
+    background-color: var(--chrome-glass);
+
+    /* iOS 17 y anteriores solo entienden la versión con prefijo. */
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-chrome {
+    background-color: var(--chrome-solid);
+
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
