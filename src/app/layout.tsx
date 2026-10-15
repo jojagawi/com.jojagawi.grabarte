@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import { GoogleTagManager } from "@next/third-parties/google";
@@ -21,6 +21,11 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
 });
+
+// La barra del navegador en el celular toma el mismo tono crema que el vidrio de la barra superior.
+export const viewport: Viewport = {
+  themeColor: "#faecdd",
+};
 
 export const metadata: Metadata = {
   metadataBase: buildMetadataBase(),
@@ -97,7 +102,7 @@ export default async function RootLayout({
       <body
         className={`${dmSans.variable} ${playfair.variable} font-sans antialiased`}
       >
-        <main className="min-h-screen">
+        <main className="min-h-svh">
           <Header seasonLinks={await getDevSeasonLinks()} />
           {process.env.NEXT_GTM && (
             <Script id="google-consent-mode" strategy="beforeInteractive">

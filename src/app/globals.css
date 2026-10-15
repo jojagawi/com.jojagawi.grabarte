@@ -253,8 +253,52 @@
   }
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+
+  /*
+   * Sin el destello gris/azul que pinta el celular al tocar; cada control trae su propio :active.
+   * Solo existe en navegadores móviles WebKit/Blink, justo donde aparece el destello; el resto lo ignora.
+   */
+  /* stylelint-disable-next-line plugin/browser-compat */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Sin agrandar letras solas al girar el teléfono (iPhone y Android); el resto lo ignora. */
+  /* stylelint-disable-next-line property-no-vendor-prefix, plugin/browser-compat */
+  -webkit-text-size-adjust: 100%;
+
+  /*
+   * Reserva siempre el carril de la barra de desplazamiento (computadora): al abrir un menú
+   * o el visor de fotos la barra se oculta y, sin esto, toda la página brinca hacia la derecha.
+   * Donde no existe no pasa nada; en celular y Mac la barra suele flotar sin ocupar espacio.
+   */
+  /* stylelint-disable-next-line plugin/browser-compat */
+  scrollbar-gutter: stable;
+}
+
+/* Radix compensa la barra oculta con un margen; con el carril reservado ese margen haría brincar la página al revés. */
+html body[data-scroll-locked] {
+  margin-right: 0 !important;
+}
+
+/* Responde al toque al instante: sin la espera de ~300 ms por si viene un doble toque. */
+a,
+button,
+[role="button"],
+label,
+summary,
+select {
+  /* Safari solo soporta auto y manipulation, que es justo el valor que se usa. */
+  /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+  touch-action: manipulation;
+}
+
+/* iPhone hace zoom a cualquier campo con letra menor a 16 px y no regresa; con 16 px nunca lo hace. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
 
