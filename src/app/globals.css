@@ -137,6 +137,30 @@
   --font-serif: "Playfair Display", "Playfair Display Fallback", georgia, serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
 
+  /*
+   * Espaciado entre letras según el tamaño, como Apple: el texto chico se abre un poco
+   * para leerse mejor y el grande se cierra, porque al crecer las letras se ven separadas.
+   * Interlineado más justo en títulos enormes, con aire para acentos (É, Ú).
+   * Tailwind exige el formato --text-{tamaño}--{propiedad} para ligar estos valores a cada tamaño.
+   */
+  /* stylelint-disable custom-property-pattern */
+  --text-xs--letter-spacing: 0.01em;
+
+  /* Los tamaños de lectura declaran 0 para no heredar el espaciado negativo de un título que los contenga. */
+  --text-sm--letter-spacing: 0em;
+  --text-base--letter-spacing: 0em;
+  --text-lg--letter-spacing: 0em;
+  --text-xl--letter-spacing: -0.01em;
+  --text-2xl--letter-spacing: -0.015em;
+  --text-3xl--letter-spacing: -0.02em;
+  --text-4xl--letter-spacing: -0.022em;
+  --text-5xl--letter-spacing: -0.025em;
+  --text-5xl--line-height: 1.1;
+  --text-6xl--letter-spacing: -0.028em;
+  --text-6xl--line-height: 1.06;
+  --text-7xl--letter-spacing: -0.03em;
+  /* stylelint-enable custom-property-pattern */
+
   /* Curva de salida fuerte: arranca rápido, frena suave (respuesta táctil inmediata). */
   --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
 

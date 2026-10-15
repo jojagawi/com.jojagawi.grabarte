@@ -147,7 +147,7 @@ export function Hero({ designs }: HeroProps) {
             <div className="space-y-8">
               {/* La etiqueta va dentro del h1: el encabezado lleva la búsqueda ("regalos personalizados")
                   y el lugar, y el titular grande queda igual. */}
-              <h1 className="flex flex-col items-start gap-8 font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
+              <h1 className="flex flex-col items-start gap-8 font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground text-balance">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-sans text-sm font-medium leading-normal">
                   <MapPin aria-hidden="true" className="w-4 h-4" />
                   Regalos personalizados en Ciudad de México
