@@ -131,6 +131,9 @@
 
   /* Curva de salida fuerte: arranca rápido, frena suave (respuesta táctil inmediata). */
   --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Curva de paneles laterales tipo iOS: entra con impulso y se asienta sin rebote. */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

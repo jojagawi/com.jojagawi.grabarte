@@ -91,17 +91,40 @@ export function DesignMediaGallery({
   const isOpen = activeIndex !== null;
   const currentImage = activeIndex !== null ? modalImages[activeIndex] : null;
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  // El visor crece desde la foto que se tocó y regresa a ella al cerrar.
+  const [zoomOrigin, setZoomOrigin] = useState("50% 50%");
+  const [isClosing, setIsClosing] = useState(false);
+  const closeTimeoutRef = useRef<number | null>(null);
 
-  const openBySrc = (src: string) => {
+  const openBySrc = (src: string, trigger: HTMLElement) => {
     const index = indexBySrc.get(src);
     if (typeof index === "number") {
+      const rect = trigger.getBoundingClientRect();
+      setZoomOrigin(`${rect.left + rect.width / 2}px ${rect.top + rect.height / 2}px`);
       setActiveIndex(index);
     }
   };
 
   const closeModal = () => {
-    setActiveIndex(null);
+    if (closeTimeoutRef.current !== null) {
+      return;
+    }
+    setIsClosing(true);
+    // Debe coincidir con la duración de salida (duration-150) del visor.
+    closeTimeoutRef.current = window.setTimeout(() => {
+      closeTimeoutRef.current = null;
+      setIsClosing(false);
+      setActiveIndex(null);
+    }, 150);
   };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const goNext = () => {
     setActiveIndex((prev) => {
@@ -133,6 +156,7 @@ export function DesignMediaGallery({
     closeButtonRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // Teclado: cierre inmediato, sin animación (se usa muchas veces seguidas).
       if (event.key === "Escape") {
         setActiveIndex(null);
       } else if (event.key === "ArrowRight") {
@@ -185,7 +209,7 @@ export function DesignMediaGallery({
             ) : (
               <button
                 type="button"
-                onClick={() => openBySrc(previewItem?.previewUrl || defaultImage)}
+                onClick={(event) => openBySrc(previewItem?.previewUrl || defaultImage, event.currentTarget)}
                 className="relative block w-full aspect-square bg-linear-to-br from-primary/10 to-inspirarte-teal/10 cursor-zoom-in transition-[scale] duration-150 ease-snappy touch-manipulation active:scale-[0.98]"
                 aria-label="Abrir imagen principal en pantalla completa"
               >
@@ -240,7 +264,7 @@ export function DesignMediaGallery({
                   ) : item.isImage ? (
                     <button
                       type="button"
-                      onClick={() => openBySrc(item.previewUrl)}
+                      onClick={(event) => openBySrc(item.previewUrl, event.currentTarget)}
                       className="relative block w-full aspect-4/3 bg-muted cursor-zoom-in transition-[scale] duration-150 ease-snappy touch-manipulation active:scale-[0.98]"
                       aria-label={`Abrir imagen ${index + 1} en pantalla completa`}
                     >
@@ -272,7 +296,8 @@ export function DesignMediaGallery({
 
       {isOpen && currentImage && (
         <div
-          className="fixed inset-0 z-100 bg-black/95"
+          data-closing={isClosing}
+          className="fixed inset-0 z-100 bg-black/95 transition-opacity duration-250 ease-snappy starting:opacity-0 data-[closing=true]:opacity-0 data-[closing=true]:duration-150"
           role="dialog"
           aria-modal="true"
           aria-label="Visor de imagen a pantalla completa"
@@ -294,7 +319,7 @@ export function DesignMediaGallery({
               ref={closeButtonRef}
               type="button"
               onClick={closeModal}
-              className="inline-flex size-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex size-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 transition-[background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               aria-label="Cerrar visor"
             >
               <X className="h-5 w-5" />
@@ -309,7 +334,7 @@ export function DesignMediaGallery({
                   event.stopPropagation();
                   goPrevious();
                 }}
-                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors"
+                className="absolute left-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-[background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94]"
                 aria-label="Imagen anterior"
               >
                 <ChevronLeft className="h-7 w-7" />
@@ -320,7 +345,7 @@ export function DesignMediaGallery({
                   event.stopPropagation();
                   goNext();
                 }}
-                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors"
+                className="absolute right-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-[background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94]"
                 aria-label="Imagen siguiente"
               >
                 <ChevronRight className="h-7 w-7" />
@@ -328,7 +353,11 @@ export function DesignMediaGallery({
             </>
           )}
 
-          <div className="relative z-10 mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-8 sm:py-20">
+          <div
+            data-closing={isClosing}
+            style={{ transformOrigin: zoomOrigin }}
+            className="relative z-10 mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-8 sm:py-20 transition-[scale] duration-250 ease-snappy starting:scale-[0.85] data-[closing=true]:scale-[0.85] data-[closing=true]:duration-150"
+          >
             <Image
               src={currentImage.src}
               alt={currentImage.alt}
