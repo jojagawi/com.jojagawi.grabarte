@@ -356,7 +356,7 @@ export function DesignMediaGallery({
           <div
             data-closing={isClosing}
             style={{ transformOrigin: zoomOrigin }}
-            className="relative z-10 mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-8 sm:py-20 transition-[scale] duration-250 ease-snappy starting:scale-[0.85] data-[closing=true]:scale-[0.85] data-[closing=true]:duration-150"
+            className="zoom-from-origin relative z-10 mx-auto h-full w-full max-w-7xl px-4 py-16 sm:px-8 sm:py-20 transition-[scale] duration-250 ease-snappy starting:scale-[0.85] data-[closing=true]:scale-[0.85] data-[closing=true]:duration-150"
           >
             <Image
               src={currentImage.src}
