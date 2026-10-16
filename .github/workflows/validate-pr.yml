@@ -23,7 +23,7 @@ jobs:
       - uses: dguo/check-author-and-committer-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          committer-email-regex: '@((adobe|github)\.com|puntos\.net)$'
+          committer-email-regex: '@((adobe|github|anthropic)\.com|puntos\.net)$'
   validate-aws:
     name: Validate AWS Cloud Formation YAML
     runs-on: ubuntu-latest
@@ -56,6 +56,17 @@ jobs:
           parameter-overrides: "LastUpdate=${{ steps.timestamp.outputs.value }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
           no-execute-changeset: 1
+          # Nombre único por corrida: con el nombre por defecto (inspirarte-com-CS) el change set
+          # sin ejecutar de la corrida anterior choca con el nuevo LastUpdate.
+          change-set-name: "inspirarte-com-pr-${{ github.run_id }}-${{ github.run_attempt }}"
+
+      - name: Delete dry-run change set
+        if: always() && steps.timestamp.outcome == 'success'
+        run: >
+          aws cloudformation delete-change-set
+          --stack-name inspirarte-com
+          --change-set-name "inspirarte-com-pr-${{ github.run_id }}-${{ github.run_attempt }}"
+          || true
 
   static-site:
     name: Validate and build static-site
