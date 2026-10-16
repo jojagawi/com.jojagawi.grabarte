@@ -23,7 +23,7 @@ jobs:
       - uses: dguo/check-author-and-committer-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          committer-email-regex: '@((adobe|github)\.com|puntos\.net)$'
+          committer-email-regex: '@((adobe|github|anthropic)\.com|puntos\.net)$'
   validate-aws:
     name: Validate AWS Cloud Formation YAML
     runs-on: ubuntu-latest
