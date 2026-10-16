@@ -17,12 +17,8 @@ import { FaMedal } from "@react-icons/all-files/fa/FaMedal";
 import { FaSchool } from "@react-icons/all-files/fa/FaSchool";
 import { FaSkullCrossbones } from "@react-icons/all-files/fa/FaSkullCrossbones";
 import { FaTree } from "@react-icons/all-files/fa/FaTree";
-import type { ComponentType } from "react";
-import {
-  CATEGORY_ICON_OPTIONS,
-  resolveCategoryIconKey,
-  normalizeCategoryIcon,
-} from "@/lib/category-icon-definitions";
+import { createElement, type ComponentType } from "react";
+import { resolveCategoryIconKey } from "@/lib/category-icon-definitions";
 import { FaPuzzlePiece } from "@react-icons/all-files/fa/FaPuzzlePiece";
 
 type IconComponent = ComponentType<{ className?: string; size?: number }>;
@@ -75,10 +71,6 @@ export function CategoryIcon({
   categoryName?: string | null;
   className?: string;
 }) {
-  const Icon = getCategoryIconComponent(iconKey, categoryName);
-  return <Icon className={className} />;
+  // createElement con un componente del registro estático: no se crea un componente nuevo por render.
+  return createElement(getCategoryIconComponent(iconKey, categoryName), { className });
 }
-
-
-
-

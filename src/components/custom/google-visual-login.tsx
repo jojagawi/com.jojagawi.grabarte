@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import { LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GOOGLE_VISUAL_STORAGE_KEY } from "@/lib/google-visual-auth";
@@ -103,32 +104,51 @@ async function fetchGoogleUser(accessToken: string): Promise<GoogleVisualUser> {
   };
 }
 
+// Evento propio: "storage" solo avisa a otras pestañas, no a la que escribe.
+const STORED_USER_EVENT = "inspiraarte:google-visual-user";
+
+function subscribeToStoredUser(onChange: () => void): () => void {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(STORED_USER_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(STORED_USER_EVENT, onChange);
+  };
+}
+
+function readStoredUser(): string | null {
+  return window.localStorage.getItem(STORAGE_KEY);
+}
+
+function writeStoredUser(rawUser: string | null): void {
+  if (rawUser) {
+    window.localStorage.setItem(STORAGE_KEY, rawUser);
+  } else {
+    window.localStorage.removeItem(STORAGE_KEY);
+  }
+  window.dispatchEvent(new Event(STORED_USER_EVENT));
+}
+
+function parseStoredUser(rawUser: string | null): GoogleVisualUser | null {
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(rawUser) as GoogleVisualUser;
+    return parsed?.name ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 export function GoogleVisualLogin({ fullWidth = false, onAction }: GoogleVisualLoginProps) {
-  const [user, setUser] = useState<GoogleVisualUser | null>(null);
+  const rawUser = useSyncExternalStore(subscribeToStoredUser, readStoredUser, () => null);
+  const user = useMemo(() => parseStoredUser(rawUser), [rawUser]);
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const tokenClientRef = useRef<GoogleTokenClient | null>(null);
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const rawUser = window.localStorage.getItem(STORAGE_KEY);
-    if (!rawUser) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(rawUser) as GoogleVisualUser;
-      if (parsed?.name) {
-        setUser(parsed);
-      }
-    } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
-  }, []);
 
   useEffect(() => {
     if (!clientId) {
@@ -156,8 +176,7 @@ export function GoogleVisualLogin({ fullWidth = false, onAction }: GoogleVisualL
 
             try {
               const profile = await fetchGoogleUser(tokenResponse.access_token);
-              setUser(profile);
-              window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+              writeStoredUser(JSON.stringify(profile));
             } catch (error) {
               console.error(error);
             } finally {
@@ -194,10 +213,7 @@ export function GoogleVisualLogin({ fullWidth = false, onAction }: GoogleVisualL
 
   const handleLogout = () => {
     onAction?.();
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
-    setUser(null);
+    writeStoredUser(null);
   };
 
   if (user) {
@@ -205,9 +221,12 @@ export function GoogleVisualLogin({ fullWidth = false, onAction }: GoogleVisualL
       <div className={`flex items-center gap-2 ${buttonClassName}`}>
         <div className="flex min-w-0 items-center gap-2 rounded-md border border-border bg-background px-2 py-1">
           {user.picture ? (
-            <img
+            <Image
               src={user.picture}
               alt={`Foto de ${user.name}`}
+              width={24}
+              height={24}
+              unoptimized
               className="h-6 w-6 rounded-full"
               referrerPolicy="no-referrer"
             />
