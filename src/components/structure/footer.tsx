@@ -1,12 +1,10 @@
 import Link from "next/link"
 import { MapPin } from "lucide-react"
 import Image from "next/image";
-import { FaInstagram } from "@react-icons/all-files/fa/FaInstagram";
-import { FaFacebookF } from "@react-icons/all-files/fa/FaFacebookF";
 import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { FaEnvelope } from "@react-icons/all-files/fa/FaEnvelope";
-import { SiTiktok } from "@react-icons/all-files/si/SiTiktok";
 import { getCategoryPages, getCategoryPath } from "@/lib/categories.server";
+import { SocialLinks } from "@/components/custom/social-links";
 
 const footerLinkClassName =
   "rounded-sm underline-offset-4 transition-colors hover:text-inspirarte-petroleum-deep hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -35,7 +33,7 @@ export async function Footer() {
     // acción que llega a AA sobre ella (4.69:1); el petróleo base (3.95:1) y el cian no.
     <footer
       id="legales"
-      className="bg-background text-foreground"
+      className="bg-background text-foreground print:hidden"
       style={{
         backgroundImage: "url('/dam/background.webp')",
         backgroundSize: "cover",
@@ -62,41 +60,7 @@ export async function Footer() {
             <p className="text-sm leading-relaxed">
               Materializamos tus ideas con precisión y detalle.
             </p>
-            <div className="flex gap-4">
-              {process.env.NEXT_PUBLIC_INSTAGRAM && (
-                <Link
-                  href={process.env.NEXT_PUBLIC_INSTAGRAM}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={socialLinkClassName}
-                  aria-label="Instagram"
-                >
-                  <FaInstagram aria-hidden="true" className="w-5 h-5" />
-                </Link>
-              )}
-              {process.env.NEXT_PUBLIC_FACEBOOK && (
-                <Link
-                  href={process.env.NEXT_PUBLIC_FACEBOOK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={socialLinkClassName}
-                  aria-label="Facebook"
-                >
-                  <FaFacebookF aria-hidden="true" className="w-5 h-5" />
-                </Link>
-              )}
-              {process.env.NEXT_PUBLIC_TIKTOK && (
-                <Link
-                  href={process.env.NEXT_PUBLIC_TIKTOK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={socialLinkClassName}
-                  aria-label="Tiktok"
-                >
-                  <SiTiktok aria-hidden="true" className="w-5 h-5" />
-                </Link>
-              )}
-            </div>
+            <SocialLinks linkClassName={socialLinkClassName} />
           </div>
 
           {/* Quick Links */}

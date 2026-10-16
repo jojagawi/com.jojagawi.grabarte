@@ -2,13 +2,16 @@ import Link from "next/link";
 import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { FaEnvelope } from "@react-icons/all-files/fa/FaEnvelope";
 import { FaClock } from "@react-icons/all-files/fa/FaClock";
+import { FaPhoneAlt } from "@react-icons/all-files/fa/FaPhoneAlt";
 
 interface ContactMethodsProps {
   // Enlace de WhatsApp con el contexto de la cotización; sin él, solo abre el chat.
   whatsappHref?: string | null;
+  // Agrega el mismo número como teléfono para llamar (tel:), útil en móvil.
+  showPhone?: boolean;
 }
 
-export function ContactMethods({ whatsappHref }: ContactMethodsProps) {
+export function ContactMethods({ whatsappHref, showPhone = false }: ContactMethodsProps) {
   const email = process.env.NEXT_PUBLIC_EMAIL;
   const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP;
   const schedules = process.env.NEXT_PUBLIC_SCHEDULES;
@@ -42,6 +45,24 @@ export function ContactMethods({ whatsappHref }: ContactMethodsProps) {
                 href={whatsappHref || `https://wa.me/${whatsapp.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                {whatsapp}
+              </a>
+            </p>
+          </div>
+        </div>
+      )}
+      {showPhone && whatsapp && (
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <FaPhoneAlt aria-hidden="true" className="w-5 h-5 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-medium text-foreground">Teléfono</h3>
+            <p className="text-muted-foreground">
+              <a
+                href={`tel:+${whatsapp.replace(/\D/g, "")}`}
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
                 {whatsapp}

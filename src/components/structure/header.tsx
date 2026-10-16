@@ -74,7 +74,7 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
   return (
     <header
       data-scrolled={isScrolled}
-      className="glass-chrome fixed top-0 left-0 right-0 z-50 border-b border-transparent transition-[border-color] duration-200 data-[scrolled=true]:border-(--chrome-hairline)"
+      className="glass-chrome print:hidden fixed top-0 left-0 right-0 z-50 border-b border-transparent transition-[border-color] duration-200 data-[scrolled=true]:border-(--chrome-hairline)"
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
@@ -146,6 +146,9 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link href="/catalogos/contactos">Contactos</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/catalogos/flyers">Flyers QR</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link href="/catalogos/temporadas">Temporadas</Link>
@@ -270,6 +273,13 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                           className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
                         >
                           Contactos
+                        </Link>
+                        <Link
+                          href="/catalogos/flyers"
+                          onClick={() => setIsOpen(false)}
+                          className="pl-4 text-base font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          Flyers QR
                         </Link>
                         <Link
                           href="/catalogos/temporadas"

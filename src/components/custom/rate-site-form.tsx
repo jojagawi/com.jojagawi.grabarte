@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getRecaptchaToken, googleSiteKey } from "@/lib/recaptcha";
 import { convertToWebp } from "@/lib/rate-image";
 import { PRIVACY_NOTICE, TERMS_AND_CONDITIONS } from "@/lib/legal";
+import { type QueryProduct, useQueryProduct } from "@/lib/query-product";
 
 type RateFormState = {
   name: string;
@@ -20,10 +21,7 @@ type RateFormState = {
   acceptedTerms: boolean;
 };
 
-export type RateableProduct = {
-  id: number;
-  name: string;
-};
+export type RateableProduct = QueryProduct;
 
 interface RateSiteFormProps {
   /** Diseños publicados: ?id= solo se acepta si corresponde a uno de ellos. */
@@ -109,33 +107,9 @@ async function uploadRatePhoto(photo: Blob): Promise<string> {
   return signed.body.rateId;
 }
 
-// Export estático: el ?id= se lee en el cliente (useSearchParams obligaría a un Suspense).
-// En el HTML prerenderado no hay query string, así que el servidor reporta "".
-function subscribeToLocation(): () => void {
-  return () => {};
-}
-
-function getLocationSearch(): string {
-  return window.location.search;
-}
-
-function getServerLocationSearch(): string {
-  return "";
-}
-
-function findProductById(products: RateableProduct[], search: string): RateableProduct | null {
-  const rawId = new URLSearchParams(search).get("id")?.trim() ?? "";
-  if (!/^\d+$/u.test(rawId)) {
-    return null;
-  }
-
-  return products.find((product) => product.id === Number(rawId)) ?? null;
-}
-
 export function RateSiteForm({ products }: RateSiteFormProps) {
   const [formState, setFormState] = useState<RateFormState>(initialFormState);
-  const locationSearch = useSyncExternalStore(subscribeToLocation, getLocationSearch, getServerLocationSearch);
-  const ratedProduct = useMemo(() => findProductById(products, locationSearch), [products, locationSearch]);
+  const ratedProduct = useQueryProduct(products);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState | null>(null);
   const [photo, setPhoto] = useState<RatePhoto | null>(null);
