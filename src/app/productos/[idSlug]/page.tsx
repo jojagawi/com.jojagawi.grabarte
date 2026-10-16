@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, QrCode } from "lucide-react";
 import { buildPageMetadata, fitTitle, toAbsoluteUrl, toMetaDescription } from "@/lib/metadata";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
@@ -795,18 +795,29 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </Button>
 
           {canEditDesigns && (
-            <Button
-              asChild
-              className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
-            >
-              <Link
-                href={`/productos/editar/${design.id}`}
-                className="inline-flex items-center gap-2"
+            <div className="flex flex-wrap gap-3">
+              <Button asChild variant="outline">
+                <Link
+                  href={`/catalogos/flyers/?id=${design.id}`}
+                  className="inline-flex items-center gap-2"
+                >
+                  <QrCode className="w-4 h-4" />
+                  Flyer con QR
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="bg-primary hover:bg-inspirarte-petroleum-deep text-white"
               >
-                <Pencil className="w-4 h-4" />
-                Editar producto
-              </Link>
-            </Button>
+                <Link
+                  href={`/productos/editar/${design.id}`}
+                  className="inline-flex items-center gap-2"
+                >
+                  <Pencil className="w-4 h-4" />
+                  Editar producto
+                </Link>
+              </Button>
+            </div>
           )}
         </div>
 
