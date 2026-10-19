@@ -52,7 +52,7 @@
     "@aws-sdk/client-s3": "^3.893.0",
     "@bugsnag/browser-performance": "^3.4.1",
     "@bugsnag/js": "^9.0.0",
-    "@bugsnag/plugin-react": "^9.0.0",
+    "@bugsnag/plugin-react": "^9.1.0",
     "@hookform/resolvers": "^3.9.1",
     "@huggingface/inference": "^4.13.30",
     "@jsquash/webp": "^1.5.0",
