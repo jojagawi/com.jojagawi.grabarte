@@ -440,6 +440,19 @@ export function serializeJsonLd(value: unknown) {
   return JSON.stringify(value).replace(/</gu, "\\u003c");
 }
 
+// Perfil de Google Business (enlace "Compartir perfil"); se puede cambiar con NEXT_PUBLIC_GOOGLE_BUSINESS.
+const DEFAULT_GOOGLE_BUSINESS_URL = "https://share.google/7gV0CtdvltCVHepT8";
+
+// Perfiles que identifican al negocio fuera del sitio (redes sociales y ficha de Google).
+function getSameAsProfiles(): string[] {
+  return [
+    process.env.NEXT_PUBLIC_INSTAGRAM,
+    process.env.NEXT_PUBLIC_FACEBOOK,
+    process.env.NEXT_PUBLIC_TIKTOK,
+    process.env.NEXT_PUBLIC_GOOGLE_BUSINESS || DEFAULT_GOOGLE_BUSINESS_URL,
+  ].filter((profile): profile is string => Boolean(profile));
+}
+
 export function buildOrganizationJsonLd() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
   const siteName = process.env.NEXT_PUBLIC_SITENAME?.trim() || "InspiraArte";
@@ -447,11 +460,6 @@ export function buildOrganizationJsonLd() {
   const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP || "";
   const websiteUrl = normalizeExternalUrl(siteUrl) || toAbsoluteLikeUrl("/");
   const whatsappTelephone = normalizeTelephone(whatsapp);
-  const socialProfiles = [
-    process.env.NEXT_PUBLIC_INSTAGRAM,
-    process.env.NEXT_PUBLIC_FACEBOOK,
-    process.env.NEXT_PUBLIC_TIKTOK,
-  ];
 
   return {
     "@context": "https://schema.org",
@@ -461,7 +469,7 @@ export function buildOrganizationJsonLd() {
       logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
       description: `${siteName} es un taller de corte y grabado láser en Ciudad de México que diseña y produce regalos y productos personalizados.`,
       foundingDate: FOUNDING_YEAR,
-      sameAs: socialProfiles.filter((profile): profile is string => Boolean(profile)),
+      sameAs: getSameAsProfiles(),
       contactPoints: [
         {
           contactType: "customer service",
@@ -498,11 +506,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
     name: input.brandName,
     url: toAbsoluteLikeUrl("/"),
     logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
-    sameAs: [
-      process.env.NEXT_PUBLIC_INSTAGRAM,
-      process.env.NEXT_PUBLIC_FACEBOOK,
-      process.env.NEXT_PUBLIC_TIKTOK,
-    ].filter((profile): profile is string => Boolean(profile)),
+    sameAs: getSameAsProfiles(),
     contactPoints: [
       {
         contactType: "customer service",
