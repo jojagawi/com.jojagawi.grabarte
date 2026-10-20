@@ -95,15 +95,15 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="es"
+      lang="es-MX"
       data-scroll-behavior="smooth"
       className={`bg-background ${dmSans.className} ${playfair.className}`}
     >
       <body
-        className={`${dmSans.variable} ${playfair.variable} font-sans antialiased`}
+        className={`${dmSans.variable} ${playfair.variable} font-sans antialiased flex min-h-svh flex-col`}
       >
-        <main className="min-h-svh">
-          <Header seasonLinks={await getDevSeasonLinks()} />
+        <Header seasonLinks={await getDevSeasonLinks()} />
+        <main className="flex-1">
           {process.env.NEXT_GTM && (
             <Script id="google-consent-mode" strategy="beforeInteractive">
               {`window.dataLayer = window.dataLayer || [];
@@ -124,13 +124,13 @@ gtag('consent', 'default', {
             dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationJsonLd) }}
           />
           <BugsnagBoundary>{children}</BugsnagBoundary>
-          <Footer />
-          <PwaAnalytics />
-          <WebMcpInit />
-          {process.env.NEXT_GTM && (
-            <GoogleTagManager gtmId={process.env.NEXT_GTM} />
-          )}
         </main>
+        <Footer />
+        <PwaAnalytics />
+        <WebMcpInit />
+        {process.env.NEXT_GTM && (
+          <GoogleTagManager gtmId={process.env.NEXT_GTM} />
+        )}
         <Script id="register-service-worker" strategy="afterInteractive">
           {`if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
   const swPath = "/service-worker.js";
