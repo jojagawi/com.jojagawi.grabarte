@@ -21,6 +21,7 @@ export interface AdminSeason {
   slug: string;
   name: string;
   description: string | null;
+  guide: string | null;
   startMonth: number;
   endMonth: number;
   leadDays: number;

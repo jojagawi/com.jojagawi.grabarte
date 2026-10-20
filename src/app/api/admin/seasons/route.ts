@@ -10,9 +10,13 @@ const MAX_LEAD_DAYS = 90;
 
 const MAX_DESCRIPTION_LENGTH = 600;
 
+// La guía es Markdown largo (600–1,000 palabras caben de sobra).
+const MAX_GUIDE_LENGTH = 12000;
+
 type SeasonInput = {
   name: string;
   description: string | null;
+  guide: string | null;
   startMonth: number;
   endMonth: number;
   leadDays: number;
@@ -33,6 +37,7 @@ function parseInput(body: unknown): SeasonInput | string {
   const data = (body ?? {}) as Record<string, unknown>;
   const name = String(data.name ?? "").trim();
   const description = String(data.description ?? "").trim();
+  const guide = String(data.guide ?? "").replace(/\r\n/gu, "\n").trim();
   const startMonth = Number(data.startMonth);
   const endMonth = Number(data.endMonth);
   const leadDays = Number(data.leadDays);
@@ -49,6 +54,9 @@ function parseInput(body: unknown): SeasonInput | string {
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     return `La descripción admite hasta ${MAX_DESCRIPTION_LENGTH} caracteres.`;
   }
+  if (guide.length > MAX_GUIDE_LENGTH) {
+    return `La guía admite hasta ${MAX_GUIDE_LENGTH} caracteres.`;
+  }
   if (!isValidMonth(startMonth) || !isValidMonth(endMonth)) {
     return "Los meses deben estar entre enero y diciembre.";
   }
@@ -59,7 +67,7 @@ function parseInput(body: unknown): SeasonInput | string {
     return "El orden debe ser un número entero.";
   }
 
-  return { name, description: description || null, startMonth, endMonth, leadDays, sortOrder, status, categoryIds };
+  return { name, description: description || null, guide: guide || null, startMonth, endMonth, leadDays, sortOrder, status, categoryIds };
 }
 
 // Descarta ids que no existan para no fallar por una categoría borrada.
@@ -96,6 +104,7 @@ async function loadSeason(id: number): Promise<AdminSeason | null> {
     slug: season.slug,
     name: season.name,
     description: season.description,
+    guide: season.guide,
     startMonth: season.startMonth,
     endMonth: season.endMonth,
     leadDays: season.leadDays,
@@ -121,6 +130,7 @@ export async function POST(request: Request) {
       slug: await uniqueSlug(input.name),
       name: input.name,
       description: input.description,
+      guide: input.guide,
       startMonth: input.startMonth,
       endMonth: input.endMonth,
       leadDays: input.leadDays,
@@ -163,6 +173,7 @@ export async function PUT(request: Request) {
       data: {
         name: input.name,
         description: input.description,
+        guide: input.guide,
         startMonth: input.startMonth,
         endMonth: input.endMonth,
         leadDays: input.leadDays,

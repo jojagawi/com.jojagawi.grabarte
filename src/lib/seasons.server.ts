@@ -36,6 +36,7 @@ export async function getSeasons(statuses: number[] = [SEASON_STATUS.active]): P
 
 export interface SeasonPage extends Season {
   description: string | null;
+  guide: string | null;
 }
 
 // Temporadas que generan página /temporada/[slug]: activas y "solo página".
@@ -44,11 +45,38 @@ export async function getSeasonPages(): Promise<SeasonPage[]> {
     getSeasons(SEASON_PAGE_STATUSES),
     prisma.catSeasons.findMany({
       where: { status: { in: SEASON_PAGE_STATUSES } },
-      select: { id: true, description: true },
+      select: { id: true, description: true, guide: true },
     }),
   ]);
-  const descriptionById = new Map(descriptions.map((season) => [season.id, season.description?.trim() || null]));
-  return seasons.map((season) => ({ ...season, description: descriptionById.get(season.id) ?? null }));
+  const textsById = new Map(descriptions.map((season) => [season.id, season]));
+  return seasons.map((season) => ({
+    ...season,
+    description: textsById.get(season.id)?.description?.trim() || null,
+    guide: textsById.get(season.id)?.guide?.trim() || null,
+  }));
+}
+
+export interface SeasonGuideLink {
+  label: string;
+  path: string;
+}
+
+// Temporadas con guía de cada categoría: la página de la categoría enlaza a la guía para que
+// ambas no compitan por la misma búsqueda (la categoría lista, la temporada explica).
+export async function getSeasonGuidesByCategoryId(): Promise<Map<number, SeasonGuideLink[]>> {
+  const guides = new Map<number, SeasonGuideLink[]>();
+  for (const season of await getSeasonPages()) {
+    if (!season.guide) {
+      continue;
+    }
+    for (const categoryId of season.categoryIds) {
+      guides.set(categoryId, [
+        ...(guides.get(categoryId) ?? []),
+        { label: season.label, path: `${getSeasonPath(season.slug)}/` },
+      ]);
+    }
+  }
+  return guides;
 }
 
 export async function getSeasonPage(slug: string): Promise<SeasonPage | null> {

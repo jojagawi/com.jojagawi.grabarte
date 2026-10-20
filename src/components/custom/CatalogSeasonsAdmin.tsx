@@ -45,6 +45,7 @@ type SeasonDraft = {
   id: number | null;
   name: string;
   description: string;
+  guide: string;
   startMonth: number;
   endMonth: number;
   leadDays: string;
@@ -66,6 +67,7 @@ function emptyDraft(nextSortOrder: number): SeasonDraft {
     id: null,
     name: "",
     description: "",
+    guide: "",
     startMonth: 1,
     endMonth: 1,
     leadDays: String(DEFAULT_SEASON_LEAD_DAYS),
@@ -80,6 +82,7 @@ function draftFromSeason(season: AdminSeason): SeasonDraft {
     id: season.id,
     name: season.name,
     description: season.description ?? "",
+    guide: season.guide ?? "",
     startMonth: season.startMonth,
     endMonth: season.endMonth,
     leadDays: String(season.leadDays),
@@ -184,6 +187,7 @@ export function CatalogSeasonsAdmin({ todayIso, initialSeasons, categories }: Ca
           id: draft.id ?? undefined,
           name: draft.name.trim(),
           description: draft.description.trim(),
+          guide: draft.guide.trim(),
           startMonth: draft.startMonth,
           endMonth: draft.endMonth,
           leadDays: Number(draft.leadDays),
@@ -367,6 +371,22 @@ export function CatalogSeasonsAdmin({ todayIso, initialSeasons, categories }: Ca
                 <span className="text-xs text-muted-foreground">
                   Se muestra en /temporada/{draft.id ? seasons.find((season) => season.id === draft.id)?.slug : "…"} y
                   en la descripción para buscadores. {draft.description.length}/600
+                </span>
+              </label>
+
+              <label htmlFor="season-guide" className="flex flex-col gap-1 text-sm text-foreground">
+                Guía (Markdown)
+                <Textarea
+                  id="season-guide"
+                  value={draft.guide}
+                  maxLength={12000}
+                  className="min-h-48 font-mono text-xs"
+                  placeholder={"## Cómo elegir…\n\nTexto de la guía con ## y ### para secciones, - listas, | tablas | y [enlaces](/productos/)."}
+                  onChange={(event) => setDraft({ ...draft, guide: event.target.value })}
+                />
+                <span className="text-xs text-muted-foreground">
+                  Se muestra debajo de las piezas de la temporada. Usa ## y ### (nunca #), listas, tablas,
+                  **negritas** y [enlaces](/ruta/). {draft.guide.length}/12000
                 </span>
               </label>
 
