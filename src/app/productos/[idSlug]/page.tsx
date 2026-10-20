@@ -614,6 +614,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       return [];
     });
 
+  const primaryCategoryName = categories.find((categoryName) => categoryPaths.has(categoryName.trim()));
   const productJsonLd = buildProductJsonLd({
     name: design.name,
     description:
@@ -626,6 +627,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     brandName: "InspiraArte",
     material: design.material?.name?.trim() || null,
     categories,
+    primaryCategory: primaryCategoryName
+      ? { name: primaryCategoryName, path: categoryPaths.get(primaryCategoryName.trim()) as string }
+      : null,
     images: [previewItem?.previewUrl, ...galleryItems.map((item) => item.previewUrl)].filter(
       (value): value is string => Boolean(value),
     ),

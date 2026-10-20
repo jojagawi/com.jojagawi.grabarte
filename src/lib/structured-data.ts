@@ -66,6 +66,8 @@ type ProductStructuredDataInput = {
   availability?: string | null;
   dimensions?: string | null;
   keywords?: string[];
+  // Categoría con página propia: se agrega a las migas entre "Productos" y el diseño.
+  primaryCategory?: BreadcrumbItem | null;
   reviews?: ProductReviewInput[];
   prices?: {
     minimumPrice?: number | null;
@@ -144,7 +146,13 @@ function toAbsoluteLikeUrl(url: string) {
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
-  return new URL(url, baseUrl).toString();
+  const absoluteUrl = new URL(url, baseUrl);
+  // Las páginas usan trailingSlash (next.config.ts): las URL del schema deben coincidir con el canonical.
+  // Los archivos (/dam/logo.webp) se quedan igual.
+  if (!absoluteUrl.pathname.endsWith("/") && !/\.[a-z0-9]+$/iu.test(absoluteUrl.pathname)) {
+    absoluteUrl.pathname = `${absoluteUrl.pathname}/`;
+  }
+  return absoluteUrl.toString();
 }
 
 function normalizeText(value: unknown) {
@@ -270,6 +278,73 @@ function mapAvailability(value: string | null | undefined) {
   return normalizeAvailability(value).schema;
 }
 
+// El taller atiende desde CDMX y envía a todo México; no publica dirección de calle
+// (NEXT_PUBLIC_DIR = "Ciudad de México, México"), así que basta con ciudad y país.
+function buildBusinessAddressNode() {
+  return {
+    "@type": "PostalAddress",
+    addressLocality: "Ciudad de México",
+    addressRegion: "CDMX",
+    addressCountry: "MX",
+  };
+}
+
+const DAY_OF_WEEK: Record<string, string> = {
+  lunes: "Monday",
+  martes: "Tuesday",
+  miercoles: "Wednesday",
+  jueves: "Thursday",
+  viernes: "Friday",
+  sabado: "Saturday",
+  domingo: "Sunday",
+};
+const WEEK_ORDER = Object.keys(DAY_OF_WEEK);
+
+function stripAccents(value: string) {
+  return value.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
+
+// "11am" → "11:00", "3pm" → "15:00", "15:30" → "15:30"; texto no reconocido → null.
+function parseScheduleTime(value: string): string | null {
+  const match = value.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/iu);
+  if (!match) {
+    return null;
+  }
+  let hours = Number(match[1]);
+  const minutes = match[2] ?? "00";
+  const meridiem = match[3]?.toLowerCase();
+  if (meridiem === "pm" && hours < 12) {
+    hours += 12;
+  } else if (meridiem === "am" && hours === 12) {
+    hours = 0;
+  }
+  return hours <= 23 ? `${String(hours).padStart(2, "0")}:${minutes}` : null;
+}
+
+// NEXT_PUBLIC_SCHEDULES = "Lunes a Viernes: 11am - 3pm|Sábado: 10am - 2pm".
+// Lo que no se pueda interpretar se omite, para no publicar horarios equivocados.
+function parseOpeningHours(rawSchedules: string | null | undefined) {
+  return normalizeText(rawSchedules)
+    .split("|")
+    .map((entry) => {
+      const [dayPart, ...hourParts] = entry.split(":");
+      const days = stripAccents(normalizeText(dayPart).toLowerCase()).split(/\s+a\s+/u);
+      const [opens, closes] = hourParts.join(":").split(/\s+(?:-|a)\s+/u).map(parseScheduleTime);
+      const firstDay = WEEK_ORDER.indexOf(days[0] ?? "");
+      const lastDay = WEEK_ORDER.indexOf(days[days.length - 1] ?? "");
+      if (firstDay < 0 || lastDay < firstDay || days.length > 2 || !opens || !closes) {
+        return null;
+      }
+      return {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: WEEK_ORDER.slice(firstDay, lastDay + 1).map((day) => DAY_OF_WEEK[day]),
+        opens,
+        closes,
+      };
+    })
+    .filter(Boolean);
+}
+
 function buildOrganizationNode(input: OrganizationStructuredDataInput) {
   const logoUrl = normalizeExternalUrl(input.logo);
   const sameAs = Array.from(
@@ -303,8 +378,14 @@ function buildOrganizationNode(input: OrganizationStructuredDataInput) {
     })
     .filter(Boolean);
 
+  const telephone = contactPoint.find((contact) => contact?.telephone)?.telephone;
+  const email = contactPoint.find((contact) => contact?.email)?.email;
+  const openingHours = parseOpeningHours(process.env.NEXT_PUBLIC_SCHEDULES);
+
+  // LocalBusiness (subtipo de Organization) para conectar con búsquedas "en CDMX" y Maps.
+  // El mismo nodo sirve de fabricante y vendedor en los productos, con el mismo @id.
   return {
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     "@id": `${toAbsoluteLikeUrl("/")}#organization`,
     name: input.name,
     url: normalizeExternalUrl(input.url) || toAbsoluteLikeUrl("/"),
@@ -320,6 +401,13 @@ function buildOrganizationNode(input: OrganizationStructuredDataInput) {
     foundingDate: normalizeText(input.foundingDate) || undefined,
     sameAs: sameAs.length > 0 ? sameAs : undefined,
     contactPoint: contactPoint.length > 0 ? contactPoint : undefined,
+    ...(telephone ? { telephone } : {}),
+    ...(email ? { email } : {}),
+    address: buildBusinessAddressNode(),
+    areaServed: { "@type": "Country", name: "México" },
+    ...(openingHours.length > 0 ? { openingHoursSpecification: openingHours } : {}),
+    currenciesAccepted: "MXN",
+    paymentAccepted: "Transferencia bancaria, depósito en OXXO, tarjeta de crédito o débito, PayPal",
     hasMerchantReturnPolicy: buildReturnPolicyNode(),
   };
 }
@@ -542,6 +630,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
   const breadcrumbNode = buildBreadcrumbNode(productUrl, [
     { name: "Inicio", path: "/" },
     { name: "Productos", path: "/productos" },
+    ...(input.primaryCategory ? [input.primaryCategory] : []),
     { name: input.name, path: productUrl },
   ]);
 
