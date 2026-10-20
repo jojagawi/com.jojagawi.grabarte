@@ -151,6 +151,16 @@ const faqs = [
     answer:
       "¡Ambos! Trabajamos con personas que buscan un regalo especial, organizadores de eventos, empresas que necesitan merchandising y cualquier persona con una idea creativa. Emitimos facturas y ofrecemos precios especiales para clientes frecuentes o pedidos grandes.",
   },
+  {
+    question: "¿Qué es el MDF?",
+    answer:
+      "El MDF (tablero de fibra de densidad media) es un tablero hecho con fibras de madera prensadas con resina. Tiene una superficie lisa, sin vetas ni nudos, por eso se corta limpio con láser y se pinta fácil con pintura acrílica. Es para interiores, porque la humedad lo hincha. Lo usamos en grosores de 2 a 9 mm.",
+  },
+  {
+    question: "¿Qué es el grabado láser?",
+    answer:
+      "El grabado láser es una técnica en la que un rayo láser quema o retira la capa superficial del material para marcar textos, fechas, logos o imágenes. No usa tintas, así que el grabado es permanente y no se despinta. El corte láser usa el mismo equipo, pero atraviesa el material para darle forma a la pieza.",
+  },
 ] as const;
 
 // Temporadas de la vitrina de la portada. Las categorías se enlazan por nombre
