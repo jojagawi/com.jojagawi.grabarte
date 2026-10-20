@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { MessageSquare, Palette, Package, Truck } from "lucide-react";
 import Link from "next/link";
 
@@ -39,9 +40,11 @@ const whatsappMessage =
 interface ProcessProps {
   /** Página propia (/proceso): el título de la sección es el h1. */
   isPageTitle?: boolean;
+  /** Contenido extra entre los pasos y la llamada a cotizar (el detalle de /proceso). */
+  children?: ReactNode;
 }
 
-export function Process({ isPageTitle = false }: ProcessProps) {
+export function Process({ isPageTitle = false, children }: ProcessProps) {
   const TitleTag = isPageTitle ? "h1" : "h2";
 
   return (
@@ -100,6 +103,8 @@ export function Process({ isPageTitle = false }: ProcessProps) {
             );
           })}
         </div>
+
+        {children}
 
         {/* Bottom CTA */}
         <div className="mt-16 bg-primary rounded-2xl p-8 md:p-12">

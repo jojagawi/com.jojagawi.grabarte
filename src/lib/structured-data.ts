@@ -715,6 +715,8 @@ export function buildCollectionPageJsonLd(input: {
   description: string;
   breadcrumbs: BreadcrumbItem[];
   items: Array<{ name: string; path: string; image?: string }>;
+  // La misma fecha visible "Actualizado el…" de la página.
+  dateModified?: Date | null;
 }) {
   const pageUrl = toAbsoluteLikeUrl(input.path);
   const siteUrl = toAbsoluteLikeUrl("/");
@@ -729,6 +731,7 @@ export function buildCollectionPageJsonLd(input: {
         description: input.description,
         url: pageUrl,
         inLanguage: "es-MX",
+        ...(input.dateModified ? { dateModified: input.dateModified.toISOString() } : {}),
         isPartOf: { "@id": `${siteUrl}#website` },
         breadcrumb: { "@id": `${pageUrl}#breadcrumbs` },
         mainEntity: { "@id": `${pageUrl}#items` },

@@ -40,6 +40,8 @@ export function getSiteDesigns() {
       // Pedidos ganados en HubSpot (lo actualiza hubspot:sync-products).
       requests: true,
       createdAt: true,
+      // Fecha visible "Actualizado el…" de categorías y temporadas.
+      updatedAt: true,
       relDesignsCategories: {
         where: {
           status: 1,
