@@ -54,7 +54,7 @@
     "@bugsnag/js": "^9.0.0",
     "@bugsnag/plugin-react": "^9.1.0",
     "@hookform/resolvers": "^3.9.1",
-    "@huggingface/inference": "^4.13.30",
+    "@huggingface/inference": "^4.13.32",
     "@jsquash/webp": "^1.5.0",
     "@mcp-b/webmcp-polyfill": "^4.0.0",
     "@next/third-parties": "^16.2.11",
