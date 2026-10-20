@@ -55,7 +55,7 @@ Cortamos y grabamos cada pieza con láser en nuestro taller de la Ciudad de Méx
 
 | Tipo de pedido | Tiempo de producción |
 | --- | --- |
-| Pedido pequeño (1 a 10 piezas) | 3 a 5 días hábiles |
+| Pedido pequeño (1 a 10 piezas) | 3 a 4 días hábiles |
 | Pedido grande o diseño complejo | 7 a 15 días hábiles |
 | Temporadas como Día de muertos o Navidad | Pide con al menos 3 semanas de anticipación |
 

@@ -114,7 +114,7 @@ const faqs = [
   {
     question: "¿Cuánto tiempo tarda mi pedido?",
     answer:
-      "El tiempo depende del producto y la cantidad. Generalmente, pedidos pequeños (1-10 piezas) están listos en 3-5 días hábiles. Para pedidos grandes o con diseños complejos, el tiempo puede ser de 7-15 días. Te confirmamos la fecha exacta al aprobar tu diseño.",
+      "El tiempo depende del producto y la cantidad. Generalmente, pedidos pequeños (1-10 piezas) están listos en 3 a 4 días hábiles. Para pedidos grandes o con diseños complejos, el tiempo puede ser de 7-15 días. Te confirmamos la fecha exacta al aprobar tu diseño.",
   },
   {
     question: "¿Cuál es el pedido mínimo?",
