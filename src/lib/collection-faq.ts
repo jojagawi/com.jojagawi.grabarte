@@ -20,8 +20,9 @@ interface CollectionFaqInput {
   leadDays?: number;
 }
 
-// Mismos plazos que la FAQ general (/faq).
-const SMALL_ORDER_DAYS = "3 a 5 días hábiles";
+// Mismos plazos que la FAQ general (/faq) y /proceso: un solo plazo para todo el sitio, en vez del
+// rango de las fichas, para que ninguna página contradiga a otra.
+const SMALL_ORDER_DAYS = "3 a 4 días hábiles";
 const LARGE_ORDER_DAYS = "7 a 15 días";
 
 function joinList(items: string[]): string {
@@ -84,30 +85,11 @@ function describeCustomization(name: string, designs: SiteDesign[]): CollectionF
   };
 }
 
-// Plazo de producción que declaran las fichas ("2 a 4 días hábiles"); sin plazos concretos, null.
-function productionRange(designs: SiteDesign[]): string | null {
-  const ranges = designs
-    .map((design) => design.productionTime?.trim().match(/^(\d+)\s*(?:a|-)\s*(\d+)\s*días hábiles/iu))
-    .filter((match): match is RegExpMatchArray => Boolean(match))
-    .map((match) => [Number(match[1]), Number(match[2])]);
-  if (ranges.length === 0) {
-    return null;
-  }
-
-  const min = Math.min(...ranges.map(([from]) => from));
-  const max = Math.max(...ranges.map(([, to]) => to));
-  return min === max ? `${min} días hábiles` : `${min} a ${max} días hábiles`;
-}
-
-function describeProductionTime(name: string, designs: SiteDesign[]): CollectionFaqItem {
-  const range = productionRange(designs);
-  const typical = range
-    ? `Estas piezas se producen en ${range} para pedidos pequeños`
-    : `Los pedidos pequeños (1 a 10 piezas) están listos en ${SMALL_ORDER_DAYS}`;
+function describeProductionTime(name: string): CollectionFaqItem {
   return {
     id: 4,
     question: `¿Cuánto tarda un pedido de ${name}?`,
-    answer: `${typical}; los pedidos grandes o con diseños complejos toman de ${LARGE_ORDER_DAYS}. Te confirmamos la fecha exacta al aprobar tu diseño. El envío se suma a ese tiempo.`,
+    answer: `Los pedidos pequeños (1 a 10 piezas) están listos en ${SMALL_ORDER_DAYS}; los pedidos grandes o con diseños complejos toman de ${LARGE_ORDER_DAYS}. Te confirmamos la fecha exacta al aprobar tu diseño. El envío se suma a ese tiempo.`,
   };
 }
 
@@ -141,7 +123,7 @@ export function buildCollectionFaq({ name, designs, leadDays }: CollectionFaqInp
     describePrices(name, designs),
     describeCustomization(name, designs),
     describeMaterials(name, designs),
-    describeProductionTime(name, designs),
+    describeProductionTime(name),
     SHIPPING_ITEM,
   ].filter((item): item is CollectionFaqItem => Boolean(item));
 }
