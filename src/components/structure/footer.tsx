@@ -63,9 +63,10 @@ export async function Footer() {
             <SocialLinks linkClassName={socialLinkClassName} />
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h2 className="font-semibold text-lg mb-4">Navegación</h2>
+          {/* Quick Links. Los títulos del pie son <p> y no <h2>: se repiten en todas las páginas y
+              no deben competir con la jerarquía de encabezados del contenido. */}
+          <nav aria-labelledby="footer-navegacion">
+            <p id="footer-navegacion" className="font-semibold text-lg mb-4">Navegación</p>
             <ul className="space-y-3">
               {[
                 { name: "Inicio", href: "/" },
@@ -86,11 +87,11 @@ export async function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Products */}
-          <div>
-            <h2 className="font-semibold text-lg mb-4">Productos</h2>
+          <nav aria-labelledby="footer-productos">
+            <p id="footer-productos" className="font-semibold text-lg mb-4">Productos</p>
             <ul className="space-y-3">
               {[...footerCategories, { name: "Ver todo el catálogo", href: "/productos" }].map((link) => (
                 <li key={link.href}>
@@ -100,11 +101,11 @@ export async function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
-            <h2 className="font-semibold text-lg mb-4">Contacto</h2>
+            <p className="font-semibold text-lg mb-4">Contacto</p>
             <ul className="space-y-4">
               {process.env.NEXT_PUBLIC_EMAIL && (
                 <li className="flex items-center gap-3">
