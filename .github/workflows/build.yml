@@ -118,6 +118,11 @@ jobs:
           SlackWebhookUrl=${{ secrets.SLACKWEBHOOKURL }},
           HubspotApiToken=${{ secrets.HUBSPOTAPIKEY }}"
           capabilities: "CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND"
+          # Nombre único por corrida: con el nombre por defecto (inspirarte-com-CS) choca con un
+          # change set viejo del mismo nombre y otros parámetros que quedó sin ejecutar en el stack
+          # ("mismatch with existing attribute Parameters"). Al ejecutarse este, CloudFormation
+          # borra los demás change sets del stack, incluido el viejo.
+          change-set-name: "inspirarte-com-${{ github.run_id }}-${{ github.run_attempt }}"
 
   static-site:
     name: Validate and build static-site
