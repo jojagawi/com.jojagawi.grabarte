@@ -31,6 +31,7 @@ import { toDisplayProductionTime } from "@/lib/site-designs.server";
 import { normalizeAvailability, SHIPPING_FALLBACK, toDisplayShippingTime } from "@/lib/product-facts";
 import { getApprovedProductRatesFromAthena } from "@/lib/rates-athena.server";
 import { ProductReviews } from "@/components/custom/product-reviews";
+import { formatUpdatedDate } from "@/components/custom/updated-date";
 
 const defaultImage = "/dam/default-image-product.webp";
 const canEditDesigns = process.env.NEXT_PUBLIC_ACL_ADD_DESIGNS === "true";
@@ -430,6 +431,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       minimumPrice: true,
       suggestedPrice: true,
       mayoreo: true,
+      // Fecha visible "Actualizado el…": la misma del lastmod del sitemap.
+      updatedAt: true,
       material: {
         select: {
           name: true,
@@ -917,6 +920,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   <div className="flex items-center gap-2">
                     <dt className="text-muted-foreground">Referencia</dt>
                     <dd className="font-medium text-foreground tabular-nums">{productReference}</dd>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <dt className="text-muted-foreground">Actualizado</dt>
+                    <dd className="font-medium text-foreground">
+                      <time dateTime={design.updatedAt.toISOString()}>{formatUpdatedDate(design.updatedAt)}</time>
+                    </dd>
                   </div>
                   {productCode && (
                     <div className="flex items-center gap-2">

@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQ } from "@/components/custom/faq";
 import { GuideContent } from "@/components/custom/guide-content";
+import { latestDate, UpdatedDate } from "@/components/custom/updated-date";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
 import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
@@ -83,10 +84,13 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
   const designs = await getSeasonDesigns(season);
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Temporada: ${season.label}`)}`;
   const seasonPath = `${getSeasonPath(season.slug)}/`;
+  // Misma regla que el lastmod del sitemap: la ficha más reciente o la edición de la temporada.
+  const updatedAt = latestDate([season.updatedAt, ...designs.map(({ design }) => design.updatedAt)]);
   const collectionJsonLd = buildCollectionPageJsonLd({
     path: seasonPath,
     name: season.label,
     description: describeSeason(season),
+    dateModified: updatedAt,
     breadcrumbs: [
       { name: "Inicio", path: "/" },
       { name: "Temporadas", path: "/temporada/" },
@@ -148,6 +152,7 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
               {designs.length} {designs.length === 1 ? "diseño" : "diseños"} de nuestro catálogo
             </p>
           )}
+          <UpdatedDate date={updatedAt} className="mt-1 text-sm text-muted-foreground" />
         </header>
 
         {designs.length > 0 ? (
