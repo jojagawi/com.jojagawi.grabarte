@@ -502,22 +502,9 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
     input.prices?.mayoreoPrice,
   ].filter((price): price is number => Number.isFinite(price));
 
-  const organization = buildOrganizationNode({
-    name: input.brandName,
-    url: toAbsoluteLikeUrl("/"),
-    logo: toAbsoluteLikeUrl(DEFAULT_LOGO_PATH),
-    sameAs: getSameAsProfiles(),
-    contactPoints: [
-      {
-        contactType: "customer service",
-        email: process.env.NEXT_PUBLIC_EMAIL || "contacto@inspiraarte.com",
-        telephone: normalizeTelephone(process.env.NEXT_PUBLIC_WHATSAPP || "") || undefined,
-        url: toAbsoluteLikeUrl("/contacto"),
-        areaServed: "MX",
-        availableLanguage: ["es-MX"],
-      },
-    ],
-  });
+  // El LocalBusiness completo ya lo emite el layout en cada página (buildOrganizationJsonLd);
+  // aquí solo se referencia por @id para no declarar un segundo nodo del negocio.
+  const organization = { "@id": `${toAbsoluteLikeUrl("/")}#organization` };
 
   const additionalProperty = [
     stringifyAdditionalProperty("Keywords", (input.keywords ?? []).join(", ")),
@@ -650,7 +637,7 @@ export function buildProductJsonLd(input: ProductStructuredDataInput) {
 
   return {
     "@context": "https://schema.org",
-    "@graph": [organization, productNode, breadcrumbNode, ...(faqNode ? [faqNode] : [])],
+    "@graph": [productNode, breadcrumbNode, ...(faqNode ? [faqNode] : [])],
   };
 }
 
