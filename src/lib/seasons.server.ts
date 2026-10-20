@@ -37,6 +37,7 @@ export async function getSeasons(statuses: number[] = [SEASON_STATUS.active]): P
 export interface SeasonPage extends Season {
   description: string | null;
   guide: string | null;
+  updatedAt: Date | null;
 }
 
 // Temporadas que generan página /temporada/[slug]: activas y "solo página".
@@ -45,7 +46,7 @@ export async function getSeasonPages(): Promise<SeasonPage[]> {
     getSeasons(SEASON_PAGE_STATUSES),
     prisma.catSeasons.findMany({
       where: { status: { in: SEASON_PAGE_STATUSES } },
-      select: { id: true, description: true, guide: true },
+      select: { id: true, description: true, guide: true, updatedAt: true },
     }),
   ]);
   const textsById = new Map(descriptions.map((season) => [season.id, season]));
@@ -53,6 +54,7 @@ export async function getSeasonPages(): Promise<SeasonPage[]> {
     ...season,
     description: textsById.get(season.id)?.description?.trim() || null,
     guide: textsById.get(season.id)?.guide?.trim() || null,
+    updatedAt: textsById.get(season.id)?.updatedAt ?? null,
   }));
 }
 

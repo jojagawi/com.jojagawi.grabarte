@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { FAQ } from "@/components/custom/faq";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
+import { latestDate, UpdatedDate } from "@/components/custom/updated-date";
 import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
 import { OG_IMAGE_SIZE } from "@/lib/og-image";
@@ -89,11 +90,14 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
   }
 
   const categoryPath = `${getCategoryPath(category.slug)}/`;
+  // Misma regla que el lastmod del sitemap: la ficha más reciente de la categoría.
+  const updatedAt = latestDate(category.designs.map((design) => design.updatedAt));
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Categoría: ${category.name}`)}`;
   const collectionJsonLd = buildCollectionPageJsonLd({
     path: categoryPath,
     name: category.name,
     description: describeCategory(category),
+    dateModified: updatedAt,
     breadcrumbs: [
       { name: "Inicio", path: "/" },
       { name: "Productos", path: "/productos/" },
@@ -158,6 +162,7 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
               {category.designs.length} {category.designs.length === 1 ? "diseño" : "diseños"} de nuestro catálogo
             </p>
           )}
+          <UpdatedDate date={updatedAt} className="mt-1 text-sm text-muted-foreground" />
           {seasonGuides.map((guide) => (
             <p key={guide.path} className="mt-4 text-base">
               <Link
