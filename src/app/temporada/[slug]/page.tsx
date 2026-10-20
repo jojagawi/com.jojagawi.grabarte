@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FAQ } from "@/components/custom/faq";
+import { GuideContent } from "@/components/custom/guide-content";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
 import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
@@ -174,6 +175,12 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
               </Button>
             </div>
           </div>
+        )}
+
+        {season.guide && (
+          <article aria-label={`Guía de ${season.label}`} className="mt-16 max-w-3xl">
+            <GuideContent markdown={season.guide} />
+          </article>
         )}
 
         {faqs.length > 0 && (

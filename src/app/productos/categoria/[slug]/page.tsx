@@ -7,6 +7,7 @@ import { ShowcaseCard } from "@/components/custom/showcase-card";
 import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
 import { OG_IMAGE_SIZE } from "@/lib/og-image";
+import { getSeasonGuidesByCategoryId } from "@/lib/seasons.server";
 import {
   type CategoryPage,
   getCategoryPage,
@@ -105,6 +106,7 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
     })),
   });
   const faqs = buildCollectionFaq({ name: category.name, designs: category.designs });
+  const seasonGuides = (await getSeasonGuidesByCategoryId()).get(category.id) ?? [];
 
   return (
     <section className="py-16 lg:py-24">
@@ -156,6 +158,20 @@ export default async function CategoryDesignsPage({ params }: CategoryPageProps)
               {category.designs.length} {category.designs.length === 1 ? "diseño" : "diseños"} de nuestro catálogo
             </p>
           )}
+          {seasonGuides.map((guide) => (
+            <p key={guide.path} className="mt-4 text-base">
+              <Link
+                href={guide.path}
+                className="group inline-flex items-center gap-2 font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Lee la guía de {guide.label}: ideas, medidas y cuándo pedir
+                <ArrowRight
+                  aria-hidden="true"
+                  className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+                />
+              </Link>
+            </p>
+          ))}
         </header>
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

@@ -18,6 +18,7 @@ Table CatSeasons {
   slug String [unique, not null]
   name String [not null]
   description String
+  guide String
   startMonth Int [not null]
   endMonth Int [not null]
   leadDays Int [not null, default: 21]

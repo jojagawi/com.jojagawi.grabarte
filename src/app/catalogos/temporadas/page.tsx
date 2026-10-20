@@ -50,6 +50,7 @@ export default async function CatalogSeasonsPage() {
         slug: season.slug,
         name: season.name,
         description: season.description,
+        guide: season.guide,
         startMonth: season.startMonth,
         endMonth: season.endMonth,
         leadDays: season.leadDays,
