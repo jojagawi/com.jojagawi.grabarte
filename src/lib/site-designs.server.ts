@@ -37,6 +37,8 @@ export function getSiteDesigns() {
       // Precio de referencia y material: los resumen las preguntas frecuentes de categorías y temporadas.
       suggestedPrice: true,
       material: { select: { name: true } },
+      // Tabla de tamaños de referencia en /proceso.
+      dimensions: true,
       // Pedidos ganados en HubSpot (lo actualiza hubspot:sync-products).
       requests: true,
       createdAt: true,

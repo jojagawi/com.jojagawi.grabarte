@@ -3,6 +3,8 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { buildHowToJsonLd, serializeJsonLd } from "@/lib/structured-data";
 import { GuideContent } from "@/components/custom/guide-content";
 import { Process, processSteps } from "@/components/custom/process";
+import { buildMaterialGuide } from "@/lib/material-guide";
+import { getSiteDesigns } from "@/lib/site-designs.server";
 
 
 export const metadata: Metadata = buildPageMetadata({
@@ -29,7 +31,7 @@ const howToJsonLd = buildHowToJsonLd({
 
 // Detalle de cada paso. Los plazos, pagos y formatos son los mismos de la FAQ (src/lib/faq-data.ts):
 // si cambian allá, cámbialos aquí.
-const processDetails = `## Paso 1: cuéntanos tu idea
+const orderSteps = `## Paso 1: cuéntanos tu idea
 
 Llena el [formulario de cotización](/contacto/) o escríbenos por WhatsApp. Te respondemos en menos de 24 horas. Para cotizar rápido, incluye:
 
@@ -69,11 +71,16 @@ Enviamos a toda la República Mexicana por paquetería. El costo depende del des
 
 Si llega dañada o con un error de producción, la reponemos sin costo. Por eso te enviamos fotos antes de mandarla.
 
-## Pedidos para eventos y empresas
+`;
+
+const eventOrders = `## Pedidos para eventos y empresas
 
 Para bodas, XV años, bautizos, graduaciones o regalos corporativos hay **descuento desde 10 piezas** y mejores precios desde 50. Cuéntanos la fecha del evento al cotizar para reservar tu lugar en producción. Tienes más respuestas en las [preguntas frecuentes](/faq/).`;
 
-export default function Proceso() {
+export default async function Proceso() {
+  const designs = await getSiteDesigns();
+  const processDetails = [orderSteps, buildMaterialGuide(designs), eventOrders].join("\n\n");
+
   return (
     <>
       <script
