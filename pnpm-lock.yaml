@@ -21,8 +21,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       '@bugsnag/plugin-react':
-        specifier: ^9.0.0
-        version: 9.0.0
+        specifier: ^9.1.0
+        version: 9.1.0(@bugsnag/core@9.0.0)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.10.0(react-hook-form@7.82.0(react@19.2.8))
@@ -537,10 +537,10 @@ packages:
   '@bugsnag/node@9.0.0':
     resolution: {integrity: sha512-zTBWPHaKaFFQbTT1J0VJF0jMS7vEIfePUcuJ92zAbaaN1Hm07gK+DDXzEiG5lZA75SngBHHrHEYEi5gH/LDpyg==}
 
-  '@bugsnag/plugin-react@9.0.0':
-    resolution: {integrity: sha512-+qHrcE39GZsLwZ0dTe4AxPGbrvOFjGlE1jkvFh74EXFKqDncg+aK1j+cedcYbYQDqSAdxCZ/i4oZ1j72BjGS8g==}
+  '@bugsnag/plugin-react@9.1.0':
+    resolution: {integrity: sha512-lQhBX5dF73MYQbK8ZgXZIqpTf+/Ww9JL3HqRdAx/tm4NrUXxofFs+BYMjztazwGTcv/bsJquZH3c365/urqimw==}
     peerDependencies:
-      '@bugsnag/core': ^8.0.0
+      '@bugsnag/core': ^9.0.0
     peerDependenciesMeta:
       '@bugsnag/core':
         optional: true
@@ -7163,7 +7163,9 @@ snapshots:
       pump: 3.0.4
       stack-generator: 2.0.10
 
-  '@bugsnag/plugin-react@9.0.0': {}
+  '@bugsnag/plugin-react@9.1.0(@bugsnag/core@9.0.0)':
+    optionalDependencies:
+      '@bugsnag/core': 9.0.0
 
   '@bugsnag/request-tracker-performance@3.2.0':
     dependencies:
