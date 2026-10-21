@@ -4,6 +4,7 @@ import { buildPageMetadata } from "@/lib/metadata";
 import {
   AGENT_CARD_PATH,
   API_CATALOG_PATH,
+  AUTH_MD_PATH,
   API_STATUS_PATH,
   OPENAPI_PATH,
   PUBLIC_DATA_FILES,
@@ -61,6 +62,10 @@ export default function DatosParaAgentes() {
               <li>
                 Estado: <a href={API_STATUS_PATH} className={linkClassName}>{API_STATUS_PATH}</a> responde{" "}
                 <code className={codeClassName}>{'{"status":"pass"}'}</code> cuando la API está publicada.
+              </li>
+              <li>
+                Autenticación de agentes: <a href={AUTH_MD_PATH} className={linkClassName}>{AUTH_MD_PATH}</a> (acceso
+                anónimo, sin registro ni credenciales)
               </li>
               <li>
                 Índice para modelos de lenguaje: <a href="/llms.txt" className={linkClassName}>/llms.txt</a>

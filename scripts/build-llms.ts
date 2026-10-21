@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { type HTMLElement, parse } from "node-html-parser";
 import { getWebMcpToolManifest } from "@/lib/webmcp-setup";
-import { AGENT_CARD_PATH, API_CATALOG_PATH, API_DOCS_PATH, OPENAPI_PATH, PUBLIC_DATA_FILES, TOOLS_MANIFEST_PATH } from "@/lib/public-api";
+import { AGENT_CARD_PATH, API_CATALOG_PATH, API_DOCS_PATH, AUTH_MD_PATH, OPENAPI_PATH, PUBLIC_DATA_FILES, TOOLS_MANIFEST_PATH } from "@/lib/public-api";
 
 // Genera llms.txt (índice) y llms-full.txt (texto completo) a partir de las páginas ya renderizadas,
 // así ambos reflejan exactamente lo que publica el sitio.
@@ -318,6 +318,7 @@ function buildLlmsTxt(pages: PageEntry[], options: Options): string {
         listItem("Catálogo de APIs", `${options.siteUrl}${API_CATALOG_PATH}`, "Linkset (RFC 9727) con la especificación, la documentación y el estado."),
         listItem("Agent Card (A2A)", `${options.siteUrl}${AGENT_CARD_PATH}`, "Habilidades del sitio para el descubrimiento entre agentes."),
         listItem("Documentación", `${options.siteUrl}${API_DOCS_PATH}`, "Cómo usar los datos y las herramientas para agentes."),
+        listItem("auth.md", `${options.siteUrl}${AUTH_MD_PATH}`, "Autenticación de agentes: acceso anónimo de solo lectura, sin registro ni credenciales."),
       ],
     ),
     section("Herramientas para agentes (WebMCP)", buildToolItems(options)),
