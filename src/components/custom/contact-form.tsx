@@ -27,7 +27,7 @@ const contactSubmitApiKey = process.env.NEXT_PUBLIC_CONTACT_LAMBDA_API_KEY?.trim
 const FORM_NAME = "ContactForm"
 const MAX_FILES = 5
 const MAX_FILE_BYTES = 10 * 1024 * 1024
-const MAX_DETAILS_LENGTH = 2000
+export const MAX_DETAILS_LENGTH = 2000
 // A partir de aquí el contador se anuncia: avisa antes de que el texto se corte.
 const DETAILS_WARNING_REMAINING = 200
 
@@ -163,8 +163,12 @@ export type QuoteLeadTime = {
   shipping: string | null
 }
 
+// Campos que pueden llegar ya escritos en la URL (la herramienta WebMCP prepare_quote).
+export type ContactPrefill = Partial<Pick<ContactFields, "quantity" | "neededBy" | "details">>
+
 interface ContactFormProps {
   requestedProduct: string | null
+  prefill?: ContactPrefill
   leadTime?: QuoteLeadTime | null
   // Cantidad y fecha escritas hasta ahora, para que WhatsApp las lleve.
   onDraftChange?: (draft: { quantity: string; neededBy: string }) => void
@@ -260,8 +264,8 @@ async function uploadFile(ticket: UploadTicket, file: File): Promise<boolean> {
   return response.ok
 }
 
-export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentChange }: ContactFormProps) {
-  const [fields, setFields] = useState<ContactFields>(initialFields)
+export function ContactForm({ requestedProduct, prefill, leadTime, onDraftChange, onSentChange }: ContactFormProps) {
+  const [fields, setFields] = useState<ContactFields>(() => ({ ...initialFields, ...prefill }))
   const [files, setFiles] = useState<File[]>([])
   const [errors, setErrors] = useState<FieldErrors>({})
   const [phase, setPhase] = useState<SubmitPhase>({ kind: "idle" })

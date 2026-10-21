@@ -1,5 +1,43 @@
 [
   {
+    "id": 273,
+    "idSlug": "273-trineo-de-santa-claus-en-mdf-para-decoracion-navidena",
+    "name": "Trineo de Santa Claus en MDF para Decoración Navideña",
+    "description": "Decora tu hogar con este trineo de Santa en MDF. Perfecto como dulcero o centro de mesa festivo. Ideal para personalizar a tu gusto. Se envía sin pintar ni armar.",
+    "categories": [
+      "Navidad"
+    ],
+    "reference": "IA-0273",
+    "material": "MDF",
+    "suggestedPrice": 250,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "22 cm largo x 10 cm ancho x 12 cm alto",
+    "isCustomizable": true,
+    "image": "https://dam.inspiraarte.com/preview/273-895-trineo-santa.webp",
+    "gallery": [],
+    "url": "/productos/273-trineo-de-santa-claus-en-mdf-para-decoracion-navidena"
+  },
+  {
+    "id": 271,
+    "idSlug": "271-arbol-de-navidad-3d-de-mdf-para-decorar-centro-de-mesa",
+    "name": "Árbol de Navidad 3D de MDF para Decorar - Centro de Mesa",
+    "description": "Decora tu hogar u oficina con este árbol navideño de MDF en corte láser con adorno de copo de nieve. Ideal para pintar y personalizar. Se envía sin pintar ni armar.",
+    "categories": [
+      "Navidad"
+    ],
+    "reference": "IA-0271",
+    "material": "MDF",
+    "suggestedPrice": 110,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "20 cm de alto x 12 cm de ancho (Base: 8 cm de diámetro)",
+    "isCustomizable": false,
+    "image": "https://dam.inspiraarte.com/preview/271-893-arbol-navideno.webp",
+    "gallery": [],
+    "url": "/productos/271-arbol-de-navidad-3d-de-mdf-para-decorar-centro-de-mesa"
+  },
+  {
     "id": 242,
     "idSlug": "242-trajinera-decorativa-mdf-para-armar-y-pintar-centro-de-mesa",
     "name": "Trajinera Decorativa MDF para Armar y Pintar | Centro de Mesa",
@@ -10,9 +48,13 @@
       "México",
       "Día de muertos"
     ],
+    "reference": "IA-0242",
     "material": "MDF",
-    "minimumPrice": null,
     "suggestedPrice": null,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "22 cm de largo x 12 cm de ancho x 11 cm de alto",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/242-821-trajinera-de-adorno.webp",
     "gallery": [],
     "url": "/productos/242-trajinera-decorativa-mdf-para-armar-y-pintar-centro-de-mesa"
@@ -25,9 +67,13 @@
     "categories": [
       "Día de muertos"
     ],
+    "reference": "IA-0241",
     "material": "MDF",
-    "minimumPrice": 50,
     "suggestedPrice": 80,
+    "productionTime": "3 a 5 días hábiles de fabricación artesanal.",
+    "shippingTime": "2 a 7 días hábiles según destino y servicio de envío.",
+    "dimensions": "Aproximadamente 18 cm de alto por 15 cm de ancho.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/241-820-calavera-con-base-normal-o-base-para-vela.webp",
     "gallery": [],
     "url": "/productos/241-calavera-mdf-personalizable-base-normal-o-portavelas"
@@ -41,9 +87,13 @@
       "Adornos",
       "Año nuevo"
     ],
+    "reference": "IA-0240",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 120,
+    "productionTime": "3 a 5 días hábiles",
+    "shippingTime": "2 a 5 días hábiles",
+    "dimensions": "Aproximadamente 20 x 15 cm",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/240-817-porta-uvas-para-ano-nuevo.webp",
     "gallery": [],
     "url": "/productos/240-porta-uvas-ano-nuevo-de-mdf-para-personalizar"
@@ -59,9 +109,13 @@
       "Día del maestro",
       "Regalos Corporativos"
     ],
+    "reference": "IA-0239",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 120,
+    "productionTime": "Hasta 5 días hábiles",
+    "shippingTime": "2 a 5 días hábiles según destino",
+    "dimensions": "Aproximadamente 15 x 10 cm, compatible con block de notas cuadrado estándar.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/239-814-porta-postits-y-plumas-personalizables.webp",
     "gallery": [],
     "url": "/productos/239-porta-post-it-y-pluma-personalizable-con-nombre-y-logo"
@@ -75,9 +129,13 @@
       "Doctor / Enfermera / Dentista",
       "Regalos"
     ],
+    "reference": "IA-0238",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 100,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "2 a 5 días hábiles según la ubicación",
+    "dimensions": "15 cm de alto x 12 cm de ancho aprox.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/238-811-porta-plumas-de-mdf-figura-medica-para-doctor-y-enfermera.webp",
     "gallery": [],
     "url": "/productos/238-porta-plumas-de-mdf-figura-medica-para-doctor-y-enfermera"
@@ -90,9 +148,13 @@
     "categories": [
       "Deportes"
     ],
+    "reference": "IA-0186",
     "material": "MDF",
-    "minimumPrice": 120,
     "suggestedPrice": 200,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "30 cm x 25 cm x 6 mm",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/186-673-medallero-de-madera-mdf-organizador-deportivo.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/186/668.webp",
@@ -109,9 +171,13 @@
       "Regalos",
       "Juegos de Mesa"
     ],
+    "reference": "IA-0185",
     "material": "MDF",
-    "minimumPrice": 200,
     "suggestedPrice": 250,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "16 cm alto x 8 cm ancho x 13 cm profundidad",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/185-665-torre-de-dados-en-mdf-para-juegos-de-rol-y-mesa.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/185/1790047249989-stnvpzoj.webp"
@@ -127,9 +193,13 @@
       "Llaveros",
       "Regalos"
     ],
+    "reference": "IA-0184",
     "material": "Metal",
-    "minimumPrice": 50,
     "suggestedPrice": 70,
+    "productionTime": "3 a 5 días hábiles",
+    "shippingTime": "2 a 5 días hábiles",
+    "dimensions": "6.5 cm x 1.2 cm x 1.5 cm",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/184-660-llavero-destapador-de-metal-personalizado-para-eventos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/184/1789808307194-p9vf30r9.webp"
@@ -145,9 +215,13 @@
       "Oficina",
       "Regalos"
     ],
+    "reference": "IA-0183",
     "material": "MDF",
-    "minimumPrice": 50,
     "suggestedPrice": 60,
+    "productionTime": "3 a 5 días hábiles",
+    "shippingTime": "2 a 5 días hábiles",
+    "dimensions": "15 cm de alto x 8 cm de ancho x 9 cm de profundidad",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/183-648-portacelular-de-mdf-personalizable-para-escritorio.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/183/649.webp",
@@ -165,9 +239,13 @@
       "Adornos",
       "Anime"
     ],
+    "reference": "IA-0181",
     "material": "MDF",
-    "minimumPrice": null,
-    "suggestedPrice": null,
+    "suggestedPrice": 120,
+    "productionTime": "5-7 días hábiles",
+    "shippingTime": "3-7 días hábiles",
+    "dimensions": "Aprox. 12 x 8 cm",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/181-655-llavero-anime-casa-con-pareja-mdf.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/181/1789427262293-kdvniku1.webp"
@@ -184,9 +262,13 @@
       "Niños",
       "Escuela"
     ],
+    "reference": "IA-0180",
     "material": "MDF",
-    "minimumPrice": 50,
     "suggestedPrice": 80,
+    "productionTime": "5 a 7 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "Variable, aprox. 20 x 20 cm por plantilla",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/180-653-plantilla-animales-para-pintar-en-mdf.webp",
     "gallery": [],
     "url": "/productos/180-plantilla-animales-para-pintar-en-mdf"
@@ -201,9 +283,13 @@
       "Montesori",
       "Escuela"
     ],
+    "reference": "IA-0132",
     "material": "MDF",
-    "minimumPrice": 150,
     "suggestedPrice": 200,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles a todo México",
+    "dimensions": "Cada conjunto de 3 piezas armado mide aprox. 8 x 8 cm (grosor 3 mm)",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/132-512-rompecabezas-didactico-de-abecedario-y-animales-en-mdf.webp",
     "gallery": [],
     "url": "/productos/132-rompecabezas-didactico-de-abecedario-y-animales-en-mdf"
@@ -217,9 +303,13 @@
       "Día de muertos",
       "Altar de muertos"
     ],
+    "reference": "IA-0131",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 120,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "2 a 5 días hábiles a todo México",
+    "dimensions": "11 cm de largo x 16 cm de alto",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/131-515-mini-altar-de-muertos-en-mdf-con-marco-para-foto.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/131/510.webp"
@@ -235,9 +325,13 @@
       "Vela",
       "Día de muertos"
     ],
+    "reference": "IA-0130",
     "material": "MDF",
-    "minimumPrice": 40,
     "suggestedPrice": 60,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "2 a 5 días hábiles a todo México",
+    "dimensions": "10 cm x 10 cm x 12 cm",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/130-508-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos.webp",
     "gallery": [],
     "url": "/productos/130-portavelas-calavera-de-mdf-para-altar-de-dia-de-muertos"
@@ -251,9 +345,13 @@
       "Día de muertos",
       "Mascotas"
     ],
+    "reference": "IA-0129",
     "material": "MDF",
-    "minimumPrice": 40,
     "suggestedPrice": 60,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "2 a 5 días hábiles a todo México",
+    "dimensions": "12 cm alto x 10 cm ancho x 10 cm base",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/129-506-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela.webp",
     "gallery": [],
     "url": "/productos/129-mini-altar-de-muertos-para-mascotas-en-mdf-con-porta-vela"
@@ -268,9 +366,13 @@
       "Adornos",
       "México"
     ],
+    "reference": "IA-0127",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 100,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "2 a 5 días hábiles",
+    "dimensions": "14 cm de alto x 12 cm de ancho x 5 cm de base (aprox.)",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/127-490-servilleteros-de-mdf-fiestas-patrias-decoracion-mexicana.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/127/491.webp",
@@ -288,9 +390,13 @@
       "Navidad",
       "Esferas"
     ],
+    "reference": "IA-0109",
     "material": "MDF",
-    "minimumPrice": 40,
     "suggestedPrice": 60,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles a todo México",
+    "dimensions": "10 cm de diámetro x 3 mm de grosor",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/109-442-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre.webp",
     "gallery": [],
     "url": "/productos/109-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre"
@@ -305,9 +411,13 @@
       "Adornos",
       "Fiesta"
     ],
+    "reference": "IA-0108",
     "material": "MDF",
-    "minimumPrice": 30,
     "suggestedPrice": 50,
+    "productionTime": "A consultar",
+    "shippingTime": "A consultar",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/108-436-servilletero-de-mdf-en-forma-de-osito-para-mesa-y-eventos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/108/437.webp"
@@ -325,15 +435,20 @@
       "Día de muertos",
       "Vela"
     ],
+    "reference": "IA-0107",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 120,
+    "productionTime": "Consultar tiempo de producción",
+    "shippingTime": "Consultar según destino",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/107-432-portavelas-de-mdf-en-forma-de-ataud-para-halloween-y-dia-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/107/433.webp",
       "https://dam.inspiraarte.com/preview/107/1787185003586-psigs7q0.webp",
       "https://dam.inspiraarte.com/preview/107/1787185004344-1koj6na0.webp",
-      "https://dam.inspiraarte.com/preview/107/1787185004992-uu6r2mv1.webp"
+      "https://dam.inspiraarte.com/preview/107/1787185004992-uu6r2mv1.webp",
+      "https://dam.inspiraarte.com/preview/107/1792389351894-suzlmaj5.webp"
     ],
     "url": "/productos/107-portavelas-de-mdf-en-forma-de-ataud-para-halloween-y-dia-de-muertos"
   },
@@ -345,9 +460,13 @@
     "categories": [
       "Calendario"
     ],
+    "reference": "IA-0105",
     "material": "MDF",
-    "minimumPrice": 130,
     "suggestedPrice": 150,
+    "productionTime": "A confirmar",
+    "shippingTime": "A confirmar",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/105-495-calendario-perpetuo-decorativo-con-base-de-mdf.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/105/1787772505749-jrccwdk7.webp"
@@ -364,9 +483,13 @@
       "Halloween",
       "Adornos"
     ],
+    "reference": "IA-0098",
     "material": "MDF",
-    "minimumPrice": 50,
     "suggestedPrice": 80,
+    "productionTime": "A confirmar",
+    "shippingTime": "A confirmar",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/98-497-juego-tres-en-raya-de-halloween-en-mdf-con-forma-de-manzana.webp",
     "gallery": [],
     "url": "/productos/98-juego-tres-en-raya-de-halloween-en-mdf-con-forma-de-manzana"
@@ -381,9 +504,13 @@
       "Vela",
       "Adornos"
     ],
+    "reference": "IA-0092",
     "material": "MDF",
-    "minimumPrice": 50,
-    "suggestedPrice": 80,
+    "suggestedPrice": 60,
+    "productionTime": "A confirmar según disponibilidad",
+    "shippingTime": "A confirmar según destino",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/92-394-adorno-proyectable-de-murcielago-con-soporte-para-vela.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/92/378.webp",
@@ -403,9 +530,13 @@
       "Adornos",
       "Altar de muertos"
     ],
+    "reference": "IA-0091",
     "material": "MDF",
-    "minimumPrice": 150,
     "suggestedPrice": 200,
+    "productionTime": "3 a 5 días hábiles",
+    "shippingTime": "5 a 10 días hábiles",
+    "dimensions": "20 x 15 x 25 cm",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/91-516-mini-altar-de-muertos-en-caja-mdf-decoracion-dia-de-muertos.jpeg",
     "gallery": [
       "https://dam.inspiraarte.com/preview/91/1787087257715-x73ydc5g.webp",
@@ -423,9 +554,13 @@
       "Regalos",
       "Nacimiento"
     ],
+    "reference": "IA-0090",
     "material": "MDF",
-    "minimumPrice": 140,
     "suggestedPrice": 180,
+    "productionTime": "Consultar plazo de producción",
+    "shippingTime": "Consultar plazo de envío según destino",
+    "dimensions": "Mini formato; consultar medidas exactas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/90-498-mini-pesebre-de-mdf-en-caja-decorativa.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/90/1787777996781-m9ok3hia.webp"
@@ -441,9 +576,13 @@
       "Adornos",
       "Día de muertos"
     ],
+    "reference": "IA-0080",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 120,
+    "productionTime": "Confirmar en la ficha del producto; puede variar según disponibilidad.",
+    "shippingTime": "Depende de la dirección de entrega y del servicio disponible.",
+    "dimensions": "No especificadas; consulta las medidas en la ficha del producto.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/80-504-calavera-en-mecedora-de-mdf-para-dia-de-muertos.webp",
     "gallery": [],
     "url": "/productos/80-calavera-en-mecedora-de-mdf-para-dia-de-muertos"
@@ -456,14 +595,38 @@
     "categories": [
       "Juegos de Mesa"
     ],
+    "reference": "IA-0071",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "A definir según disponibilidad de inventario",
+    "shippingTime": "Depende de la dirección y servicio de envío",
+    "dimensions": "Plegable de tamaño compacto; consulta medidas exactas en ficha técnica.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/71-478-ajedrez-armable-de-mdf-con-piezas-grabadas.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/71/1787268877619-cmm4gg1i.webp"
     ],
     "url": "/productos/71-ajedrez-armable-de-mdf-con-piezas-grabadas"
+  },
+  {
+    "id": 66,
+    "idSlug": "66-adorno-de-frasco-pocion-halloween-en-mdf-multipacas-para-decorar",
+    "name": "Adorno de Frasco Poción Halloween en MDF multipacas para Decorar",
+    "description": "Transforma tus espacios con este adorno de frasco de poción en diferentes modelos de MDF. Perfecto para personalizar, pintar a tu gusto y crear centros de mesa de Halloween únicos.",
+    "categories": [
+      "Halloween",
+      "Adornos"
+    ],
+    "reference": "IA-0066",
+    "material": "MDF",
+    "suggestedPrice": 100,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "8cm X 15cm",
+    "isCustomizable": false,
+    "image": "https://dam.inspiraarte.com/preview/66-898-adorno-de-frasco-pocion-halloween-en-mdf-multipacas-para-decorar.webp",
+    "gallery": [],
+    "url": "/productos/66-adorno-de-frasco-pocion-halloween-en-mdf-multipacas-para-decorar"
   },
   {
     "id": 64,
@@ -474,9 +637,13 @@
       "Halloween",
       "Adornos"
     ],
+    "reference": "IA-0064",
     "material": "MDF",
-    "minimumPrice": 90,
     "suggestedPrice": 150,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "10 cm x 10 cm x 10 cm",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/64-807-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/64/1790966320148-vaucjiep.webp",
@@ -492,9 +659,13 @@
     "categories": [
       "Regalos"
     ],
+    "reference": "IA-0063",
     "material": "Varios",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "Variable según diseño, cantidad y disponibilidad",
+    "shippingTime": "Depende del destino y servicio de envío",
+    "dimensions": "Consultar medidas disponibles por opción",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/63-385-toallas-personalizadas-para-regalos-y-eventos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/63/1787035723573-tda1888g.webp"
@@ -509,9 +680,13 @@
     "categories": [
       "Regalos"
     ],
+    "reference": "IA-0062",
     "material": "Termo",
-    "minimumPrice": null,
     "suggestedPrice": null,
+    "productionTime": "Personalizado bajo pedido; confirmar plazo al cotizar.",
+    "shippingTime": "Depende del destino y disponibilidad; confirmar al finalizar el pedido.",
+    "dimensions": "Consultar según el modelo disponible.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/62-386-termo-personalizado-con-grabado-y-diseno-a-tu-gusto.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/62/1787035520381-hdlp8fx9.webp"
@@ -527,9 +702,13 @@
       "Oficina",
       "Escuela"
     ],
+    "reference": "IA-0061",
     "material": "Varios",
-    "minimumPrice": 80,
     "suggestedPrice": 150,
+    "productionTime": "Depende de la personalización y cantidad solicitada.",
+    "shippingTime": "Según el destino y disponibilidad; se confirma al finalizar el pedido.",
+    "dimensions": "Medidas estándar de cada artículo; no se especifican dimensiones exactas.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/61-388-lapices-y-plumas-personalizados-para-escuela-y-oficina.webp",
     "gallery": [],
     "url": "/productos/61-lapices-y-plumas-personalizados-para-escuela-y-oficina"
@@ -543,9 +722,13 @@
       "Halloween",
       "Adornos"
     ],
+    "reference": "IA-0060",
     "material": "MDF",
-    "minimumPrice": 120,
     "suggestedPrice": 150,
+    "productionTime": "No especificado",
+    "shippingTime": "No especificado",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/60-439-adorno-de-halloween-en-mdf-con-calavera-y-vela.webp",
     "gallery": [],
     "url": "/productos/60-adorno-de-halloween-en-mdf-con-calavera-y-vela"
@@ -559,9 +742,13 @@
       "Regalos",
       "Oficina"
     ],
+    "reference": "IA-0059",
     "material": "Piedra",
-    "minimumPrice": 300,
     "suggestedPrice": 400,
+    "productionTime": "Depende del diseño, cantidad y tipo de grabado; consultar antes de confirmar.",
+    "shippingTime": "Depende del destino y disponibilidad de envío; se calcula al confirmar el pedido.",
+    "dimensions": "No especificadas; placa rectangular con agujero para colgar. Consultar medidas disponibles.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/59-392-placa-de-piedra-personalizada-con-grabado.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/59/1786653114876-dd50eham.webp"
@@ -577,9 +764,13 @@
       "Halloween",
       "Vela"
     ],
+    "reference": "IA-0057",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "Consultar plazo de producción disponible.",
+    "shippingTime": "Consultar plazo de envío según destino.",
+    "dimensions": "Dimensiones no especificadas.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/57-218-lampara-de-mdf-para-vela-con-escenario-de-casa-de-halloween.webp",
     "gallery": [],
     "url": "/productos/57-lampara-de-mdf-para-vela-con-escenario-de-casa-de-halloween"
@@ -594,9 +785,13 @@
       "Adornos",
       "Vela"
     ],
+    "reference": "IA-0054",
     "material": "MDF",
-    "minimumPrice": 200,
     "suggestedPrice": 300,
+    "productionTime": "Según disponibilidad del taller",
+    "shippingTime": "Varía según destino y servicio de envío",
+    "dimensions": "Consultar medidas disponibles",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/54-210-lampara-decorativa-halloween-en-mdf-con-brazo-esqueletico-y-arana.webp",
     "gallery": [],
     "url": "/productos/54-lampara-decorativa-halloween-en-mdf-con-brazo-esqueletico-y-arana"
@@ -611,9 +806,13 @@
       "Halloween",
       "Cajas"
     ],
+    "reference": "IA-0053",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "Consultar",
+    "shippingTime": "Consultar",
+    "dimensions": "No especificadas",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/53-209-caja-cripta-de-mdf-para-halloween-y-dulces.webp",
     "gallery": [],
     "url": "/productos/53-caja-cripta-de-mdf-para-halloween-y-dulces"
@@ -627,9 +826,13 @@
       "Llaveros",
       "Harry Potter"
     ],
+    "reference": "IA-0052",
     "material": "MDF",
-    "minimumPrice": 15,
     "suggestedPrice": 30,
+    "productionTime": "A confirmar según disponibilidad del modelo",
+    "shippingTime": "Depende de la dirección y método de envío seleccionado",
+    "dimensions": "Varía según el diseño; consulta la ficha disponible del modelo",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/52-208-llaveros-de-harry-potter-en-mdf-con-disenos-variados.webp",
     "gallery": [],
     "url": "/productos/52-llaveros-de-harry-potter-en-mdf-con-disenos-variados"
@@ -643,9 +846,13 @@
       "Día de muertos",
       "Adornos"
     ],
+    "reference": "IA-0051",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 150,
+    "productionTime": "Personalizado bajo pedido; confirma el tiempo al finalizar tu compra.",
+    "shippingTime": "El plazo depende del destino y se confirma al procesar el pedido.",
+    "dimensions": "Medidas no especificadas; revisa la información disponible al personalizar el producto.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/51-399-calavera-personalizada-en-mdf-para-altar-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/51/1787037093094-n7mdm81c.webp"
@@ -663,9 +870,13 @@
       "Tradiciones",
       "Adornos"
     ],
+    "reference": "IA-0047",
     "material": "MDF",
-    "minimumPrice": 30,
     "suggestedPrice": 50,
+    "productionTime": "Sujeto a confirmación al realizar el pedido.",
+    "shippingTime": "Depende del destino y del servicio de envío elegido.",
+    "dimensions": "Medida no especificada; consulta la referencia al solicitarlo.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/47-223-adorno-de-calaverita-en-mdf-para-dia-de-muertos.webp",
     "gallery": [],
     "url": "/productos/47-adorno-de-calaverita-en-mdf-para-dia-de-muertos"
@@ -679,9 +890,13 @@
       "Portaretrato",
       "Día de muertos"
     ],
+    "reference": "IA-0046",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 150,
+    "productionTime": "Según modelo y talla seleccionados.",
+    "shippingTime": "Depende del destino y la disponibilidad.",
+    "dimensions": "Varía según el modelo y tamaño seleccionado.",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/46-402-marco-fotografico-de-mdf-para-altar-de-dia-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/46/1787037118079-kh9g1mr8.webp"
@@ -698,9 +913,13 @@
       "Navidad",
       "Nacimiento"
     ],
+    "reference": "IA-0041",
     "material": "MDF",
-    "minimumPrice": 150,
     "suggestedPrice": 300,
+    "productionTime": "No especificado",
+    "shippingTime": "No especificado",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/41-389-adorno-de-luna-con-pesebre-navideno-en-mdf.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/41/1787185022329-cscy890r.webp",
@@ -718,9 +937,13 @@
       "Regalos",
       "Nacimiento"
     ],
+    "reference": "IA-0030",
     "material": "MDF",
-    "minimumPrice": 200,
     "suggestedPrice": 300,
+    "productionTime": "Sobre pedido",
+    "shippingTime": "Consultar según destino",
+    "dimensions": "Compacto; consultar medidas exactas antes de compra.",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/30-395-mini-pesebre-de-mdf-para-decoracion-de-navidad.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/30/1787037003703-tbskzb0f.webp",
@@ -739,9 +962,13 @@
       "Tradiciones",
       "México"
     ],
+    "reference": "IA-0029",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "1 a 3 días hábiles",
+    "shippingTime": "3 a 7 días hábiles",
+    "dimensions": "Medidas variables según el modelo disponible",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/29-128-nicho-de-mdf-para-altar-de-muertos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/29/129.webp"
@@ -757,9 +984,13 @@
       "Aretes",
       "Halloween"
     ],
+    "reference": "IA-0027",
     "material": "MDF",
-    "minimumPrice": 15,
     "suggestedPrice": 30,
+    "productionTime": "2 a 4 días hábiles",
+    "shippingTime": "3 a 7 días hábiles, según destino",
+    "dimensions": "Aprox. 11 cm de alto x 5 cm de ancho por pieza",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/27-214-aretes-de-mdf-con-gatito-esqueletico-y-huesitos.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/27/1786607285200-k9zne1g4.webp"
@@ -775,9 +1006,13 @@
       "Oficina",
       "Adornos"
     ],
+    "reference": "IA-0017",
     "material": "MDF",
-    "minimumPrice": 100,
     "suggestedPrice": 150,
+    "productionTime": "5 a 7 días hábiles",
+    "shippingTime": "3 a 5 días hábiles",
+    "dimensions": "18 x 10 x 1.5 cm",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/17-207-calendario-eterno-de-madera-personalizable-escritorio.webp",
     "gallery": [],
     "url": "/productos/17-calendario-eterno-de-madera-personalizable-escritorio"
@@ -793,9 +1028,13 @@
       "Navidad",
       "Vela"
     ],
+    "reference": "IA-0016",
     "material": "MDF",
-    "minimumPrice": 80,
     "suggestedPrice": 120,
+    "productionTime": "Por confirmar según disponibilidad",
+    "shippingTime": "Confirmar según destino",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/16-211-mini-nacimiento-de-mdf-con-vela.webp",
     "gallery": [],
     "url": "/productos/16-mini-nacimiento-de-mdf-con-vela"
@@ -810,9 +1049,13 @@
       "Nacimiento",
       "Navidad"
     ],
+    "reference": "IA-0015",
     "material": "MDF",
-    "minimumPrice": 350,
     "suggestedPrice": 500,
+    "productionTime": "A confirmar con el proveedor",
+    "shippingTime": "A confirmar con el proveedor",
+    "dimensions": "A confirmar con el proveedor",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/15-28-nacimiento-decorativo-de-mdf-con-figuras-para-navidad.webp",
     "gallery": [],
     "url": "/productos/15-nacimiento-decorativo-de-mdf-con-figuras-para-navidad"
@@ -828,9 +1071,13 @@
       "Regalos",
       "Rompecabezas 3D"
     ],
+    "reference": "IA-0004",
     "material": "MDF",
-    "minimumPrice": 45,
     "suggestedPrice": 80,
+    "productionTime": "Bajo pedido; consultar plazo disponible",
+    "shippingTime": "Depende del destino y servicio de envío",
+    "dimensions": "No especificadas; consultar medidas disponibles",
+    "isCustomizable": true,
     "image": "https://dam.inspiraarte.com/preview/4-390-tarjeta-3d-navidena-de-mdf-para-armar.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/4/1785261353736-i3dcq4u1.webp"
@@ -849,9 +1096,13 @@
       "Tradiciones",
       "Altar de muertos"
     ],
+    "reference": "IA-0003",
     "material": "MDF",
-    "minimumPrice": 250,
     "suggestedPrice": 400,
+    "productionTime": "No especificado",
+    "shippingTime": "No especificado",
+    "dimensions": "No especificadas",
+    "isCustomizable": false,
     "image": "https://dam.inspiraarte.com/preview/3-127-altar-de-muertos-de-mdf-con-tres-niveles-y-detalles.webp",
     "gallery": [
       "https://dam.inspiraarte.com/preview/3/1785260700034-21p6rg5u.webp",

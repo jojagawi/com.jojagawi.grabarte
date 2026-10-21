@@ -1,0 +1,75 @@
+{
+  "definitions": [
+    "El corte láser es una técnica en la que un rayo láser atraviesa el material siguiendo un diseño digital. Así se obtienen formas detalladas y piezas idénticas entre sí, algo difícil de lograr con sierra.",
+    "El grabado láser es una técnica en la que el láser quema o retira solo la capa superficial del material para marcar textos, fechas, logos o imágenes. No usa tintas, así que el grabado es permanente: no se despinta ni se borra con el uso.",
+    "El MDF (tablero de fibra de densidad media) es un tablero hecho con fibras de madera prensadas con resina. Tiene una superficie lisa y pareja, sin vetas ni nudos, por eso se corta limpio con láser y acepta bien la pintura acrílica. Es para interiores: la humedad lo hincha. Lo trabajamos en grosores de 2 a 9 mm."
+  ],
+  "materials": [
+    {
+      "name": "MDF",
+      "definition": "Tablero de fibras de madera prensadas con resina; liso, sin vetas ni nudos",
+      "technique": "Corte y grabado láser",
+      "bestFor": "Adornos, cajas, letreros y piezas para pintar",
+      "catalogCount": 46
+    },
+    {
+      "name": "Acrílico",
+      "definition": "Plástico rígido transparente o de color; el láser deja el borde pulido",
+      "technique": "Corte y grabado láser",
+      "bestFor": "Cajas, decoración y maquetas",
+      "catalogCount": 0
+    },
+    {
+      "name": "Metal",
+      "definition": "Piezas metálicas con un marcado permanente que no se borra con el uso",
+      "technique": "Grabado láser",
+      "bestFor": "Llaveros, placas y regalos para eventos",
+      "catalogCount": 1
+    },
+    {
+      "name": "Termo",
+      "definition": "Termos metálicos grabados alrededor de la pieza (grabado rotativo)",
+      "technique": "Grabado láser rotativo",
+      "bestFor": "Regalos corporativos y personalizados con nombre o logo",
+      "catalogCount": 1
+    }
+  ],
+  "sizeReferences": [
+    {
+      "name": "Llavero Destapador de Metal Personalizado para Eventos",
+      "url": "/productos/184-llavero-destapador-de-metal-personalizado-para-eventos/",
+      "dimensions": "6.5 cm x 1.2 cm x 1.5 cm",
+      "suggestedPrice": 70
+    },
+    {
+      "name": "Esferas Navideñas Personalizadas de Madera MDF con Nombre",
+      "url": "/productos/109-esferas-navidenas-personalizadas-de-madera-mdf-con-nombre/",
+      "dimensions": "10 cm de diámetro x 3 mm de grosor",
+      "suggestedPrice": 60
+    },
+    {
+      "name": "Calabaza Cuadrada de MDF para Decoración de Halloween",
+      "url": "/productos/64-calabaza-cuadrada-de-mdf-para-decoracion-de-halloween/",
+      "dimensions": "10 cm x 10 cm x 10 cm",
+      "suggestedPrice": 150
+    },
+    {
+      "name": "Calendario Eterno de Madera Personalizable– Escritorio",
+      "url": "/productos/17-calendario-eterno-de-madera-personalizable-escritorio/",
+      "dimensions": "18 x 10 x 1.5 cm",
+      "suggestedPrice": 150
+    },
+    {
+      "name": "Mini Altar de Muertos en Caja MDF - Decoración Día de Muertos",
+      "url": "/productos/91-mini-altar-de-muertos-en-caja-mdf-decoracion-dia-de-muertos/",
+      "dimensions": "20 x 15 x 25 cm",
+      "suggestedPrice": 200
+    },
+    {
+      "name": "Medallero de Madera MDF Organizador Deportivo",
+      "url": "/productos/186-medallero-de-madera-mdf-organizador-deportivo/",
+      "dimensions": "30 cm x 25 cm x 6 mm",
+      "suggestedPrice": 200
+    }
+  ]
+}

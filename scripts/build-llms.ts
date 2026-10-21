@@ -29,6 +29,9 @@ const AGENT_DATA_FILES = [
   { title: "Categorías", path: "/mcp/categories.json", description: "Categorías del catálogo." },
   { title: "Productos", path: "/mcp/products.json", description: "Diseños publicados con descripción, categorías, precio de referencia y enlace a su ficha." },
   { title: "Preguntas frecuentes", path: "/mcp/faqs.json", description: "Preguntas y respuestas sobre pedidos, envíos y pagos." },
+  { title: "Temporadas", path: "/mcp/seasons.json", description: "Temporadas del año con su guía, categorías y piezas." },
+  { title: "Materiales", path: "/mcp/materials.json", description: "Materiales y técnicas, con medidas y precios de referencia." },
+  { title: "Calificaciones", path: "/mcp/reviews.json", description: "Opiniones aprobadas de clientes." },
 ];
 
 const SITE_SUMMARY = [
