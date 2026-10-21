@@ -1,11 +1,15 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import {
+  AGENT_CARD_PATH,
   API_CATALOG_PATH,
   API_STATUS_PATH,
+  AUTH_MD_PATH,
   OPENAPI_PATH,
+  buildAgentCard,
   buildApiCatalog,
   buildApiStatus,
+  buildAuthMd,
   buildOpenApiSpec,
 } from "@/lib/public-api";
 
@@ -13,25 +17,33 @@ import {
 //   public/.well-known/api-catalog   linkset que apunta a la especificación, la documentación y el estado
 //   public/mcp/openapi.json          OpenAPI 3.1 de los JSON de /mcp/
 //   public/mcp/status.json           estado de la API
+//   public/.well-known/agent-card.json  Agent Card de A2A con las habilidades del sitio
+//   public/auth.md                   cómo se autentican los agentes (acceso anónimo, solo lectura)
 // S3 no deduce el tipo de api-catalog (no tiene extensión): build.yml lo vuelve a subir como
 // application/linkset+json y next.config.ts lo sirve así en dev.
 
 const PUBLIC_DIR = resolve(process.cwd(), "public");
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inspiraarte.com").replace(/\/+$/u, "");
 
-async function writeJson(path: string, value: unknown): Promise<void> {
+async function writeText(path: string, content: string): Promise<void> {
   const file = resolve(PUBLIC_DIR, path.replace(/^\/+/u, ""));
   await mkdir(dirname(file), { recursive: true });
-  await writeFile(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  await writeFile(file, content, "utf8");
 }
+
+const writeJson = (path: string, value: unknown) => writeText(path, `${JSON.stringify(value, null, 2)}\n`);
 
 async function main(): Promise<void> {
   await Promise.all([
     writeJson(API_CATALOG_PATH, buildApiCatalog(siteUrl)),
     writeJson(OPENAPI_PATH, buildOpenApiSpec(siteUrl)),
     writeJson(API_STATUS_PATH, buildApiStatus()),
+    writeJson(AGENT_CARD_PATH, buildAgentCard(siteUrl)),
+    writeText(AUTH_MD_PATH, buildAuthMd(siteUrl)),
   ]);
-  console.log(`build:api-catalog: ${API_CATALOG_PATH}, ${OPENAPI_PATH} y ${API_STATUS_PATH} para ${siteUrl}`);
+  console.log(
+    `build:api-catalog: ${API_CATALOG_PATH}, ${OPENAPI_PATH}, ${API_STATUS_PATH}, ${AGENT_CARD_PATH} y ${AUTH_MD_PATH} para ${siteUrl}`,
+  );
 }
 
 main().catch((error) => {
