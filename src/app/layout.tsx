@@ -9,6 +9,9 @@ import { Footer } from "@/components/structure/footer";
 import { Header, type SeasonLink } from "@/components/structure/header";
 import { getSeasonPages } from "@/lib/seasons.server";
 import { PwaAnalytics } from "@/components/structure/pwa-analytics";
+import { InteractionTracker } from "@/components/structure/interaction-tracker";
+import { CookieConsent } from "@/components/structure/cookie-consent";
+import { consentInitScript } from "@/lib/consent";
 import { WebMcpInit } from "@/components/structure/webmcp-init";
 import "./globals.css";
 
@@ -106,17 +109,7 @@ export default async function RootLayout({
         <main className="flex-1">
           {process.env.NEXT_GTM && (
             <Script id="google-consent-mode" strategy="beforeInteractive">
-              {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('consent', 'default', {
-  ad_storage: 'denied',
-  ad_user_data: 'denied',
-  ad_personalization: 'denied',
-  analytics_storage: 'denied',
-  functionality_storage: 'granted',
-  security_storage: 'granted',
-  wait_for_update: 500
-});`}
+              {consentInitScript}
             </Script>
           )}
           <script
@@ -127,9 +120,13 @@ gtag('consent', 'default', {
         </main>
         <Footer />
         <PwaAnalytics />
+        <InteractionTracker />
         <WebMcpInit />
         {process.env.NEXT_GTM && (
-          <GoogleTagManager gtmId={process.env.NEXT_GTM} />
+          <>
+            <GoogleTagManager gtmId={process.env.NEXT_GTM} />
+            <CookieConsent />
+          </>
         )}
         <Script id="register-service-worker" strategy="afterInteractive">
           {`if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {

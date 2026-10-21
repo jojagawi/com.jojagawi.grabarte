@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { FilePreview } from "@/components/custom/file-preview";
+import { trackEvent } from "@/lib/analytics";
 import { Card, CardContent } from "@/components/ui/card";
 
 type FileItem = {
@@ -102,6 +103,11 @@ export function DesignMediaGallery({
       const rect = trigger.getBoundingClientRect();
       setZoomOrigin(`${rect.left + rect.width / 2}px ${rect.top + rect.height / 2}px`);
       setActiveIndex(index);
+      trackEvent("gallery_open", {
+        item_name: designName,
+        image_position: index + 1,
+        image_count: modalImages.length,
+      });
     }
   };
 
@@ -125,6 +131,14 @@ export function DesignMediaGallery({
       }
     };
   }, []);
+
+  const trackNavigate = (direction: "next" | "previous") => {
+    trackEvent("gallery_navigate", { item_name: designName, direction, method: "button" });
+  };
+
+  const trackVideoPlay = (position: number) => {
+    trackEvent("video_play", { item_name: designName, video_position: position });
+  };
 
   const goNext = () => {
     setActiveIndex((prev) => {
@@ -160,6 +174,7 @@ export function DesignMediaGallery({
       if (event.key === "Escape") {
         setActiveIndex(null);
       } else if (event.key === "ArrowRight") {
+        trackEvent("gallery_navigate", { item_name: designName, direction: "next", method: "keyboard" });
         setActiveIndex((prev) => {
           if (prev === null) {
             return prev;
@@ -167,6 +182,7 @@ export function DesignMediaGallery({
           return (prev + 1) % modalImages.length;
         });
       } else if (event.key === "ArrowLeft") {
+        trackEvent("gallery_navigate", { item_name: designName, direction: "previous", method: "keyboard" });
         setActiveIndex((prev) => {
           if (prev === null) {
             return prev;
@@ -183,7 +199,7 @@ export function DesignMediaGallery({
       previouslyFocused?.focus();
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen, modalImages.length]);
+  }, [isOpen, modalImages.length, designName]);
 
   return (
     <>
@@ -196,6 +212,7 @@ export function DesignMediaGallery({
                 controls
                 className="w-full aspect-square object-cover bg-black"
                 preload="metadata"
+                onPlay={() => trackVideoPlay(0)}
               >
                 <source src={previewItem.previewUrl} />
                 <track
@@ -251,6 +268,7 @@ export function DesignMediaGallery({
                       controls
                       className="w-full aspect-4/3 object-cover bg-black"
                       preload="metadata"
+                      onPlay={() => trackVideoPlay(index + 1)}
                     >
                       <source src={item.previewUrl} />
                       <track
@@ -332,6 +350,7 @@ export function DesignMediaGallery({
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
+                  trackNavigate("previous");
                   goPrevious();
                 }}
                 className="absolute left-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-[background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94]"
@@ -343,6 +362,7 @@ export function DesignMediaGallery({
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
+                  trackNavigate("next");
                   goNext();
                 }}
                 className="absolute right-3 top-1/2 z-20 -translate-y-1/2 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white transition-[background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94]"

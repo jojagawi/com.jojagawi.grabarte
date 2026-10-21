@@ -266,6 +266,8 @@ export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentC
   const [errors, setErrors] = useState<FieldErrors>({})
   const [phase, setPhase] = useState<SubmitPhase>({ kind: "idle" })
   const successHeadingRef = useRef<HTMLHeadingElement>(null)
+  // form_contact_start se envía una vez por formulario, con el primer campo que se toca.
+  const startTrackedRef = useRef(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
   // Recordatorio de cantidad y fecha: se muestra una vez; el segundo envío sigue sin ellos.
   const [orderNudgeShown, setOrderNudgeShown] = useState(false)
@@ -323,6 +325,15 @@ export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentC
     }
     onSentChange?.(phase.kind === "success")
   }, [phase.kind, onSentChange])
+
+  function handleFormStart(event: FormEvent<HTMLFormElement>) {
+    if (startTrackedRef.current) {
+      return
+    }
+    startTrackedRef.current = true
+    const field = event.target instanceof HTMLElement ? event.target.id.replace(/^contact-/, "") : ""
+    sendGTMEvent({ event: "form_contact_start", form_name: FORM_NAME, first_field: field || "unknown" })
+  }
 
   function updateField(field: keyof ContactFields, value: string) {
     setFields((current) => ({ ...current, [field]: value }))
@@ -395,6 +406,12 @@ export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentC
     const validationErrors = validateFields(fields, today)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
+      sendGTMEvent({
+        event: "form_contact_error",
+        form_name: FORM_NAME,
+        error_type: "validation",
+        invalid_fields: Object.keys(validationErrors).join(","),
+      })
       const firstInvalid = Object.keys(validationErrors)[0]
       document.getElementById(`contact-${firstInvalid}`)?.focus()
       return
@@ -568,7 +585,7 @@ export function ContactForm({ requestedProduct, leadTime, onDraftChange, onSentC
   const errorId = (field: keyof FieldErrors) => (errors[field] ? `contact-${field}-error` : undefined)
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-border bg-card p-5 sm:p-8">
+    <form noValidate onSubmit={handleSubmit} onChange={handleFormStart} className="space-y-5 rounded-2xl border border-border bg-card p-5 sm:p-8">
       {googleSiteKey && (
         <Script src={`https://www.google.com/recaptcha/api.js?render=${googleSiteKey}`} strategy="afterInteractive" />
       )}

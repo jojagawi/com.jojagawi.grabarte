@@ -8,6 +8,7 @@ import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp"
 import { ContactForm, type QuoteLeadTime } from "@/components/custom/contact-form"
 import { ContactMethods } from "@/components/custom/contact-methods"
 import { buildWhatsappQuoteHref } from "@/lib/quote-request"
+import { trackEvent } from "@/lib/analytics"
 
 const MAX_PRODUCT_LENGTH = 200
 const MAX_LEAD_TIME_LENGTH = 80
@@ -185,6 +186,7 @@ export function Contact() {
                   onClick={() => {
                     pendingFocus.current = "restore"
                     setProductDismissed(true)
+                    trackEvent("quote_product_remove", { item_name: requestedProduct ?? undefined })
                   }}
                   className="inline-flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-[color,background-color,scale] duration-150 ease-snappy touch-manipulation active:scale-[0.94] hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
@@ -204,6 +206,7 @@ export function Contact() {
                 onClick={() => {
                   pendingFocus.current = "dismiss"
                   setProductDismissed(false)
+                  trackEvent("quote_product_restore", { item_name: productFromUrl })
                 }}
                 className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 transition-opacity duration-150 ease-snappy touch-manipulation select-none active:opacity-60 hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >

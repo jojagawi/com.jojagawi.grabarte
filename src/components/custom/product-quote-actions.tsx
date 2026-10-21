@@ -86,7 +86,12 @@ export function ProductQuoteActions({
 
   return (
     <>
-      <div id={actionsId} className="space-y-4 border-t border-border pt-6">
+      <div
+        id={actionsId}
+        data-track-location="ficha_acciones"
+        data-track-item-name={productName}
+        className="space-y-4 border-t border-border pt-6"
+      >
         <div className="space-y-1">
           <p className="text-foreground">
             {price ? (
@@ -143,7 +148,12 @@ export function ProductQuoteActions({
       </div>
 
       <ProductQuoteBar actionsId={actionsId}>
-        <div className="flex items-center gap-3" data-llms-skip>
+        <div
+          className="flex items-center gap-3"
+          data-llms-skip
+          data-track-location="ficha_barra_movil"
+          data-track-item-name={productName}
+        >
           <p className="min-w-0 flex-1 truncate text-sm text-foreground">
             {price ? (
               <>

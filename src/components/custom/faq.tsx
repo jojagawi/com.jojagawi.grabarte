@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { trackEvent } from "@/lib/analytics"
 
 type FaqItem = {
   id: number
@@ -22,6 +23,17 @@ export function FAQ({ faqs, embedded = false, isPageTitle = false }: FAQProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
   const TitleTag = isPageTitle ? "h1" : "h2"
   const QuestionTag = isPageTitle ? "h2" : "h3"
+  const faqLocation = isPageTitle ? "faq_page" : embedded ? "embedded" : "section"
+
+  function toggle(faq: FaqItem, index: number, isOpen: boolean) {
+    setOpenIndex(isOpen ? null : index)
+    trackEvent(isOpen ? "faq_close" : "faq_open", {
+      faq_id: faq.id,
+      faq_question: faq.question.slice(0, 100),
+      faq_position: index + 1,
+      faq_location: faqLocation,
+    })
+  }
 
   return (
     <section id="faq" className={cn(!embedded && "py-24 bg-muted/30")}>
@@ -63,7 +75,7 @@ export function FAQ({ faqs, embedded = false, isPageTitle = false }: FAQProps) {
               <QuestionTag className="text-base">
                 <button
                   type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  onClick={() => toggle(faq, index, isOpen)}
                   aria-expanded={isOpen}
                   aria-controls={panelId}
                   className="w-full px-6 py-5 flex items-center justify-between text-left rounded-xl transition-colors duration-150 ease-snappy touch-manipulation active:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

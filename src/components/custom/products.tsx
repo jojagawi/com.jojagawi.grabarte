@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { slugify } from "@/lib/slug"
 import { cn } from "@/lib/utils"
+import { trackEvent } from "@/lib/analytics"
 import { CategoryIcon } from "@/components/custom/category-icon-registry"
 
 type ProductListItem = {
@@ -55,6 +56,17 @@ export function Products({ products, categories, materialOptions, enableDevFilte
   const [showInHomeFilter, setShowInHomeFilter] = useState<BooleanFilter>("all")
   const [showInSiteFilter, setShowInSiteFilter] = useState<BooleanFilter>("all")
   const [materialFilter, setMaterialFilter] = useState<string>("all")
+
+  function selectCategory(categoryName: string | null) {
+    setSelectedCategory(categoryName)
+    trackEvent("category_select", {
+      category_name: categoryName ?? "Todos",
+      selection_method: "filter",
+      results_count: categoryName
+        ? products.filter((product) => product.categories.includes(categoryName)).length
+        : products.length,
+    })
+  }
 
   const filteredProducts = products.filter((product) => {
     const byCategory = !selectedCategory || product.categories.includes(selectedCategory)
@@ -162,7 +174,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
         {/* Categories Filter. data-llms-skip: botones de filtro, sin texto útil para llms-full.txt. */}
         <div className="flex flex-wrap justify-center gap-3 mb-12" data-llms-skip>
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => selectCategory(null)}
             className={cn(
               "px-4 py-2 rounded-full text-sm font-medium transition-[color,background-color,box-shadow,scale] duration-150 ease-snappy touch-manipulation select-none active:scale-[0.96]",
               !selectedCategory
@@ -177,7 +189,7 @@ export function Products({ products, categories, materialOptions, enableDevFilte
             return (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.name === selectedCategory ? null : category.name)}
+                onClick={() => selectCategory(category.name === selectedCategory ? null : category.name)}
                 className={cn(
                   "px-4 py-2 rounded-full text-sm font-medium transition-[color,background-color,box-shadow,scale] duration-150 ease-snappy touch-manipulation select-none active:scale-[0.96] flex items-center gap-2",
                   selectedCategory === category.name
