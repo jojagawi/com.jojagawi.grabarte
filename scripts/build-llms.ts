@@ -5,8 +5,8 @@ import { type HTMLElement, parse } from "node-html-parser";
 import { getWebMcpToolManifest } from "@/lib/webmcp-setup";
 import { AGENT_CARD_PATH, API_CATALOG_PATH, API_DOCS_PATH, AUTH_MD_PATH, OPENAPI_PATH, PUBLIC_DATA_FILES, TOOLS_MANIFEST_PATH } from "@/lib/public-api";
 
-// Genera llms.txt (índice) y llms-full.txt (texto completo) a partir de las páginas ya renderizadas,
-// así ambos reflejan exactamente lo que publica el sitio.
+// Genera llms.txt (índice), llms-full.txt (texto completo) y un index.md junto a cada index.html
+// indexable, a partir de las páginas ya renderizadas, así todo refleja exactamente lo que publica el sitio.
 //
 //   pnpm run build:llms                                  lee out/ (postbuild, después del sitemap)
 //   pnpm run build:llms -- --base-url=http://localhost:3000   consulta un servidor (dev o start)
@@ -16,6 +16,8 @@ import { AGENT_CARD_PATH, API_CATALOG_PATH, API_DOCS_PATH, AUTH_MD_PATH, OPENAPI
 // Las páginas se descubren siguiendo los enlaces internos desde "/". Se omiten las que llevan
 // noindex (panel, formularios, categorías delgadas, 404), así que no hace falta mantener una lista.
 // Escribe en public/ (para dev y para el repositorio) y, al leer out/, también ahí (para el deploy).
+// Los index.md por página solo van a out/ (o a --out-dir): en public/ ensuciarían el repositorio.
+// Cada página los anuncia con <link rel="alternate" type="text/markdown"> (src/lib/metadata.ts).
 // Con --base-url no toca out/: ese contenido no viene de ese build. Genera desde el build para
 // producción: en dev las páginas muestran extras de desarrollo (por ejemplo, filtros del catálogo).
 
@@ -24,6 +26,7 @@ const MAX_PAGES = 1000;
 const ROOT = process.cwd();
 const OUT_DIR = resolve(ROOT, "out");
 const PUBLIC_DIR = resolve(ROOT, "public");
+const PAGE_MARKDOWN_FILE = "index.md";
 
 
 const SITE_SUMMARY = [
@@ -274,6 +277,11 @@ function buildHeader(pages: PageEntry[]): string {
   return [`# ${SITE_NAME}`, `> ${home?.description || SITE_SUMMARY}`, SITE_SUMMARY].join("\n\n");
 }
 
+function buildMarkdownNote(pages: PageEntry[]): string {
+  const example = pages.find((page) => page.kind === "product") ?? pages[0];
+  return `Cada página listada tiene su versión en Markdown en la misma URL más \`${PAGE_MARKDOWN_FILE}\` (por ejemplo, ${getMarkdownUrl(example)}).`;
+}
+
 // Las herramientas que registra src/lib/webmcp-setup.ts al abrir cualquier página del sitio.
 function buildToolItems(options: Options): string[] {
   const tools = getWebMcpToolManifest();
@@ -301,11 +309,32 @@ function buildToolsManifest(options: Options): string {
   return `${JSON.stringify(manifest, null, 2)}\n`;
 }
 
+function getMarkdownUrl(page: PageEntry): string {
+  return `${page.url}${PAGE_MARKDOWN_FILE}`;
+}
+
+// La versión Markdown de una página: frontmatter con título, descripción y URL canónica, y su contenido principal.
+function buildPageMarkdown(page: PageEntry): string {
+  const yamlString = (value: string) => JSON.stringify(value);
+  return [
+    "---",
+    `title: ${yamlString(page.title)}`,
+    ...(page.description ? [`description: ${yamlString(page.description)}`] : []),
+    `url: ${page.url}`,
+    "---",
+    "",
+    /^# /mu.test(page.markdown) ? page.markdown : `# ${page.title}\n\n${page.markdown}`,
+  ]
+    .join("\n")
+    .concat("\n");
+}
+
 function buildLlmsTxt(pages: PageEntry[], options: Options): string {
   const toItems = (entries: PageEntry[]) => entries.map((page) => listItem(page.title, page.url, page.description));
 
   return [
     buildHeader(pages),
+    buildMarkdownNote(pages),
     section("Páginas", toItems(byKind(pages, "home", "page"))),
     section("Categorías del catálogo", toItems(byKind(pages, "category"))),
     section("Temporadas", toItems(byKind(pages, "season"))),
@@ -367,6 +396,19 @@ async function writeOutputs(files: Record<string, string>, options: Options): Pr
   return written;
 }
 
+async function writePageMarkdown(pages: PageEntry[], options: Options): Promise<number> {
+  const directory = options.outDir ?? (options.baseUrl ? null : OUT_DIR);
+  if (!directory) {
+    return 0;
+  }
+  for (const page of pages) {
+    const file = resolve(directory, `.${page.path}`, PAGE_MARKDOWN_FILE);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, buildPageMarkdown(page), "utf8");
+  }
+  return pages.length;
+}
+
 async function main() {
   const options = parseOptions();
   if (!options.baseUrl && !(await fileExists(resolve(OUT_DIR, "index.html")))) {
@@ -384,6 +426,8 @@ async function main() {
     [TOOLS_MANIFEST_PATH.slice(1)]: buildToolsManifest(options),
   }, options);
 
+  const markdownCount = await writePageMarkdown(pages, options);
+
   const counts = Object.entries(
     pages.reduce<Record<string, number>>((acc, page) => ({ ...acc, [page.kind]: (acc[page.kind] ?? 0) + 1 }), {}),
   )
@@ -391,6 +435,7 @@ async function main() {
     .join(", ");
   console.log(`llms: ${pages.length} páginas (${counts}) desde ${options.baseUrl ?? "out/"}`);
   written.forEach((file) => console.log(`  escrito ${file}`));
+  console.log(markdownCount > 0 ? `  escritos ${markdownCount} ${PAGE_MARKDOWN_FILE} en ${options.outDir ?? OUT_DIR}` : `  sin ${PAGE_MARKDOWN_FILE} por página (solo con out/ o --out-dir)`);
 }
 
 main().catch((error: unknown) => {
