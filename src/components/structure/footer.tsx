@@ -49,7 +49,7 @@ export async function Footer() {
             <Link href="/" className="flex items-center gap-2 group">
               <div className="w-48 h-16 rounded-lg  flex items-center justify-center">
                 <Image
-                  src="/dam/logos/logo.webp"
+                  src="/dam/logos/logo-header.webp"
                   alt="Logo InspiraArte"
                   width={192}
                   height={64}

@@ -82,8 +82,10 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="w-48 h-16 rounded-lg  flex items-center justify-center">
+              {/* logo-header.webp: logo.webp reducido a 384×128 (2× de 192×64), 14 KB en vez de 44 KB.
+                  Se descarga con prioridad alta junto al CSS y las fuentes, así que pesa en el primer render. */}
               <Image
-                src="/dam/logos/logo.webp"
+                src="/dam/logos/logo-header.webp"
                 alt="Logo InspiraArte"
                 width={192}
                 height={64}
