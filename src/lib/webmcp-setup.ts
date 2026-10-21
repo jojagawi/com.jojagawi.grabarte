@@ -13,13 +13,24 @@ type JsonSchema = {
   type: "object";
   properties: Record<string, unknown>;
   required?: string[];
+  additionalProperties?: boolean;
+};
+
+// Anotaciones completas: los validadores de WebMCP piden declarar si la herramienta cambia algo.
+type ToolAnnotations = {
+  readOnlyHint: boolean;
+  destructiveHint: boolean;
+  idempotentHint: boolean;
+  openWorldHint: boolean;
 };
 
 type ToolDefinition = {
   name: string;
   description: string;
   inputSchema: JsonSchema;
-  annotations?: { readOnlyHint?: boolean };
+  // structuredContent de cada respuesta correcta; los errores (isError) no lo llevan.
+  outputSchema: JsonSchema;
+  annotations: ToolAnnotations;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- cada herramienta valida sus argumentos.
   execute: (args: any) => Promise<ToolResult>;
 };
@@ -301,12 +312,98 @@ function toSitePath(value: string | undefined): string | null {
   return `${pathname.endsWith("/") ? pathname : `${pathname}/`}${rest}`;
 }
 
+// Solo consulta los JSON del sitio: no cambia nada ni sale del dominio.
+const READ_ONLY: ToolAnnotations = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+// Cambia de página dentro del sitio; no envía datos ni borra nada.
+const NAVIGATION: ToolAnnotations = {
+  readOnlyHint: false,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
+const NO_INPUT: JsonSchema = { type: "object", properties: {}, additionalProperties: false };
+
+const nullableString = (description: string) => ({ type: ["string", "null"], description });
+const nullableNumber = (description: string) => ({ type: ["number", "null"], description });
+const stringList = (description: string) => ({ type: "array", items: { type: "string" }, description });
+
+const PRODUCT_SUMMARY_SCHEMA = {
+  type: "object",
+  properties: {
+    id: { type: "integer", description: "ID del producto." },
+    idSlug: { type: "string", description: "Identificador id-slug de la ficha." },
+    reference: { type: "string", description: "Referencia IA-0000." },
+    name: { type: "string" },
+    categories: stringList("Categorías del producto."),
+    suggestedPrice: nullableNumber("Precio de referencia por pieza en MXN; null = bajo cotización."),
+    image: nullableString("URL de la imagen principal."),
+    url: { type: "string", description: "URL absoluta de la ficha." },
+  },
+  required: ["id", "reference", "name", "url"],
+};
+
+const REVIEW_SCHEMA = {
+  type: "object",
+  properties: {
+    name: { type: "string", description: "Nombre del cliente." },
+    product: { type: "string", description: "Producto que calificó." },
+    rating: { type: "integer", minimum: 1, maximum: 5 },
+    comment: { type: "string" },
+    productId: { type: ["integer", "null"], description: "ID del producto, si la calificación está ligada a uno." },
+    createdAt: { type: "string", description: "Fecha ISO de la calificación." },
+  },
+  required: ["name", "rating", "comment"],
+};
+
+const PRODUCT_DETAIL_SCHEMA = {
+  type: "object",
+  properties: {
+    ...PRODUCT_SUMMARY_SCHEMA.properties,
+    description: { type: "string" },
+    material: nullableString("MDF, Acrílico, Metal, Termo…"),
+    productionTime: nullableString("Tiempo de producción, por ejemplo \"3 a 4 días hábiles\"."),
+    shippingTime: nullableString("Tiempo de envío."),
+    dimensions: nullableString("Medidas de la pieza."),
+    isCustomizable: { type: "boolean", description: "Si se personaliza con nombre, fecha o logo." },
+    gallery: stringList("URLs de imágenes adicionales."),
+    reviews: { type: "array", items: REVIEW_SCHEMA, description: "Calificaciones aprobadas del producto." },
+  },
+  required: ["id", "reference", "name", "description", "url", "reviews"],
+};
+
+const OPENED_PAGE_SCHEMA: JsonSchema = {
+  type: "object",
+  properties: { url: { type: "string", description: "URL absoluta de la página que se abre." } },
+  required: ["url"],
+};
+
 const TOOLS: ToolDefinition[] = [
   {
     name: "list_categories",
     description: "Lista las categorías públicas del catálogo de InspiraArte (taller de corte y grabado láser en CDMX).",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
+    inputSchema: NO_INPUT,
+    outputSchema: {
+      type: "object",
+      properties: {
+        categories: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { id: { type: "integer" }, name: { type: "string" } },
+            required: ["id", "name"],
+          },
+        },
+      },
+      required: ["categories"],
+    },
+    annotations: READ_ONLY,
     execute: async () => {
       const categories = await loadData<CategoryItem[]>("categories.json");
       if (!categories) {
@@ -323,6 +420,7 @@ const TOOLS: ToolDefinition[] = [
       "Busca productos del catálogo por palabras (nombre, descripción, material o categoría) y/o por categoría. Devuelve nombre, referencia, precio de referencia y enlace.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         query: { type: "string", description: "Palabras a buscar, por ejemplo \"esferas navidad\" o \"llavero metal\"." },
         category: { type: "string", description: "Nombre de una categoría (ver list_categories)." },
@@ -330,7 +428,16 @@ const TOOLS: ToolDefinition[] = [
         limit: { type: "integer", minimum: 1, maximum: 20, description: "Máximo de resultados (1 a 20, 8 por defecto)." },
       },
     },
-    annotations: { readOnlyHint: true },
+    outputSchema: {
+      type: "object",
+      properties: {
+        total: { type: "integer", description: "Productos que coinciden (antes de aplicar limit)." },
+        exact: { type: "boolean", description: "false si ninguno tiene todas las palabras y se devuelven los más parecidos." },
+        products: { type: "array", items: PRODUCT_SUMMARY_SCHEMA },
+      },
+      required: ["total", "exact", "products"],
+    },
+    annotations: READ_ONLY,
     execute: async ({ query, category, customizable, limit }: {
       query?: string;
       category?: string;
@@ -360,7 +467,7 @@ const TOOLS: ToolDefinition[] = [
       if (items.length === 0) {
         return textResult(
           "No se encontraron productos con esos criterios. Prueba con menos palabras o revisa las categorías con list_categories. También se hacen diseños a la medida: usa prepare_quote.",
-          { total: 0, products: [] },
+          { total: 0, exact: false, products: [] },
         );
       }
 
@@ -380,12 +487,14 @@ const TOOLS: ToolDefinition[] = [
       "Detalle de un producto: descripción, material, medidas, precio de referencia, tiempos de producción y envío, imágenes y calificaciones.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         id: { type: "integer", minimum: 1, description: "ID numérico del producto (también aparece como IA-0000)." },
         idSlug: { type: "string", description: "Identificador id-slug o ruta de la ficha, por ejemplo \"242-trajinera-decorativa\"." },
       },
     },
-    annotations: { readOnlyHint: true },
+    outputSchema: PRODUCT_DETAIL_SCHEMA as JsonSchema,
+    annotations: READ_ONLY,
     execute: async ({ id, idSlug }: { id?: number; idSlug?: string }) => {
       const [products, reviews] = await Promise.all([
         loadData<ProductItem[]>("products.json"),
@@ -411,8 +520,16 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "get_current_product",
     description: "Devuelve el producto que el visitante está viendo, si está en una ficha de producto.",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
+    inputSchema: NO_INPUT,
+    outputSchema: {
+      type: "object",
+      properties: {
+        product: { anyOf: [PRODUCT_DETAIL_SCHEMA, { type: "null" }], description: "null si no está en una ficha." },
+        path: { type: "string", description: "Ruta de la página actual." },
+      },
+      required: ["product", "path"],
+    },
+    annotations: READ_ONLY,
     execute: async () => {
       const match = /^\/productos\/(\d+-[^/]+)\/?$/u.exec(window.location.pathname);
       if (!match) {
@@ -442,8 +559,30 @@ const TOOLS: ToolDefinition[] = [
     name: "list_seasons",
     description:
       "Lista las temporadas del año (Navidad, Día de muertos, regreso a clases…) con sus meses, categorías y número de piezas.",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
+    inputSchema: NO_INPUT,
+    outputSchema: {
+      type: "object",
+      properties: {
+        seasons: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              slug: { type: "string" },
+              name: { type: "string" },
+              months: { type: "string", description: "Meses de la temporada, por ejemplo \"Noviembre – Diciembre\"." },
+              categories: stringList("Categorías de la temporada."),
+              productCount: { type: "integer" },
+              hasGuide: { type: "boolean" },
+              url: { type: "string" },
+            },
+            required: ["slug", "name", "months", "productCount", "url"],
+          },
+        },
+      },
+      required: ["seasons"],
+    },
+    annotations: READ_ONLY,
     execute: async () => {
       const seasons = await loadData<SeasonItem[]>("seasons.json");
       if (!seasons) {
@@ -472,13 +611,35 @@ const TOOLS: ToolDefinition[] = [
       "Guía de compra de una temporada (ideas, tiempos para pedir a tiempo, piezas recomendadas) y sus productos.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         season: { type: "string", description: "Slug o nombre de la temporada, por ejemplo \"navidad\" o \"Día de muertos\"." },
         limit: { type: "integer", minimum: 1, maximum: 20, description: "Máximo de productos a listar (1 a 20, 10 por defecto)." },
       },
       required: ["season"],
     },
-    annotations: { readOnlyHint: true },
+    outputSchema: {
+      type: "object",
+      properties: {
+        slug: { type: "string" },
+        name: { type: "string" },
+        months: { type: "string" },
+        url: { type: "string" },
+        description: nullableString("Texto introductorio."),
+        guide: nullableString("Guía en Markdown; null si la temporada no tiene."),
+        categories: stringList("Categorías de la temporada."),
+        products: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { id: { type: "integer" }, name: { type: "string" }, url: { type: "string" } },
+            required: ["id", "name", "url"],
+          },
+        },
+      },
+      required: ["slug", "name", "months", "url", "products"],
+    },
+    annotations: READ_ONLY,
     execute: async ({ season, limit }: { season?: string; limit?: number }) => {
       const seasons = await loadData<SeasonItem[]>("seasons.json");
       if (!seasons) {
@@ -517,8 +678,42 @@ const TOOLS: ToolDefinition[] = [
     name: "get_materials_guide",
     description:
       "Explica los materiales y técnicas (MDF, acrílico, metal, termos; corte y grabado láser) con medidas y precios de referencia.",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
+    inputSchema: NO_INPUT,
+    outputSchema: {
+      type: "object",
+      properties: {
+        definitions: stringList("Definiciones de corte láser, grabado láser y MDF."),
+        materials: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              definition: { type: "string" },
+              technique: { type: "string" },
+              bestFor: { type: "string" },
+              catalogCount: { type: "integer", description: "Diseños de ese material en el catálogo." },
+            },
+            required: ["name", "definition", "technique", "bestFor", "catalogCount"],
+          },
+        },
+        sizeReferences: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              url: { type: "string" },
+              dimensions: { type: "string" },
+              suggestedPrice: nullableNumber("Precio por pieza en MXN."),
+            },
+            required: ["name", "url", "dimensions"],
+          },
+        },
+      },
+      required: ["definitions", "materials", "sizeReferences"],
+    },
+    annotations: READ_ONLY,
     execute: async () => {
       const guide = await loadData<MaterialsGuide>("materials.json");
       if (!guide) {
@@ -545,12 +740,27 @@ const TOOLS: ToolDefinition[] = [
     description: "Busca respuestas en las preguntas frecuentes: tiempos, pedido mínimo, envíos, pagos, garantía.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         query: { type: "string", description: "Palabras a buscar, por ejemplo \"envío Monterrey\" o \"formas de pago\". Vacío devuelve todas." },
         limit: { type: "integer", minimum: 1, maximum: 20, description: "Máximo de respuestas (1 a 20, 5 por defecto)." },
       },
     },
-    annotations: { readOnlyHint: true },
+    outputSchema: {
+      type: "object",
+      properties: {
+        faqs: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { question: { type: "string" }, answer: { type: "string" } },
+            required: ["question", "answer"],
+          },
+        },
+      },
+      required: ["faqs"],
+    },
+    annotations: READ_ONLY,
     execute: async ({ query, limit }: { query?: string; limit?: number }) => {
       const faqs = await loadData<FaqItem[]>("faqs.json");
       if (!faqs) {
@@ -575,12 +785,22 @@ const TOOLS: ToolDefinition[] = [
     description: "Calificaciones y opiniones aprobadas de clientes, de todo el sitio o de un producto.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         productId: { type: "integer", minimum: 1, description: "ID del producto para ver solo sus opiniones." },
         limit: { type: "integer", minimum: 1, maximum: 20, description: "Máximo de opiniones (1 a 20, 5 por defecto)." },
       },
     },
-    annotations: { readOnlyHint: true },
+    outputSchema: {
+      type: "object",
+      properties: {
+        average: nullableNumber("Promedio de 1 a 5; null si no hay calificaciones."),
+        total: { type: "integer" },
+        reviews: { type: "array", items: REVIEW_SCHEMA },
+      },
+      required: ["average", "total", "reviews"],
+    },
+    annotations: READ_ONLY,
     execute: async ({ productId, limit }: { productId?: number; limit?: number }) => {
       const reviews = await loadData<ReviewItem[]>("reviews.json");
       if (!reviews) {
@@ -607,8 +827,32 @@ const TOOLS: ToolDefinition[] = [
   {
     name: "get_business_info",
     description: "Datos de contacto, ubicación, horarios y redes sociales de InspiraArte.",
-    inputSchema: { type: "object", properties: {} },
-    annotations: { readOnlyHint: true },
+    inputSchema: NO_INPUT,
+    outputSchema: {
+      type: "object",
+      properties: {
+        businessName: { type: "string" },
+        email: { type: "string" },
+        whatsapp: { type: "string", description: "Vacío si no hay WhatsApp publicado." },
+        address: { type: "string" },
+        contactUrl: { type: "string", description: "URL absoluta del formulario de cotización." },
+        schedules: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { dayRange: { type: "string" }, hours: { type: "string" } },
+            required: ["dayRange", "hours"],
+          },
+        },
+        social: {
+          type: "object",
+          description: "URLs de redes (instagram, facebook, tiktok, googleBusiness); null si no hay.",
+          additionalProperties: { type: ["string", "null"] },
+        },
+      },
+      required: ["businessName", "email", "contactUrl", "schedules"],
+    },
+    annotations: READ_ONLY,
     execute: async () => {
       const info = await loadData<BusinessInfoItem>("business-info.json");
       if (!info) {
@@ -645,13 +889,15 @@ const TOOLS: ToolDefinition[] = [
       "Lleva al visitante a una página del sitio: la ficha de un producto (productId), una temporada (seasonSlug) o una ruta como \"/productos/\" o \"/faq/\".",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         productId: { type: "integer", minimum: 1, description: "ID del producto cuya ficha se abre." },
         seasonSlug: { type: "string", description: "Slug de la temporada (ver list_seasons)." },
         path: { type: "string", description: "Ruta del sitio que empieza con \"/\", por ejemplo \"/proceso/\"." },
       },
     },
-    annotations: { readOnlyHint: false },
+    outputSchema: OPENED_PAGE_SCHEMA,
+    annotations: NAVIGATION,
     execute: async ({ productId, seasonSlug, path }: { productId?: number; seasonSlug?: string; path?: string }) => {
       let target: string | null = null;
 
@@ -687,6 +933,7 @@ const TOOLS: ToolDefinition[] = [
       "Abre el formulario de cotización (/contacto) con el producto, la cantidad, la fecha y los detalles ya escritos. No envía nada: el visitante revisa, agrega su nombre y correo y pulsa Enviar.",
     inputSchema: {
       type: "object",
+      additionalProperties: false,
       properties: {
         productId: { type: "integer", minimum: 1, description: "ID del producto a cotizar. Omitir para un diseño a la medida." },
         quantity: { type: "integer", minimum: 1, maximum: 100000, description: "Número de piezas." },
@@ -694,7 +941,15 @@ const TOOLS: ToolDefinition[] = [
         details: { type: "string", description: "Qué se quiere personalizar: nombres, textos, colores, logo, ocasión." },
       },
     },
-    annotations: { readOnlyHint: false },
+    outputSchema: {
+      type: "object",
+      properties: {
+        url: { type: "string", description: "URL de /contacto con los campos prellenados." },
+        submitted: { type: "boolean", const: false, description: "Siempre false: el visitante envía la solicitud." },
+      },
+      required: ["url", "submitted"],
+    },
+    annotations: NAVIGATION,
     execute: async ({ productId, quantity, neededBy, details }: {
       productId?: number;
       quantity?: number;
