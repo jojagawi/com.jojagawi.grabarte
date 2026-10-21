@@ -43,10 +43,30 @@ function findNoIndexPaths(directory = OUT_DIR, prefix = "") {
   });
 }
 
+// Rastreadores de buscadores e IA que se nombran aparte en robots.txt. Hoy "*" ya los deja pasar;
+// nombrarlos deja explícito que el sitio quiere aparecer en ChatGPT, Gemini, Perplexity y Claude
+// aunque alguien cambie la regla general. Un bot con su propio grupo ignora el de "*".
+const AI_CRAWLERS = [
+  "Bingbot",
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "GPTBot",
+  "Google-Extended",
+  "PerplexityBot",
+  "Perplexity-User",
+  "ClaudeBot",
+  "Claude-SearchBot",
+  "Claude-User",
+  "Applebot-Extended",
+];
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
   generateRobotsTxt: true,
+  robotsTxtOptions: {
+    policies: [{ userAgent: "*", allow: "/" }, ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: "/" }))],
+  },
   sitemapSize: 100,
   // lastmod real por ruta, no la hora del build; sin changefreq ni priority (Google los ignora).
   autoLastmod: false,

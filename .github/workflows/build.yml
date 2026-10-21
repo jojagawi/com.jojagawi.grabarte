@@ -168,6 +168,10 @@ jobs:
       - name: Build project
         run: pnpm run build:all
 
+      # Antes de subir: guarda los lastmod publicados para avisar solo de lo que cambió.
+      - name: Snapshot sitemap for IndexNow
+        run: pnpm run indexnow -- --snapshot
+
       # Despliegue en dos pasadas para que nunca quede un HTML pidiendo chunks borrados
       # ("module factory is not available"): primero se suben los archivos (chunks antes que
       # HTML), luego se purga Cloudflare y al final se borran los huérfanos con margen.
@@ -233,3 +237,9 @@ jobs:
             **/*.webp = public, max-age=31536000, immutable
             **/*.html = public, max-age=300
             **/* = public, max-age=31536000, immutable
+
+      # Avisa a Bing (y por él a ChatGPT y Copilot) de las páginas nuevas o modificadas.
+      # Si falla, el deploy ya está hecho: no lo marca como fallido.
+      - name: Notify IndexNow
+        continue-on-error: true
+        run: pnpm run indexnow

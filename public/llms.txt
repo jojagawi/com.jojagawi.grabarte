@@ -91,6 +91,24 @@ InspiraArte es un taller de corte y grabado láser en Ciudad de México, fundado
 - [Categorías](https://www.inspiraarte.com/mcp/categories.json): Categorías del catálogo.
 - [Productos](https://www.inspiraarte.com/mcp/products.json): Diseños publicados con descripción, categorías, precio de referencia y enlace a su ficha.
 - [Preguntas frecuentes](https://www.inspiraarte.com/mcp/faqs.json): Preguntas y respuestas sobre pedidos, envíos y pagos.
+- [Temporadas](https://www.inspiraarte.com/mcp/seasons.json): Temporadas del año con su guía, categorías y piezas.
+- [Materiales](https://www.inspiraarte.com/mcp/materials.json): Materiales y técnicas, con medidas y precios de referencia.
+- [Calificaciones](https://www.inspiraarte.com/mcp/reviews.json): Opiniones aprobadas de clientes.
+
+## Herramientas para agentes (WebMCP)
+- [Definiciones de las herramientas](https://www.inspiraarte.com/mcp/tools.json): Las 12 herramientas que el sitio registra en document.modelContext (WebMCP) al abrirlo en un navegador compatible, con esquemas de entrada y salida. Leen los mismos datos de "Datos para agentes". Ninguna envía datos: prepare_quote solo llena el formulario de /contacto y el visitante decide si lo envía.
+- `list_categories`: Lista las categorías públicas del catálogo de InspiraArte (taller de corte y grabado láser en CDMX).
+- `search_products`: Busca productos del catálogo por palabras (nombre, descripción, material o categoría) y/o por categoría. Devuelve nombre, referencia, precio de referencia y enlace.
+- `get_product_detail`: Detalle de un producto: descripción, material, medidas, precio de referencia, tiempos de producción y envío, imágenes y calificaciones.
+- `get_current_product`: Devuelve el producto que el visitante está viendo, si está en una ficha de producto.
+- `list_seasons`: Lista las temporadas del año (Navidad, Día de muertos, regreso a clases…) con sus meses, categorías y número de piezas.
+- `get_season_guide`: Guía de compra de una temporada (ideas, tiempos para pedir a tiempo, piezas recomendadas) y sus productos.
+- `get_materials_guide`: Explica los materiales y técnicas (MDF, acrílico, metal, termos; corte y grabado láser) con medidas y precios de referencia.
+- `search_faq`: Busca respuestas en las preguntas frecuentes: tiempos, pedido mínimo, envíos, pagos, garantía.
+- `get_reviews`: Calificaciones y opiniones aprobadas de clientes, de todo el sitio o de un producto.
+- `get_business_info`: Datos de contacto, ubicación, horarios y redes sociales de InspiraArte.
+- `navigate_to` (abre otra página del sitio): Lleva al visitante a una página del sitio: la ficha de un producto (productId), una temporada (seasonSlug) o una ruta como "/productos/" o "/faq/".
+- `prepare_quote` (abre otra página del sitio): Abre el formulario de cotización (/contacto) con el producto, la cantidad, la fecha y los detalles ya escritos. No envía nada: el visitante revisa, agrega su nombre y correo y pulsa Enviar.
 
 ## Optional
 - [Aviso de privacidad](https://www.inspiraarte.com/aviso-de-privacidad/): Conoce cómo tratamos tus datos personales en InspiraArte conforme a la legislación mexicana aplicable y buenas prácticas internacionales de privacidad.
