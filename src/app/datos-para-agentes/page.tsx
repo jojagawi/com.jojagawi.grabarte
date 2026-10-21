@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { buildPageMetadata } from "@/lib/metadata";
 import {
+  AGENT_CARD_PATH,
   API_CATALOG_PATH,
   API_STATUS_PATH,
   OPENAPI_PATH,
@@ -51,6 +52,11 @@ export default function DatosParaAgentes() {
               </li>
               <li>
                 Especificación OpenAPI 3.1: <a href={OPENAPI_PATH} className={linkClassName}>{OPENAPI_PATH}</a>
+              </li>
+              <li>
+                Agent Card de A2A: <a href={AGENT_CARD_PATH} className={linkClassName}>{AGENT_CARD_PATH}</a>. Describe
+                las habilidades del sitio; no hay un servicio A2A que reciba mensajes, las habilidades se cumplen
+                leyendo los JSON de abajo.
               </li>
               <li>
                 Estado: <a href={API_STATUS_PATH} className={linkClassName}>{API_STATUS_PATH}</a> responde{" "}

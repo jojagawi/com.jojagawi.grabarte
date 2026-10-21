@@ -1,9 +1,11 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import {
+  AGENT_CARD_PATH,
   API_CATALOG_PATH,
   API_STATUS_PATH,
   OPENAPI_PATH,
+  buildAgentCard,
   buildApiCatalog,
   buildApiStatus,
   buildOpenApiSpec,
@@ -13,6 +15,7 @@ import {
 //   public/.well-known/api-catalog   linkset que apunta a la especificación, la documentación y el estado
 //   public/mcp/openapi.json          OpenAPI 3.1 de los JSON de /mcp/
 //   public/mcp/status.json           estado de la API
+//   public/.well-known/agent-card.json  Agent Card de A2A con las habilidades del sitio
 // S3 no deduce el tipo de api-catalog (no tiene extensión): build.yml lo vuelve a subir como
 // application/linkset+json y next.config.ts lo sirve así en dev.
 
@@ -30,8 +33,11 @@ async function main(): Promise<void> {
     writeJson(API_CATALOG_PATH, buildApiCatalog(siteUrl)),
     writeJson(OPENAPI_PATH, buildOpenApiSpec(siteUrl)),
     writeJson(API_STATUS_PATH, buildApiStatus()),
+    writeJson(AGENT_CARD_PATH, buildAgentCard(siteUrl)),
   ]);
-  console.log(`build:api-catalog: ${API_CATALOG_PATH}, ${OPENAPI_PATH} y ${API_STATUS_PATH} para ${siteUrl}`);
+  console.log(
+    `build:api-catalog: ${API_CATALOG_PATH}, ${OPENAPI_PATH}, ${API_STATUS_PATH} y ${AGENT_CARD_PATH} para ${siteUrl}`,
+  );
 }
 
 main().catch((error) => {
