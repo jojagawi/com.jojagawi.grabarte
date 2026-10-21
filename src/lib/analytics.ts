@@ -54,7 +54,8 @@ export function getLinkLocation(element: Element): string {
 // Clasifica el clic en un enlace; null cuando no aporta nada sobre el page_view.
 export function classifyLinkClick(anchor: HTMLAnchorElement): { event: string; params: AnalyticsParams } | null {
   const rawHref = anchor.getAttribute("href");
-  if (!rawHref || rawHref.startsWith("#") || rawHref.startsWith("javascript:")) {
+  // Otros esquemas (javascript:, data:…) se descartan abajo: solo cuentan http(s), mailto y tel.
+  if (!rawHref || rawHref.startsWith("#")) {
     return null;
   }
 
