@@ -181,7 +181,7 @@ export default function AvisoDePrivacidad() {
             </p>
           </section>
 
-          <section className="space-y-3">
+          <section id="cookies" className="space-y-3">
             <h2 className="font-semibold text-2xl">9. Uso de cookies y tecnologías similares</h2>
             <p className="text-muted-foreground">
               El sitio puede utilizar cookies y tecnologías similares para funcionamiento técnico,

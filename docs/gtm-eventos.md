@@ -38,6 +38,7 @@ El contenedor (activadores, variables y etiquetas) se configura a mano en GTM.
 | Navegación de header, footer y menú móvil | todo el sitio | `navigation_click` | **nuevo** |
 | Abrir menú móvil | todo el sitio | `menu_open` | **nuevo** |
 | Flechas de la vitrina de temporada | portada | `carousel_scroll` | **nuevo** |
+| Aceptar / rechazar cookies en el banner | todo el sitio | `consent_update` | **nuevo** |
 | Instalación de la PWA | todo el sitio | `install_prompt_*`, `pwa_installed`, `pwa_standalone_session` | ya existía |
 
 Fuera de alcance (panel de administración): `formContactSend` (alta de diseño, el nombre no
@@ -71,6 +72,7 @@ Parámetros comunes de los clics en enlaces: `link_location` (zona: `header`, `f
 | `navigation_click` | comunes + `link_url` |
 | `menu_open` | `menu_name` |
 | `carousel_scroll` | `carousel_name`, `direction` |
+| `consent_update` | `consent_analytics`, `consent_ads` (`granted`/`denied`) |
 
 ## Configuración sugerida en GTM
 
@@ -87,9 +89,15 @@ Notas:
 
 - Los nombres no chocan con la medición mejorada de GA4 (`click`, `file_download`), así que
   pueden convivir; si la medición mejorada ya mide salidas o descargas, decide cuál reportar.
-- `layout.tsx` declara Consent Mode con `analytics_storage: denied` por defecto y el sitio no
-  envía ningún `consent update`: si el contenedor no tiene un banner de consentimiento, GA4
-  solo recibe pings sin cookies.
+- **Consentimiento (Consent Mode v2):** todo arranca negado (`analytics_storage`, `ad_*`). El
+  banner de cookies (`src/components/structure/cookie-consent.tsx`) ofrece *Aceptar* o *Solo
+  necesarias*; la elección se guarda en `localStorage` (`inspiraarte-consent`) y se envía con
+  `gtag('consent', 'update', …)` más el evento `consent_update` (`consent_analytics`,
+  `consent_ads`). En las visitas siguientes `layout.tsx` aplica la elección guardada antes de
+  cargar GTM. El footer tiene *Preferencias de cookies* para cambiarla. Para volver a pedirla a
+  todos, sube `CONSENT_VERSION` en `src/lib/consent.ts`. En GTM, las etiquetas de Google ya
+  respetan el consentimiento; si usas etiquetas de terceros, exige `analytics_storage` en su
+  configuración de consentimiento adicional.
 - Un enlace con `data-track="none"` (o dentro de un elemento con ese atributo) se omite del
   rastreo automático; `data-track-location` y `data-track-item-name` en un ancestro fijan la
   zona y el diseño de los enlaces que contiene.
