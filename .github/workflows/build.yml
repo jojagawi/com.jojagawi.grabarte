@@ -191,11 +191,14 @@ jobs:
 
       # api-catalog no tiene extensión y S3 lo guarda como binary/octet-stream; RFC 9727 pide
       # application/linkset+json. Se copia sobre sí mismo con el tipo correcto (mismo contenido y
-      # ETag, así que el paso de huérfanos no lo vuelve a subir).
-      - name: Set API catalog content type
+      # ETag, así que el paso de huérfanos no lo vuelve a subir). auth.md igual, como text/markdown.
+      - name: Set API catalog and auth.md content types
         run: |
           aws s3 cp out/.well-known/api-catalog s3://www.inspiraarte.com/.well-known/api-catalog \
             --content-type 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"' \
+            --cache-control 'public, max-age=300'
+          aws s3 cp out/auth.md s3://www.inspiraarte.com/auth.md \
+            --content-type 'text/markdown; charset=utf-8' \
             --cache-control 'public, max-age=300'
 
       # S3 website no permite cabeceras propias: la cabecera Link de la home (RFC 8288/9727) la
