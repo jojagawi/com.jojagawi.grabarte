@@ -172,16 +172,61 @@ jobs:
       - name: Snapshot sitemap for IndexNow
         run: pnpm run indexnow -- --snapshot
 
-      - uses: osiegmar/s3-publisher-action@v3
+      # Despliegue en dos pasadas para que nunca quede un HTML pidiendo chunks borrados
+      # ("module factory is not available"): primero se suben los archivos (chunks antes que
+      # HTML), luego se purga Cloudflare y al final se borran los huérfanos con margen.
+      # Solo _next/static y las .webp llevan hash en el nombre; el resto (HTML, payloads RSC
+      # index.txt, sitemap, service worker…) no puede ser immutable o se queda viejo un año.
+      - name: Publish static site (sin borrar huérfanos)
+        uses: osiegmar/s3-publisher-action@v3
+        with:
+          bucket: www.inspiraarte.com
+          dir: out
+          order: |
+            _next/static/**/*
+          cache-control: |
+            _next/static/**/* = public, max-age=31536000, immutable
+            **/*.webp = public, max-age=31536000, immutable
+            **/* = public, max-age=300
+
+      # Sin la purga, Cloudflare sigue sirviendo el HTML del build anterior.
+      - name: Purge Cloudflare cache
+        env:
+          CF_TOKEN: ${{ secrets.NEXT_CLOUDFLARE_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.NEXT_CLOUDFLARE_ZONE_ID }}
+        run: |
+          if [ -z "$CF_TOKEN" ]; then
+            echo "::warning title=Cloudflare::NEXT_CLOUDFLARE_TOKEN vacio; no se purgo la cache."
+            exit 0
+          fi
+          if [ -z "$CF_ZONE_ID" ]; then
+            CF_ZONE_ID=$(curl -sS -H "Authorization: Bearer $CF_TOKEN" \
+              "https://api.cloudflare.com/client/v4/zones?name=inspiraarte.com" | jq -r '.result[0].id // empty')
+          fi
+          if [ -z "$CF_ZONE_ID" ]; then
+            echo "::warning title=Cloudflare::No se encontro la zona; agrega el secreto NEXT_CLOUDFLARE_ZONE_ID."
+            exit 0
+          fi
+          RESULT=$(curl -sS -X POST -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}' \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache")
+          if [ "$(echo "$RESULT" | jq -r '.success')" != "true" ]; then
+            echo "::warning title=Cloudflare::La purga fallo: $(echo "$RESULT" | jq -c '.errors')"
+          fi
+
+      # Espera más que el max-age del HTML (300 s) antes de borrar: un navegador con el HTML
+      # anterior en caché aún puede pedir los chunks viejos.
+      - name: Delete orphaned files
+        uses: osiegmar/s3-publisher-action@v3
         with:
           bucket: www.inspiraarte.com
           dir: out
           delete-orphaned: true
-          wait-before-delete: 3000
+          wait-before-delete: 330000
           cache-control: |
+            _next/static/**/* = public, max-age=31536000, immutable
             **/*.webp = public, max-age=31536000, immutable
-            **/*.html = public, max-age=300
-            **/* = public, max-age=31536000, immutable
+            **/* = public, max-age=300
 
       - uses: osiegmar/s3-publisher-action@v3
         with:
