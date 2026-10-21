@@ -5,13 +5,20 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, MessageSquare, Palette, Truck, X } from "lucide-react"
 import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp"
-import { ContactForm, type QuoteLeadTime } from "@/components/custom/contact-form"
+import {
+  ContactForm,
+  MAX_DETAILS_LENGTH,
+  type ContactPrefill,
+  type QuoteLeadTime,
+} from "@/components/custom/contact-form"
 import { ContactMethods } from "@/components/custom/contact-methods"
 import { buildWhatsappQuoteHref } from "@/lib/quote-request"
 import { trackEvent } from "@/lib/analytics"
 
 const MAX_PRODUCT_LENGTH = 200
 const MAX_LEAD_TIME_LENGTH = 80
+const MAX_QUANTITY_LENGTH = 40
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u
 // Solo miniaturas del bucket de vistas previas: la URL la puede escribir cualquiera.
 const PREVIEW_PATH_PATTERN = /^preview\/[A-Za-z0-9._-]+\.(webp|png|jpe?g)$/u
 // Solo rutas internas de fichas: evita convertir la tarjeta en un enlace a cualquier sitio.
@@ -59,6 +66,14 @@ const readRequestedProduct = () => readParam("producto", MAX_PRODUCT_LENGTH)
 const readProductionTime = () => readParam("produccion", MAX_LEAD_TIME_LENGTH)
 const readShippingTime = () => readParam("envio", MAX_LEAD_TIME_LENGTH)
 const readNothing = () => null
+// Cantidad, fecha y detalles que deja escritos la herramienta WebMCP prepare_quote. El visitante
+// los revisa y completa sus datos; nada se envía sin que pulse el botón.
+const readQuantity = () => readParam("cantidad", MAX_QUANTITY_LENGTH)
+const readNeededBy = () => {
+  const value = readParam("fecha", 10)
+  return value && ISO_DATE_PATTERN.test(value) ? value : null
+}
+const readDetails = () => readParam("detalles", MAX_DETAILS_LENGTH)
 
 // "IA-0239 · Porta Post-it" → referencia y nombre; si no trae referencia, todo es nombre.
 function splitProductSubject(subject: string): { reference: string | null; name: string } {
@@ -75,6 +90,9 @@ export function Contact() {
   const shippingTime = useSyncExternalStore(subscribeToNothing, readShippingTime, readNothing)
   const imagePath = useSyncExternalStore(subscribeToNothing, readImagePath, readNothing)
   const productPath = useSyncExternalStore(subscribeToNothing, readProductPath, readNothing)
+  const quantityFromUrl = useSyncExternalStore(subscribeToNothing, readQuantity, readNothing)
+  const neededByFromUrl = useSyncExternalStore(subscribeToNothing, readNeededBy, readNothing)
+  const detailsFromUrl = useSyncExternalStore(subscribeToNothing, readDetails, readNothing)
   // El visitante puede quitar el producto si quiere cotizar otra cosa.
   const [productDismissed, setProductDismissed] = useState(false)
   const [sent, setSent] = useState(false)
@@ -101,6 +119,13 @@ export function Contact() {
       ? { production: productionTime, shipping: shippingTime }
       : null
   const whatsappHref = buildWhatsappQuoteHref({ product: requestedProduct, ...draft })
+  const prefill: ContactPrefill = {
+    ...(quantityFromUrl ? { quantity: quantityFromUrl } : {}),
+    ...(neededByFromUrl ? { neededBy: neededByFromUrl } : {}),
+    ...(detailsFromUrl ? { details: detailsFromUrl } : {}),
+  }
+  // El HTML estático no trae la URL: si hay campos prellenados el formulario se monta de nuevo con ellos.
+  const prefillKey = Object.keys(prefill).length > 0 ? "prefill" : "empty"
 
   return (
     <section id="contacto" className="bg-background pt-24 pb-24 lg:pt-28">
@@ -215,7 +240,9 @@ export function Contact() {
             </p>
           )}
           <ContactForm
+            key={prefillKey}
             requestedProduct={requestedProduct}
+            prefill={prefill}
             leadTime={leadTime}
             onDraftChange={setDraft}
             onSentChange={setSent}
