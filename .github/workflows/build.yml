@@ -168,6 +168,10 @@ jobs:
       - name: Build project
         run: pnpm run build:all
 
+      # Antes de subir: guarda los lastmod publicados para avisar solo de lo que cambió.
+      - name: Snapshot sitemap for IndexNow
+        run: pnpm run indexnow -- --snapshot
+
       - uses: osiegmar/s3-publisher-action@v3
         with:
           bucket: www.inspiraarte.com
@@ -188,3 +192,9 @@ jobs:
             **/*.webp = public, max-age=31536000, immutable
             **/*.html = public, max-age=300
             **/* = public, max-age=31536000, immutable
+
+      # Avisa a Bing (y por él a ChatGPT y Copilot) de las páginas nuevas o modificadas.
+      # Si falla, el deploy ya está hecho: no lo marca como fallido.
+      - name: Notify IndexNow
+        continue-on-error: true
+        run: pnpm run indexnow

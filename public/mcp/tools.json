@@ -1,0 +1,1045 @@
+{
+  "name": "InspiraArte",
+  "description": "InspiraArte es un taller de corte y grabado láser en Ciudad de México, fundado en 2026, que diseña y produce piezas personalizadas en MDF, acrílico, metal y más. Atiende pedidos desde una pieza hasta pedidos corporativos y envía a todo México. Cada pedido se cotiza y se aprueba con una propuesta de diseño antes de producir.",
+  "url": "https://www.inspiraarte.com/",
+  "protocol": "webmcp",
+  "usage": "Las herramientas se registran en document.modelContext al abrir cualquier página del sitio. Para consultar los datos sin navegador, lee los JSON de /mcp/ que se listan en /llms.txt.",
+  "tools": [
+    {
+      "name": "list_categories",
+      "description": "Lista las categorías públicas del catálogo de InspiraArte (taller de corte y grabado láser en CDMX).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "categories"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_products",
+      "description": "Busca productos del catálogo por palabras (nombre, descripción, material o categoría) y/o por categoría. Devuelve nombre, referencia, precio de referencia y enlace.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Palabras a buscar, por ejemplo \"esferas navidad\" o \"llavero metal\"."
+          },
+          "category": {
+            "type": "string",
+            "description": "Nombre de una categoría (ver list_categories)."
+          },
+          "customizable": {
+            "type": "boolean",
+            "description": "true para mostrar solo piezas personalizables con nombre, fecha o logo."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Máximo de resultados (1 a 20, 8 por defecto)."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Productos que coinciden (antes de aplicar limit)."
+          },
+          "exact": {
+            "type": "boolean",
+            "description": "false si ninguno tiene todas las palabras y se devuelven los más parecidos."
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "ID del producto."
+                },
+                "idSlug": {
+                  "type": "string",
+                  "description": "Identificador id-slug de la ficha."
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "Referencia IA-0000."
+                },
+                "name": {
+                  "type": "string"
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Categorías del producto."
+                },
+                "suggestedPrice": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Precio de referencia por pieza en MXN; null = bajo cotización."
+                },
+                "image": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "URL de la imagen principal."
+                },
+                "url": {
+                  "type": "string",
+                  "description": "URL absoluta de la ficha."
+                }
+              },
+              "required": [
+                "id",
+                "reference",
+                "name",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": [
+          "total",
+          "exact",
+          "products"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_product_detail",
+      "description": "Detalle de un producto: descripción, material, medidas, precio de referencia, tiempos de producción y envío, imágenes y calificaciones.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID numérico del producto (también aparece como IA-0000)."
+          },
+          "idSlug": {
+            "type": "string",
+            "description": "Identificador id-slug o ruta de la ficha, por ejemplo \"242-trajinera-decorativa\"."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID del producto."
+          },
+          "idSlug": {
+            "type": "string",
+            "description": "Identificador id-slug de la ficha."
+          },
+          "reference": {
+            "type": "string",
+            "description": "Referencia IA-0000."
+          },
+          "name": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Categorías del producto."
+          },
+          "suggestedPrice": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Precio de referencia por pieza en MXN; null = bajo cotización."
+          },
+          "image": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "URL de la imagen principal."
+          },
+          "url": {
+            "type": "string",
+            "description": "URL absoluta de la ficha."
+          },
+          "description": {
+            "type": "string"
+          },
+          "material": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "MDF, Acrílico, Metal, Termo…"
+          },
+          "productionTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tiempo de producción, por ejemplo \"3 a 4 días hábiles\"."
+          },
+          "shippingTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Tiempo de envío."
+          },
+          "dimensions": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Medidas de la pieza."
+          },
+          "isCustomizable": {
+            "type": "boolean",
+            "description": "Si se personaliza con nombre, fecha o logo."
+          },
+          "gallery": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "URLs de imágenes adicionales."
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Nombre del cliente."
+                },
+                "product": {
+                  "type": "string",
+                  "description": "Producto que calificó."
+                },
+                "rating": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "productId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ID del producto, si la calificación está ligada a uno."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Fecha ISO de la calificación."
+                }
+              },
+              "required": [
+                "name",
+                "rating",
+                "comment"
+              ]
+            },
+            "description": "Calificaciones aprobadas del producto."
+          }
+        },
+        "required": [
+          "id",
+          "reference",
+          "name",
+          "description",
+          "url",
+          "reviews"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_current_product",
+      "description": "Devuelve el producto que el visitante está viendo, si está en una ficha de producto.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID del producto."
+                  },
+                  "idSlug": {
+                    "type": "string",
+                    "description": "Identificador id-slug de la ficha."
+                  },
+                  "reference": {
+                    "type": "string",
+                    "description": "Referencia IA-0000."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Categorías del producto."
+                  },
+                  "suggestedPrice": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Precio de referencia por pieza en MXN; null = bajo cotización."
+                  },
+                  "image": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL de la imagen principal."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "URL absoluta de la ficha."
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "material": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MDF, Acrílico, Metal, Termo…"
+                  },
+                  "productionTime": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Tiempo de producción, por ejemplo \"3 a 4 días hábiles\"."
+                  },
+                  "shippingTime": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Tiempo de envío."
+                  },
+                  "dimensions": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Medidas de la pieza."
+                  },
+                  "isCustomizable": {
+                    "type": "boolean",
+                    "description": "Si se personaliza con nombre, fecha o logo."
+                  },
+                  "gallery": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "URLs de imágenes adicionales."
+                  },
+                  "reviews": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Nombre del cliente."
+                        },
+                        "product": {
+                          "type": "string",
+                          "description": "Producto que calificó."
+                        },
+                        "rating": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 5
+                        },
+                        "comment": {
+                          "type": "string"
+                        },
+                        "productId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "ID del producto, si la calificación está ligada a uno."
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "description": "Fecha ISO de la calificación."
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "rating",
+                        "comment"
+                      ]
+                    },
+                    "description": "Calificaciones aprobadas del producto."
+                  }
+                },
+                "required": [
+                  "id",
+                  "reference",
+                  "name",
+                  "description",
+                  "url",
+                  "reviews"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null si no está en una ficha."
+          },
+          "path": {
+            "type": "string",
+            "description": "Ruta de la página actual."
+          }
+        },
+        "required": [
+          "product",
+          "path"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_seasons",
+      "description": "Lista las temporadas del año (Navidad, Día de muertos, regreso a clases…) con sus meses, categorías y número de piezas.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "seasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "months": {
+                  "type": "string",
+                  "description": "Meses de la temporada, por ejemplo \"Noviembre – Diciembre\"."
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Categorías de la temporada."
+                },
+                "productCount": {
+                  "type": "integer"
+                },
+                "hasGuide": {
+                  "type": "boolean"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "slug",
+                "name",
+                "months",
+                "productCount",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": [
+          "seasons"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_season_guide",
+      "description": "Guía de compra de una temporada (ideas, tiempos para pedir a tiempo, piezas recomendadas) y sus productos.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "season": {
+            "type": "string",
+            "description": "Slug o nombre de la temporada, por ejemplo \"navidad\" o \"Día de muertos\"."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Máximo de productos a listar (1 a 20, 10 por defecto)."
+          }
+        },
+        "required": [
+          "season"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "months": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Texto introductorio."
+          },
+          "guide": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Guía en Markdown; null si la temporada no tiene."
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Categorías de la temporada."
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "url"
+              ]
+            }
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "months",
+          "url",
+          "products"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_materials_guide",
+      "description": "Explica los materiales y técnicas (MDF, acrílico, metal, termos; corte y grabado láser) con medidas y precios de referencia.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "definitions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Definiciones de corte láser, grabado láser y MDF."
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "definition": {
+                  "type": "string"
+                },
+                "technique": {
+                  "type": "string"
+                },
+                "bestFor": {
+                  "type": "string"
+                },
+                "catalogCount": {
+                  "type": "integer",
+                  "description": "Diseños de ese material en el catálogo."
+                }
+              },
+              "required": [
+                "name",
+                "definition",
+                "technique",
+                "bestFor",
+                "catalogCount"
+              ]
+            }
+          },
+          "sizeReferences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "dimensions": {
+                  "type": "string"
+                },
+                "suggestedPrice": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Precio por pieza en MXN."
+                }
+              },
+              "required": [
+                "name",
+                "url",
+                "dimensions"
+              ]
+            }
+          }
+        },
+        "required": [
+          "definitions",
+          "materials",
+          "sizeReferences"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_faq",
+      "description": "Busca respuestas en las preguntas frecuentes: tiempos, pedido mínimo, envíos, pagos, garantía.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Palabras a buscar, por ejemplo \"envío Monterrey\" o \"formas de pago\". Vacío devuelve todas."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Máximo de respuestas (1 a 20, 5 por defecto)."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "faqs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "question",
+                "answer"
+              ]
+            }
+          }
+        },
+        "required": [
+          "faqs"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_reviews",
+      "description": "Calificaciones y opiniones aprobadas de clientes, de todo el sitio o de un producto.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del producto para ver solo sus opiniones."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Máximo de opiniones (1 a 20, 5 por defecto)."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "average": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Promedio de 1 a 5; null si no hay calificaciones."
+          },
+          "total": {
+            "type": "integer"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Nombre del cliente."
+                },
+                "product": {
+                  "type": "string",
+                  "description": "Producto que calificó."
+                },
+                "rating": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "productId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "ID del producto, si la calificación está ligada a uno."
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Fecha ISO de la calificación."
+                }
+              },
+              "required": [
+                "name",
+                "rating",
+                "comment"
+              ]
+            }
+          }
+        },
+        "required": [
+          "average",
+          "total",
+          "reviews"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_business_info",
+      "description": "Datos de contacto, ubicación, horarios y redes sociales de InspiraArte.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "whatsapp": {
+            "type": "string",
+            "description": "Vacío si no hay WhatsApp publicado."
+          },
+          "address": {
+            "type": "string"
+          },
+          "contactUrl": {
+            "type": "string",
+            "description": "URL absoluta del formulario de cotización."
+          },
+          "schedules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dayRange": {
+                  "type": "string"
+                },
+                "hours": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dayRange",
+                "hours"
+              ]
+            }
+          },
+          "social": {
+            "type": "object",
+            "description": "URLs de redes (instagram, facebook, tiktok, googleBusiness); null si no hay.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "required": [
+          "businessName",
+          "email",
+          "contactUrl",
+          "schedules"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "navigate_to",
+      "description": "Lleva al visitante a una página del sitio: la ficha de un producto (productId), una temporada (seasonSlug) o una ruta como \"/productos/\" o \"/faq/\".",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del producto cuya ficha se abre."
+          },
+          "seasonSlug": {
+            "type": "string",
+            "description": "Slug de la temporada (ver list_seasons)."
+          },
+          "path": {
+            "type": "string",
+            "description": "Ruta del sitio que empieza con \"/\", por ejemplo \"/proceso/\"."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL absoluta de la página que se abre."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "prepare_quote",
+      "description": "Abre el formulario de cotización (/contacto) con el producto, la cantidad, la fecha y los detalles ya escritos. No envía nada: el visitante revisa, agrega su nombre y correo y pulsa Enviar.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "ID del producto a cotizar. Omitir para un diseño a la medida."
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000,
+            "description": "Número de piezas."
+          },
+          "neededBy": {
+            "type": "string",
+            "description": "Fecha en que se necesitan, en formato AAAA-MM-DD."
+          },
+          "details": {
+            "type": "string",
+            "description": "Qué se quiere personalizar: nombres, textos, colores, logo, ocasión."
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL de /contacto con los campos prellenados."
+          },
+          "submitted": {
+            "type": "boolean",
+            "const": false,
+            "description": "Siempre false: el visitante envía la solicitud."
+          }
+        },
+        "required": [
+          "url",
+          "submitted"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

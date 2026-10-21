@@ -2,6 +2,7 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { type HTMLElement, parse } from "node-html-parser";
+import { getWebMcpToolManifest } from "@/lib/webmcp-setup";
 
 // Genera llms.txt (índice) y llms-full.txt (texto completo) a partir de las páginas ya renderizadas,
 // así ambos reflejan exactamente lo que publica el sitio.
@@ -39,6 +40,8 @@ const SITE_SUMMARY = [
   "piezas personalizadas en MDF, acrílico, metal y más. Atiende pedidos desde una pieza hasta pedidos",
   "corporativos y envía a todo México. Cada pedido se cotiza y se aprueba con una propuesta de diseño antes de producir.",
 ].join(" ");
+
+const TOOLS_MANIFEST_PATH = "/mcp/tools.json";
 
 // Rutas que no son páginas: recursos, endpoints y archivos generados.
 const SKIPPED_PATH_PREFIXES = ["/_next/", "/api/", "/dam/", "/mcp/", "/cdn-cgi/"];
@@ -282,6 +285,33 @@ function buildHeader(pages: PageEntry[]): string {
   return [`# ${SITE_NAME}`, `> ${home?.description || SITE_SUMMARY}`, SITE_SUMMARY].join("\n\n");
 }
 
+// Las herramientas que registra src/lib/webmcp-setup.ts al abrir cualquier página del sitio.
+function buildToolItems(options: Options): string[] {
+  const tools = getWebMcpToolManifest();
+  return [
+    listItem(
+      "Definiciones de las herramientas",
+      `${options.siteUrl}${TOOLS_MANIFEST_PATH}`,
+      `Las ${tools.length} herramientas que el sitio registra en document.modelContext (WebMCP) al abrirlo en un navegador compatible, con esquemas de entrada y salida. Leen los mismos datos de "Datos para agentes". Ninguna envía datos: prepare_quote solo llena el formulario de /contacto y el visitante decide si lo envía.`,
+    ),
+    ...tools.map((tool) => `- \`${tool.name}\`${tool.annotations.readOnlyHint ? "" : " (abre otra página del sitio)"}: ${tool.description}`),
+  ];
+}
+
+// Mismo contenido que registra el navegador, sin el código de cada herramienta.
+function buildToolsManifest(options: Options): string {
+  const manifest = {
+    name: SITE_NAME,
+    description: SITE_SUMMARY,
+    url: `${options.siteUrl}/`,
+    protocol: "webmcp",
+    usage:
+      "Las herramientas se registran en document.modelContext al abrir cualquier página del sitio. Para consultar los datos sin navegador, lee los JSON de /mcp/ que se listan en /llms.txt.",
+    tools: getWebMcpToolManifest(),
+  };
+  return `${JSON.stringify(manifest, null, 2)}\n`;
+}
+
 function buildLlmsTxt(pages: PageEntry[], options: Options): string {
   const toItems = (entries: PageEntry[]) => entries.map((page) => listItem(page.title, page.url, page.description));
 
@@ -295,6 +325,7 @@ function buildLlmsTxt(pages: PageEntry[], options: Options): string {
       "Datos para agentes",
       AGENT_DATA_FILES.map((file) => listItem(file.title, `${options.siteUrl}${file.path}`, file.description)),
     ),
+    section("Herramientas para agentes (WebMCP)", buildToolItems(options)),
     section("Optional", [
       ...toItems(byKind(pages, "legal")),
       listItem("Contenido completo del sitio", `${options.siteUrl}/llms-full.txt`, "Texto íntegro de las páginas públicas."),
@@ -354,6 +385,7 @@ async function main() {
   const written = await writeOutputs({
     "llms.txt": buildLlmsTxt(pages, options),
     "llms-full.txt": buildLlmsFullTxt(pages),
+    [TOOLS_MANIFEST_PATH.slice(1)]: buildToolsManifest(options),
   }, options);
 
   const counts = Object.entries(

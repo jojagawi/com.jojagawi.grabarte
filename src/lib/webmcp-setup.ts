@@ -1009,6 +1009,18 @@ const TOOLS: ToolDefinition[] = [
   },
 ];
 
+// Definiciones sin `execute`, para publicarlas en /mcp/tools.json y en llms.txt
+// (scripts/build-llms.ts): así los agentes que no ejecutan JavaScript también las conocen.
+export function getWebMcpToolManifest() {
+  return TOOLS.map(({ name, description, inputSchema, outputSchema, annotations }) => ({
+    name,
+    description,
+    inputSchema,
+    outputSchema,
+    annotations,
+  }));
+}
+
 function getModelContext(source: unknown): unknown {
   if (source && typeof source === "object" && "modelContext" in source) {
     return (source as ModelContextCarrier).modelContext;
