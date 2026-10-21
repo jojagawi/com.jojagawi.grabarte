@@ -9,6 +9,7 @@ export const OPENAPI_PATH = "/mcp/openapi.json";
 export const API_STATUS_PATH = "/mcp/status.json";
 export const API_DOCS_PATH = "/datos-para-agentes/";
 export const TOOLS_MANIFEST_PATH = "/mcp/tools.json";
+export const AGENT_CARD_PATH = "/.well-known/agent-card.json";
 export const AUTH_MD_PATH = "/auth.md";
 export const API_CATALOG_CONTENT_TYPE = 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"';
 
@@ -240,6 +241,93 @@ export function buildApiCatalog(siteUrl: string) {
         status: [{ href: `${siteUrl}${API_STATUS_PATH}`, type: "application/json" }],
       },
     ],
+  };
+}
+
+// Agent Card de A2A (https://a2a-protocol.org/latest/specification/) para el descubrimiento entre
+// agentes. El sitio es estático: no hay un servicio A2A que reciba mensajes (message:send). La
+// interfaz que se anuncia son los JSON de /mcp/ por HTTP GET, y cada habilidad dice qué archivo leer.
+type AgentSkill = {
+  id: string;
+  name: string;
+  description: string;
+  tags: string[];
+  examples: string[];
+};
+
+const AGENT_SKILLS: AgentSkill[] = [
+  {
+    id: "catalog-search",
+    name: "Buscar en el catálogo",
+    description:
+      "Productos de corte y grabado láser con descripción, material, medidas, precio de referencia en MXN, " +
+      "tiempos de producción y envío. Lee /mcp/products.json y /mcp/categories.json.",
+    tags: ["catálogo", "productos", "grabado láser", "corte láser", "regalos personalizados"],
+    examples: ["¿Tienen termos grabados con nombre?", "Muéstrame los recuerdos para boda en MDF."],
+  },
+  {
+    id: "season-guides",
+    name: "Guías de temporada",
+    description: "Temporadas del año con su guía de compra, fechas para pedir a tiempo y piezas recomendadas. Lee /mcp/seasons.json.",
+    tags: ["temporadas", "navidad", "día de muertos", "regreso a clases"],
+    examples: ["¿Qué me recomiendan para Navidad y cuándo debo pedir?"],
+  },
+  {
+    id: "materials-guide",
+    name: "Materiales y técnicas",
+    description: "MDF, acrílico, metal y termos; corte y grabado láser; medidas y precios de referencia. Lee /mcp/materials.json.",
+    tags: ["materiales", "MDF", "acrílico", "técnicas"],
+    examples: ["¿Qué diferencia hay entre MDF y acrílico?"],
+  },
+  {
+    id: "faq",
+    name: "Preguntas frecuentes",
+    description: "Pedido mínimo, tiempos, envíos, pagos y garantía. Lee /mcp/faqs.json.",
+    tags: ["preguntas frecuentes", "envíos", "pagos"],
+    examples: ["¿Hacen envíos a todo México?", "¿Cuál es el pedido mínimo?"],
+  },
+  {
+    id: "reviews",
+    name: "Calificaciones de clientes",
+    description: "Opiniones aprobadas de clientes, del sitio o de un producto. Lee /mcp/reviews.json.",
+    tags: ["opiniones", "calificaciones"],
+    examples: ["¿Qué opinan los clientes de InspiraArte?"],
+  },
+  {
+    id: "business-info",
+    name: "Contacto del taller",
+    description: "Correo, WhatsApp, ubicación en Ciudad de México, horarios y redes sociales. Lee /mcp/business-info.json.",
+    tags: ["contacto", "horarios", "ubicación"],
+    examples: ["¿Cómo contacto a InspiraArte?"],
+  },
+  {
+    id: "quote-request",
+    name: "Preparar una cotización",
+    description:
+      "Arma el enlace al formulario de cotización con el producto, la cantidad, la fecha y los detalles " +
+      "(/contacto/?producto=&cantidad=&fecha=AAAA-MM-DD&detalles=). El agente no envía la solicitud: la persona revisa y envía el formulario.",
+    tags: ["cotización", "pedido"],
+    examples: ["Quiero cotizar 50 llaveros grabados para el 15 de diciembre."],
+  },
+];
+
+export function buildAgentCard(siteUrl: string) {
+  return {
+    name: "InspiraArte",
+    description:
+      "Taller de corte y grabado láser en Ciudad de México. Este agente expone en JSON de solo lectura el catálogo, " +
+      "las temporadas, los materiales, las preguntas frecuentes, las calificaciones y el contacto del taller. " +
+      `Cada habilidad indica el archivo de ${API_BASE_PATH} que hay que pedir con GET (esquemas en ${OPENAPI_PATH}). ` +
+      "No hay endpoint para enviar mensajes ni tareas: para cotizar, la persona envía el formulario de /contacto/.",
+    version: "1.0.0",
+    provider: { organization: "InspiraArte", url: siteUrl },
+    documentationUrl: `${siteUrl}${API_DOCS_PATH}`,
+    iconUrl: `${siteUrl}/logo.png`,
+    supportedInterfaces: [{ url: `${siteUrl}${API_BASE_PATH}`, protocolBinding: "HTTP+JSON", protocolVersion: "1.0" }],
+    capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },
+    defaultInputModes: ["text/plain"],
+    defaultOutputModes: ["application/json"],
+    skills: AGENT_SKILLS,
   };
 }
 
