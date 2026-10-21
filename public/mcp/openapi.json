@@ -1,0 +1,566 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API pública de InspiraArte",
+    "version": "1.0.0",
+    "description": "Datos públicos del taller InspiraArte (corte y grabado láser en Ciudad de México) en JSON de solo lectura: catálogo, temporadas, materiales, preguntas frecuentes, calificaciones y contacto. Son archivos estáticos que se regeneran en cada publicación del sitio; no requieren autenticación. Para cotizar, usa el formulario de /contacto/.",
+    "contact": {
+      "name": "InspiraArte",
+      "url": "https://www.inspiraarte.com/contacto/",
+      "email": "contacto@inspiraarte.com"
+    }
+  },
+  "externalDocs": {
+    "description": "Documentación",
+    "url": "https://www.inspiraarte.com/datos-para-agentes/"
+  },
+  "servers": [
+    {
+      "url": "https://www.inspiraarte.com"
+    }
+  ],
+  "security": [],
+  "paths": {
+    "/mcp/business-info.json": {
+      "get": {
+        "operationId": "getBusinessInfo",
+        "summary": "Información del negocio",
+        "description": "Contacto, ubicación, horarios y redes sociales.",
+        "responses": {
+          "200": {
+            "description": "Información del negocio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "businessName": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "whatsapp": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "contactUrl": {
+                      "type": "string"
+                    },
+                    "schedules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "dayRange": {
+                            "type": "string"
+                          },
+                          "hours": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "dayRange",
+                          "hours"
+                        ]
+                      }
+                    },
+                    "social": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": "Enlaces a redes sociales (instagram, facebook, tiktok, googleBusiness); null si no hay."
+                    }
+                  },
+                  "required": [
+                    "businessName",
+                    "email",
+                    "whatsapp",
+                    "address",
+                    "contactUrl",
+                    "schedules",
+                    "social"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/categories.json": {
+      "get": {
+        "operationId": "listCategories",
+        "summary": "Categorías",
+        "description": "Categorías del catálogo.",
+        "responses": {
+          "200": {
+            "description": "Categorías",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/products.json": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "Productos",
+        "description": "Diseños publicados con descripción, categorías, precio de referencia y enlace a su ficha.",
+        "responses": {
+          "200": {
+            "description": "Productos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "idSlug": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "categories": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "reference": {
+                        "type": "string"
+                      },
+                      "material": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "suggestedPrice": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Precio de referencia en MXN."
+                      },
+                      "productionTime": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "shippingTime": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dimensions": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "isCustomizable": {
+                        "type": "boolean"
+                      },
+                      "image": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gallery": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "Ruta de la ficha del producto en el sitio."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "idSlug",
+                      "name",
+                      "description",
+                      "categories",
+                      "reference",
+                      "material",
+                      "suggestedPrice",
+                      "productionTime",
+                      "shippingTime",
+                      "dimensions",
+                      "isCustomizable",
+                      "image",
+                      "gallery",
+                      "url"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/faqs.json": {
+      "get": {
+        "operationId": "listFaqs",
+        "summary": "Preguntas frecuentes",
+        "description": "Preguntas y respuestas sobre pedidos, envíos y pagos.",
+        "responses": {
+          "200": {
+            "description": "Preguntas frecuentes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "question": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "question",
+                      "answer"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/seasons.json": {
+      "get": {
+        "operationId": "listSeasons",
+        "summary": "Temporadas",
+        "description": "Temporadas del año con su guía, categorías y piezas.",
+        "responses": {
+          "200": {
+            "description": "Temporadas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "slug": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "months": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "guide": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Guía de la temporada en Markdown."
+                      },
+                      "categories": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "products": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "url": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "url"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "slug",
+                      "name",
+                      "months",
+                      "url",
+                      "description",
+                      "guide",
+                      "categories",
+                      "products"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/materials.json": {
+      "get": {
+        "operationId": "getMaterialsGuide",
+        "summary": "Materiales",
+        "description": "Materiales y técnicas, con medidas y precios de referencia.",
+        "responses": {
+          "200": {
+            "description": "Materiales",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "definitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "materials": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "definition": {
+                            "type": "string"
+                          },
+                          "technique": {
+                            "type": "string"
+                          },
+                          "bestFor": {
+                            "type": "string"
+                          },
+                          "catalogCount": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "definition",
+                          "technique",
+                          "bestFor",
+                          "catalogCount"
+                        ]
+                      }
+                    },
+                    "sizeReferences": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "dimensions": {
+                            "type": "string"
+                          },
+                          "suggestedPrice": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "url",
+                          "dimensions",
+                          "suggestedPrice"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "definitions",
+                    "materials",
+                    "sizeReferences"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/reviews.json": {
+      "get": {
+        "operationId": "listReviews",
+        "summary": "Calificaciones",
+        "description": "Opiniones aprobadas de clientes.",
+        "responses": {
+          "200": {
+            "description": "Calificaciones",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "product": {
+                        "type": "string"
+                      },
+                      "rating": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "productId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "product",
+                      "rating",
+                      "comment",
+                      "productId",
+                      "createdAt"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/tools.json": {
+      "get": {
+        "operationId": "getWebMcpTools",
+        "summary": "Herramientas WebMCP",
+        "description": "Definiciones de las herramientas que el sitio registra en document.modelContext (WebMCP).",
+        "responses": {
+          "200": {
+            "description": "Herramientas WebMCP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mcp/status.json": {
+      "get": {
+        "operationId": "getStatus",
+        "summary": "Estado",
+        "description": "Responde 200 con status \"pass\" cuando la API está publicada.",
+        "responses": {
+          "200": {
+            "description": "Estado de la API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pass",
+                        "warn",
+                        "fail"
+                      ]
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
