@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import Image from "next/image";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -191,7 +192,15 @@ export function Header({ seasonLinks = [] }: HeaderProps) {
                 Cotizar
               </Link>
             </Button>
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <Sheet
+              open={isOpen}
+              onOpenChange={(open) => {
+                setIsOpen(open);
+                if (open) {
+                  trackEvent("menu_open", { menu_name: "mobile" });
+                }
+              }}
+            >
               <SheetTrigger asChild className="md:hidden">
                 <Button variant="ghost" size="icon" className="size-11">
                   <Menu className="h-6 w-6" />

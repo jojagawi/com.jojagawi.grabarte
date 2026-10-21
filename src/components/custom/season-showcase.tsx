@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { trackEvent } from "@/lib/analytics"
 import { ShowcaseCard, type SeasonShowcaseItem } from "@/components/custom/showcase-card"
 
 export type { SeasonShowcaseItem }
@@ -67,6 +68,7 @@ export function SeasonShowcase({ eyebrow, title, description, items, totalDesign
     if (!track) {
       return
     }
+    trackEvent("carousel_scroll", { carousel_name: "temporada", direction: direction === 1 ? "next" : "previous" })
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     track.scrollBy({ left: direction * track.clientWidth * 0.9, behavior: reduceMotion ? "auto" : "smooth" })
   }

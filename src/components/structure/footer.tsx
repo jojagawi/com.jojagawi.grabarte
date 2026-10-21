@@ -5,6 +5,7 @@ import { FaWhatsapp } from "@react-icons/all-files/fa/FaWhatsapp";
 import { FaEnvelope } from "@react-icons/all-files/fa/FaEnvelope";
 import { getCategoryPages, getCategoryPath } from "@/lib/categories.server";
 import { SocialLinks } from "@/components/custom/social-links";
+import { CookiePreferencesButton } from "@/components/structure/cookie-consent";
 
 const footerLinkClassName =
   "rounded-sm underline-offset-4 transition-colors hover:text-inspirarte-petroleum-deep hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
@@ -155,7 +156,7 @@ export async function Footer() {
               © {new Date().getFullYear()} InspiraArte. Todos los derechos
               reservados.
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <Link
                 href="/aviso-de-privacidad"
                 className={`${footerLinkClassName} text-sm`}
@@ -168,6 +169,9 @@ export async function Footer() {
               >
                 Términos y Condiciones
               </Link>
+              {process.env.NEXT_GTM && (
+                <CookiePreferencesButton className={`${footerLinkClassName} text-sm`} />
+              )}
             </div>
           </div>
         </div>

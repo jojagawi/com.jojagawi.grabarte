@@ -16,9 +16,9 @@ interface BeforeInstallPromptEvent extends Event {
 declare global {
   interface Window {
     gtag?: (
-      command: "event",
-      eventName: string,
-      eventParams?: Record<string, unknown>,
+      command: "event" | "consent",
+      action: string,
+      params?: Record<string, unknown>,
     ) => void;
   }
 }
