@@ -164,6 +164,8 @@ export function buildPageMetadata({
     ...(keywords ? { keywords } : {}),
     alternates: {
       canonical: absoluteCanonicalUrl,
+      // scripts/build-llms.ts escribe index.md junto a cada index.html indexable.
+      ...(noIndex ? {} : { types: { "text/markdown": `${absoluteCanonicalUrl}index.md` } }),
     },
     openGraph: {
       title,

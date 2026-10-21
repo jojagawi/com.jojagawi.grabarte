@@ -211,6 +211,15 @@ jobs:
             --content-type 'text/markdown; charset=utf-8' \
             --cache-control 'public, max-age=300'
 
+      # La versión Markdown de cada página (index.md junto a su index.html, de build:llms) también
+      # lleva acentos: text/markdown con UTF-8 para que los agentes la lean bien.
+      - name: Set page Markdown content type
+        run: |
+          aws s3 cp out/ s3://www.inspiraarte.com/ \
+            --recursive --exclude '*' --include 'index.md' --include '*/index.md' \
+            --content-type 'text/markdown; charset=utf-8' \
+            --cache-control 'public, max-age=300'
+
       # S3 website no permite cabeceras propias: la cabecera Link de la home (RFC 8288/9727) la
       # pone una Transform Rule de Cloudflare. Si el token no tiene "Transform Rules: Edit", avisa
       # y sigue: el deploy ya está hecho.
