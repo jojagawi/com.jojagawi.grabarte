@@ -1,0 +1,28 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://www.inspiraarte.com/mcp/",
+      "service-desc": [
+        {
+          "href": "https://www.inspiraarte.com/mcp/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://www.inspiraarte.com/datos-para-agentes/",
+          "type": "text/html",
+          "hreflang": [
+            "es"
+          ]
+        }
+      ],
+      "status": [
+        {
+          "href": "https://www.inspiraarte.com/mcp/status.json",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

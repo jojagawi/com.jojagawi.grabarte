@@ -169,6 +169,12 @@ export async function Footer() {
               >
                 Términos y Condiciones
               </Link>
+              <Link
+                href="/datos-para-agentes"
+                className={`${footerLinkClassName} text-sm`}
+              >
+                Datos para agentes
+              </Link>
               {process.env.NEXT_GTM && (
                 <CookiePreferencesButton className={`${footerLinkClassName} text-sm`} />
               )}

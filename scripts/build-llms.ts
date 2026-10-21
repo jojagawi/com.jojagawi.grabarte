@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { NodeHtmlMarkdown } from "node-html-markdown";
 import { type HTMLElement, parse } from "node-html-parser";
 import { getWebMcpToolManifest } from "@/lib/webmcp-setup";
+import { API_CATALOG_PATH, API_DOCS_PATH, OPENAPI_PATH, PUBLIC_DATA_FILES, TOOLS_MANIFEST_PATH } from "@/lib/public-api";
 
 // Genera llms.txt (índice) y llms-full.txt (texto completo) a partir de las páginas ya renderizadas,
 // así ambos reflejan exactamente lo que publica el sitio.
@@ -24,16 +25,6 @@ const ROOT = process.cwd();
 const OUT_DIR = resolve(ROOT, "out");
 const PUBLIC_DIR = resolve(ROOT, "public");
 
-// Mismos archivos que publica `pnpm run build:mcp` en public/mcp/.
-const AGENT_DATA_FILES = [
-  { title: "Información del negocio", path: "/mcp/business-info.json", description: "Contacto, ubicación, horarios y redes sociales." },
-  { title: "Categorías", path: "/mcp/categories.json", description: "Categorías del catálogo." },
-  { title: "Productos", path: "/mcp/products.json", description: "Diseños publicados con descripción, categorías, precio de referencia y enlace a su ficha." },
-  { title: "Preguntas frecuentes", path: "/mcp/faqs.json", description: "Preguntas y respuestas sobre pedidos, envíos y pagos." },
-  { title: "Temporadas", path: "/mcp/seasons.json", description: "Temporadas del año con su guía, categorías y piezas." },
-  { title: "Materiales", path: "/mcp/materials.json", description: "Materiales y técnicas, con medidas y precios de referencia." },
-  { title: "Calificaciones", path: "/mcp/reviews.json", description: "Opiniones aprobadas de clientes." },
-];
 
 const SITE_SUMMARY = [
   "InspiraArte es un taller de corte y grabado láser en Ciudad de México, fundado en 2026, que diseña y produce",
@@ -41,10 +32,8 @@ const SITE_SUMMARY = [
   "corporativos y envía a todo México. Cada pedido se cotiza y se aprueba con una propuesta de diseño antes de producir.",
 ].join(" ");
 
-const TOOLS_MANIFEST_PATH = "/mcp/tools.json";
-
 // Rutas que no son páginas: recursos, endpoints y archivos generados.
-const SKIPPED_PATH_PREFIXES = ["/_next/", "/api/", "/dam/", "/mcp/", "/cdn-cgi/"];
+const SKIPPED_PATH_PREFIXES = ["/_next/", "/api/", "/dam/", "/mcp/", "/cdn-cgi/", "/.well-known/"];
 const LEGAL_PATHS = new Set(["/aviso-de-privacidad/", "/terminos-y-condiciones/"]);
 
 // Fuera del contenido: navegación, pie, formularios y elementos sin texto útil.
@@ -323,7 +312,12 @@ function buildLlmsTxt(pages: PageEntry[], options: Options): string {
     section("Productos", toItems(byKind(pages, "product"))),
     section(
       "Datos para agentes",
-      AGENT_DATA_FILES.map((file) => listItem(file.title, `${options.siteUrl}${file.path}`, file.description)),
+      [
+        ...PUBLIC_DATA_FILES.map((file) => listItem(file.title, `${options.siteUrl}${file.path}`, file.description)),
+        listItem("Especificación OpenAPI", `${options.siteUrl}${OPENAPI_PATH}`, "OpenAPI 3.1 de los JSON anteriores, con sus esquemas."),
+        listItem("Catálogo de APIs", `${options.siteUrl}${API_CATALOG_PATH}`, "Linkset (RFC 9727) con la especificación, la documentación y el estado."),
+        listItem("Documentación", `${options.siteUrl}${API_DOCS_PATH}`, "Cómo usar los datos y las herramientas para agentes."),
+      ],
     ),
     section("Herramientas para agentes (WebMCP)", buildToolItems(options)),
     section("Optional", [

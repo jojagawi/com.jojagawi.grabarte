@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { API_CATALOG_CONTENT_TYPE, API_CATALOG_PATH } from "./src/lib/public-api";
 
 const isStaticExport = process.env.STATIC_EXPORT === "true";
 const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -24,6 +25,11 @@ const nextConfig: NextConfig = {
     : {
         async headers() {
           return [
+            // En producción lo pone build.yml al subir el archivo a S3.
+            {
+              source: API_CATALOG_PATH,
+              headers: [{ key: "Content-Type", value: API_CATALOG_CONTENT_TYPE }],
+            },
             {
               source: "/",
               headers: [
