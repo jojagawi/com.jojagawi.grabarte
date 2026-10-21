@@ -151,6 +151,20 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
     }
   };
 
+  // form_rate_start se envía una vez, con el primer campo que se toca.
+  const startTrackedRef = useRef(false);
+  const handleFormStart = () => {
+    if (startTrackedRef.current) {
+      return;
+    }
+    startTrackedRef.current = true;
+    sendGTMEvent({
+      event: "form_rate_start",
+      form_name: "RateSiteForm",
+      ...(ratedProduct ? { design_id: ratedProduct.id } : {}),
+    });
+  };
+
   const ratingPreview = useMemo(() => Number(formState.rating) || 0, [formState.rating]);
 
   useEffect(() => {
@@ -294,7 +308,7 @@ export function RateSiteForm({ products }: RateSiteFormProps) {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit} onChange={handleFormStart}>
             <div className="space-y-2">
               <Label htmlFor="rate-name">Nombre</Label>
               <Input

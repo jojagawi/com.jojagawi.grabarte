@@ -10,6 +10,7 @@ import { buildAiThumbObjectKey } from "@/lib/preview-paths";
 import { selectDesignCardImagePath } from "@/lib/preview-thumbnails";
 import { buildProductCode } from "@/lib/utils";
 import { DesignMediaGallery } from "@/components/custom/design-media-gallery";
+import { TrackOnView } from "@/components/custom/track-on-view";
 import { FilePreview } from "@/components/custom/file-preview";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -828,6 +829,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           )}
         </div>
 
+        <TrackOnView
+          event="view_item"
+          params={{
+            item_id: String(design.id),
+            item_name: design.name,
+            item_category: categories[0]?.trim() || undefined,
+            price: suggestedPrice && suggestedPrice > 0 ? suggestedPrice : undefined,
+            currency: "MXN",
+          }}
+        />
         <DesignMediaGallery
           designName={design.name}
           defaultImage={defaultImage}

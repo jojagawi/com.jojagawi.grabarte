@@ -9,6 +9,7 @@ import { Footer } from "@/components/structure/footer";
 import { Header, type SeasonLink } from "@/components/structure/header";
 import { getSeasonPages } from "@/lib/seasons.server";
 import { PwaAnalytics } from "@/components/structure/pwa-analytics";
+import { InteractionTracker } from "@/components/structure/interaction-tracker";
 import { WebMcpInit } from "@/components/structure/webmcp-init";
 import "./globals.css";
 
@@ -127,6 +128,7 @@ gtag('consent', 'default', {
         </main>
         <Footer />
         <PwaAnalytics />
+        <InteractionTracker />
         <WebMcpInit />
         {process.env.NEXT_GTM && (
           <GoogleTagManager gtmId={process.env.NEXT_GTM} />
