@@ -198,6 +198,16 @@ jobs:
             --content-type 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"' \
             --cache-control 'public, max-age=300'
 
+      # Los SKILL.md del índice de Agent Skills llevan acentos: se fija text/markdown con UTF-8 para
+      # que los agentes no los lean como Latin-1. El contenido no cambia, así que el digest de
+      # /.well-known/agent-skills/index.json sigue siendo válido.
+      - name: Set Agent Skills content type
+        run: |
+          aws s3 cp out/.well-known/agent-skills/ s3://www.inspiraarte.com/.well-known/agent-skills/ \
+            --recursive --exclude '*' --include '*/SKILL.md' \
+            --content-type 'text/markdown; charset=utf-8' \
+            --cache-control 'public, max-age=300'
+
       # S3 website no permite cabeceras propias: la cabecera Link de la home (RFC 8288/9727) la
       # pone una Transform Rule de Cloudflare. Si el token no tiene "Transform Rules: Edit", avisa
       # y sigue: el deploy ya está hecho.
