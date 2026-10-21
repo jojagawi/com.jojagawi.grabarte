@@ -217,6 +217,17 @@ export function buildOpenApiSpec(siteUrl: string) {
   };
 }
 
+// Cabecera Link (RFC 8288, RFC 9727 §3) de la home. En producción la pone una regla de
+// Cloudflare (scripts/cloudflare-link-headers.ts); en dev, next.config.ts.
+export function buildHomeLinkHeader(siteUrl: string): string {
+  return [
+    `<${siteUrl}${API_CATALOG_PATH}>; rel="api-catalog"; type="application/linkset+json"`,
+    `<${siteUrl}${OPENAPI_PATH}>; rel="service-desc"; type="application/vnd.oai.openapi+json"`,
+    `<${siteUrl}${API_DOCS_PATH}>; rel="service-doc"; type="text/html"`,
+    `<${siteUrl}/llms.txt>; rel="describedby"; type="text/plain"`,
+  ].join(", ");
+}
+
 // Formato Linkset (RFC 9264) con las relaciones que pide RFC 9727.
 export function buildApiCatalog(siteUrl: string) {
   return {

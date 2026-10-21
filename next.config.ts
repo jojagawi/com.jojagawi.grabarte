@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { API_CATALOG_CONTENT_TYPE, API_CATALOG_PATH } from "./src/lib/public-api";
+import { API_CATALOG_CONTENT_TYPE, API_CATALOG_PATH, buildHomeLinkHeader } from "./src/lib/public-api";
 
 const isStaticExport = process.env.STATIC_EXPORT === "true";
 const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -31,20 +31,22 @@ const nextConfig: NextConfig = {
               headers: [{ key: "Content-Type", value: API_CATALOG_CONTENT_TYPE }],
             },
             {
-              source: "/",
-              headers: [
-                {
-                  key: "Link",
-                  value: `<${siteUrl}/>; rel=\"canonical\"`,
-                },
-              ],
-            },
-            {
               source: "/:path*",
               headers: [
                 {
                   key: "Link",
                   value: `<${siteUrl}/:path*>; rel=\"canonical\"`,
+                },
+              ],
+            },
+            // Después de "/:path*" (que también coincide con "/"): con la misma clave gana la última.
+            // En producción la cabecera de descubrimiento la pone Cloudflare (scripts/cloudflare-link-headers.ts).
+            {
+              source: "/",
+              headers: [
+                {
+                  key: "Link",
+                  value: `<${siteUrl}/>; rel=\"canonical\", ${buildHomeLinkHeader(siteUrl)}`,
                 },
               ],
             },
