@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "buscar-catalogo",
+      "type": "skill-md",
+      "description": "Busca diseños de corte y grabado láser en el catálogo público de InspiraArte (CDMX) por palabras, categoría, temporada o si se pueden personalizar.",
+      "url": "/.well-known/agent-skills/buscar-catalogo/SKILL.md",
+      "digest": "sha256:82ae241d1785b4a6adb25365374cc524524a6d487ce669c65cfc268e75c1dfaf"
+    },
+    {
+      "name": "detalle-de-producto",
+      "type": "skill-md",
+      "description": "Obtiene la ficha completa de un producto de InspiraArte (medidas, material, precio de referencia, tiempos de producción y envío, imágenes y opiniones) a partir de su id, referencia IA-0000 o URL.",
+      "url": "/.well-known/agent-skills/detalle-de-producto/SKILL.md",
+      "digest": "sha256:a79401471edb272f8c0d8a2b9dbd26ef35f94c2161507616d8ea8b77a680e028"
+    },
+    {
+      "name": "informacion-del-taller",
+      "type": "skill-md",
+      "description": "Responde preguntas sobre InspiraArte (contacto, ubicación, tiempos, envíos, pagos, materiales y técnicas de corte y grabado láser) con sus preguntas frecuentes y datos públicos.",
+      "url": "/.well-known/agent-skills/informacion-del-taller/SKILL.md",
+      "digest": "sha256:c65a620d5a79b71835629572ddecd4e4306f3cb24c5a43b9ba0a007b8de9bf33"
+    },
+    {
+      "name": "solicitar-cotizacion",
+      "type": "skill-md",
+      "description": "Prepara una solicitud de cotización en InspiraArte con producto, cantidad, fecha y detalles de personalización, como enlace a /contacto/ prellenado que la persona revisa y envía.",
+      "url": "/.well-known/agent-skills/solicitar-cotizacion/SKILL.md",
+      "digest": "sha256:1de85e2fbf5b81c530cf6e0227a914134b314baafcdf1971e085459ca38b608b"
+    }
+  ]
+}
