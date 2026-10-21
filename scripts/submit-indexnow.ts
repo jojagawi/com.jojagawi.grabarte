@@ -10,9 +10,10 @@ import { dirname, resolve } from "node:path";
 //   pnpm run indexnow                 después de subir: envía las URLs de out/ que cambiaron
 //
 // Sin snapshot (primer deploy o el sitemap publicado no respondió) envía todo el sitemap.
-// La clave es pública por diseño: IndexNow la valida leyendo public/<clave>.txt en el dominio.
+// La clave es pública por diseño (la generó Bing Webmaster): IndexNow la valida leyendo
+// public/<clave>.txt en el dominio.
 
-const INDEXNOW_KEY = "313ad2e1fd23179b18aa72227c82bb32";
+const INDEXNOW_KEY = "1bfac68ff84942e588f0f5b9174d53f0";
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
 // Límite del protocolo por solicitud.
 const MAX_URLS_PER_REQUEST = 10000;
