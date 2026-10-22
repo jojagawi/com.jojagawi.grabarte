@@ -46,3 +46,9 @@ BLOG_PREVIEW=true pnpm run dev
 ```
 
 Con `BLOG_PREVIEW=true` se ven también los artículos en `draft` o con `publishAt` futuro.
+
+## Revisiones y borradores automáticos
+
+- `pnpm run blog:check` revisa todos los artículos (encabezado, productos visibles, precios y enlaces por ID, longitud, preguntas frecuentes). Corre en el CI de cada PR dentro de `test:all`.
+- `pnpm run blog:products -- <temporada>` lista los productos publicados que un artículo puede citar.
+- Los temas y fechas están en [blog-calendario.md](blog-calendario.md). Una rutina de Claude escribe un borrador los días 1 y 15 siguiendo [blog-rutina.md](blog-rutina.md) y lo entrega como PR.

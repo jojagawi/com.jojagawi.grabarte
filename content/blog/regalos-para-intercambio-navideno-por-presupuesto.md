@@ -1,6 +1,6 @@
 ---
 title: Regalos para intercambio navideño por presupuesto
-description: Ideas de regalos personalizados para el intercambio de la oficina, la escuela o la familia, de menos de $100 a más de $200, y cuándo pedirlos para llegar a la posada.
+description: Regalos personalizados para el intercambio de la oficina, la escuela o la familia, de menos de $100 a más de $200, y cuándo pedirlos para la posada.
 season: navidad
 products: 109, 4, 184, 183, 271, 16, 239, 17, 90, 185, 273, 240
 publishAt: 2026-10-26
