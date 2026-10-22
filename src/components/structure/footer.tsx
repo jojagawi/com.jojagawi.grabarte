@@ -74,6 +74,7 @@ export async function Footer() {
                 { name: "Productos", href: "/productos" },
                 { name: "Temporadas", href: "/temporada" },
                 { name: "Proceso", href: "/proceso" },
+                { name: "Blog", href: "/blog" },
                 { name: "Nosotros", href: "/nosotros" },
                 { name: "FAQ", href: "/faq" },
                 { name: "Contacto", href: "/contacto" },

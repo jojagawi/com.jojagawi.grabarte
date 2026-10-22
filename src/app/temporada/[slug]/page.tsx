@@ -7,6 +7,7 @@ import { FAQ } from "@/components/custom/faq";
 import { GuideContent } from "@/components/custom/guide-content";
 import { latestDate, UpdatedDate } from "@/components/custom/updated-date";
 import { ShowcaseCard } from "@/components/custom/showcase-card";
+import { getBlogPostsBySeason } from "@/lib/blog.server";
 import { buildCollectionFaq } from "@/lib/collection-faq";
 import { buildPageMetadata, toMetaDescription } from "@/lib/metadata";
 import { OG_IMAGE_SIZE } from "@/lib/og-image";
@@ -82,6 +83,7 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
   }
 
   const designs = await getSeasonDesigns(season);
+  const posts = await getBlogPostsBySeason(season.slug);
   const quoteHref = `/contacto?producto=${encodeURIComponent(`Temporada: ${season.label}`)}`;
   const seasonPath = `${getSeasonPath(season.slug)}/`;
   // Misma regla que el lastmod del sitemap: la ficha más reciente o la edición de la temporada.
@@ -186,6 +188,27 @@ export default async function SeasonDesignsPage({ params }: SeasonPageProps) {
           <article aria-label={`Guía de ${season.label}`} className="mt-16 max-w-3xl">
             <GuideContent markdown={season.guide} />
           </article>
+        )}
+
+        {posts.length > 0 && (
+          <section aria-labelledby="blog-temporada" className="mt-16 max-w-3xl">
+            <h2 id="blog-temporada" className="font-serif text-2xl font-bold text-foreground sm:text-3xl">
+              Lee también en el blog
+            </h2>
+            <ul className="mt-4 space-y-3">
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <Link
+                    href={post.path}
+                    className="font-medium text-primary underline underline-offset-4 hover:text-inspirarte-petroleum-deep"
+                  >
+                    {post.title}
+                  </Link>
+                  <p className="mt-1 text-sm text-muted-foreground">{post.description}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         {faqs.length > 0 && (

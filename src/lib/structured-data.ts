@@ -761,3 +761,47 @@ export function buildAboutPageJsonLd(input: { path: string; name: string; descri
     mainEntity: { "@id": `${siteUrl}#organization` },
   };
 }
+
+export function buildBlogPostingJsonLd(input: {
+  path: string;
+  headline: string;
+  description: string;
+  datePublished: Date;
+  dateModified: Date;
+  breadcrumbs: BreadcrumbItem[];
+  image?: string | null;
+  // Sin autor con nombre, firma la organización.
+  authorName?: string | null;
+  wordCount?: number;
+  about?: string | null;
+}) {
+  const pageUrl = toAbsoluteLikeUrl(input.path);
+  const siteUrl = toAbsoluteLikeUrl("/");
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${pageUrl}#article`,
+        headline: input.headline,
+        description: input.description,
+        url: pageUrl,
+        mainEntityOfPage: pageUrl,
+        inLanguage: "es-MX",
+        datePublished: input.datePublished.toISOString(),
+        dateModified: input.dateModified.toISOString(),
+        ...(input.image ? { image: toAbsoluteLikeUrl(input.image) } : {}),
+        ...(input.wordCount ? { wordCount: input.wordCount } : {}),
+        ...(input.about ? { about: input.about } : {}),
+        author: input.authorName
+          ? { "@type": "Person", name: input.authorName, worksFor: { "@id": `${siteUrl}#organization` } }
+          : { "@id": `${siteUrl}#organization` },
+        publisher: { "@id": `${siteUrl}#organization` },
+        isPartOf: { "@id": `${siteUrl}#website` },
+        breadcrumb: { "@id": `${pageUrl}#breadcrumbs` },
+      },
+      buildBreadcrumbNode(pageUrl, input.breadcrumbs),
+    ],
+  };
+}

@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { getBlogPosts } from "@/lib/blog.server";
 import { prisma } from "@/lib/prisma";
 import { SEASON_PAGE_STATUSES } from "@/lib/seasons";
 import { slugify } from "@/lib/slug";
@@ -13,6 +14,7 @@ import { slugify } from "@/lib/slug";
 //   fichas      Designs.updatedAt
 //   categorías  la ficha más reciente de la categoría
 //   temporadas  la ficha más reciente o la edición de la temporada (CatSeasons.updatedAt)
+//   blog        updatedAt del encabezado de cada artículo; el listado, el artículo más reciente
 //   resto       último commit del page.tsx de la ruta; los listados y la portada también
 //               toman la ficha más reciente, porque la muestran
 //
@@ -61,7 +63,7 @@ function gitLastCommitDate(files: string[]): Date | null {
 
 async function main() {
   try {
-    const [designs, categories, seasons] = await Promise.all([
+    const [designs, categories, seasons, posts] = await Promise.all([
       prisma.designs.findMany({
         where: { status: 1, showInSite: 1, name: { not: null } },
         select: {
@@ -87,6 +89,7 @@ async function main() {
           relSeasonsCategories: { where: { category: { status: 1 } }, select: { categoryId: true } },
         },
       }),
+      getBlogPosts(),
     ]);
 
     const lastmodByPath: Record<string, string> = {};
@@ -126,6 +129,11 @@ async function main() {
       const categoryIds = season.relSeasonsCategories.map((relation) => relation.categoryId);
       setLastmod(`/temporada/${season.slug}`, latest([season.updatedAt, latestByCategory(categoryIds)]));
     }
+
+    for (const post of posts) {
+      setLastmod(post.path, post.modifiedAt);
+    }
+    setLastmod("/blog", latest(posts.map((post) => post.modifiedAt)));
 
     const latestDesign = latest(designs.map((design) => design.updatedAt));
     const latestSeason = latest(seasons.map((season) => season.updatedAt));
