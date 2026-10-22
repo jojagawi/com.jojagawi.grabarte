@@ -69,7 +69,10 @@ jobs:
         run: |
           mkdir -p .aws/dist
           cd .aws/lambda/rates
-          zip -r ../../dist/rates-lambda.zip lambda-rates-handler.mjs
+          # @aws-sdk/s3-presigned-post no viene en el runtime de Lambda: sin node_modules la
+          # función falla al importar.
+          npm install --omit=dev --no-audit --no-fund
+          zip -qr ../../dist/rates-lambda.zip lambda-rates-handler.mjs package.json node_modules
           zip -ur ../../dist/rates-lambda.zip .env
           CONTENT_HASH=$(sha256sum ../../dist/rates-lambda.zip | awk '{print $1}' | cut -c1-16)
           echo "artifact_key=${RATES_LAMBDA_KEY_PREFIX}/rates-lambda-${CONTENT_HASH}.zip" >> $GITHUB_OUTPUT
@@ -89,7 +92,10 @@ jobs:
         run: |
           mkdir -p .aws/dist
           cd .aws/lambda/contact
-          zip -r ../../dist/contact-lambda.zip lambda-contact-handler.mjs
+          # @aws-sdk/s3-presigned-post no viene en el runtime de Lambda: sin node_modules la
+          # función falla al importar y ninguna solicitud llega a S3, HubSpot ni Slack.
+          npm install --omit=dev --no-audit --no-fund
+          zip -qr ../../dist/contact-lambda.zip lambda-contact-handler.mjs package.json node_modules
           zip -ur ../../dist/contact-lambda.zip .env
           # El hash incluye el .env: si solo cambian los secretos, la llave del zip cambia y
           # CloudFormation actualiza la Lambda (con la misma llave omitiría la subida y el cambio).
