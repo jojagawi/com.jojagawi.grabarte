@@ -6,7 +6,7 @@ Cada artículo sale de 6 a 8 semanas antes de su fecha. `publishAt` es el primer
 
 | Estado | publishAt | Para la fecha | Tema | Pilar | Temporada | Archivo |
 | --- | --- | --- | --- | --- | --- | --- |
-| publicado | 2026-10-26 | Posadas y Navidad | Regalos para intercambio navideño por presupuesto | Ideas | navidad | regalos-para-intercambio-navideno-por-presupuesto |
+| publicado | 2026-10-22 | Posadas y Navidad | Regalos para intercambio navideño por presupuesto | Ideas | navidad | regalos-para-intercambio-navideno-por-presupuesto |
 | pendiente | 2026-11-02 | Fin de año | Regalos de fin de año con logo para clientes y equipo | Empresas | navidad | |
 | pendiente | 2026-11-16 | 16 dic, posadas | El nacimiento mexicano: cuándo se pone, qué figuras lleva y cómo pintarlo en MDF | DIY / tradición | navidad | |
 | pendiente | 2026-12-01 | 31 dic y 6 ene | Porta uvas, Reyes Magos y detalles para la cena de Año Nuevo | Ideas | navidad | |
