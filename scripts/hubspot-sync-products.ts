@@ -62,6 +62,16 @@ type HubspotProduct = {
 
 type RawValue = string | number | boolean | null | undefined;
 
+// Conserva el código HTTP para distinguir errores que se pueden tolerar (p. ej. 402 por límite del plan).
+class HubspotHttpError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
 type HubspotLineItem = {
   id: string;
   properties: Record<string, string | null>;
@@ -142,7 +152,7 @@ async function hubspot<T>(path: string, init: RequestInit = {}): Promise<T> {
         `El token no tiene permisos para ${path} (403). En la app privada activa los scopes "e-commerce" (Productos), "files" (imágenes) y "crm.objects.deals.read" (pedidos). Respuesta: ${body.slice(0, 300)}`,
       );
     }
-    throw new Error(`HubSpot ${init.method ?? "GET"} ${path} → ${response.status}: ${body.slice(0, 500)}`);
+    throw new HubspotHttpError(`HubSpot ${init.method ?? "GET"} ${path} → ${response.status}: ${body.slice(0, 500)}`, response.status);
   }
 }
 
@@ -456,6 +466,9 @@ async function main() {
     const updates: Array<{ id: string; properties: Record<string, string> }> = [];
     // Cada trabajo escribe hs_images en el payload de su producto al terminar la subida.
     const imageJobs: Array<{ sku: string; sourceUrl: string; target: Record<string, string> }> = [];
+    // La imagen de un producto nuevo se sube hasta que HubSpot lo crea: si la creación falla
+    // (p. ej. por el límite de productos del plan), no quedan archivos huérfanos en cada build.
+    const createImageUrls = new Map<string, string>();
     let unchanged = 0;
 
     for (const design of designs) {
@@ -477,7 +490,7 @@ async function main() {
         const properties = { ...values, hs_sku: sku };
         creates.push({ properties });
         if (needsImage) {
-          imageJobs.push({ sku, sourceUrl, target: properties });
+          createImageUrls.set(sku, sourceUrl);
         }
         continue;
       }
@@ -496,7 +509,7 @@ async function main() {
     }
 
     console.log(
-      `[hubspot:sync-products] Diseños: ${designs.length}${includeUnpublished ? " (incluye no publicados)" : " (solo publicados)"} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length} | Pedidos por actualizar: ${requestUpdates.length}`,
+      `[hubspot:sync-products] Diseños: ${designs.length}${includeUnpublished ? " (incluye no publicados)" : " (solo publicados)"} | En HubSpot: ${existingBySku.size} | Nuevos: ${creates.length} | Con cambios: ${updates.length} | Sin cambios: ${unchanged} | Imágenes por subir: ${imageJobs.length + createImageUrls.size} | Pedidos por actualizar: ${requestUpdates.length}`,
     );
     if (duplicatedSkus > 0) {
       console.warn(`[hubspot:sync-products] Aviso: ${duplicatedSkus} productos de HubSpot repiten SKU; se usa el primero.`);
@@ -509,7 +522,8 @@ async function main() {
 
     if (dryRun) {
       const withImage = new Set(imageJobs.map((job) => job.target));
-      const imageNote = (properties: Record<string, string>) => (withImage.has(properties) ? " + imagen" : "");
+      const imageNote = (properties: Record<string, string>) =>
+        withImage.has(properties) || createImageUrls.has(properties.hs_sku) ? " + imagen" : "";
       for (const item of creates.slice(0, 5)) {
         console.log("  + crear", item.properties.hs_sku, JSON.stringify(item.properties).slice(0, 200) + imageNote(item.properties));
       }
@@ -525,43 +539,75 @@ async function main() {
 
     let uploadedImages = 0;
     let failedImages = 0;
-    for (const batch of chunk(imageJobs, IMAGE_UPLOAD_CONCURRENCY)) {
-      await Promise.all(
-        batch.map(async (job) => {
-          try {
-            job.target.hs_images = await uploadProductImage(job.sku, job.sourceUrl);
-            uploadedImages += 1;
-          } catch (error) {
-            failedImages += 1;
-            console.warn(
-              `[hubspot:sync-products] Imagen de ${job.sku} no subida: ${error instanceof Error ? error.message : error}`,
-            );
-          }
-        }),
-      );
-    }
-    if (imageJobs.length > 0) {
-      console.log(`[hubspot:sync-products] Imágenes subidas: ${uploadedImages}${failedImages ? ` | Fallidas: ${failedImages}` : ""}`);
-    }
+    const uploadImages = async (jobs: typeof imageJobs) => {
+      for (const batch of chunk(jobs, IMAGE_UPLOAD_CONCURRENCY)) {
+        await Promise.all(
+          batch.map(async (job) => {
+            try {
+              job.target.hs_images = await uploadProductImage(job.sku, job.sourceUrl);
+              uploadedImages += 1;
+            } catch (error) {
+              failedImages += 1;
+              console.warn(
+                `[hubspot:sync-products] Imagen de ${job.sku} no subida: ${error instanceof Error ? error.message : error}`,
+              );
+            }
+          }),
+        );
+      }
+    };
+    const sendUpdates = async (inputs: typeof updates) => {
+      let count = 0;
+      // Una actualización que solo traía imagen y falló se queda sin nada que enviar.
+      for (const batch of chunk(inputs.filter((update) => Object.keys(update.properties).length > 0), BATCH_SIZE)) {
+        const result = await hubspot<{ results: unknown[] }>("/crm/v3/objects/products/batch/update", {
+          method: "POST",
+          body: JSON.stringify({ inputs: batch }),
+        });
+        count += result.results.length;
+      }
+      return count;
+    };
 
-    // Una actualización que solo traía imagen y falló se queda sin nada que enviar.
-    const pendingUpdates = updates.filter((update) => Object.keys(update.properties).length > 0);
+    // Primero los existentes: un fallo al crear no debe dejar sin aplicar los cambios.
+    await uploadImages(imageJobs);
+    const updated = await sendUpdates(updates);
 
     let created = 0;
-    let updated = 0;
-    for (const batch of chunk(creates, BATCH_SIZE)) {
-      const result = await hubspot<{ results: unknown[] }>("/crm/v3/objects/products/batch/create", {
-        method: "POST",
-        body: JSON.stringify({ inputs: batch }),
-      });
-      created += result.results.length;
+    let notCreated: string[] = [];
+    const createdProducts: HubspotProduct[] = [];
+    for (const [index, batch] of chunk(creates, BATCH_SIZE).entries()) {
+      try {
+        const result = await hubspot<{ results: HubspotProduct[] }>("/crm/v3/objects/products/batch/create", {
+          method: "POST",
+          body: JSON.stringify({ inputs: batch }),
+        });
+        created += result.results.length;
+        createdProducts.push(...result.results);
+      } catch (error) {
+        // 402: el portal llegó al límite de productos de su plan. Se avisa y se sigue con lo demás.
+        if (!(error instanceof HubspotHttpError) || error.status !== 402) {
+          throw error;
+        }
+        notCreated = creates.slice(index * BATCH_SIZE).map((item) => item.properties.hs_sku);
+        warn(
+          `HubSpot no permite crear más productos (límite del plan). No se crearon: ${notCreated.join(", ")}. Libera espacio borrando productos que ya no uses o amplía el plan.`,
+        );
+        break;
+      }
     }
-    for (const batch of chunk(pendingUpdates, BATCH_SIZE)) {
-      const result = await hubspot<{ results: unknown[] }>("/crm/v3/objects/products/batch/update", {
-        method: "POST",
-        body: JSON.stringify({ inputs: batch }),
-      });
-      updated += result.results.length;
+
+    // Imágenes de los productos recién creados, como actualización aparte.
+    const createdImageJobs = createdProducts.flatMap((product) => {
+      const sku = product.properties.hs_sku ?? "";
+      const sourceUrl = createImageUrls.get(sku);
+      return sourceUrl ? [{ id: product.id, sku, sourceUrl, target: {} as Record<string, string> }] : [];
+    });
+    await uploadImages(createdImageJobs);
+    await sendUpdates(createdImageJobs.map((job) => ({ id: job.id, properties: job.target })));
+
+    if (imageJobs.length + createdImageJobs.length > 0) {
+      console.log(`[hubspot:sync-products] Imágenes subidas: ${uploadedImages}${failedImages ? ` | Fallidas: ${failedImages}` : ""}`);
     }
 
     // SQL directo: prisma.designs.update tocaría updatedAt (@updatedAt) y el sitemap marcaría la
@@ -571,7 +617,7 @@ async function main() {
     }
 
     console.log(
-      `[hubspot:sync-products] Listo. Creados: ${created} | Actualizados: ${updated} | Sin cambios: ${unchanged} | Pedidos actualizados en SQLite: ${requestUpdates.length}`,
+      `[hubspot:sync-products] Listo. Creados: ${created}${notCreated.length ? ` | Sin crear (límite): ${notCreated.length}` : ""} | Actualizados: ${updated} | Sin cambios: ${unchanged} | Pedidos actualizados en SQLite: ${requestUpdates.length}`,
     );
   } finally {
     await prisma.$disconnect();
