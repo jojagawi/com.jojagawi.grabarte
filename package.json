@@ -24,7 +24,7 @@
     "images:rename-previews": "tsx scripts/rename-preview-files.ts",
     "prebuild": "run-s build:sw prisma:generate build:hubspot build:mcp build:api-catalog build:agent-skills images:optimize images:thumbnails",
     "postbuild": "run-s build:sitemap-lastmod build:sitemap build:llms",
-    "build:all": "run-s prebuild build",
+    "build:all": "run-s build",
     "build": "next build",
     "prebuild:static": "run-s build:sw prisma:generate build:hubspot build:mcp build:api-catalog build:agent-skills images:optimize images:thumbnails",
     "build:static": "cross-env STATIC_EXPORT=true next build",
