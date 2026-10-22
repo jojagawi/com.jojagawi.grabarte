@@ -174,7 +174,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # El prebuild sincroniza los productos con HubSpot (build:hubspot) antes de compilar, así el
+      # conteo de pedidos que trae de HubSpot ya sale en las fichas. Si falla, solo deja un aviso.
       - name: Build project
+        env:
+          HUBSPOT_API_KEY: ${{ secrets.HUBSPOTAPIKEY }}
         run: pnpm run build:all
 
       # Antes de subir: guarda los lastmod publicados para avisar solo de lo que cambió.

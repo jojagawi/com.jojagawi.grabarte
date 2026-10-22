@@ -18,6 +18,8 @@ import sharp from "sharp";
 //   pnpm run hubspot:sync-products --all        incluye también los activos no publicados
 //   pnpm run hubspot:sync-products --refresh-images  vuelve a subir todas las imágenes
 //   pnpm run hubspot:sync-products --sku=IA-0003     solo ese producto
+//   pnpm run hubspot:sync-products --optional   modo build: sin token se omite y un error solo
+//                                               avisa (no rompe el build). HUBSPOT_SYNC=false lo apaga.
 
 config({ path: [".env.local", ".env.development", ".env"], quiet: true });
 
@@ -36,6 +38,8 @@ const dryRun = args.has("--dry-run");
 // Por defecto solo los que muestra el sitio (status 1 + showInSite 1, mismo filtro que las páginas).
 const includeUnpublished = args.has("--all");
 const refreshImages = args.has("--refresh-images");
+// --optional: lo usa el prebuild. El build no depende de HubSpot, así que nunca debe fallar por él.
+const optional = args.has("--optional");
 // --sku=IA-0003: procesa un solo producto (útil para probar antes de correr todo).
 const onlyDesignId = Number(
   process.argv.find((arg) => arg.startsWith("--sku="))?.replace(/^--sku=(IA-)?/i, "") ?? Number.NaN,
@@ -237,7 +241,24 @@ async function uploadProductImage(sku: string, sourceUrl: string): Promise<strin
   return file.url;
 }
 
+// En GitHub Actions el aviso sale en el resumen del run; en local, en la consola.
+function warn(message: string): void {
+  if (process.env.GITHUB_ACTIONS === "true") {
+    console.log(`::warning title=HubSpot::${message.replace(/\r?\n/g, " ")}`);
+  } else {
+    console.warn(`[hubspot:sync-products] ${message}`);
+  }
+}
+
 async function main() {
+  if (optional && /^(0|false|no|off)$/i.test(process.env.HUBSPOT_SYNC?.trim() ?? "")) {
+    console.log("[hubspot:sync-products] HUBSPOT_SYNC desactivado; se omite la sincronización.");
+    return;
+  }
+  if (optional && !token) {
+    warn("Sin HUBSPOT_API_KEY: se omite la sincronización de productos con HubSpot.");
+    return;
+  }
   if (!token) {
     throw new Error("Falta HUBSPOT_API_KEY en el entorno (.env.development, .env.local o .env).");
   }
@@ -558,6 +579,11 @@ async function main() {
 }
 
 main().catch((error: unknown) => {
-  console.error("[hubspot:sync-products]", error instanceof Error ? error.message : error);
+  const message = error instanceof Error ? error.message : String(error);
+  if (optional) {
+    warn(`No se pudieron sincronizar los productos; el build sigue. ${message}`);
+    return;
+  }
+  console.error("[hubspot:sync-products]", message);
   process.exitCode = 1;
 });
