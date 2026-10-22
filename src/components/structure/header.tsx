@@ -35,6 +35,7 @@ const navigation: NavItem[] = [
   { name: "Inicio", href: "/" },
   { name: "Productos", href: "/productos" },
   { name: "Proceso", href: "/proceso" },
+  { name: "Blog", href: "/blog" },
   { name: "Nosotros", href: "/nosotros" },
   { name: "FAQ", href: "/faq" },
   { name: "Contacto", href: "/contacto" },

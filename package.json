@@ -14,6 +14,8 @@
     "build:llms": "tsx scripts/build-llms.ts",
     "build:sitemap-lastmod": "tsx scripts/build-sitemap-lastmod.ts",
     "indexnow": "tsx scripts/submit-indexnow.ts",
+    "blog:check": "tsx scripts/blog-check.ts",
+    "blog:products": "tsx scripts/blog-products.ts",
     "cloudflare:link-headers": "tsx scripts/cloudflare-link-headers.ts",
     "hubspot:properties": "tsx scripts/hubspot-product-properties.ts",
     "hubspot:sync-products": "tsx scripts/hubspot-sync-products.ts",
@@ -46,7 +48,7 @@
     "test:format:check": "prettier --check \"src/**/*.{js,jsx,css,scss}\" \"*.{js,json,md}\"",
     "test:lighthouse:raw": "lhci autorun",
     "test:lighthouse": "node scripts/run-lighthouse-stable.mjs",
-    "test:all": "run-s test:lint test:style:check test:format:check test:typecheck",
+    "test:all": "run-s test:lint test:style:check test:format:check test:typecheck blog:check",
     "ci": "run-s test:all build test:lighthouse"
   },
   "browserslist": [

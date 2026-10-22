@@ -59,7 +59,7 @@ const REMOVED_SELECTORS = [
   "[data-llms-skip]",
 ];
 
-type PageKind = "home" | "page" | "category" | "season" | "product" | "legal";
+type PageKind = "home" | "page" | "category" | "season" | "post" | "product" | "legal";
 
 interface PageEntry {
   path: string;
@@ -135,6 +135,7 @@ function getPageKind(path: string): PageKind {
   if (LEGAL_PATHS.has(path)) return "legal";
   if (path.startsWith("/productos/categoria/")) return "category";
   if (/^\/temporada\/[^/]+\/$/u.test(path)) return "season";
+  if (/^\/blog\/[^/]+\/$/u.test(path)) return "post";
   if (/^\/productos\/\d+-/u.test(path)) return "product";
   return "page";
 }
@@ -338,6 +339,7 @@ function buildLlmsTxt(pages: PageEntry[], options: Options): string {
     section("Páginas", toItems(byKind(pages, "home", "page"))),
     section("Categorías del catálogo", toItems(byKind(pages, "category"))),
     section("Temporadas", toItems(byKind(pages, "season"))),
+    section("Blog", toItems(byKind(pages, "post"))),
     section("Productos", toItems(byKind(pages, "product"))),
     section(
       "Datos para agentes",
