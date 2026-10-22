@@ -3,6 +3,9 @@ name: Setup and Build
 on:
   push:
     branches: [main]
+  # Rebuild semanal: lunes 5:00 en Ciudad de México (UTC-6 todo el año, sin horario de verano).
+  schedule:
+    - cron: "0 11 * * 1"
   workflow_call:
     secrets:
       AWS_ACCESS_KEY_ID:
