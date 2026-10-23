@@ -311,6 +311,8 @@ jobs:
     environment: Prod
     needs: [aws-infra, static-site]
     if: always()
+    # Solo llama al webhook de Slack: no necesita el GITHUB_TOKEN.
+    permissions: {}
     steps:
       - name: Send build result to Slack
         env:
