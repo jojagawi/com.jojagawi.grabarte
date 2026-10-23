@@ -301,3 +301,52 @@ jobs:
       - name: Notify IndexNow
         continue-on-error: true
         run: pnpm run indexnow
+
+  # Aviso en Slack (#inspiraarte) del resultado del deploy, tanto si sale bien como si falla.
+  # Usa su propio webhook (SLACK_BUILD_WEBHOOK_URL) para no mezclarse con el de los formularios de
+  # contacto (SLACKWEBHOOKURL), que apunta a otro canal. Sin el secreto solo deja un aviso.
+  notify-slack:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    environment: Prod
+    needs: [aws-infra, static-site]
+    if: always()
+    steps:
+      - name: Send build result to Slack
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_BUILD_WEBHOOK_URL }}
+          INFRA_RESULT: ${{ needs.aws-infra.result }}
+          SITE_RESULT: ${{ needs.static-site.result }}
+          EVENT: ${{ github.event_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          # Va por env: y no dentro del script, para que comillas o $ del commit no rompan el JSON.
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "::warning title=Slack::SLACK_BUILD_WEBHOOK_URL vacio; no se aviso en Slack."
+            exit 0
+          fi
+          if [ "$INFRA_RESULT" = "success" ] && [ "$SITE_RESULT" = "success" ]; then
+            TITLE=":white_check_mark: Deploy de inspiraarte.com exitoso"
+          elif [ "$INFRA_RESULT" = "cancelled" ] || [ "$SITE_RESULT" = "cancelled" ]; then
+            TITLE=":warning: Deploy de inspiraarte.com cancelado"
+          else
+            TITLE=":x: Falló el deploy de inspiraarte.com"
+          fi
+          case "$EVENT" in
+            schedule) ORIGEN="rebuild semanal (lunes)" ;;
+            push) ORIGEN="push a main por $ACTOR" ;;
+            *) ORIGEN="$EVENT por $ACTOR" ;;
+          esac
+          COMMIT_LINE="$(printf '%s' "$COMMIT_MSG" | head -n1)"
+          TEXT="*${TITLE}*
+          Origen: ${ORIGEN}
+          Infraestructura AWS: \`${INFRA_RESULT}\` · Sitio estático: \`${SITE_RESULT}\`
+          Commit: <${COMMIT_URL}|${SHA:0:7}> ${COMMIT_LINE}
+          <${RUN_URL}|Ver el run en GitHub Actions>"
+          jq -n --arg text "$TEXT" '{text: $text}' |
+            curl -sS --fail -X POST -H 'Content-Type: application/json' --data @- "$SLACK_WEBHOOK" ||
+            echo "::warning title=Slack::No se pudo enviar el aviso a Slack."
