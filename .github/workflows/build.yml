@@ -233,20 +233,6 @@ jobs:
             --content-type 'text/markdown; charset=utf-8' \
             --cache-control 'public, max-age=300'
 
-      # S3 website no permite cabeceras propias: la cabecera Link de la home (RFC 8288/9727) la
-      # pone una Transform Rule de Cloudflare. Si el token no tiene "Transform Rules: Edit", avisa
-      # y sigue: el deploy ya está hecho.
-      - name: Set home Link headers in Cloudflare
-        continue-on-error: true
-        env:
-          CF_TOKEN: ${{ secrets.NEXT_CLOUDFLARE_TOKEN }}
-          CF_ZONE_ID: ${{ secrets.NEXT_CLOUDFLARE_ZONE_ID }}
-        run: |
-          if ! pnpm run cloudflare:link-headers; then
-            echo "::warning title=Cloudflare::No se pudo crear la regla de cabeceras Link; revisa el permiso Transform Rules del token."
-            exit 1
-          fi
-
       # Sin la purga, Cloudflare sigue sirviendo el HTML del build anterior.
       - name: Purge Cloudflare cache
         env:

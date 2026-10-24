@@ -16,7 +16,6 @@
     "indexnow": "tsx scripts/submit-indexnow.ts",
     "blog:check": "tsx scripts/blog-check.ts",
     "blog:products": "tsx scripts/blog-products.ts",
-    "cloudflare:link-headers": "tsx scripts/cloudflare-link-headers.ts",
     "hubspot:properties": "tsx scripts/hubspot-product-properties.ts",
     "hubspot:sync-products": "tsx scripts/hubspot-sync-products.ts",
     "build:hubspot": "tsx scripts/hubspot-sync-products.ts --optional",

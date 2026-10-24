@@ -40,7 +40,7 @@ const nextConfig: NextConfig = {
               ],
             },
             // Después de "/:path*" (que también coincide con "/"): con la misma clave gana la última.
-            // En producción la cabecera de descubrimiento la pone Cloudflare (scripts/cloudflare-link-headers.ts).
+            // En producción la cabecera de descubrimiento la pone una Transform Rule de Cloudflare configurada a mano.
             {
               source: "/",
               headers: [

@@ -219,8 +219,8 @@ export function buildOpenApiSpec(siteUrl: string) {
   };
 }
 
-// Cabecera Link (RFC 8288, RFC 9727 §3) de la home. En producción la pone una regla de
-// Cloudflare (scripts/cloudflare-link-headers.ts); en dev, next.config.ts.
+// Cabecera Link (RFC 8288, RFC 9727 §3) de la home. En producción la pone una Transform Rule de
+// Cloudflare configurada a mano en la consola (mismo valor); en dev, next.config.ts.
 export function buildHomeLinkHeader(siteUrl: string): string {
   return [
     `<${siteUrl}${API_CATALOG_PATH}>; rel="api-catalog"; type="application/linkset+json"`,
